@@ -14,6 +14,7 @@ export default function LexiconCard({
   size_from,
   size_to,
   sortBy,
+  imageUrl,
 }: {
   id: number;
   common_name: string;
@@ -26,18 +27,8 @@ export default function LexiconCard({
   size_from: string;
   size_to: string;
   sortBy: string;
+  imageUrl: string;
 }) {
-  const getUrl = () => {
-    if (category === "Säugetier") {
-      const imageUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/Saeugetier/${common_name}.jpg`;
-      return imageUrl;
-    } else {
-      const imageUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/${category}/${common_name}.jpg`;
-      return imageUrl;
-    }
-  };
-  const imageUrl = Placeholder;
-
   const link = `/animalpage/${common_name}`;
 
   return (

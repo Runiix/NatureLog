@@ -3,6 +3,12 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import LexiconGrid from "@/app/components/LexiconGrid";
 
+const getUser = async (supabase: any) => {
+  const { data, error } = await supabase.auth.getUser();
+  if (error) console.error("Error fetching user", error);
+  return data;
+};
+
 export default async function LexiconPage(params: any) {
   const cookieStore = cookies();
   const supabase = createServerClient(
@@ -26,9 +32,11 @@ export default async function LexiconPage(params: any) {
       },
     }
   );
+  const user = await getUser(supabase);
+  console.log("User: ", user);
   return (
     <main className=" bg-gray-200">
-      <Nav />
+      <Nav user={user} />
       <section className="flex flex-col items-center w-full">
         <h2 className="text-green-600 text-center text-6xl mt-24 mb-16">
           Arten-Lexikon{" "}

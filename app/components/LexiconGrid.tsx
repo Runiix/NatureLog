@@ -24,11 +24,11 @@ export default function LexiconGrid(filters: any) {
   const [color, setColor] = useState<string>(
     decodeURIComponent(filters.filters[1])
   );
-  const [values, setValues] = useState([0, 500]);
   const [sizeFrom, setSizeFrom] = useState<number>(filters.filters[2]);
   const [sizeTo, setSizeTo] = useState<number>(filters.filters[3]);
-  const [sortBy, setSortBy] = useState<string>("common_name");
-  const [sortOrder, setSortOrder] = useState<boolean>(false);
+  const [sortBy, setSortBy] = useState<string>(filters.filters[4]);
+  const [sortOrder, setSortOrder] = useState<boolean>(filters.filters[5]);
+  const [values, setValues] = useState([0, 500]);
 
   const searchParams = useSearchParams();
   const pathName = usePathname();
@@ -37,7 +37,6 @@ export default function LexiconGrid(filters: any) {
   const [query, setQuery] = useState("");
 
   useEffect(() => {
-    console.log("filters: ", filters);
     loadAnimals(0);
   }, [query, genus, color, sizeFrom, sizeTo, sortBy, sortOrder]);
 
@@ -150,9 +149,18 @@ export default function LexiconGrid(filters: any) {
       console.error("Error loading more movies:", error);
     }
   };
+  const getUrl = (category: string, common_name: string) => {
+    if (category === "Säugetier") {
+      const imageUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/Saeugetier/${common_name}.jpg`;
+      return imageUrl;
+    } else {
+      const imageUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/${category}/${common_name}.jpg`;
+      return imageUrl;
+    }
+  };
   return (
     <div>
-      <div className="flex flex-col sm:flex-row justify-around w-full items-center">
+      <div className="flex flex-col sm:flex-row lg:gap-52 xl:gap-64 justify-around w-full items-center">
         <div className="flex flex-col">
           <div
             className="flex items-center gap-6 bg-gray-900 shadow-md py-2 pl-6 pr-2 text-xl rounded-md hover:bg-green-600 hover:text-gray-900 hover:cursor-pointer"
@@ -413,23 +421,15 @@ export default function LexiconGrid(filters: any) {
                 }`}
               />
             </div>
-            {!sortOrder ? (
-              <div
-                onClick={() => changeSortOrder(true)}
-                className="bg-gray-900 shadow-md p-2 text-xl rounded-md hover:bg-green-600 hover:text-gray-900 hover:cursor-pointer transition-all duration-200"
-              >
-                <ArrowDownward />
-              </div>
-            ) : (
-              <div>
-                <div
-                  onClick={() => changeSortOrder(false)}
-                  className="bg-gray-900 shadow-md p-2 text-xl rounded-md hover:bg-green-600 hover:text-gray-900 hover:cursor-pointer transition-all duration-200"
-                >
-                  <ArrowDownward />
-                </div>
-              </div>
-            )}
+
+            <div
+              onClick={() => changeSortOrder(!sortOrder)}
+              className={`transition-all duration-200 "bg-gray-900 shadow-md p-2 text-xl rounded-md hover:bg-green-600 hover:text-gray-900 bg-gray-900 hover:cursor-pointer ${
+                sortOrder ? "rotate-180" : "rotate-0"
+              }`}
+            >
+              <ArrowDownward />
+            </div>
           </div>
           {expandSort && (
             <div className="flex flex-col absolute bg-gray-900 mt-12 transition-all duration-200 rounded-b-md border border-slate-400 shadow-lg shadow-black z-50">
@@ -482,6 +482,7 @@ export default function LexiconGrid(filters: any) {
                 size_from={animal.size_from}
                 size_to={animal.size_to}
                 sortBy={filters.filters[4]}
+                imageUrl={getUrl(animal.category, animal.common_name)}
               />
             ))}
         </div>
