@@ -5,15 +5,26 @@ import { redirect } from "next/navigation";
 
 import { createClient } from "@/utils/supabase/server";
 
+function validatePassword(password: string) {
+  const passwordRegex =
+    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{10,}$/;
+  return passwordRegex.test(password);
+}
+
 export async function login(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
+
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
   };
+  if (!validatePassword(data.password)) {
+    redirect("/error");
+    return;
+  }
 
   const { error } = await supabase.auth.signInWithPassword(data);
 
@@ -26,7 +37,7 @@ export async function login(formData: FormData) {
 }
 
 export async function signup(formData: FormData) {
-  const supabase = createClient();
+  const supabase = await createClient();
 
   // type-casting here for convenience
   // in practice, you should validate your inputs
@@ -34,13 +45,14 @@ export async function signup(formData: FormData) {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
   };
-
+  console.log(data);
   const { error } = await supabase.auth.signUp(data);
 
   if (error) {
+    console.log("Error during sign up", error);
     redirect("/error");
   }
 
   revalidatePath("/", "layout");
-  redirect("/account");
+  redirect("/homepage");
 }

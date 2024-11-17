@@ -4,6 +4,7 @@ import Nav from "@/app/components/Nav";
 import Image from "next/image";
 import Placeholder from "../../assets/images/Placeholder.jpg";
 import { Height, Landscape } from "@mui/icons-material";
+import { createClient } from "@/utils/supabase/server";
 
 const getAnimalData = async (supabase: any, name: string) => {
   const birdName = decodeURIComponent(name);
@@ -36,28 +37,7 @@ const getMainImage = async (supabase: any, name: string) => {
 };
 
 export default async function page({ params }: any) {
-  const cookieStore = cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value, ...options });
-          } catch (error) {}
-        },
-        remove(name: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value: "", ...options });
-          } catch (error) {}
-        },
-      },
-    }
-  );
+  const supabase = await createClient();
   const animalData = await getAnimalData(supabase, params.common_name);
 
   const getUrl = () => {

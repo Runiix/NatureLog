@@ -1,26 +1,28 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { supabase } from "../../utils/supabase/client";
+import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 import { GridLoader } from "react-spinners";
+import { login, signup } from "../actions/handleLogin";
 
 export default function AuthForm() {
   const [isNewUser, setIsNewUser] = useState(false);
-  const [displayName, setDisplayName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  //  const [displayName, setDisplayName] = useState("");
+  //  const [email, setEmail] = useState("");
+  //  const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
   const [emailData, setEmailData] = useState("");
-  const router = useRouter();
+  const supabase = createClient();
+  //  const router = useRouter();
 
-  useEffect(() => {
+  /*  useEffect(() => {
     setDisplayName(email.split("@")[0]);
-  }, [email]);
+  }, [email]);*/
 
-  async function handleLogin(e: any) {
+  /* async function handleLogin(e: any) {
     e.preventDefault();
     setIsSigningIn(true);
     const { data, error } = await supabase.auth.signInWithPassword({
@@ -60,8 +62,10 @@ export default function AuthForm() {
     });
     if (!error) {
       setIsSigningUp(true);
+    } else {
+      alert("Error Signing Up");
     }
-  }
+  }*/
 
   const sendResetPassword = async () => {
     try {
@@ -86,7 +90,7 @@ export default function AuthForm() {
   if (isSigningIn) {
     signInMessage = "Sie werden angemeldet";
   } else if (isNewUser) {
-    signInMessage = "Registrieren";
+    signInMessage = "Die Registrierung läuft";
   }
 
   const signUpMessage = (
@@ -107,27 +111,27 @@ export default function AuthForm() {
               Anmeldung
             </h1>
           </div>
-          <form
-            onSubmit={isNewUser ? handleSignUp : handleLogin}
-            className="flex flex-col items-center gap-5"
-          >
+          <form className="flex flex-col items-center gap-5">
             <input
+              id="email"
+              name="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              required
               placeholder="E-Mail"
               className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
             />
             <input
+              id="password"
+              name="password"
               type="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              required
               placeholder="Passwort"
               className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 bg-opacity-80 border border-slate-300 text-lg hover:border-slate-100 "
             />
             <button
-              type="submit"
+              formAction={isNewUser ? signup : login}
               className="bg-green-600 text-zinc-900 py-3 flex gap-4 justify-around items-center px-20  rounded-2xl hover:text-slate-100 hover:bg-green-700"
+              onClick={() => setIsSigningIn(true)}
             >
               <p className="text-2xl">{signInMessage} </p>
               {isSigningIn && (

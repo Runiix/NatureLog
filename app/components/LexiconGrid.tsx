@@ -7,9 +7,16 @@ import { GridLoader } from "react-spinners";
 import { ArrowDownward, ExpandMore } from "@mui/icons-material";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { Range } from "react-range";
-import { Sora } from "next/font/google";
 
-export default function LexiconGrid(filters: any) {
+export default function LexiconGrid({
+  filters,
+  user,
+  spottedList,
+}: {
+  filters: any;
+  user: any;
+  spottedList: [number];
+}) {
   const [offset, setOffset] = useState(0);
   const [loadingMoreAnimals, setLoadingMoreAnimals] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -38,6 +45,7 @@ export default function LexiconGrid(filters: any) {
 
   useEffect(() => {
     loadAnimals(0);
+    console.log(filters);
   }, [query, genus, color, sizeFrom, sizeTo, sortBy, sortOrder]);
 
   useEffect(() => {
@@ -150,11 +158,14 @@ export default function LexiconGrid(filters: any) {
     }
   };
   const getUrl = (category: string, common_name: string) => {
+    const regex = /[äöüß]/g;
+    // Replace the matched characters with '_'
+    const Name = common_name.replace(regex, "_");
     if (category === "Säugetier") {
-      const imageUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/Saeugetier/${common_name}.jpg`;
+      const imageUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/Saeugetier/${Name}.jpg`;
       return imageUrl;
     } else {
-      const imageUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/${category}/${common_name}.jpg`;
+      const imageUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/${category}/${Name}.jpg`;
       return imageUrl;
     }
   };
@@ -483,6 +494,8 @@ export default function LexiconGrid(filters: any) {
                 size_to={animal.size_to}
                 sortBy={filters.filters[4]}
                 imageUrl={getUrl(animal.category, animal.common_name)}
+                user={user}
+                spottedList={spottedList}
               />
             ))}
         </div>

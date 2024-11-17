@@ -6,13 +6,18 @@ import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 
 const getUser = async (supabase: any) => {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error) console.error("Error fetching user", error);
-  console.log(user);
-  return user;
+  try {
+    const {
+      data: { user },
+      error,
+    } = await supabase.auth.getUser();
+    if (error) throw error;
+    console.log("USER:", user);
+    return user;
+  } catch (error) {
+    console.error("Error fetching user:", error);
+    return null;
+  }
 };
 
 export default async function page() {
@@ -41,7 +46,7 @@ export default async function page() {
   const user = await getUser(supabase);
   return (
     <main className="bg-gray-900 bg-opacity-50">
-      <Nav />
+      <Nav user={user} />
       <section className="h-screen flex flex-col items-center justify-center gap-10">
         <Image
           src={HomeHero}
