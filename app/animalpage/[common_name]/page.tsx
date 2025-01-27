@@ -1,10 +1,16 @@
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { cookies } from "next/headers";
 import Nav from "@/app/components/Nav";
 import Image from "next/image";
-import Placeholder from "../../assets/images/Placeholder.jpg";
 import { Height, Landscape } from "@mui/icons-material";
 import { createClient } from "@/utils/supabase/server";
+
+const getUser = async (supabase: any) => {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  if (error) console.error("Error fetching user", error);
+  return user;
+};
 
 const getAnimalData = async (supabase: any, name: string) => {
   const birdName = decodeURIComponent(name);
@@ -16,53 +22,19 @@ const getAnimalData = async (supabase: any, name: string) => {
   return data[0];
 };
 
-const getMainImage = async (supabase: any, name: string) => {
-  const { data: categoryData, error: categoryError } = await supabase
-    .from("animals")
-    .select("category")
-    .eq("common_name", name);
-  if (categoryError) console.error("Error getting animal category");
-  console.log(`/main/${categoryData[0].category}/${name}.webp`);
-
-  const { data, error } = await supabase.storage
-    .from("animalImages")
-    .createSignedUrl(`main/${categoryData[0].category}/${name}.webp`, 60 * 60);
-  if (error) {
-    console.error("Error generating signed URL", error);
-    return null;
-  }
-
-  console.log("signedUrl", data);
-  return data;
-};
-
-export default async function page({ params }: any) {
+export default async function page(props: any) {
+  const params = await props.params;
   const supabase = await createClient();
   const animalData = await getAnimalData(supabase, params.common_name);
+  const user = await getUser(supabase);
 
-  const getUrl = () => {
-    // Define a regular expression to match the characters ä, ö, ü, and ß
-    const regex = /[äöüß]/g;
-    // Replace the matched characters with '_'
-    const Name = animalData.common_name.replace(regex, "_");
-    console.log(animalData);
-    if (animalData.category === "Säugetier") {
-      const imageUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/Saeugetier/${Name}.jpg`;
-      return imageUrl;
-    } else {
-      const imageUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/${animalData.category}/${Name}.jpg`;
-      return imageUrl;
-    }
-  };
-  const imageUrl = getUrl();
-  /*   const mainImageUrl = await getMainImage(supabase, params.common_name);
-   */ return (
+  return (
     <div className="bg-gray-200 ">
-      <Nav />
+      <Nav user={user} />
       <div className="h-screen flex flex-col items-center w-full">
         <div className="absolute w-full h-full object-cover ">
           <Image
-            src={imageUrl}
+            src={animalData.image_link}
             alt="animal Banner"
             width={2000}
             height={2000}

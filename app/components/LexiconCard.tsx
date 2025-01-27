@@ -42,7 +42,7 @@ export default function LexiconCard({
   const [isSpotted, setIsSpotted] = useState("false");
   const link = `/animalpage/${common_name}`;
   const pathname = usePathname();
-
+  const [src, setSrc] = useState(imageUrl);
   useEffect(() => {
     const checkIfSpotted = () => {
       if (spottedList !== undefined) {
@@ -56,17 +56,24 @@ export default function LexiconCard({
   const handleChildElementClick = (e: any) => {
     e.stopPropagation();
   };
+  const handleError = () => {
+    setSrc(
+      "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
+    );
+  };
 
   return (
     <div className="group">
       <Link href={link}>
         <div className="flex flex-col hover:cursor-pointer w-80 h-72 bg-gray-900 rounded-lg">
           <Image
-            src={imageUrl}
+            src={src}
             alt="Placeholder"
             width={300}
             height={200}
+            priority
             className="object-cover w-full h-full rounded-t-lg group-hover:opacity-90"
+            onError={handleError}
           />
           <div className=" p-4 w-full flex justify-between items-center">
             <div>

@@ -1,6 +1,4 @@
 import Nav from "../../components/Nav";
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { cookies } from "next/headers";
 import LexiconGrid from "@/app/components/LexiconGrid";
 import { createClient } from "@/utils/supabase/server";
 
@@ -38,7 +36,7 @@ export default async function LexiconPage(params: any) {
             Arten-Lexikon{" "}
           </h2>
           <LexiconGrid
-            filters={params.params}
+            filters={await params.params}
             user={user}
             spottedList={spottedList}
           />
@@ -55,7 +53,7 @@ export default async function LexiconPage(params: any) {
             Arten-Lexikon{" "}
           </h2>
           <LexiconGrid
-            filters={params.params}
+            filters={await params.params}
             user={user}
             spottedList={spottedList}
           />

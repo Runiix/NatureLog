@@ -2,7 +2,6 @@ import Image from "next/image";
 import Link from "next/link";
 import Nav from "../components/Nav";
 import HomeHero from "./assets/images/HomeHero.jpg";
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
 import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import AnimalOfTheDay from "../components/AnimalOfTheDay";

@@ -1,8 +1,7 @@
 "use server";
 
-import { cookies } from "next/headers";
-import { createServerClient } from "@supabase/ssr";
 import { revalidatePath } from "next/cache";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function getAnimals(
   { filters }: any,
@@ -10,25 +9,14 @@ export default async function getAnimals(
   pageSize: number,
   query: string
 ) {
-  const cookieStore = cookies();
+  const supabase = await createClient();
 
-  const supabaseServer = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name) {
-          return cookieStore.get(name)?.value;
-        },
-      },
-    }
-  );
   const from = offset * pageSize;
   const to = (offset + 1) * pageSize - 1;
 
   if (filters[0] === "all" && filters[1] === "all") {
     console.log(1);
-    const { data, error } = await supabaseServer
+    const { data, error } = await supabase
       .from("animals")
       .select("*")
       .gte("size_from", filters[2])
@@ -43,7 +31,7 @@ export default async function getAnimals(
     return data;
   } else if (filters[0] === "all") {
     console.log(2);
-    const { data, error } = await supabaseServer
+    const { data, error } = await supabase
       .from("animals")
       .select("*")
       .textSearch("colors", `${filters[1]}`, {
@@ -62,7 +50,7 @@ export default async function getAnimals(
     return data;
   } else if (filters[1] === "all") {
     console.log(3);
-    const { data, error } = await supabaseServer
+    const { data, error } = await supabase
       .from("animals")
       .select("*")
       .eq("category", decodeURIComponent(filters[0]))
@@ -79,7 +67,7 @@ export default async function getAnimals(
   } else {
     console.log(4);
 
-    const { data, error } = await supabaseServer
+    const { data, error } = await supabase
       .from("animals")
       .select("*")
       .match({

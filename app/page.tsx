@@ -2,47 +2,19 @@ import Image from "next/image";
 import Link from "next/link";
 import Nav from "./components/Nav";
 import HomeHero from "./assets/images/HomeHero.jpg";
-import { createServerClient, type CookieOptions } from "@supabase/ssr";
-import { cookies } from "next/headers";
+import { createClient } from "@/utils/supabase/server";
 
 const getUser = async (supabase: any) => {
-  try {
-    const {
-      data: { user },
-      error,
-    } = await supabase.auth.getUser();
-    if (error) throw error;
-    console.log("USER:", user);
-    return user;
-  } catch (error) {
-    console.error("Error fetching user:", error);
+  const { data, error } = await supabase.auth.getUser();
+  if (error) {
     return null;
   }
+  return data.user;
 };
 
 export default async function page() {
-  const cookieStore = cookies();
-  const supabase = createServerClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
-    {
-      cookies: {
-        get(name: string) {
-          return cookieStore.get(name)?.value;
-        },
-        set(name: string, value: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value, ...options });
-          } catch (error) {}
-        },
-        remove(name: string, options: CookieOptions) {
-          try {
-            cookieStore.set({ name, value: "", ...options });
-          } catch (error) {}
-        },
-      },
-    }
-  );
+  const supabase = await createClient();
+
   const user = await getUser(supabase);
   return (
     <main className="bg-gray-900 bg-opacity-50">

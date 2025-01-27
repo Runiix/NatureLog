@@ -3,7 +3,7 @@ import LexiconCard from "./LexiconCard";
 import { useState, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import getAnimals from "../actions/getAnimals";
-import { GridLoader } from "react-spinners";
+import { CircleLoader } from "react-spinners";
 import { ArrowDownward, ExpandMore } from "@mui/icons-material";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { Range } from "react-range";
@@ -154,7 +154,7 @@ export default function LexiconGrid({
       setAnimals((prevAnimals: any) => [...prevAnimals, ...data]);
       setOffset((prev) => prev + 1);
     } catch (error) {
-      console.error("Error loading more movies:", error);
+      console.error("Error loading more animals:", error);
     }
   };
   const getUrl = (category: string, common_name: string) => {
@@ -358,51 +358,6 @@ export default function LexiconGrid({
                   <p>blau</p>
                 </div>
               </div>
-              <div>
-                <div className="flex items-center gap-10">
-                  <Range
-                    step={1}
-                    min={0}
-                    max={500}
-                    values={values}
-                    onChange={handleSliderChange}
-                    renderTrack={({ props, children }) => (
-                      <div
-                        {...props}
-                        style={{
-                          ...props.style,
-                          height: "4px",
-                          width: "100%",
-                          backgroundColor: "#eee",
-                        }}
-                      >
-                        {children}
-                      </div>
-                    )}
-                    renderThumb={({ props, index }) => (
-                      <div
-                        {...props}
-                        style={{
-                          ...props.style,
-                          height: "36px",
-                          width: "36px",
-                          textAlign: "center",
-                          backgroundColor: "#090",
-                        }}
-                        className="rounded-full flex justify-center items-center"
-                      >
-                        {values[index]}
-                      </div>
-                    )}
-                  />
-                  <button
-                    className="border border-slate-400 rounded-md hover:bg-gray-800"
-                    onClick={() => handleSizeChange()}
-                  >
-                    Größe ändern
-                  </button>
-                </div>
-              </div>
             </div>
           )}
         </div>
@@ -481,7 +436,7 @@ export default function LexiconGrid({
           {animals &&
             animals.map((animal: any, index: number) => (
               <LexiconCard
-                key={index}
+                key={animal.id}
                 id={animal.id}
                 common_name={animal.common_name}
                 scientific_name={animal.scientific_name}
@@ -501,15 +456,61 @@ export default function LexiconGrid({
         </div>
         {loading && (
           <div className="" ref={ref}>
-            <GridLoader color="#16A34A" />{" "}
+            <CircleLoader color="#16A34A" />{" "}
           </div>
         )}
         {loadingMoreAnimals && (
           <div className="" ref={ref}>
-            <GridLoader color="#16A34A" />{" "}
+            <CircleLoader color="#16A34A" />{" "}
           </div>
         )}
       </div>
     </div>
   );
 }
+
+/*               <div>
+                <div className="flex items-center gap-10">
+                  <Range
+                    step={1}
+                    min={0}
+                    max={500}
+                    values={values}
+                    onChange={handleSliderChange}
+                    renderTrack={({ props, children }) => (
+                      <div
+                        {...props}
+                        style={{
+                          ...props.style,
+                          height: "4px",
+                          width: "100%",
+                          backgroundColor: "#eee",
+                        }}
+                      >
+                        {children}
+                      </div>
+                    )}
+                    renderThumb={({ props, index }) => (
+                      <div
+                        {...props}
+                        style={{
+                          ...props.style,
+                          height: "36px",
+                          width: "36px",
+                          textAlign: "center",
+                          backgroundColor: "#090",
+                        }}
+                        className="rounded-full flex justify-center items-center"
+                      >
+                        {values[index]}
+                      </div>
+                    )}
+                  />
+                  <button
+                    className="border border-slate-400 rounded-md hover:bg-gray-800"
+                    onClick={() => handleSizeChange()}
+                  >
+                    Größe ändern
+                  </button>
+                </div>
+              </div> */
