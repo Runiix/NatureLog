@@ -22,9 +22,46 @@ const getSpottedList = async (supabase: any, userId: any) => {
     return spottedIds;
   }
 };
+async function getAnimalImageList(supabase: any, genus: string) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { success: false, error: "User is not authenticated!" };
+  }
+  const { data, error } = await supabase.storage
+    .from("animalImages")
+    .list(`main/${genus}/`, {
+      limit: 400,
+      offset: 0,
+      sortBy: { column: "name", order: "asc" },
+    });
+  if (error) console.error("Error fetching animal images", error);
+  if (data === null) return [];
+
+  const filteredData = data.filter(
+    (item: { name: string }) => item.name !== ".emptyFolderPlaceholder"
+  );
+  return filteredData;
+}
+
 export default async function LexiconPage(params: any) {
   const supabase = await createClient();
   const user = await getUser(supabase);
+  const mammalImages = await getAnimalImageList(supabase, "Saeugetier");
+  const birdImages = await getAnimalImageList(supabase, "Vogel");
+  const amphibiaImages = await getAnimalImageList(supabase, "Amphibie");
+  const reptileImages = await getAnimalImageList(supabase, "Reptil");
+  const spiderImages = await getAnimalImageList(supabase, "Arachnoid");
+  const insectImages = await getAnimalImageList(supabase, "Insekt");
+  const animalImageList = mammalImages.concat(
+    birdImages,
+    amphibiaImages,
+    reptileImages,
+    spiderImages,
+    insectImages
+  );
   if (user) {
     const userId = user.id;
     const spottedList = await getSpottedList(supabase, userId);
@@ -39,6 +76,7 @@ export default async function LexiconPage(params: any) {
             filters={await params.params}
             user={user}
             spottedList={spottedList}
+            animalImageList={animalImageList}
           />
         </section>
       </main>
@@ -56,6 +94,7 @@ export default async function LexiconPage(params: any) {
             filters={await params.params}
             user={user}
             spottedList={spottedList}
+            animalImageList={animalImageList}
           />
         </section>
       </main>

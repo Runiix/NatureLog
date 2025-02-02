@@ -6,16 +6,17 @@ import getAnimals from "../actions/getAnimals";
 import { CircleLoader } from "react-spinners";
 import { ArrowDownward, ExpandMore } from "@mui/icons-material";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
-import { Range } from "react-range";
 
 export default function LexiconGrid({
   filters,
   user,
   spottedList,
+  animalImageList,
 }: {
   filters: any;
   user: any;
   spottedList: [number];
+  animalImageList: any;
 }) {
   const [offset, setOffset] = useState(0);
   const [loadingMoreAnimals, setLoadingMoreAnimals] = useState(false);
@@ -36,6 +37,7 @@ export default function LexiconGrid({
   const [sortBy, setSortBy] = useState<string>(filters.filters[4]);
   const [sortOrder, setSortOrder] = useState<boolean>(filters.filters[5]);
   const [values, setValues] = useState([0, 500]);
+  const regex = /[äöüß]/g;
 
   const searchParams = useSearchParams();
   const pathName = usePathname();
@@ -79,7 +81,6 @@ export default function LexiconGrid({
     }
   };
   const changeColorFilter = (c: string) => {
-    console.log(genus);
     if (color === c) {
       setColor("all");
       router.replace(
@@ -451,6 +452,11 @@ export default function LexiconGrid({
                 imageUrl={getUrl(animal.category, animal.common_name)}
                 user={user}
                 spottedList={spottedList}
+                animalImageExists={animalImageList.some(
+                  (obj: any) =>
+                    obj.name &&
+                    obj.name === animal.common_name.replace(regex, "_") + ".jpg"
+                )}
               />
             ))}
         </div>

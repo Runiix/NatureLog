@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
-import { GridLoader } from "react-spinners";
+import { CircleLoader, GridLoader } from "react-spinners";
 import { login, signup } from "../actions/handleLogin";
 
 export default function AuthForm() {
@@ -72,7 +72,7 @@ export default function AuthForm() {
       const { data, error } = await supabase.auth.resetPasswordForEmail(
         emailData,
         {
-          redirectTo: "https://moment-app-8mtl.vercel.app/passwordreset",
+          redirectTo: "https://localhost:3000/passwordreset",
         }
       );
     } catch (error) {
@@ -90,7 +90,7 @@ export default function AuthForm() {
   if (isSigningIn) {
     signInMessage = "Sie werden angemeldet";
   } else if (isNewUser) {
-    signInMessage = "Die Registrierung läuft";
+    signInMessage = "Registrieren";
   }
 
   const signUpMessage = (
@@ -136,7 +136,7 @@ export default function AuthForm() {
               <p className="text-2xl">{signInMessage} </p>
               {isSigningIn && (
                 <div className="">
-                  <GridLoader color="#000000" margin={0} size={12} />{" "}
+                  <CircleLoader color="#000000" size={12} />{" "}
                 </div>
               )}
             </button>

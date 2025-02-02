@@ -2,14 +2,10 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { Close, Menu } from "@mui/icons-material";
+import { Close, Menu, Person } from "@mui/icons-material";
 
 export default function Nav({ user }: any) {
   const [toggleMenu, setToggleMenu] = useState(false);
-
-  useEffect(() => {
-    console.log(toggleMenu);
-  }, [toggleMenu]);
 
   return (
     <div>
@@ -59,7 +55,11 @@ export default function Nav({ user }: any) {
                 </div>
               </div>
             </div>
-            <div>
+            <div className="flex items-center gap-6">
+              <div className="text-slate-900">
+                <Person />
+                {user.user_metadata.displayName}
+              </div>
               <div>
                 <form
                   action="/auth/signout"
@@ -120,6 +120,7 @@ export default function Nav({ user }: any) {
             >
               Lexikon
             </Link>
+
             <div>
               <form action="/auth/signout" method="post">
                 <button

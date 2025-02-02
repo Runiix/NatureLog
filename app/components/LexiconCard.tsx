@@ -23,6 +23,7 @@ export default function LexiconCard({
   imageUrl,
   user,
   spottedList,
+  animalImageExists,
 }: {
   id: number;
   common_name: string;
@@ -38,11 +39,13 @@ export default function LexiconCard({
   imageUrl: string;
   user: any;
   spottedList: [number];
+  animalImageExists: boolean;
 }) {
   const [isSpotted, setIsSpotted] = useState("false");
   const link = `/animalpage/${common_name}`;
   const pathname = usePathname();
   const [src, setSrc] = useState(imageUrl);
+
   useEffect(() => {
     const checkIfSpotted = () => {
       if (spottedList !== undefined) {
@@ -66,15 +69,28 @@ export default function LexiconCard({
     <div className="group">
       <Link href={link}>
         <div className="flex flex-col hover:cursor-pointer w-80 h-72 bg-gray-900 rounded-lg">
-          <Image
-            src={src}
-            alt="Placeholder"
-            width={300}
-            height={200}
-            priority
-            className="object-cover w-full h-full rounded-t-lg group-hover:opacity-90"
-            onError={handleError}
-          />
+          {animalImageExists ? (
+            <Image
+              src={src}
+              alt="Placeholder"
+              width={300}
+              height={200}
+              priority
+              className="object-cover w-full h-full rounded-t-lg group-hover:opacity-90"
+              onError={handleError}
+            />
+          ) : (
+            <Image
+              src="https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
+              alt="Placeholder"
+              width={300}
+              height={200}
+              priority
+              className="object-cover w-full h-full rounded-t-lg group-hover:opacity-90"
+              onError={handleError}
+            />
+          )}
+
           <div className=" p-4 w-full flex justify-between items-center">
             <div>
               <h2 className="text-2xl">{common_name}</h2>

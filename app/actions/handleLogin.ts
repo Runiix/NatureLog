@@ -23,7 +23,6 @@ export async function login(formData: FormData) {
   };
   if (!validatePassword(data.password)) {
     redirect("/error");
-    return;
   }
 
   const { error } = await supabase.auth.signInWithPassword(data);
@@ -38,18 +37,25 @@ export async function login(formData: FormData) {
 
 export async function signup(formData: FormData) {
   const supabase = await createClient();
-
+  console.log("SIGNING UP");
   // type-casting here for convenience
   // in practice, you should validate your inputs
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
+    options: {
+      data: {
+        displayName: formData.get("email")?.toString()?.split("@")[0],
+      },
+    },
   };
-  console.log(data);
+  if (!validatePassword(data.password)) {
+    redirect("/error");
+  }
   const { error } = await supabase.auth.signUp(data);
 
   if (error) {
-    console.log("Error during sign up", error);
+    console.error("Error during sign up", error);
     redirect("/error");
   }
 

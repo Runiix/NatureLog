@@ -18,6 +18,7 @@ export default function CollectionAnimalGrid({
   insectCount,
   arachnoidCount,
   user,
+  animalImageList,
 }: {
   animals: any;
   spottedList: [number];
@@ -29,6 +30,7 @@ export default function CollectionAnimalGrid({
   insectCount: number;
   arachnoidCount: number;
   user: any;
+  animalImageList: any;
 }) {
   const spottedBirdCount = animals.filter(
     (item: { category: string }) => item.category === "Vogel"
@@ -58,6 +60,7 @@ export default function CollectionAnimalGrid({
   const { ref, inView } = useInView();
   const [genus, setGenus] = useState<string>("all");
   const [animalItems, setAnimalItems] = useState<any>([]);
+  const regex = /[äöüß]/g;
 
   useEffect(() => {
     loadAnimals(0);
@@ -248,6 +251,11 @@ export default function CollectionAnimalGrid({
               imageUrl={animal.image_link}
               user={user}
               spottedList={spottedList}
+              animalImageExists={animalImageList.some(
+                (obj: any) =>
+                  obj.name &&
+                  obj.name === animal.common_name.replace(regex, "_") + ".jpg"
+              )}
             />
           ))}
       </div>

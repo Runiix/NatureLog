@@ -6,9 +6,15 @@ import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { useRouter } from "next/navigation";
 
-export default function ProfilePicture({ user }: { user: any }) {
+export default function ProfilePicture({
+  userId,
+  currUser,
+}: {
+  userId: any;
+  currUser: boolean;
+}) {
   const changeprofile = true;
-  const profilePicUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${user.id}/ProfilePicture/ProfilePic.jpg`;
+  const profilePicUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${userId}/ProfilePicture/ProfilePic.jpg`;
   const supabase = createClient();
   const router = useRouter();
 
@@ -51,7 +57,9 @@ export default function ProfilePicture({ user }: { user: any }) {
                 <Image
                   src={profilePicUrl}
                   alt="profileBanner"
-                  className="z-10 object-cover rounded-full w-100 border-2 bg-gray-900 hover:cursor-pointer group-hover:opacity-90 h-100 aspect-square"
+                  className={`z-10 object-cover rounded-full w-100 border-2 bg-gray-900 ${
+                    currUser && "hover:cursor-pointer group-hover:opacity-90"
+                  }  h-100 aspect-square`}
                   height={200}
                   width={200}
                   priority
@@ -60,12 +68,14 @@ export default function ProfilePicture({ user }: { user: any }) {
               <p className="hidden group-hover:flex absolute bottom-8 sm:bottom-14 ml-4 sm:ml-5 text-xs hover:cursor-pointer">
                 change
               </p>
-              <input
-                type="file"
-                id="photo-upload"
-                onChange={addOrChangeProfilePictures}
-                className="hidden"
-              />
+              {currUser && (
+                <input
+                  type="file"
+                  id="photo-upload"
+                  onChange={addOrChangeProfilePictures}
+                  className="hidden"
+                />
+              )}
             </label>
           ) : profilePicUrl === "" ? (
             <Person className="text-5xl hover:cursor-pointer border-2 hover:text-slate-400 rounded-full " />

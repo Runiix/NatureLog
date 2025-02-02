@@ -11,22 +11,25 @@ export default function ProfileInfos({
   user,
   animalCount,
   teamIcon,
+  currUser,
 }: {
   user: any;
   animalCount: number;
   teamIcon: string;
+  currUser: boolean;
 }) {
-  const collectionLink = `/collectionpage/${user.id}`;
+  const collectionLink = currUser
+    ? `/collectionpage/${user.user_metadata.displayName}`
+    : `${user.display_name}`;
   const [team, setTeam] = useState(teamIcon);
   const [teamSelect, setTeamSelect] = useState(false);
   const params = useParams();
-  console.log(params.username);
 
   return (
     <div className="flex gap-10">
       <div className="flex flex-col items-center  gap-2">
         <div>Team</div>
-        {params.username === user.user_metadata.displayName ? (
+        {currUser ? (
           <button
             className="border-2 rounded-lg p-2 text-xl hover:bg-gray-800 hover:scale-110 transition duration-300 flex justify-center items-center"
             onClick={() => setTeamSelect(!teamSelect)}

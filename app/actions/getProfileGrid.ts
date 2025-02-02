@@ -2,7 +2,7 @@
 
 import { createClient } from "@/utils/supabase/server";
 
-export default async function getProfileGrid() {
+export default async function getProfileGrid(userId: string) {
   const supabase = await createClient();
   const {
     data: { user },
@@ -13,13 +13,16 @@ export default async function getProfileGrid() {
   }
   const { data, error } = await supabase.storage
     .from("profiles")
-    .list(user.id + "/ProfileGrid/", {
-      limit: 11,
+    .list(userId + "/ProfileGrid/", {
+      limit: 13,
       offset: 0,
       sortBy: { column: "name", order: "asc" },
     });
   if (error) console.error("Error fetching profile grid", error);
   if (data === null) return [];
-  data.shift();
-  return data;
+
+  const filteredData = data.filter(
+    (item) => item.name !== ".emptyFolderPlaceholder"
+  );
+  return filteredData;
 }

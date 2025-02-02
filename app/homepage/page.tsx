@@ -1,10 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
 import Nav from "../components/Nav";
-import HomeHero from "./assets/images/HomeHero.jpg";
-import { cookies } from "next/headers";
 import { createClient } from "@/utils/supabase/server";
 import AnimalOfTheDay from "../components/AnimalOfTheDay";
+import ProfileList from "../components/ProfileList";
 
 const getUser = async (supabase: any) => {
   const {
@@ -43,19 +40,24 @@ const getAnimalOfTheDay = async (supabase: any) => {
     console.error("Error getting data from DB:", error);
   }
 };
+const getUsers = async (supabase: any) => {
+  const { data, error } = await supabase.from("users").select("*");
+  if (error) console.log("ERROR FETCHING USERS", error);
+  return data;
+};
 
 export default async function homepage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
   const animal = await getAnimalOfTheDay(supabase);
-
+  const users = await getUsers(supabase);
   return (
-    <main className="bg-gray-900 bg-opacity-50">
+    <main>
       <Nav user={user} />
-      <section className="h-screen flex flex-col items-center justify-center gap-10"></section>
-      <section>
+      {/*       <section>
         <AnimalOfTheDay data={animal[0]} />
-      </section>
+      </section> */}
+      <ProfileList profiles={users} />
     </main>
   );
 }
