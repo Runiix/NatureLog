@@ -1,11 +1,12 @@
 "use client";
-
-import { createClient } from "@/utils/supabase/client";
 import { Delete, Edit } from "@mui/icons-material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import getProfileGrid from "../actions/getProfileGrid";
 import { CircleLoader } from "react-spinners";
+import addProfileGridImage from "../actions/addProfileGridImage";
+import removeProfileGridImage from "../actions/removeProfileGridImage";
+import changeProfileGridImage from "../actions/changeProfileGridImage";
 
 export default function PictureGrid({
   user,
@@ -14,7 +15,6 @@ export default function PictureGrid({
   user: any;
   currUser: boolean;
 }) {
-  const supabase = createClient();
   const [profileGridFull, setProfileGridFull] = useState(false);
   const [oldImageUrl, setOldImageUrl] = useState("");
   const [profileGrid, setProfileGrid] = useState<any>([]);
@@ -25,7 +25,7 @@ export default function PictureGrid({
   const loadProfileGrid = async () => {
     const gridData = await getProfileGrid(user.id);
     if (Array.isArray(gridData)) {
-      setProfileGrid(gridData); // Set the resolved data
+      setProfileGrid(gridData);
       if (gridData.length === 12) {
         setProfileGridFull(true);
       }
@@ -39,96 +39,52 @@ export default function PictureGrid({
     setLoading(false);
   }, [refresh]);
 
-  async function addProfileGridImage(event: any) {
+  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoading(true);
-    try {
-      const file = event.target.files[0];
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+    if (!e.target.files || e.target.files.length === 0) return;
 
-      if (!user) {
-        throw new Error("User not authenticated for Photo upload!");
-      }
-      const filePath = `/${user.id}/ProfileGrid/${file.name}`;
+    const file = e.target.files[0];
 
-      const { data: listData, error: listError } = await supabase.storage
-        .from("profiles")
-        .list(user?.id + "/ProfileGrid/", {
-          limit: 13,
-          offset: 0,
-          sortBy: { column: "name", order: "asc" },
-        });
-      if (listError) {
-        console.error(listError);
-      }
+    const formData = new FormData();
+    formData.append("file", file);
 
-      if (listData === null || listData.length < 13) {
-        const { error: insertError } = await supabase.storage
-          .from("profiles")
-          .upload(filePath, file, {
-            cacheControl: "3600",
-            upsert: true,
-          });
-        if (insertError) {
-          console.error(insertError);
-        }
-        setRefresh(!refresh);
-      } else {
-        setProfileGridFull(true);
-      }
-    } catch (error) {
-      console.error("Error uploading file: ", error);
+    const response = await addProfileGridImage(formData);
+    if (response) {
+      setProfileGridFull(response.profileGridFull);
+      setLoading(false);
+      setRefresh((prev) => !prev);
     }
-  }
-
-  const changeProfileGridImage = async (event: any) => {
-    setLoading(true);
-    const file = event.target.files[0];
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    console.log(file, oldImageUrl);
-    if (!user) {
-      throw new Error("User not authenticated for Photo upload!");
-    }
-    const filePath = `/${user.id}/ProfileGrid/${file.name}`;
-
-    const { error: removeError } = await supabase.storage
-      .from("profiles")
-      .remove([oldImageUrl]);
-    if (removeError) {
-      console.error(removeError);
-    }
-    const { error: insertError } = await supabase.storage
-      .from("profiles")
-      .upload(filePath, file, {
-        cacheControl: "3600",
-        upsert: true,
-      });
-    if (insertError) {
-      console.error(insertError);
-    }
-    setRefresh(!refresh);
   };
-  const removeProfileGridImage = async (url: string) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    setLoading(true);
+    if (!e.target.files || e.target.files.length === 0) return;
 
-    const { error: insertError } = await supabase.storage
-      .from("profiles")
-      .remove([url]);
-    if (insertError) {
-      console.error(insertError);
+    const file = e.target.files[0];
+
+    const formData = new FormData();
+    formData.append("file", file);
+    formData.append("old_file", oldImageUrl);
+
+    const response = await changeProfileGridImage(formData);
+    if (response) {
+      setLoading(false);
+      setRefresh((prev) => !prev);
     }
-    setRefresh(!refresh);
-    setProfileGridFull(false);
+  };
+  const handleFileDelete = async (url: string) => {
+    const formData = new FormData();
+    formData.append("file", url);
+
+    const response = await removeProfileGridImage(formData);
+    if (response) {
+      setProfileGridFull(response.profileGridFull);
+      setLoading(false);
+      setRefresh((prev) => !prev);
+    }
   };
 
   return (
-    <div className="items-center justify-center grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5 gap-4 border-t-2 border-gray-950 pt-4">
+    <div className="items-center justify-center grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-1 sm:gap-4 border-t-2 border-gray-950 pt-4">
       {profileGrid &&
         profileGrid.map((imageId: number, index: number) => (
           <div key={profileGrid[index].id} className="relative">
@@ -137,7 +93,7 @@ export default function PictureGrid({
               width={200}
               height={200}
               alt=""
-              className="rounded-lg object-cover aspect-square hover:opacity-90 cursor-pointer"
+              className="rounded-lg object-cover aspect-square scale-95 sm:scale-100 hover:opacity-90 cursor-pointer"
               priority
               onClick={() =>
                 setImageModal(
@@ -159,14 +115,14 @@ export default function PictureGrid({
                   <input
                     type="file"
                     id="photo-upload"
-                    onChange={changeProfileGridImage}
+                    onChange={handleFileChange}
                     className="hidden"
                   />
                 </label>
                 <button
                   className="group cursor-pointer"
                   onClick={() =>
-                    removeProfileGridImage(
+                    handleFileDelete(
                       `${user.id}/ProfileGrid/${profileGrid[index].name}`
                     )
                   }
@@ -183,7 +139,7 @@ export default function PictureGrid({
           <input
             type="file"
             id="photo-upload"
-            onChange={addProfileGridImage}
+            onChange={handleFileUpload}
             className="hidden"
           />
         </label>

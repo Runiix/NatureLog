@@ -2,10 +2,10 @@
 import { usePathname, useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
-import LexiconCard from "./LexiconCard";
 import { useInView } from "react-intersection-observer";
 import getCollectionAnimals from "../actions/getCollectionAnimals";
 import { CircleLoader } from "react-spinners";
+import CollectionCard from "./CollectionCard";
 
 export default function CollectionAnimalGrid({
   animals,
@@ -18,6 +18,7 @@ export default function CollectionAnimalGrid({
   insectCount,
   arachnoidCount,
   user,
+  currUser,
   animalImageList,
 }: {
   animals: any;
@@ -30,6 +31,7 @@ export default function CollectionAnimalGrid({
   insectCount: number;
   arachnoidCount: number;
   user: any;
+  currUser?: "false";
   animalImageList: any;
 }) {
   const spottedBirdCount = animals.filter(
@@ -52,7 +54,7 @@ export default function CollectionAnimalGrid({
   ).length;
   const [query, setQuery] = useState("");
   const searchParams = useSearchParams();
-  const { replace, refresh } = useRouter();
+  const { replace } = useRouter();
   const pathName = usePathname();
   const [offset, setOffset] = useState(0);
   const [loadingMoreAnimals, setLoadingMoreAnimals] = useState(false);
@@ -91,7 +93,7 @@ export default function CollectionAnimalGrid({
       } else {
         pageSize = 12;
       }
-      const data: any = await getCollectionAnimals(
+      const data = await getCollectionAnimals(
         spottedList,
         offset,
         pageSize,
@@ -120,7 +122,7 @@ export default function CollectionAnimalGrid({
       } else {
         pageSize = 12;
       }
-      const data: any = await getCollectionAnimals(
+      const data = await getCollectionAnimals(
         spottedList,
         offset,
         pageSize,
@@ -138,7 +140,7 @@ export default function CollectionAnimalGrid({
   };
 
   return (
-    <div className="mt-20">
+    <div className="mt-20 flex items-center flex-col">
       <div>
         <div className="flex flex-col items-center justify-center ">
           <p className="text-gray-900">Arten</p>
@@ -151,7 +153,7 @@ export default function CollectionAnimalGrid({
             <p>{animalCount}</p>
           </div>
         </div>
-        <div className="flex flex-row gap-3 items-center justify-center">
+        <div className="flex flex-row flex-wrap gap-3 items-center justify-center">
           <div className="flex flex-col items-center justify-center">
             <p className="text-gray-900">Vögel</p>
             <div
@@ -235,21 +237,23 @@ export default function CollectionAnimalGrid({
       <div className="m-auto items-center justify-center grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mt-10">
         {animalItems &&
           animalItems.map((animal: any, index: number) => (
-            <LexiconCard
+            <CollectionCard
               key={animal.id}
               id={animal.id}
               common_name={animal.common_name}
               scientific_name={animal.scientific_name}
-              category={animal.category}
-              description={animal.description}
-              habitat={animal.habitat}
               population_estimate={animal.population_estimate}
               endangerment_status={animal.endangerment_status}
               size_from={animal.size_from}
               size_to={animal.size_to}
               sortBy="common_name"
-              imageUrl={animal.image_link}
+              imageUrl={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${
+                user.id
+              }/Collection/${
+                animal.common_name.replace(regex, "_") + ".jpg"
+              }?t=${new Date().getTime()}`}
               user={user}
+              currUser={currUser}
               spottedList={spottedList}
               animalImageExists={animalImageList.some(
                 (obj: any) =>
@@ -260,13 +264,13 @@ export default function CollectionAnimalGrid({
           ))}
       </div>
       {loading && (
-        <div className="" ref={ref}>
+        <div className="m-10" ref={ref}>
           {" "}
           <CircleLoader color="#16A34A" />{" "}
         </div>
       )}
       {loadingMoreAnimals && (
-        <div className="" ref={ref}>
+        <div className=" m-10" ref={ref}>
           {" "}
           <CircleLoader color="#16A34A" />{" "}
         </div>

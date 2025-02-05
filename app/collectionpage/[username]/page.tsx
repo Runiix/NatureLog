@@ -48,7 +48,7 @@ const getAnimalCount = async (supabase: any, genus: string) => {
     else return data.length;
   }
 };
-async function getAnimalImageList(supabase: any, genus: string) {
+async function getAnimalImageList(supabase: any, userId: string) {
   const {
     data: { user },
   } = await supabase.auth.getUser();
@@ -57,8 +57,8 @@ async function getAnimalImageList(supabase: any, genus: string) {
     return { success: false, error: "User is not authenticated!" };
   }
   const { data, error } = await supabase.storage
-    .from("animalImages")
-    .list(`main/${genus}/`, {
+    .from("profiles")
+    .list(`${userId}/Collection/`, {
       limit: 400,
       offset: 0,
       sortBy: { column: "name", order: "asc" },
@@ -93,22 +93,11 @@ export default async function collectionpage(params: any) {
   const insectCount = await getAnimalCount(supabase, "Insekt");
   const arachnoidCount = await getAnimalCount(supabase, "Arachnoid");
   const animalCount = await getAnimalCount(supabase, "all");
-  const mammalImages = await getAnimalImageList(supabase, "Saeugetier");
-  const birdImages = await getAnimalImageList(supabase, "Vogel");
-  const amphibiaImages = await getAnimalImageList(supabase, "Amphibie");
-  const reptileImages = await getAnimalImageList(supabase, "Reptil");
-  const spiderImages = await getAnimalImageList(supabase, "Arachnoid");
-  const insectImages = await getAnimalImageList(supabase, "Insekt");
-  const animalImageList = mammalImages.concat(
-    birdImages,
-    amphibiaImages,
-    reptileImages,
-    spiderImages,
-    insectImages
-  );
+
   if (paramUserId === user.id) {
     const spottedList = await getSpottedList(supabase, user.id);
     const animals = await getAnimals(supabase, spottedList);
+    const animalImageList = await getAnimalImageList(supabase, user.id);
 
     return (
       <div>
@@ -133,6 +122,7 @@ export default async function collectionpage(params: any) {
   } else {
     const spottedList = await getSpottedList(supabase, paramUserId);
     const animals = await getAnimals(supabase, spottedList);
+    const animalImageList = await getAnimalImageList(supabase, paramUserId);
 
     return (
       <div>
@@ -155,6 +145,7 @@ export default async function collectionpage(params: any) {
             insectCount={insectCount}
             arachnoidCount={arachnoidCount}
             user={paramUser}
+            currUser="false"
             animalImageList={animalImageList}
           />
         </div>

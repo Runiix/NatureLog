@@ -9,7 +9,7 @@ export default function LoginPage() {
   return (
     <div className="bg-gray-900 min-h-screen flex flex-col items-center justify-center text-slate-100 bg-opacity-50">
       <Link
-        className="absolute left-5 top-5 z-10 text-slate-100 p-2 hover:text-green-600 bg-gray-900 bg-opacity-50 rounded-full"
+        className="text-xs sm:text-base absolute left-5 top-5 z-10 text-slate-100 p-2 hover:text-green-600 bg-gray-900 bg-opacity-50 rounded-full"
         href="/"
         aria-label="navigate back to landing page"
       >

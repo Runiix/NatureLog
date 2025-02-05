@@ -20,13 +20,13 @@ export default function ProfileInfos({
 }) {
   const collectionLink = currUser
     ? `/collectionpage/${user.user_metadata.displayName}`
-    : `${user.display_name}`;
+    : `/collectionpage/${user.display_name}`;
   const [team, setTeam] = useState(teamIcon);
   const [teamSelect, setTeamSelect] = useState(false);
   const params = useParams();
 
   return (
-    <div className="flex gap-10">
+    <div className="flex justify-around gap-2 sm:gap-10">
       <div className="flex flex-col items-center  gap-2">
         <div>Team</div>
         {currUser ? (
@@ -121,15 +121,18 @@ export default function ProfileInfos({
           </div>
         )}
       </div>
-      <Link href={collectionLink} className=" flex flex-col gap-2 items-center">
-        <div>Fotografierte Arten</div>
+      <Link
+        href={collectionLink}
+        className=" flex flex-col gap-2 items-center text-center"
+      >
+        <div>Arten</div>
         <div className="border-2 rounded-lg px-4 py-2 text-xl hover:bg-gray-800 hover:scale-110 transition duration-300">
           {animalCount}
         </div>
       </Link>
-      <div>
+      <div className="flex flex-col items-center">
         <div>Bundesland</div>
-        <div>Karte</div>
+        <div>NRW</div>
       </div>
     </div>
   );

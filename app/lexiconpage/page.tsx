@@ -1,4 +1,4 @@
-import Nav from "../../components/Nav";
+import Nav from "../components/Nav";
 import LexiconGrid from "@/app/components/LexiconGrid";
 import { createClient } from "@/utils/supabase/server";
 
@@ -7,7 +7,9 @@ const getUser = async (supabase: any) => {
     data: { user },
     error,
   } = await supabase.auth.getUser();
-  if (error) console.error("Error fetching user", error);
+  if (error) {
+    return null;
+  }
   return user;
 };
 
@@ -23,13 +25,6 @@ const getSpottedList = async (supabase: any, userId: any) => {
   }
 };
 async function getAnimalImageList(supabase: any, genus: string) {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { success: false, error: "User is not authenticated!" };
-  }
   const { data, error } = await supabase.storage
     .from("animalImages")
     .list(`main/${genus}/`, {
@@ -46,7 +41,7 @@ async function getAnimalImageList(supabase: any, genus: string) {
   return filteredData;
 }
 
-export default async function LexiconPage(params: any) {
+export default async function LexiconPage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
   const mammalImages = await getAnimalImageList(supabase, "Saeugetier");
@@ -69,11 +64,10 @@ export default async function LexiconPage(params: any) {
       <main className=" bg-gray-200">
         <Nav user={user} />
         <section className="flex flex-col items-center w-full">
-          <h2 className="text-green-600 text-center text-6xl mt-24 mb-16">
+          <h2 className="text-green-600 text-center text-2xl sm:text-6xl  mt-24 mb-2">
             Arten-Lexikon{" "}
           </h2>
           <LexiconGrid
-            filters={await params.params}
             user={user}
             spottedList={spottedList}
             animalImageList={animalImageList}
@@ -87,11 +81,10 @@ export default async function LexiconPage(params: any) {
       <main className=" bg-gray-200">
         <Nav user={user} />
         <section className="flex flex-col items-center w-full">
-          <h2 className="text-green-600 text-center text-6xl mt-24 mb-16">
+          <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-24 mb-16">
             Arten-Lexikon{" "}
           </h2>
           <LexiconGrid
-            filters={await params.params}
             user={user}
             spottedList={spottedList}
             animalImageList={animalImageList}

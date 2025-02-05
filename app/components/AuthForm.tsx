@@ -8,64 +8,11 @@ import { login, signup } from "../actions/handleLogin";
 
 export default function AuthForm() {
   const [isNewUser, setIsNewUser] = useState(false);
-  //  const [displayName, setDisplayName] = useState("");
-  //  const [email, setEmail] = useState("");
-  //  const [password, setPassword] = useState("");
   const [isSigningIn, setIsSigningIn] = useState(false);
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
   const [emailData, setEmailData] = useState("");
   const supabase = createClient();
-  //  const router = useRouter();
-
-  /*  useEffect(() => {
-    setDisplayName(email.split("@")[0]);
-  }, [email]);*/
-
-  /* async function handleLogin(e: any) {
-    e.preventDefault();
-    setIsSigningIn(true);
-    const { data, error } = await supabase.auth.signInWithPassword({
-      email,
-      password,
-    });
-    if (!error) {
-      router.push("/homepage");
-    } else {
-      alert("Email or Password not correct");
-      setIsSigningIn(false);
-    }
-  }
-
-  function validatePassword(password: string) {
-    const passwordRegex =
-      /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{10,}$/;
-    return passwordRegex.test(password);
-  }
-
-  async function handleSignUp(e: any) {
-    e.preventDefault();
-    if (!validatePassword(password)) {
-      alert(
-        "Password must be at least 10 characters long and contain at least one capital letter, one number, and one special symbol."
-      );
-      return;
-    }
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          displayName: displayName,
-        },
-      },
-    });
-    if (!error) {
-      setIsSigningUp(true);
-    } else {
-      alert("Error Signing Up");
-    }
-  }*/
 
   const sendResetPassword = async () => {
     try {
@@ -153,7 +100,7 @@ export default function AuthForm() {
                   </button>
                 </>
               ) : (
-                <div className="flex flex-col items-center justify-center">
+                <div className="flex flex-col items-center text-center justify-center">
                   <div>
                     Haben Sie noch keinen Account?{" "}
                     <button

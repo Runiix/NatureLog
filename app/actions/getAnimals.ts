@@ -4,87 +4,72 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function getAnimals(
-  { filters }: any,
+  searchParams: any,
   offset: number,
-  pageSize: number,
-  query: string
+  pageSize: number
 ) {
+  const params = new URLSearchParams(searchParams as Record<string, string>);
   const supabase = await createClient();
+  const color = params.get("color")?.split(",") || [];
+  const sizeFrom = params.get("sizeFrom") || null;
+  const sizeTo = params.get("sizeTo") || null;
+  const genus = params.get("genus")?.split(",") || [];
+  const search = params.get("query") || "";
+  const sortBy = params.get("sortBy") || null;
+  const endangerment = params.get("endangerment")?.split(",") || [];
+  const sortOrder = params.get("sortOrder") || null;
+  let bool = false;
+  if (sortOrder === "ascending") {
+    bool = true;
+  }
 
   const from = offset * pageSize;
   const to = (offset + 1) * pageSize - 1;
 
-  if (filters[0] === "all" && filters[1] === "all") {
-    console.log(1);
-    const { data, error } = await supabase
-      .from("animals")
-      .select("*")
-      .gte("size_from", filters[2])
-      .lte("size_from", filters[3])
-      .order(filters[4], { ascending: JSON.parse(filters[5]) })
-      .ilike("common_name", `%${query}%`)
-      .range(from, to);
-    if (error) {
-      throw new Error("Failed to fetch data");
-    }
-    revalidatePath;
-    return data;
-  } else if (filters[0] === "all") {
-    console.log(2);
-    const { data, error } = await supabase
-      .from("animals")
-      .select("*")
-      .textSearch("colors", `${filters[1]}`, {
-        config: "english",
-      })
-      .gte("size_from", filters[2])
-      .lte("size_from", filters[3])
-      .order(filters[4], { ascending: JSON.parse(filters[5]) })
+  let query = supabase.from("animals").select("*");
 
-      .ilike("common_name", `%${query}%`)
-      .range(from, to);
-    if (error) {
-      throw new Error("Failed to fetch data");
-    }
-    revalidatePath;
-    return data;
-  } else if (filters[1] === "all") {
-    console.log(3);
-    const { data, error } = await supabase
-      .from("animals")
-      .select("*")
-      .eq("category", decodeURIComponent(filters[0]))
-      .gte("size_from", filters[2])
-      .lte("size_from", filters[3])
-      .order(filters[4], { ascending: JSON.parse(filters[5]) })
-      .ilike("common_name", `%${query}%`)
-      .range(from, to);
-    if (error) {
-      throw new Error("Failed to fetch data");
-    }
-    revalidatePath;
-    return data;
-  } else {
-    console.log(4);
-
-    const { data, error } = await supabase
-      .from("animals")
-      .select("*")
-      .match({
-        category: decodeURIComponent(filters[0]),
-      })
-      .textSearch("colors", `${filters[1]}`, {
-        config: "english",
-      })
-      .gte("size_from", filters[2])
-      .lte("size_from", filters[3])
-      .order(filters[4], { ascending: JSON.parse(filters[5]) })
-      .ilike("common_name", `%${query}%`)
-      .range(from, to);
-    if (error) {
-      throw new Error("Failed to fetch data");
-    }
-    revalidatePath;
-    return data;
+  if (genus.length > 0) {
+    query = query.in("category", genus);
   }
+  if (endangerment.length > 0) {
+    query = query.in("endangerment_status", endangerment);
+  }
+  if (color.length > 0) {
+    const colorConditions = color
+      .map((color) => `colors.ilike.%${color}%`)
+      .join(",");
+
+    query = query.or(colorConditions);
+  }
+  if (sizeFrom) {
+    query = query.gt("size_from", sizeFrom);
+  }
+  if (sizeTo) {
+    query = query.lt("size_to", sizeTo);
+  }
+  if (sortBy) {
+    if (sortBy === "endangerment_status") {
+      query = query
+        .order("endangerment_order", { ascending: bool })
+        .order("id", { ascending: bool });
+    } else {
+      query = query
+        .order(sortBy, { ascending: bool })
+        .order("id", { ascending: bool });
+    }
+  } else {
+    query = query.order("common_name", { ascending: true });
+  }
+  if (search !== "") {
+    query = query.ilike("common_name", `%${search}%`);
+  }
+  query = query.range(from, to);
+
+  const { data, error } = await query;
+  if (error) {
+    console.error("Failed to fetch data", error);
+    return [];
+  }
+  revalidatePath;
+  return data;
 }

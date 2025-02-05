@@ -56,9 +56,12 @@ export default function LexiconCard({
     checkIfSpotted();
   }, []);
 
-  const handleChildElementClick = (e: any) => {
+  const handleChildElementClick = (
+    e: React.MouseEvent<HTMLButtonElement> | React.MouseEvent<HTMLDivElement>
+  ) => {
     e.stopPropagation();
   };
+
   const handleError = () => {
     setSrc(
       "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
@@ -68,17 +71,19 @@ export default function LexiconCard({
   return (
     <div className="group">
       <Link href={link}>
-        <div className="flex flex-col hover:cursor-pointer w-80 h-72 bg-gray-900 rounded-lg">
+        <div className="flex flex-col w-80 bg-gray-900 rounded-lg">
           {animalImageExists ? (
-            <Image
-              src={src}
-              alt="Placeholder"
-              width={300}
-              height={200}
-              priority
-              className="object-cover w-full h-full rounded-t-lg group-hover:opacity-90"
-              onError={handleError}
-            />
+            <div>
+              <Image
+                src={src}
+                alt="Placeholder"
+                width={300}
+                height={200}
+                priority
+                className="object-cover w-full h-48 rounded-t-lg hover:opacity-90 "
+                onError={handleError}
+              />
+            </div>
           ) : (
             <Image
               src="https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
@@ -86,7 +91,7 @@ export default function LexiconCard({
               width={300}
               height={200}
               priority
-              className="object-cover w-full h-full rounded-t-lg group-hover:opacity-90"
+              className="object-cover w-full  rounded-t-lg hover:opacity-90 h-48"
               onError={handleError}
             />
           )}
@@ -136,6 +141,50 @@ export default function LexiconCard({
                 </button>
               </form>
             )}
+            {/*           {user && isSpotted === "true" ? (
+            <div>
+              <button
+                className="bg-transparent border-none text-slate-400 cursor-pointer hover:text-green-600 hover:scale-110 transition duration-300"
+                onClick={() => setRemoveModal((prev) => !prev)}
+              >
+                <Favorite className="text-green-600" />
+              </button>
+              {removeModal && (
+                <div
+                  className="fixed top-0 left-0 w-full h-full z-10 bg-slate-950 bg-opacity-30 flex items-center justify-center"
+                  onClick={() => setRemoveModal((prev) => !prev)}
+                >
+                  <div
+                    className="w-1/2 h-1/2 rounded-lg bg-slate-200"
+                    onClick={handleChildElementClick}
+                  ></div>
+                </div>
+              )}
+            </div>
+          ) : (
+            user &&
+            isSpotted === "false" && (
+              <div>
+                <button
+                  className="bg-transparent border-none text-slate-400 cursor-pointer hover:text-green-600 hover:scale-110 transition duration-300"
+                  onClick={() => setAddModal((prev) => !prev)}
+                >
+                  <Add className="text-slate-200" />
+                </button>
+                {removeModal && (
+                  <div
+                    className="fixed top-0 left-0 w-full h-full z-10 bg-slate-950 bg-opacity-30 flex items-center justify-center"
+                    onClick={() => setAddModal((prev) => !prev)}
+                  >
+                    <div
+                      className="w-1/2 h-1/2 rounded-lg bg-slate-200"
+                      onClick={handleChildElementClick}
+                    ></div>
+                  </div>
+                )}
+              </div>
+            )
+          )} */}
           </div>
         </div>
       </Link>

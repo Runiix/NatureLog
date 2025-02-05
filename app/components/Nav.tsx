@@ -15,7 +15,7 @@ export default function Nav({ user }: any) {
             <div className="flex items-center ">
               <div>
                 <Link href="/">
-                  <h2 className="text-green-600 text-4xl mx-10 hover:text-green-700 transition-all duration-200">
+                  <h2 className="text-green-600 text-2xl sm:text-4xl mx-10 hover:text-green-700 transition-all duration-200">
                     NatureLog
                   </h2>
                 </Link>
@@ -47,7 +47,7 @@ export default function Nav({ user }: any) {
                 </div>
                 <div>
                   <Link
-                    href="/lexiconpage/all/all/0/1000/common_name/true"
+                    href="/lexiconpage"
                     className="text-slate-600 hover:text-slate-900 transition-all duration-200"
                   >
                     Lexikon
@@ -55,7 +55,7 @@ export default function Nav({ user }: any) {
                 </div>
               </div>
             </div>
-            <div className="flex items-center gap-6">
+            <div className="hidden lg:flex items-center gap-6">
               <div className="text-slate-900">
                 <Person />
                 {user.user_metadata.displayName}
@@ -75,7 +75,7 @@ export default function Nav({ user }: any) {
                 </form>
               </div>
             </div>
-            <div className="m-2 flex lg:invisible absolute right-5 top-5 hover:cursor-pointer">
+            <div className="m-2 flex lg:invisible absolute right-5 hover:cursor-pointer">
               {toggleMenu ? (
                 <Close
                   className="text-gray-900"
@@ -91,7 +91,7 @@ export default function Nav({ user }: any) {
           </div>
 
           <div
-            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-20 text-xl w-fdivl rounded-md flex lg:hidden flex-col gap-3 text-center bg-slate-200 border-y  px-4 pt-4  ${
+            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12 sm:top-20 text-xl w-fdivl rounded-md flex lg:hidden flex-col gap-3 text-center bg-slate-200 border-y  px-4 pt-4  ${
               toggleMenu ? "scale-100 opacity-100" : "scale-0 opacity-0"
             } `}
           >
@@ -115,7 +115,7 @@ export default function Nav({ user }: any) {
               Sammlung
             </Link>
             <Link
-              href="/lexiconpage/all/all/0/1000/common_name/true"
+              href="/lexiconpage"
               className="text-slate-600 hover:text-slate-900 transition-all duration-200"
             >
               Lexikon
@@ -134,18 +134,18 @@ export default function Nav({ user }: any) {
           </div>
         </nav>
       ) : (
-        <nav className="absolute w-full top-0 py-3 flex items-center justify-between bg-gray-200 z-50">
+        <nav className="absolute w-screen top-0 py-3 flex items-center justify-between bg-gray-200 z-50">
           <div className="flex items-center gap-20">
             <div>
               <Link href="/">
-                <h2 className="text-green-600 text-4xl ml-10 hover:text-green-700 transition-all duration-200">
+                <h2 className="text-green-600 text-2xl sm:text-4xl ml-10 hover:text-green-700 transition-all duration-200">
                   NatureLog
                 </h2>
               </Link>
             </div>
             <div className="hidden sm:flex gap-10 ">
               <Link
-                href="/lexiconpage/all/all/0/1000/common_name/true"
+                href="/lexiconpage"
                 className="text-slate-600 hover:text-slate-900 transition-all duration-200"
               >
                 Lexikon
@@ -161,7 +161,7 @@ export default function Nav({ user }: any) {
             </Link>
           </div>
           <div
-            className="m-2 flex sm:invisible absolute right-5 top-5 hover:cursor-pointer text-gray-900"
+            className="m-2 flex sm:invisible absolute right-5 hover:cursor-pointer text-gray-900"
             onClick={() => setToggleMenu(!toggleMenu)}
           >
             {toggleMenu ? <Close /> : <Menu />}
@@ -174,7 +174,7 @@ export default function Nav({ user }: any) {
             <div className="flex flex-col items-center p-4 gap-6">
               <div>
                 <Link
-                  href="/lexiconpage/all/all/0/1000/common_name/true"
+                  href="/lexiconpage"
                   className="text-slate-200 hover:text-slate-900 transition-all duration-200"
                 >
                   Lexikon

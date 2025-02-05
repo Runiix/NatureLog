@@ -16,7 +16,7 @@ export default function ProfileListElement({
   return (
     <Link
       href={profilelink}
-      className="p-4 rounded-md bg-gray-950 w-96 shadow-md shadow-gray-800 hover:bg-green-600 transition-all duration-200"
+      className="py-4 rounded-md bg-gray-950 w-80 sm:w-96 shadow-md shadow-gray-800 hover:bg-green-600 transition-all duration-200"
     >
       <div className="flex gap-8 items-center justify-around">
         <Image
