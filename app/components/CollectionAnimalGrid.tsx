@@ -52,6 +52,44 @@ export default function CollectionAnimalGrid({
   const spottedArachnoidCount = animals.filter(
     (item: { category: string }) => item.category === "Arachnoid"
   ).length;
+  const genusList = [
+    {
+      name: "Vögel",
+      value: "Vogel",
+      spottedCount: spottedBirdCount,
+      count: birdCount,
+    },
+    {
+      name: "Säugetiere",
+      value: "Säugetier",
+      spottedCount: spottedMammalCount,
+      count: mammalCount,
+    },
+    {
+      name: "Amphibien",
+      value: "Amphibie",
+      spottedCount: spottedAmphibiaCount,
+      count: amphibiaCount,
+    },
+    {
+      name: "Reptilien",
+      value: "Reptil",
+      spottedCount: spottedReptileCount,
+      count: reptileCount,
+    },
+    {
+      name: "Insekten",
+      value: "Insekt",
+      spottedCount: spottedInsectCount,
+      count: insectCount,
+    },
+    {
+      name: "Spinnen",
+      value: "Arachnoid",
+      spottedCount: spottedArachnoidCount,
+      count: arachnoidCount,
+    },
+  ];
   const [query, setQuery] = useState("");
   const searchParams = useSearchParams();
   const { replace } = useRouter();
@@ -154,72 +192,22 @@ export default function CollectionAnimalGrid({
           </div>
         </div>
         <div className="flex flex-row flex-wrap gap-3 items-center justify-center">
-          <div className="flex flex-col items-center justify-center">
-            <p className="text-gray-900">Vögel</p>
+          {genusList.map((genus) => (
             <div
-              className="bg-gray-900 w-20 text-center rounded-full p-2 mb-4 hover:cursor-pointer hover:scale-105 hover:bg-gray-800 flex justify-center gap-1"
-              onClick={() => setGenus("Vogel")}
+              className="flex flex-col items-center justify-center"
+              key={genus.value}
             >
-              <p className="text-green-600">{spottedBirdCount} </p>
-              <p>/</p>
-              <p>{birdCount}</p>
+              <p className="text-gray-900">{genus.name}</p>
+              <div
+                className="bg-gray-900 w-20 text-center rounded-full p-2 mb-4 hover:cursor-pointer hover:scale-105 hover:bg-gray-800 flex justify-center gap-1"
+                onClick={() => setGenus(genus.value)}
+              >
+                <p className="text-green-600">{genus.spottedCount} </p>
+                <p>/</p>
+                <p>{genus.count}</p>
+              </div>
             </div>
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <p className="text-gray-900">Säugetiere</p>
-            <div
-              className="bg-gray-900 w-20 text-center rounded-full p-2 mb-4 hover:cursor-pointer hover:scale-105 hover:bg-gray-800 flex justify-center gap-1"
-              onClick={() => setGenus("Säugetier")}
-            >
-              <p className="text-green-600">{spottedMammalCount} </p>
-              <p>/</p>
-              <p>{mammalCount}</p>
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <p className="text-gray-900">Amphibien</p>
-            <div
-              className="bg-gray-900 w-20 text-center rounded-full p-2 mb-4 hover:cursor-pointer hover:scale-105 hover:bg-gray-800 flex justify-center gap-1"
-              onClick={() => setGenus("Amphibie")}
-            >
-              <p className="text-green-600">{spottedAmphibiaCount} </p>
-              <p>/</p>
-              <p>{reptileCount}</p>{" "}
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <p className="text-gray-900">Reptilien</p>
-            <div
-              className="bg-gray-900 w-20 text-center rounded-full p-2 mb-4 hover:cursor-pointer hover:scale-105 hover:bg-gray-800 flex justify-center gap-1"
-              onClick={() => setGenus("Reptil")}
-            >
-              <p className="text-green-600">{spottedReptileCount} </p>
-              <p>/</p>
-              <p>{amphibiaCount}</p>{" "}
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <p className="text-gray-900">Insekten</p>
-            <div
-              className="bg-gray-900 w-20 text-center rounded-full p-2 mb-4 hover:cursor-pointer hover:scale-105 hover:bg-gray-800 flex justify-center gap-1"
-              onClick={() => setGenus("Insekt")}
-            >
-              <p className="text-green-600">{spottedInsectCount} </p>
-              <p>/</p>
-              <p>{insectCount}</p>{" "}
-            </div>
-          </div>
-          <div className="flex flex-col items-center justify-center">
-            <p className="text-gray-900">Spinnen</p>
-            <div
-              className="bg-gray-900 w-20 text-center rounded-full p-2 mb-4 hover:cursor-pointer hover:scale-105 hover:bg-gray-800 flex justify-center gap-1"
-              onClick={() => setGenus("Arachnoid")}
-            >
-              <p className="text-green-600">{spottedArachnoidCount} </p>
-              <p>/</p>
-              <p>{arachnoidCount}</p>{" "}
-            </div>
-          </div>
+          ))}
         </div>
       </div>
       <div className="flex items-center justify-center gap-2 ">
@@ -249,9 +237,7 @@ export default function CollectionAnimalGrid({
               sortBy="common_name"
               imageUrl={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${
                 user.id
-              }/Collection/${
-                animal.common_name.replace(regex, "_") + ".jpg"
-              }?t=${new Date().getTime()}`}
+              }/Collection/${animal.common_name.replace(regex, "_") + ".jpg"}`}
               user={user}
               currUser={currUser}
               spottedList={spottedList}

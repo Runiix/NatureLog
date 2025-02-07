@@ -21,3 +21,7 @@
     text-wrap: balance;
   }
 }
+html,
+body {
+  overflow-x: hidden;
+}

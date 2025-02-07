@@ -1,9 +1,8 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
-import { CircleLoader, GridLoader } from "react-spinners";
+import { CircleLoader } from "react-spinners";
 import { login, signup } from "../actions/handleLogin";
 
 export default function AuthForm() {
@@ -59,6 +58,16 @@ export default function AuthForm() {
             </h1>
           </div>
           <form className="flex flex-col items-center gap-5">
+            {isNewUser && (
+              <input
+                id="username"
+                name="username"
+                type="text"
+                placeholder="Benutzername"
+                required
+                className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
+              />
+            )}
             <input
               id="email"
               name="email"

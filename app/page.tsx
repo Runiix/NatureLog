@@ -5,6 +5,10 @@ import HomeHero from "./assets/images/HomeHero.jpg";
 import { createClient } from "@/utils/supabase/server";
 import LandingInfo from "./components/LandingInfo";
 import Placeholder from "./assets/images/Placeholder.jpg";
+import Lexikon from "./assets/images/Lexikon.png";
+import Sammlung from "./assets/images/Sammlung.png";
+import Profil from "./assets/images/Profil.png";
+import Footer from "./components/Footer";
 
 const getUser = async (supabase: any) => {
   const { data, error } = await supabase.auth.getUser();
@@ -17,17 +21,39 @@ const getUser = async (supabase: any) => {
 export default async function page() {
   const supabase = await createClient();
 
+  const LandingInfoData = [
+    {
+      src: Lexikon,
+      position: "left" as "right" | "left",
+      titel: "Das Lexikon",
+      text: "Entdecke unsere heimische Tierwelt - durch Filter und die Suchfunktion ganz einfach",
+    },
+    {
+      src: Sammlung,
+      position: "right" as "right" | "left",
+      titel: "Die Sammlung",
+      text: "Tracke deine Sichtungen und lade dein Lieblingsfoto für jede Art hoch",
+    },
+    {
+      src: Profil,
+      position: "left" as "right" | "left",
+      titel: "Das Profil",
+      text: "Lade ein Profilblid hoch, wähle ein Team aus und lade deine Liblingsfotos hoch",
+    },
+  ];
+
   const user = await getUser(supabase);
   return (
-    <main className="bg-gray-900 bg-opacity-50 w-screen">
+    <main className="bg-gray-900 bg-opacity-50 w-full">
       <Nav user={user} />
-      <section className="h-screen w-screen flex flex-col items-center justify-center gap-10 shadow-md shadow-gray-700 ">
+      <section className="h-screen w-full flex flex-col items-center justify-center gap-10 shadow-md shadow-gray-700 ">
         <Image
           src={HomeHero}
           alt=" Forrest Home Hero"
           height={900}
           width={1920}
           className="absolute w-screen h-screen object-cover -z-10 "
+          priority
         />
         <div className="flex flex-col gap-6">
           <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
@@ -62,14 +88,18 @@ export default async function page() {
           </Link>
         </div>
       </section>
-      <section className="bg-slate-200 w-screen">
-        <LandingInfo
-          src={Placeholder}
-          position="left"
-          title="Das Lexikon"
-          text="Entdecke unsere heimische Tierwelt, durch Filter und die Suchfunktion ganz einfach"
-        />
+      <section className="bg-slate-200 w-full max-w-screen overflow-hidden px-0 mx-0">
+        {LandingInfoData.map((info) => (
+          <LandingInfo
+            key={info.titel}
+            src={info.src}
+            position={info.position}
+            title={info.titel}
+            text={info.text}
+          />
+        ))}
       </section>
+      <Footer />
     </main>
   );
 }

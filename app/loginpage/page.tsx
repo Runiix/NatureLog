@@ -1,8 +1,6 @@
 import Image from "next/image";
 import HomeHero from "../assets/images/HomeHero.jpg";
-import { ArrowBack } from "@mui/icons-material";
 import Link from "next/link";
-import { login, signup } from "../actions/handleLogin";
 import AuthForm from "../components/AuthForm";
 
 export default function LoginPage() {

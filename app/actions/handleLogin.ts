@@ -45,7 +45,7 @@ export async function signup(formData: FormData) {
     password: formData.get("password") as string,
     options: {
       data: {
-        displayName: formData.get("email")?.toString()?.split("@")[0],
+        displayName: formData.get("username"),
       },
     },
   };

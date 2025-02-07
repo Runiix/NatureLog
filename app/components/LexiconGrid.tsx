@@ -383,9 +383,6 @@ export default function LexiconGrid({
               id={animal.id}
               common_name={animal.common_name}
               scientific_name={animal.scientific_name}
-              category={animal.category}
-              description={animal.description}
-              habitat={animal.habitat}
               population_estimate={animal.population_estimate}
               endangerment_status={animal.endangerment_status}
               size_from={animal.size_from}

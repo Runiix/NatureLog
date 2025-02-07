@@ -7,6 +7,7 @@ import { CircleLoader } from "react-spinners";
 import addProfileGridImage from "../actions/addProfileGridImage";
 import removeProfileGridImage from "../actions/removeProfileGridImage";
 import changeProfileGridImage from "../actions/changeProfileGridImage";
+import imageCompression from "browser-image-compression";
 
 export default function PictureGrid({
   user,
@@ -44,15 +45,28 @@ export default function PictureGrid({
     if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
+    if (file) {
+      const options = {
+        maxSizeMB: 5, // Target size
+        maxWidthOrHeight: 1920, // Resize if needed
+        useWebWorker: true,
+      };
 
-    const formData = new FormData();
-    formData.append("file", file);
-
-    const response = await addProfileGridImage(formData);
-    if (response) {
-      setProfileGridFull(response.profileGridFull);
-      setLoading(false);
-      setRefresh((prev) => !prev);
+      try {
+        const compressedFile = await imageCompression(file, options);
+        const formData = new FormData();
+        formData.append("file", compressedFile);
+        formData.append("fileName", file.name);
+        console.log("Uploading", compressedFile.name);
+        const response = await addProfileGridImage(formData);
+        if (response) {
+          setProfileGridFull(response.profileGridFull);
+          setLoading(false);
+          setRefresh((prev) => !prev);
+        }
+      } catch (error) {
+        console.error("Compression failed:", error);
+      }
     }
   };
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,17 +74,31 @@ export default function PictureGrid({
     if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
+    if (file) {
+      const options = {
+        maxSizeMB: 5,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("old_file", oldImageUrl);
+      try {
+        const compressedFile = await imageCompression(file, options);
+        const formData = new FormData();
+        formData.append("file", compressedFile);
+        formData.append("old_file", oldImageUrl);
+        formData.append("fileName", file.name);
 
-    const response = await changeProfileGridImage(formData);
-    if (response) {
-      setLoading(false);
-      setRefresh((prev) => !prev);
+        const response = await changeProfileGridImage(formData);
+        if (response) {
+          setLoading(false);
+          setRefresh((prev) => !prev);
+        }
+      } catch (error) {
+        console.error("Compression failed:", error);
+      }
     }
   };
+
   const handleFileDelete = async (url: string) => {
     const formData = new FormData();
     formData.append("file", url);

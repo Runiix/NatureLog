@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { Close, Menu, Person } from "@mui/icons-material";
 
 export default function Nav({ user }: any) {

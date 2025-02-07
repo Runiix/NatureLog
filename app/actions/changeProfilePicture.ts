@@ -2,30 +2,23 @@
 
 import { createClient } from "@/utils/supabase/server";
 
-export default async function changeProfileGridImage(formData: FormData) {
+export default async function changeProfilePicture(formData: FormData) {
   const supabase = await createClient();
   const file = formData.get("file") as File;
-  const old_file = formData.get("old_file") as string;
-  const fileName = formData.get("fileName") as string;
+  console.log("UPDATING PORFILE PIC");
+
   try {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    console.log("CHANGING", file, old_file);
     if (!user) {
       throw new Error("User not authenticated for Photo upload!");
     }
-    const filePath = `/${user.id}/ProfileGrid/${fileName}`;
+    const filePath = `/${user.id}/ProfilePicture/ProfilePic.jpg`;
 
-    const { error: removeError } = await supabase.storage
-      .from("profiles")
-      .remove([old_file]);
-    if (removeError) {
-      console.error(removeError);
-    }
     const { error: insertError } = await supabase.storage
       .from("profiles")
-      .upload(filePath, file, {
+      .update(filePath, file, {
         cacheControl: "3600",
         upsert: true,
       });

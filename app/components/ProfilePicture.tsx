@@ -2,60 +2,77 @@
 
 import Image from "next/image";
 import { Person } from "@mui/icons-material";
-import { useState } from "react";
-import { createClient } from "@/utils/supabase/client";
-import { useRouter } from "next/navigation";
+import { useState, useEffect } from "react";
+import changeProfilePicture from "../actions/changeProfilePicture";
+import { CircleLoader } from "react-spinners";
+import imageCompression from "browser-image-compression";
 
 export default function ProfilePicture({
   userId,
   currUser,
+  profilePic,
+  profilePicUrl,
 }: {
   userId: any;
   currUser: boolean;
+  profilePic: boolean;
+  profilePicUrl: string;
 }) {
-  const changeprofile = true;
-  const profilePicUrl = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${userId}/ProfilePicture/ProfilePic.jpg`;
-  const supabase = createClient();
-  const router = useRouter();
+  const [profilePictureUrl, setProfilePictureUrl] = useState(profilePicUrl);
+  const [loading, setLoading] = useState(false);
+  const [profilePicExists, setProfilePicExists] = useState(profilePic);
 
-  async function addOrChangeProfilePictures(event: any) {
-    try {
-      const file = event.target.files[0];
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  const handleProfilePictureUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    setLoading(true);
+    if (!e.target.files || e.target.files.length === 0) return;
 
-      if (!user) {
-        throw new Error("User not authenticated for Photo upload!");
+    const file = e.target.files[0];
+    if (file) {
+      const options = {
+        maxSizeMB: 5, // Target size
+        maxWidthOrHeight: 1920, // Resize if needed
+        useWebWorker: true,
+      };
+
+      try {
+        if (file.size > 5 * 1024 * 1024) {
+          // If file is >5MB, compress
+          const compressedFile = await imageCompression(file, options);
+          console.log("Original size:", file.size, "bytes");
+          console.log("Compressed size:", compressedFile.size, "bytes");
+          const formData = new FormData();
+          formData.append("file", compressedFile);
+
+          const response = await changeProfilePicture(formData);
+          if (response) {
+            setProfilePictureUrl(
+              `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${userId}/ProfilePicture/ProfilePic.jpg?t=${new Date().getTime()}`
+            );
+            setProfilePicExists(true);
+            setLoading(false);
+          }
+        }
+      } catch (error) {
+        console.error("Compression failed:", error);
       }
-      const filePath = `/${user.id}/ProfilePicture/ProfilePic.jpg`;
-
-      const { error: insertError } = await supabase.storage
-        .from("profiles")
-        .upload(filePath, file, {
-          cacheControl: "3600",
-          upsert: true,
-        });
-      router.refresh;
-      if (insertError) {
-        console.error(insertError);
-      }
-    } catch (error) {
-      console.error("Error uploading file: ", error);
     }
-  }
+  };
 
   return (
     <div>
       <div>
         <div className="text-5xl flex items-center gap-2 sm:gap-4">
-          {changeprofile ? (
+          {loading ? (
+            <CircleLoader color="#16A34A" />
+          ) : (
             <label className="group">
-              {profilePicUrl === "" ? (
+              {profilePicExists === false ? (
                 <Person className="text-5xl hover:cursor-pointer border-2 group-hover:text-slate-400 rounded-full w-20 h-20" />
               ) : (
                 <Image
-                  src={profilePicUrl}
+                  src={profilePictureUrl}
                   alt="profileBanner"
                   className={`z-10 object-cover rounded-full w-100 border-2 bg-gray-900 ${
                     currUser && "hover:cursor-pointer group-hover:opacity-90"
@@ -72,21 +89,11 @@ export default function ProfilePicture({
                 <input
                   type="file"
                   id="photo-upload"
-                  onChange={addOrChangeProfilePictures}
+                  onChange={handleProfilePictureUpload}
                   className="hidden"
                 />
               )}
             </label>
-          ) : profilePicUrl === "" ? (
-            <Person className="text-5xl hover:cursor-pointer border-2 hover:text-slate-400 rounded-full " />
-          ) : (
-            <Image
-              src={profilePicUrl}
-              alt="profileBanner"
-              className="z-10 object-cover rounded-full w-20 min-w-20 border-2 bg-gray-900 h-20"
-              height={40}
-              width={40}
-            />
           )}
         </div>
       </div>

@@ -1,0 +1,16 @@
+{
+  "name": "Nature Log App",
+  "short_name": "Nature Log",
+  "description": "A Web App for tracking you animal sightings",
+  "icons": [
+    {
+      "src": "/icons/apple-icon.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    }
+  ],
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#000000"
+}

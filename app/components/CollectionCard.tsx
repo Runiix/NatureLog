@@ -2,12 +2,11 @@
 
 import { Add, Edit, Favorite } from "@mui/icons-material";
 import Image from "next/image";
-import { addOrRemoveAnimals } from "../actions/addOrRemoveAnimal";
-import { useState, useEffect } from "react";
-import { usePathname } from "next/navigation";
+import { useState } from "react";
 import Link from "next/link";
 import { CircleLoader } from "react-spinners";
 import addCollectionImage from "../actions/addCollectionImage";
+import FavoriteButton from "./FavoriteButton";
 
 export default function CollectionCard({
   id,
@@ -38,28 +37,10 @@ export default function CollectionCard({
   spottedList: [number];
   animalImageExists: boolean;
 }) {
-  const [isSpotted, setIsSpotted] = useState("false");
   const link = `/animalpage/${common_name}`;
-  const pathname = usePathname();
   const [src, setSrc] = useState(imageUrl);
   const [imageModal, setImageModal] = useState(false);
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    const checkIfSpotted = () => {
-      if (spottedList !== undefined) {
-        const isSpotted = spottedList.some((item) => item === id);
-        if (isSpotted) setIsSpotted("true");
-      }
-    };
-    checkIfSpotted();
-  }, []);
-
-  const handleChildElementClick = (
-    e: React.MouseEvent<HTMLButtonElement> | React.MouseEvent<HTMLDivElement>
-  ) => {
-    e.stopPropagation();
-  };
 
   const handleError = () => {
     setSrc(
@@ -88,7 +69,7 @@ export default function CollectionCard({
         {animalImageExists ? (
           <div className="group relative flex items-end justify-end cursor-pointer">
             <Image
-              src={src}
+              src={src + `?t=${new Date().getTime()}`}
               alt="Placeholder"
               width={300}
               height={200}
@@ -141,7 +122,6 @@ export default function CollectionCard({
             )}
           </div>
         )}
-
         <Link
           href={link}
           className=" p-4 w-full flex justify-between items-center"
@@ -158,40 +138,10 @@ export default function CollectionCard({
                 : endangerment_status}
             </h3>
           </div>
-          {user && (
-            <form
-              id="spottedForm"
-              onSubmit={async (e: any) => {
-                e.preventDefault();
-                const response = await addOrRemoveAnimals(
-                  new FormData(e.target)
-                );
-                if (response.success) {
-                  setIsSpotted(String(response.isSpotted));
-                } else {
-                  console.error(response.error);
-                }
-              }}
-            >
-              <input type="hidden" name="animalId" value={id} />
-              <input type="hidden" name="isSpotted" value={isSpotted} />
-              <input type="hidden" name="pathname" value={pathname} />
-
-              <button
-                type="submit"
-                className="bg-transparent border-none text-slate-400 cursor-pointer hover:text-green-600 hover:scale-110 transition duration-300"
-                onClick={(e) => handleChildElementClick(e)}
-              >
-                {isSpotted === "true" ? (
-                  <Favorite className="text-green-600" />
-                ) : (
-                  <Add className="text-slate-200" />
-                )}
-              </button>
-            </form>
-          )}
+          <FavoriteButton user={user} id={id} spottedList={spottedList} />
         </Link>
       </div>
+
       {imageModal && (
         <div
           className="fixed top-0 left-0 w-full h-full z-50 bg-slate-950 bg-opacity-30 flex items-center justify-center"

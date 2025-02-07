@@ -24,6 +24,33 @@ export default function ProfileInfos({
   const [team, setTeam] = useState(teamIcon);
   const [teamSelect, setTeamSelect] = useState(false);
   const params = useParams();
+  const teamList = [
+    {
+      name: "wolf",
+      src: "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/wolf-portrait.jpg",
+      alt: "Wolf Icon",
+    },
+    {
+      name: "kingfisher",
+      src: "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/kingfisher-portrait.jpg",
+      alt: "Eisvogel Icon",
+    },
+    {
+      name: "adder",
+      src: "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/adder-portrait.jpg",
+      alt: "Kreuzotter Icon",
+    },
+    {
+      name: "frog",
+      src: "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/frog-portrait.jpg",
+      alt: "Frosch Icon",
+    },
+    {
+      name: "dragonfly",
+      src: "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/dragonfly-portrait.jpg",
+      alt: "Libelle Icon",
+    },
+  ];
 
   return (
     <div className="flex justify-around gap-2 sm:gap-10">
@@ -48,76 +75,19 @@ export default function ProfileInfos({
             className=" bg-gray-800 p-2 rounded-lg flex gap-2 absolute "
             onClick={() => setTeamSelect(false)}
           >
-            <Image
-              src="https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/wolf-portrait.jpg"
-              width={80}
-              height={80}
-              alt=""
-              className="rounded-full cursor-pointer hover:opacity-90"
-              onClick={() =>
-                changeTeam("wolf", user.id).then(() =>
-                  setTeam(
-                    "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/wolf-portrait.jpg"
-                  )
-                )
-              }
-            />
-            <Image
-              src="https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/kingfisher-portrait.jpg"
-              width={80}
-              height={80}
-              alt=""
-              className="rounded-full cursor-pointer hover:opacity-90"
-              onClick={() =>
-                changeTeam("kingfisher", user.id).then(() =>
-                  setTeam(
-                    "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/kingfisher-portrait.jpg"
-                  )
-                )
-              }
-            />
-            <Image
-              src="https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/adder-portrait.jpg"
-              width={80}
-              height={80}
-              alt=""
-              className="rounded-full cursor-pointer hover:opacity-90"
-              onClick={() =>
-                changeTeam("adder", user.id).then(() =>
-                  setTeam(
-                    "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/adder-portrait.jpg"
-                  )
-                )
-              }
-            />
-            <Image
-              src="https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/frog-portrait.jpg"
-              width={80}
-              height={80}
-              alt=""
-              className="rounded-full cursor-pointer hover:opacity-90"
-              onClick={() =>
-                changeTeam("frog", user.id).then(() =>
-                  setTeam(
-                    "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/frog-portrait.jpg"
-                  )
-                )
-              }
-            />
-            <Image
-              src="https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/dragonfly-portrait.jpg"
-              width={80}
-              height={80}
-              alt=""
-              className="rounded-full cursor-pointer hover:opacity-90"
-              onClick={() =>
-                changeTeam("dragonfly", user.id).then(() =>
-                  setTeam(
-                    "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/dragonfly-portrait.jpg"
-                  )
-                )
-              }
-            />
+            {teamList.map((team) => (
+              <Image
+                key={team.name}
+                src={team.src}
+                width={80}
+                height={80}
+                alt={team.alt}
+                className="rounded-full cursor-pointer hover:opacity-90"
+                onClick={() =>
+                  changeTeam(team.name, user.id).then(() => setTeam(team.src))
+                }
+              />
+            ))}
           </div>
         )}
       </div>
