@@ -46,7 +46,6 @@ export default function LexiconGrid({
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
-
     const sortBy = params.get("sortBy") || null;
     const sortOrder = params.get("sortOrder") || null;
     if (sortBy) {
@@ -55,56 +54,55 @@ export default function LexiconGrid({
     if (sortOrder) {
       setSortOrder(sortOrder);
     }
+    const loadAnimals = async (offset: number) => {
+      try {
+        let pageSize = 0;
+        if (window.innerWidth > 1500) {
+          pageSize = 25;
+        } else {
+          pageSize = 20;
+        }
+        const data = await getAnimals(searchParams, offset, pageSize);
+        setLoading(false);
+
+        if (data.length < pageSize) {
+          setLoadingMoreAnimals(false);
+        } else {
+          setLoadingMoreAnimals(true);
+        }
+        setAnimals(data);
+        setOffset(1);
+      } catch (error) {
+        console.error("Error loading Animals:", error);
+      }
+    };
     loadAnimals(0);
   }, [searchParams]);
 
   useEffect(() => {
+    const loadMoreAnimals = async () => {
+      try {
+        let pageSize = 0;
+        if (window.innerWidth > 1500) {
+          pageSize = 25;
+        } else {
+          pageSize = 20;
+        }
+        const data = await getAnimals(searchParams, offset, pageSize);
+        if (data.length < pageSize) {
+          setLoadingMoreAnimals(false);
+        }
+        setAnimals((prevAnimals: any) => [...prevAnimals, ...data]);
+        setOffset((prev) => prev + 1);
+      } catch (error) {
+        console.error("Error loading more animals:", error);
+      }
+    };
     if (inView && loadingMoreAnimals) {
       loadMoreAnimals();
     }
-  }, [inView]);
+  }, [inView, loadingMoreAnimals, offset, searchParams]);
 
-  const loadAnimals = async (offset: number) => {
-    try {
-      let pageSize = 0;
-      if (window.innerWidth > 1500) {
-        pageSize = 25;
-      } else {
-        pageSize = 20;
-      }
-      const data = await getAnimals(searchParams, offset, pageSize);
-      setLoading(false);
-
-      if (data.length < pageSize) {
-        setLoadingMoreAnimals(false);
-      } else {
-        setLoadingMoreAnimals(true);
-      }
-      setAnimals(data);
-      setOffset(1);
-    } catch (error) {
-      console.error("Error loading Animals:", error);
-    }
-  };
-
-  const loadMoreAnimals = async () => {
-    try {
-      let pageSize = 0;
-      if (window.innerWidth > 1500) {
-        pageSize = 25;
-      } else {
-        pageSize = 20;
-      }
-      const data = await getAnimals(searchParams, offset, pageSize);
-      if (data.length < pageSize) {
-        setLoadingMoreAnimals(false);
-      }
-      setAnimals((prevAnimals: any) => [...prevAnimals, ...data]);
-      setOffset((prev) => prev + 1);
-    } catch (error) {
-      console.error("Error loading more animals:", error);
-    }
-  };
   const handleSearch = (term: string) => {
     const params = new URLSearchParams(searchParams);
     if (term) {

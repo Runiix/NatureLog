@@ -26,7 +26,7 @@ export default function FavoriteButton({
       }
     };
     checkIfSpotted();
-  }, []);
+  }, [id, spottedList]);
   function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
   }

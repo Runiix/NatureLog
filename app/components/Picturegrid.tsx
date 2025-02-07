@@ -23,22 +23,21 @@ export default function PictureGrid({
   const [imageModal, setImageModal] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const loadProfileGrid = async () => {
-    const gridData = await getProfileGrid(user.id);
-    if (Array.isArray(gridData)) {
-      setProfileGrid(gridData);
-      if (gridData.length === 12) {
-        setProfileGridFull(true);
-      }
-    } else {
-      console.error("Failed to load profile grid:", gridData.error);
-    }
-  };
-
   useEffect(() => {
+    const loadProfileGrid = async () => {
+      const gridData = await getProfileGrid(user.id);
+      if (Array.isArray(gridData)) {
+        setProfileGrid(gridData);
+        if (gridData.length === 12) {
+          setProfileGridFull(true);
+        }
+      } else {
+        console.error("Failed to load profile grid:", gridData.error);
+      }
+    };
     loadProfileGrid();
     setLoading(false);
-  }, [refresh]);
+  }, [refresh, user.id]);
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoading(true);

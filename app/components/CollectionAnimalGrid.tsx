@@ -102,16 +102,6 @@ export default function CollectionAnimalGrid({
   const [animalItems, setAnimalItems] = useState<any>([]);
   const regex = /[äöüß]/g;
 
-  useEffect(() => {
-    loadAnimals(0);
-  }, [query, genus]);
-
-  useEffect(() => {
-    if (inView && loadingMoreAnimals) {
-      loadMoreAnimals();
-    }
-  }, [inView]);
-
   const handleSearch = (term: string) => {
     const params = new URLSearchParams(searchParams);
     if (term) {
@@ -123,59 +113,67 @@ export default function CollectionAnimalGrid({
     setQuery(term);
   };
 
-  const loadAnimals = async (offset: number) => {
-    try {
-      let pageSize = 0;
-      if (window.innerWidth > 1500) {
-        pageSize = 15;
-      } else {
-        pageSize = 12;
-      }
-      const data = await getCollectionAnimals(
-        spottedList,
-        offset,
-        pageSize,
-        query,
-        genus
-      );
-      setLoading(false);
+  useEffect(() => {
+    const loadAnimals = async (offset: number) => {
+      try {
+        let pageSize = 0;
+        if (window.innerWidth > 1500) {
+          pageSize = 15;
+        } else {
+          pageSize = 12;
+        }
+        const data = await getCollectionAnimals(
+          spottedList,
+          offset,
+          pageSize,
+          query,
+          genus
+        );
+        setLoading(false);
 
-      if (data.length < pageSize) {
-        setLoadingMoreAnimals(false);
-      } else {
-        setLoadingMoreAnimals(true);
+        if (data.length < pageSize) {
+          setLoadingMoreAnimals(false);
+        } else {
+          setLoadingMoreAnimals(true);
+        }
+        setAnimalItems(data);
+        setOffset(1);
+      } catch (error) {
+        console.error("Error loading animals:", error);
       }
-      setAnimalItems(data);
-      setOffset(1);
-    } catch (error) {
-      console.error("Error loading animals:", error);
-    }
-  };
+    };
+    loadAnimals(0);
+  }, [query, genus, spottedList]);
 
-  const loadMoreAnimals = async () => {
-    try {
-      let pageSize = 0;
-      if (window.innerWidth > 1500) {
-        pageSize = 15;
-      } else {
-        pageSize = 12;
+  useEffect(() => {
+    const loadMoreAnimals = async () => {
+      try {
+        let pageSize = 0;
+        if (window.innerWidth > 1500) {
+          pageSize = 15;
+        } else {
+          pageSize = 12;
+        }
+        const data = await getCollectionAnimals(
+          spottedList,
+          offset,
+          pageSize,
+          query,
+          genus
+        );
+        if (data.length < pageSize) {
+          setLoadingMoreAnimals(false);
+        }
+        setAnimalItems((prevAnimals: any) => [...prevAnimals, ...data]);
+        setOffset((prev) => prev + 1);
+      } catch (error) {
+        console.error("Error loading more animals:", error);
       }
-      const data = await getCollectionAnimals(
-        spottedList,
-        offset,
-        pageSize,
-        query,
-        genus
-      );
-      if (data.length < pageSize) {
-        setLoadingMoreAnimals(false);
-      }
-      setAnimalItems((prevAnimals: any) => [...prevAnimals, ...data]);
-      setOffset((prev) => prev + 1);
-    } catch (error) {
-      console.error("Error loading more animals:", error);
+    };
+    if (inView && loadingMoreAnimals) {
+      loadMoreAnimals();
     }
-  };
+  }, [inView, loadingMoreAnimals, genus, offset, query, spottedList]);
 
   return (
     <div className="mt-20 flex items-center flex-col">
