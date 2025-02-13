@@ -38,14 +38,9 @@ export async function updateSession(request: NextRequest) {
     data: { user },
   } = await supabase.auth.getUser();
   if (
-    !user &&
-    !request.nextUrl.pathname.startsWith("/loginpage") &&
-    !user &&
-    request.nextUrl.pathname !== "/" &&
-    !user &&
-    request.nextUrl.pathname.startsWith("/error") &&
-    !user &&
-    request.nextUrl.pathname.startsWith("/passwordreset")
+    (!user && request.nextUrl.pathname.startsWith("/homepage")) ||
+    (!user && request.nextUrl.pathname.startsWith("/collectionpage")) ||
+    (!user && request.nextUrl.pathname.startsWith("/profilepage"))
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
@@ -55,7 +50,7 @@ export async function updateSession(request: NextRequest) {
   if (
     (user && request.nextUrl.pathname.startsWith("/loginpage")) ||
     (user && request.nextUrl.pathname === "/") ||
-    (user && request.nextUrl.pathname.startsWith("/error"))
+    (user && request.nextUrl.pathname.startsWith("/passwordreset"))
   ) {
     const url = request.nextUrl.clone();
     url.pathname = "/homepage";

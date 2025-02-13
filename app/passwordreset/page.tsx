@@ -42,7 +42,7 @@ export default function PasswordReset() {
   };
 
   return (
-    <main className="flex">
+    <main className="flex bg-gray-900 bg-opacity-50">
       <Image
         src={HomeHero}
         alt="hero banner"
@@ -55,17 +55,17 @@ export default function PasswordReset() {
         </h1>
         <div className="flex flex-col gap-2 mb-4">
           <label>Passwort eingaben</label>
-          <div className="flex gap-4 items-center border border-slate-300 text-lg hover:border-slate-100 rounded-xl">
+          <div className="flex items-center border border-slate-300 text-lg hover:border-slate-100 rounded-xl">
             <input
               type={showPassword ? "text" : "password"}
               value={data?.password}
               placeholder="Password"
               onChange={handlePasswordChange}
-              className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 bg-opacity-80 border-r-none active:border-r-none border-slate-300 text-lg hover:border-slate-100 "
+              className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 bg-opacity-80 border-r-none rounded-r-none active:border-r-none border-slate-300 text-lg hover:border-slate-100 "
             />
             <div
               onClick={() => setShowPassword(!showPassword)}
-              className="pr-4 hover:cursor-pointer hover:text-green-600 text-slate-400 "
+              className="pr-4 hover:cursor-pointer hover:text-green-600 text-slate-400 bg-gray-900 bg-opacity-80 py-5 rounded-r-lg"
             >
               {showPassword ? <Visibility /> : <VisibilityOff />}
             </div>
@@ -73,17 +73,17 @@ export default function PasswordReset() {
         </div>
         <div className="flex flex-col gap-2 mb-4">
           <label>Passwort bestätigen</label>
-          <div className="flex gap-4 items-center border border-slate-300 text-lg hover:border-slate-100 rounded-xl">
+          <div className="flex items-center border border-slate-300 text-lg hover:border-slate-100 rounded-xl">
             <input
               type={showPassword ? "text" : "password"}
               value={data?.confirmPassword}
               placeholder="Confrm Password"
               onChange={handleConfirmPasswordChange}
-              className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 bg-opacity-80 border-r-none active:border-r-none border-slate-300 text-lg hover:border-slate-100 "
+              className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 bg-opacity-80 border-r-none rounded-r-none active:border-r-none border-slate-300 text-lg hover:border-slate-100 "
             />
             <div
               onClick={() => setShowPassword(!showPassword)}
-              className="pr-4 hover:cursor-pointer hover:text-green-600 text-slate-400"
+              className="pr-4 hover:cursor-pointer hover:text-green-600 text-slate-400 bg-gray-900 bg-opacity-80 py-5 rounded-r-lg"
             >
               {showPassword ? <Visibility /> : <VisibilityOff />}
             </div>
