@@ -124,7 +124,7 @@ export default async function homepage() {
     <div>
       <Nav user={user} />
       <main className="flex flex-col justify-center items-center gap-10 w-full ">
-        <section className="flex items-center gap-10 justify-center w-full">
+        <section className="flex flex-col sm:flex-row items-center gap-10 justify-center w-full">
           {dayImageExists ? (
             <AnimalOfTheDay
               data={animalOfTheDay}

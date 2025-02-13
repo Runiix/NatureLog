@@ -13,7 +13,7 @@ export default function AnimalOfTheDay({
   const link = `/animalpage/${data.common_name}`;
 
   return (
-    <div className=" w-1/3 relative top-20 left-10 bg-gray-900 rounded-lg p-4 hover:bg-gray-800 max-w-[30rem]">
+    <div className=" sm:w-1/3 relative top-20 sm:left-10 bg-gray-900 rounded-lg  hover:bg-gray-800 max-w-[30rem]">
       <Link href={link}>
         <div className="flex flex-col gap-4">
           <div>
@@ -25,10 +25,10 @@ export default function AnimalOfTheDay({
               alt="Placeholder"
               width={300}
               height={200}
-              className="object-cover w-full h-full group-hover:opacity-90"
+              className="object-cover w-full h-full group-hover:opacity-90 rounded-t-lg"
             />
           </div>
-          <div className="flex flex-col gap-2">
+          <div className="flex flex-col gap-2 mx-2 mb-2">
             <div className=" gap-1 text-xl items-center">
               <h3>{data.common_name}</h3>
               <h3 className="text-slate-400"> {data.scientific_name}</h3>

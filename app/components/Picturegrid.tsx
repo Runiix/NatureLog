@@ -182,7 +182,7 @@ export default function PictureGrid({
             alt=""
             width={1920}
             height={1920}
-            className="relative m-auto z-20"
+            className="relative m-auto z-20 sm:w-2/3 max-h-full object-contain"
           />
         </div>
       )}
