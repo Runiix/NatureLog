@@ -4,7 +4,6 @@ import Nav from "./components/Nav";
 import HomeHero from "./assets/images/HomeHero.jpg";
 import { createClient } from "@/utils/supabase/server";
 import LandingInfo from "./components/LandingInfo";
-import Placeholder from "./assets/images/Placeholder.jpg";
 import Lexikon from "./assets/images/Lexikon.png";
 import Sammlung from "./assets/images/Sammlung.png";
 import Profil from "./assets/images/Profil.png";

@@ -141,7 +141,8 @@ export default function AuthForm() {
             </h1>
             <div className="flex flex-col items-center gap-4">
               <label className="mb-4 sm:mb-10">
-                Geben Sie ihre E-Mail ein, um ihr Passwort zu ändern
+                Geben Sie ihre Konto E-Mail ein. <br /> Sie erhalten einen Link
+                zur Änderung Ihres Passworts
               </label>
               <input
                 type="email"

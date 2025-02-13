@@ -2,6 +2,7 @@ import Nav from "../components/Nav";
 import { createClient } from "@/utils/supabase/server";
 import AnimalOfTheDay from "../components/AnimalOfTheDay";
 import ProfileList from "../components/ProfileList";
+import AnimalRecognizer from "../components/AnimalRecognizer";
 
 const getUser = async (supabase: any) => {
   const {
@@ -11,16 +12,16 @@ const getUser = async (supabase: any) => {
 };
 
 const getRandomId = async (supabase: any) => {
-  try {
-    const { data, error } = await supabase.from("animals").select("id");
-    if (error) console.error("Fehler bei Abfrage der Tier ID", error);
-    const IdData = data.map((animal: any) => animal.id);
-    const randomIndex = Math.floor(Math.random() * IdData.length);
-    const randomId = IdData[randomIndex];
-    return randomId;
-  } catch (error) {
-    console.error("Fehler bei Abfrage der Tier ID", error);
+  const { data, error } = await supabase.from("animals").select("id");
+  if (error) console.error("Fehler bei Abfrage der Tier ID", error);
+  const IdData = data.map((animal: any) => animal.id);
+  const today = new Date().toISOString().split("T")[0];
+  let seed = 0;
+  for (let i = 0; i < today.length; i++) {
+    seed += today.charCodeAt(i);
   }
+  const index = seed % IdData.length;
+  return IdData[index];
 };
 
 const getAnimalOfTheDay = async (supabase: any) => {
@@ -32,7 +33,7 @@ const getAnimalOfTheDay = async (supabase: any) => {
         .select("*")
         .eq("id", rand);
       if (error) console.error("Error getting Animal", error);
-      return data;
+      return data[0];
     } else {
       console.error("Rand is undefined or null");
     }
@@ -42,22 +43,47 @@ const getAnimalOfTheDay = async (supabase: any) => {
 };
 const getUsers = async (supabase: any) => {
   const { data, error } = await supabase.from("users").select("*");
-  if (error) console.log("ERROR FETCHING USERS", error);
+  if (error) console.error("ERROR FETCHING USERS", error);
   return data;
 };
+async function fileExists(supabase: any, imageLink: string) {
+  const { data, error } = await supabase.storage.from("animalImages").list("", {
+    search: imageLink, // Checks if the file exists in the list
+  });
+
+  if (error) {
+    console.error("Error listing files:", error);
+    return false;
+  }
+  return data.some((file: { name: string }) => file.name === imageLink);
+}
 
 export default async function homepage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
   const animal = await getAnimalOfTheDay(supabase);
   const users = await getUsers(supabase);
+  const Urlparts = animal.image_link.split("/animalImages/");
+  const imageUrl = Urlparts[1];
+  const imageExists = await fileExists(supabase, imageUrl);
+
   return (
     <main>
       <Nav user={user} />
-      {/*       <section>
-        <AnimalOfTheDay data={animal[0]} />
-      </section> */}
+      <section>
+        {imageExists ? (
+          <AnimalOfTheDay data={animal} imageUrl={animal.image_link} />
+        ) : (
+          <AnimalOfTheDay
+            data={animal}
+            imageUrl={
+              "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
+            }
+          />
+        )}
+      </section>
       <ProfileList profiles={users} />
+      {/* <AnimalRecognizer /> */}
     </main>
   );
 }

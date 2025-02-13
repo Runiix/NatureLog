@@ -1,7 +1,6 @@
 import ProfileListElement from "./ProfileListElement";
 
 export default function ProfileList({ profiles }: any) {
-  console.log(profiles);
   return (
     <div className="flex flex-col items-center text-center pt-32 gap-6">
       <h1 className="text-slate-900 text-2xl">Profile</h1>
