@@ -3,27 +3,29 @@ import Link from "next/link";
 
 export default function AnimalOfTheDay({
   data,
+  titel,
   imageUrl,
 }: {
   data: any;
+  titel: string;
   imageUrl: string;
 }) {
   const link = `/animalpage/${data.common_name}`;
 
   return (
-    <div className=" w-1/3 relative top-20 left-10 bg-gray-900 rounded-lg p-4 hover:bg-gray-800 ">
+    <div className=" w-1/3 relative top-20 left-10 bg-gray-900 rounded-lg p-4 hover:bg-gray-800 max-w-[30rem]">
       <Link href={link}>
-        <div>
-          <h2 className="text-2xl p-4">Tier des Tages</h2>
-        </div>
         <div className="flex flex-col gap-4">
           <div>
+            <h2 className="text-2xl p-4 bg-gray-900 bg-opacity-30 absolute">
+              Tier des {titel}
+            </h2>
             <Image
               src={imageUrl}
               alt="Placeholder"
               width={300}
               height={200}
-              className="object-cover w-full h-full  group-hover:opacity-90"
+              className="object-cover w-full h-full group-hover:opacity-90"
             />
           </div>
           <div className="flex flex-col gap-2">

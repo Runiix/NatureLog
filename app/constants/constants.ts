@@ -96,3 +96,14 @@ export const SizeSlider = styled(Slider)({
     },
   },
 });
+
+export const challenges = [
+  "einene Singvogel",
+  "einen Raubvogel",
+  "einen Wasservogel",
+  "ein Säugetier",
+  "ein Reptil",
+  "eine Amphibie",
+  "ein Insekt",
+  "eine Spinne",
+];

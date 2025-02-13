@@ -7,6 +7,26 @@ type ProfileElement = {
   profilepicture: string;
   profilelink: string;
 };
+const checkForProfilePic = async (supabase: any, user: any) => {
+  const { data: listData, error: listError } = await supabase.storage
+    .from("profiles")
+    .list(user?.id + "/ProfilePicture/", {
+      limit: 2,
+      offset: 0,
+      sortBy: { column: "name", order: "asc" },
+    });
+  if (listError) {
+    console.error(listError);
+    return false;
+  }
+  const filteredData = listData.filter(
+    (item: any) => item.name !== ".emptyFolderPlaceholder"
+  );
+  if (filteredData.length === 0) {
+    return false;
+  }
+  return true;
+};
 
 export default function ProfileListElement({
   username,

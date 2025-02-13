@@ -28,7 +28,7 @@ export async function login(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
-    alert("Wrong E-Mail or Password");
+    console.error("Wrong E-Mail or Password", error);
   }
 
   revalidatePath("/", "layout");
@@ -58,7 +58,6 @@ export async function signup(formData: FormData) {
     console.error("Error during sign up", error);
     redirect("/error");
   }
-
   revalidatePath("/", "layout");
   redirect("/homepage");
 }
