@@ -221,7 +221,7 @@ export default function CollectionAnimalGrid({
           }}
         />
       </div>
-      <div className="m-auto items-center justify-center grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mt-10">
+      <div className="m-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-4 mt-10">
         {animalItems &&
           animalItems.map((animal: any, index: number) => (
             <CollectionCard

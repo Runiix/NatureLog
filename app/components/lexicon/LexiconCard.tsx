@@ -46,7 +46,7 @@ export default function LexiconCard({
   return (
     <div className="group">
       <Link href={link}>
-        <div className="flex flex-col w-80 bg-gray-900 rounded-lg">
+        <div className="flex flex-col w-44 sm:w-80 bg-gray-900 rounded-lg">
           {animalImageExists ? (
             <div>
               <Image
@@ -55,7 +55,7 @@ export default function LexiconCard({
                 width={300}
                 height={200}
                 priority
-                className="object-cover w-full h-48 rounded-t-lg hover:opacity-90 "
+                className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-90 "
                 onError={handleError}
               />
             </div>
@@ -66,15 +66,15 @@ export default function LexiconCard({
               width={300}
               height={200}
               priority
-              className="object-cover w-full  rounded-t-lg hover:opacity-90 h-48"
+              className="object-cover w-full  rounded-t-lg hover:opacity-90 h-32 sm:h-48"
               onError={handleError}
             />
           )}
 
           <div className=" p-4 w-full flex justify-between items-center">
             <div>
-              <h2 className="text-2xl">{common_name}</h2>
-              <h3 className="text-sm">
+              <h2 className="text-xs sm:text-2xl">{common_name}</h2>
+              <h3 className="text-[0.5rem] sm:text-sm">
                 {sortBy === "common_name"
                   ? scientific_name
                   : sortBy === "population_estimate"

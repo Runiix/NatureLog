@@ -382,7 +382,7 @@ export default function LexiconGrid({
         </div>
       )}
 
-      <div className="items-center justify-center grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mt-10">
+      <div className="items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-4 mt-10">
         {animals &&
           animals.map((animal: any, index: number) => (
             <LexiconCard

@@ -65,7 +65,7 @@ export default function CollectionCard({
 
   return (
     <div>
-      <div className="flex flex-col w-80 bg-gray-900 rounded-lg">
+      <div className="flex flex-col w-44 sm:w-80 bg-gray-900 rounded-lg">
         {animalImageExists ? (
           <div className="group relative flex items-end justify-end cursor-pointer">
             <Image
@@ -74,12 +74,12 @@ export default function CollectionCard({
               width={300}
               height={200}
               priority
-              className="object-cover w-full h-48 rounded-t-lg hover:opacity-80 "
+              className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-80 "
               onError={handleError}
               onClick={() => setImageModal((prev) => !prev)}
             />
             {currUser !== "false" && (
-              <label className="absolute mr-4 mb-4">
+              <label className="absolute sm:mr-4 sm:mb-4">
                 {loading ? (
                   <CircleLoader color="#16A34A" />
                 ) : (
@@ -102,7 +102,7 @@ export default function CollectionCard({
               width={300}
               height={200}
               priority
-              className="object-cover w-full  rounded-t-lg hover:opacity-90 h-48"
+              className="object-cover w-full  rounded-t-lg hover:opacity-90 h-32 sm::h-48"
               onError={handleError}
             />
             {currUser !== "false" && (
@@ -127,8 +127,8 @@ export default function CollectionCard({
           className=" p-4 w-full flex justify-between items-center"
         >
           <div>
-            <h2 className="text-2xl">{common_name}</h2>
-            <h3 className="text-sm">
+            <h2 className="text-xs sm:text-2xl">{common_name}</h2>
+            <h3 className="text-[0.5rem] sm:text-sm">
               {sortBy === "common_name"
                 ? scientific_name
                 : sortBy === "population_estimate"
