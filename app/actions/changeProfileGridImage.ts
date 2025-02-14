@@ -11,7 +11,6 @@ export default async function changeProfileGridImage(formData: FormData) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    console.log("CHANGING", file, old_file);
     if (!user) {
       throw new Error("User not authenticated for Photo upload!");
     }

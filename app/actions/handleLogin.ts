@@ -37,7 +37,6 @@ export async function login(formData: FormData) {
 
 export async function signup(formData: FormData) {
   const supabase = await createClient();
-  console.log("SIGNING UP");
   // type-casting here for convenience
   // in practice, you should validate your inputs
   const data = {
@@ -55,7 +54,6 @@ export async function signup(formData: FormData) {
   const { error } = await supabase.auth.signUp(data);
 
   if (error) {
-    console.error("Error during sign up", error);
     redirect("/error");
   }
   revalidatePath("/", "layout");

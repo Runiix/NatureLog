@@ -3,8 +3,8 @@
 import { createClient } from "@/utils/supabase/server";
 import { revalidatePath } from "next/cache";
 
-export async function addOrRemoveAnimals(formData: any) {
-  const pathName = formData.get("pathname");
+export async function addOrRemoveAnimals(formData: FormData) {
+  const pathName = formData.get("pathname") as string;
   const animalId = formData.get("animalId");
   const spotted = formData.get("isSpotted");
   const supabase = await createClient();
@@ -20,7 +20,6 @@ export async function addOrRemoveAnimals(formData: any) {
   let updatedspotted: String;
 
   if (spotted === "true") {
-    console.log("removed from spotted", spotted);
     const { error } = await supabase
       .from("spotted")
       .delete()
@@ -37,7 +36,6 @@ export async function addOrRemoveAnimals(formData: any) {
     if (error) {
       console.error("error inserting Animal", error);
     }
-    console.log("Inserting");
     updatedspotted = "true";
   }
 

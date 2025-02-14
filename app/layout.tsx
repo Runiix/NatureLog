@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
+import CookieConsentBanner from "./components/general/CookieConsentBanner";
 
 const open_sans = Open_Sans({ subsets: ["latin"] });
 
@@ -24,6 +25,7 @@ export default function RootLayout({
         className={`${open_sans.className} bg-gray-200 font-bold text-slate-100`}
       >
         {children}
+        {/* <CookieConsentBanner /> */}
       </body>
     </html>
   );

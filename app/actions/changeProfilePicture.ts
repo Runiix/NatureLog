@@ -5,7 +5,6 @@ import { createClient } from "@/utils/supabase/server";
 export default async function changeProfilePicture(formData: FormData) {
   const supabase = await createClient();
   const file = formData.get("file") as File;
-  console.log("UPDATING PORFILE PIC");
 
   try {
     const {

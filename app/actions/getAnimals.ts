@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
 
 export default async function getAnimals(
-  searchParams: any,
+  searchParams: Record<string, string>,
   offset: number,
   pageSize: number
 ) {

@@ -1,15 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
-import Nav from "./components/Nav";
+import Nav from "./components/general/Nav";
 import HomeHero from "./assets/images/HomeHero.jpg";
 import { createClient } from "@/utils/supabase/server";
-import LandingInfo from "./components/LandingInfo";
+import LandingInfo from "./components/landing/LandingInfo";
 import Lexikon from "./assets/images/Lexikon.png";
 import Sammlung from "./assets/images/Sammlung.png";
 import Profil from "./assets/images/Profil.png";
-import Footer from "./components/Footer";
+import Footer from "./components/general/Footer";
+import { SupabaseClient } from "@supabase/supabase-js";
 
-const getUser = async (supabase: any) => {
+const getUser = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase.auth.getUser();
   if (error) {
     return null;
