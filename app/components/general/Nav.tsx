@@ -54,6 +54,14 @@ export default function Nav({ user }: { user: User | null }) {
                     Lexikon
                   </Link>
                 </div>
+                <div>
+                  <Link
+                    href="/socialpage"
+                    className="text-slate-600 hover:text-slate-900 transition-all duration-200"
+                  >
+                    Community
+                  </Link>
+                </div>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-6">
@@ -120,6 +128,12 @@ export default function Nav({ user }: { user: User | null }) {
               className="text-slate-600 hover:text-slate-900 transition-all duration-200"
             >
               Lexikon
+            </Link>
+            <Link
+              href="/socialpage"
+              className="text-slate-600 hover:text-slate-900 transition-all duration-200"
+            >
+              Community
             </Link>
 
             <div>
