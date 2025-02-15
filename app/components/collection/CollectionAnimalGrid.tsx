@@ -175,7 +175,7 @@ export default function CollectionAnimalGrid({
     if (inView) {
       loadMoreAnimals();
     }
-  }, [inView, genus, offset, query, spottedList]);
+  }, [inView, genus, query, spottedList]);
 
   return (
     <div className="mt-20 flex items-center flex-col">

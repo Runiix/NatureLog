@@ -59,9 +59,9 @@ export default function LexiconGrid({
       try {
         let pageSize = 0;
         if (window.innerWidth > 1500) {
-          pageSize = 25;
+          pageSize = 12;
         } else {
-          pageSize = 20;
+          pageSize = 8;
         }
         const data = await getAnimals(
           Object.fromEntries(searchParams.entries()),
@@ -89,9 +89,9 @@ export default function LexiconGrid({
       try {
         let pageSize = 0;
         if (window.innerWidth > 1500) {
-          pageSize = 25;
+          pageSize = 12;
         } else {
-          pageSize = 20;
+          pageSize = 8;
         }
         const data = await getAnimals(
           Object.fromEntries(searchParams.entries()),
@@ -102,15 +102,16 @@ export default function LexiconGrid({
           setLoadingMoreAnimals(false);
         }
         setAnimals((prevAnimals: any) => [...prevAnimals, ...data]);
+        console.log(data);
         setOffset((prev) => prev + 1);
       } catch (error) {
         console.error("Error loading more animals:", error);
       }
     };
-    if (inView && loadingMoreAnimals) {
+    if (inView) {
       loadMoreAnimals();
     }
-  }, [inView, loadingMoreAnimals, offset, searchParams]);
+  }, [inView, searchParams, spottedList]);
 
   const handleSearch = (term: string) => {
     const params = new URLSearchParams(searchParams);
@@ -404,11 +405,7 @@ export default function LexiconGrid({
             />
           ))}
       </div>
-      {loading && (
-        <div className="mg-4" ref={ref}>
-          <CircleLoader color="#16A34A" />{" "}
-        </div>
-      )}
+
       {loadingMoreAnimals && (
         <div className="mb-4" ref={ref}>
           <CircleLoader color="#16A34A" />{" "}
