@@ -50,8 +50,8 @@ export default async function page() {
         <Image
           src={HomeHero}
           alt=" Forrest Home Hero"
-          height={900}
-          width={1920}
+          height={800}
+          width={1200}
           className="absolute w-screen h-screen object-cover -z-10 "
           priority
         />

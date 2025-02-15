@@ -31,7 +31,7 @@ export default function ProfilePicture({
     const file = e.target.files[0];
     if (file) {
       const options = {
-        maxSizeMB: 5, // Target size
+        maxSizeKB: 100, // Target size
         maxWidthOrHeight: 1920, // Resize if needed
         useWebWorker: true,
       };

@@ -26,7 +26,7 @@ export default function AnimalRecognizer() {
     const API_KEY = "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"; // Replace with your actual API key
     if (file) {
       const options = {
-        maxSizeMB: 5, // Target size
+        maxSizeKB: 100, // Target size
         maxWidthOrHeight: 1920, // Resize if needed
         useWebWorker: true,
       };

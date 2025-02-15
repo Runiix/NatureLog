@@ -46,8 +46,7 @@ export default function PictureGrid({
     const file = e.target.files[0];
     if (file) {
       const options = {
-        maxSizeMB: 5, // Target size
-        maxWidthOrHeight: 1920, // Resize if needed
+        maxSizeKB: 200, // Target size
         useWebWorker: true,
       };
 
@@ -74,8 +73,7 @@ export default function PictureGrid({
     const file = e.target.files[0];
     if (file) {
       const options = {
-        maxSizeMB: 5,
-        maxWidthOrHeight: 1920,
+        maxSizeKB: 200,
         useWebWorker: true,
       };
 
@@ -115,6 +113,7 @@ export default function PictureGrid({
         profileGrid.map((imageId: number, index: number) => (
           <div key={profileGrid[index].id} className="relative">
             <Image
+              unoptimized
               src={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${user.id}/ProfileGrid/${profileGrid[index].name}`}
               width={200}
               height={200}
@@ -177,6 +176,7 @@ export default function PictureGrid({
         >
           {" "}
           <Image
+            unoptimized
             src={imageModal}
             alt=""
             width={1920}

@@ -7,6 +7,7 @@ import Link from "next/link";
 import { CircleLoader } from "react-spinners";
 import addCollectionImage from "../../actions/addCollectionImage";
 import FavoriteButton from "../general/FavoriteButton";
+import imageCompression from "browser-image-compression";
 
 export default function CollectionCard({
   id,
@@ -49,17 +50,34 @@ export default function CollectionCard({
   };
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoading(true);
+
     if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
+    if (file) {
+      const options = {
+        maxSizeMB: 0.2,
+        maxWidthOrHeight: 1920,
+        useWebWorker: true,
+      };
+      console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
 
-    const formData = new FormData();
-    formData.append("file", file);
-    formData.append("common_name", common_name);
+      try {
+        const compressedFile = await imageCompression(file, options);
+        const formData = new FormData();
+        formData.append("file", compressedFile);
+        formData.append("common_name", common_name);
+        console.log(
+          `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
+        ); // smaller than maxSizeMB
 
-    const response = await addCollectionImage(formData);
-    if (response) {
-      setLoading(false);
+        const response = await addCollectionImage(formData);
+        if (response) {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error("Compression failed:", error);
+      }
     }
   };
 
@@ -77,6 +95,7 @@ export default function CollectionCard({
               className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-80 "
               onError={handleError}
               onClick={() => setImageModal((prev) => !prev)}
+              unoptimized
             />
             {currUser !== "false" && (
               <label className="absolute sm:mr-4 sm:mb-4">
@@ -104,6 +123,7 @@ export default function CollectionCard({
               priority
               className="object-cover w-full  rounded-t-lg hover:opacity-90 h-32 sm::h-48"
               onError={handleError}
+              unoptimized
             />
             {currUser !== "false" && (
               <label className="absolute mr-4 mb-4">
@@ -152,7 +172,7 @@ export default function CollectionCard({
             src={src}
             alt=""
             width={1920}
-            height={1920}
+            height={1080}
             className="relative m-auto z-20"
           />
         </div>

@@ -39,6 +39,16 @@ const getSpottedList = async (supabase: SupabaseClient, user: User) => {
   }
   return [];
 };
+const getSpottedCount = async (supabase: SupabaseClient, animalId: string) => {
+  const { data, error } = await supabase
+    .from("spotted")
+    .select("animal_id")
+    .eq("animal_id", animalId);
+  if (error) console.error("Error getting animal count", error);
+  console.log(data);
+  if (data) return data.length;
+  return 0;
+};
 
 export default async function page(props: any) {
   const params = await props.params;
@@ -46,6 +56,7 @@ export default async function page(props: any) {
   const user = await getUser(supabase);
   const animalData = await getAnimalData(supabase, params.common_name);
   const spottedList = user ? await getSpottedList(supabase, user) : [];
+  const animalCount = await getSpottedCount(supabase, animalData.id);
 
   return (
     <div className="bg-gray-200 ">
@@ -55,8 +66,8 @@ export default async function page(props: any) {
           <Image
             src={animalData.image_link}
             alt="animal Banner"
-            width={2000}
-            height={2000}
+            width={1200}
+            height={800}
             className="absolute w-full h-1/2 sm:h-full object-cover"
             priority
           />
@@ -95,7 +106,9 @@ export default async function page(props: any) {
                 </h3>
               </div>
               <div className="flex flex-col sm:items-end gap-4">
-                <h3 className="text-xl">x% haben diese Art gesehen</h3>
+                <h3 className="text-xl">
+                  {animalCount} haben diese Art gesehen
+                </h3>
                 <div>
                   <div className="flex gap-5 ml-5">
                     <div className="rounded-full bg-green-600 p-1"></div>

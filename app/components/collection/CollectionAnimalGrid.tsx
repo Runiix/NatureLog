@@ -119,9 +119,9 @@ export default function CollectionAnimalGrid({
       try {
         let pageSize = 0;
         if (window.innerWidth > 1500) {
-          pageSize = 15;
-        } else {
           pageSize = 12;
+        } else {
+          pageSize = 8;
         }
         const data = await getCollectionAnimals(
           spottedList,
@@ -130,7 +130,6 @@ export default function CollectionAnimalGrid({
           query,
           genus
         );
-        setLoading(false);
 
         if (data.length < pageSize) {
           setLoadingMoreAnimals(false);
@@ -138,6 +137,7 @@ export default function CollectionAnimalGrid({
           setLoadingMoreAnimals(true);
         }
         setAnimalItems(data);
+        console.log(data);
         setOffset(1);
       } catch (error) {
         console.error("Error loading animals:", error);
@@ -151,9 +151,9 @@ export default function CollectionAnimalGrid({
       try {
         let pageSize = 0;
         if (window.innerWidth > 1500) {
-          pageSize = 15;
-        } else {
           pageSize = 12;
+        } else {
+          pageSize = 8;
         }
         const data = await getCollectionAnimals(
           spottedList,
@@ -166,15 +166,16 @@ export default function CollectionAnimalGrid({
           setLoadingMoreAnimals(false);
         }
         setAnimalItems((prevAnimals: any) => [...prevAnimals, ...data]);
+        console.log(animalItems, data);
         setOffset((prev) => prev + 1);
       } catch (error) {
         console.error("Error loading more animals:", error);
       }
     };
-    if (inView && loadingMoreAnimals) {
+    if (inView) {
       loadMoreAnimals();
     }
-  }, [inView, loadingMoreAnimals, genus, offset, query, spottedList]);
+  }, [inView, genus, offset, query, spottedList]);
 
   return (
     <div className="mt-20 flex items-center flex-col">
@@ -246,12 +247,7 @@ export default function CollectionAnimalGrid({
             />
           ))}
       </div>
-      {loading && (
-        <div className="m-10" ref={ref}>
-          {" "}
-          <CircleLoader color="#16A34A" />{" "}
-        </div>
-      )}
+
       {loadingMoreAnimals && (
         <div className=" m-10" ref={ref}>
           {" "}

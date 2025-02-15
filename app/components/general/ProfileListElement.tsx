@@ -4,6 +4,7 @@ import { SupabaseClient, User } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
+// import FollowingButton from "./FollowingButton";
 
 type ProfileElement = {
   username: string;
@@ -44,6 +45,7 @@ export default function ProfileListElement({
       <div className="flex gap-8 items-center justify-around">
         <Avatar />
         <h2>{username}</h2>
+        {/* <FollowingButton /> */}
       </div>
     </Link>
   );
