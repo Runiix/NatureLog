@@ -1,4 +1,4 @@
-### NatureLof ist eine Webanwendung mit der die persönliche Anzahl an gesichteten Wildtierarten getrackt werden kann.
+### NatureLog ist eine Webanwendung mit der die persönliche Anzahl an gesichteten Wildtierarten getrackt werden kann.
 
 ## Softwarestack:
 
