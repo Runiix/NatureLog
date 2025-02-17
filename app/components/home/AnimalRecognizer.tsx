@@ -23,7 +23,7 @@ export default function AnimalRecognizer() {
   async function classifyImage(file: File) {
     const API_URL =
       "https://api-inference.huggingface.co/models/microsoft/resnet-152";
-    const API_KEY = "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"; // Replace with your actual API key
+    const API_KEY = process.env.API_KEY; // Replace with your actual API key
     if (file) {
       const options = {
         maxSizeKB: 100, // Target size
