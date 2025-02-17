@@ -17,7 +17,7 @@ export default function AnimalOfTheDay({
       <Link href={link}>
         <div className="flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl p-4 bg-gray-900 bg-opacity-30 absolute">
+            <h2 className="text-2xl px-4 py-2 bg-gray-900 bg-opacity-30  absolute w-full">
               Tier des {titel}
             </h2>
             <Image
@@ -25,7 +25,7 @@ export default function AnimalOfTheDay({
               alt="Placeholder"
               width={300}
               height={200}
-              className="object-cover w-full h-full group-hover:opacity-90 rounded-t-lg"
+              className="object-cover aspect-[4/3] w-full group-hover:opacity-90 rounded-t-lg "
             />
           </div>
           <div className="flex flex-col gap-2 mx-2 mb-2">

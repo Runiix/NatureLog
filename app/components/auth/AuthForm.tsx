@@ -11,6 +11,7 @@ export default function AuthForm() {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
   const [emailData, setEmailData] = useState("");
+  const [loginError, setLoginError] = useState(false);
   const supabase = createClient();
 
   const sendResetPassword = async () => {
@@ -45,6 +46,12 @@ export default function AuthForm() {
     </p>
   );
 
+  const handleLogin = async (formData: FormData) => {
+    const { error } = await login(formData);
+    if (error) setLoginError(true);
+    setIsSigningIn(false);
+  };
+
   return (
     <div className=" z-10">
       {!resetPassword && (
@@ -56,6 +63,11 @@ export default function AuthForm() {
             <h1 className="mb-4 text-slate-100 text-3xl sm:text-4xl">
               Anmeldung
             </h1>
+            {loginError && (
+              <h2 className="text-red-500">
+                Ihre E-Mail oder Passwort sind nicht korrekt!
+              </h2>
+            )}
           </div>
           <form className="flex flex-col items-center gap-5">
             {isNewUser && (
@@ -85,7 +97,7 @@ export default function AuthForm() {
               className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 bg-opacity-80 border border-slate-300 text-lg hover:border-slate-100 "
             />
             <button
-              formAction={isNewUser ? signup : login}
+              formAction={isNewUser ? signup : handleLogin}
               className="bg-green-600 text-zinc-900 py-3 flex gap-4 justify-around items-center px-20  rounded-2xl hover:text-slate-100 hover:bg-green-700"
               onClick={() => setIsSigningIn(true)}
             >

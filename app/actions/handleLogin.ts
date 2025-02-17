@@ -21,18 +21,14 @@ export async function login(formData: FormData) {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
   };
-  if (!validatePassword(data.password)) {
-    redirect("/error");
-  }
-
   const { error } = await supabase.auth.signInWithPassword(data);
 
   if (error) {
-    console.error("Wrong E-Mail or Password", error);
+    return { error: true };
   }
-
   revalidatePath("/", "layout");
   redirect("/homepage");
+  return { error: false };
 }
 
 export async function signup(formData: FormData) {
