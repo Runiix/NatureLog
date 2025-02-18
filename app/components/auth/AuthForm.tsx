@@ -12,6 +12,7 @@ export default function AuthForm() {
   const [resetPassword, setResetPassword] = useState(false);
   const [emailData, setEmailData] = useState("");
   const [loginError, setLoginError] = useState(false);
+  const [validationError, setValidationError] = useState(false);
   const supabase = createClient();
 
   const sendResetPassword = async () => {
@@ -52,6 +53,20 @@ export default function AuthForm() {
     setIsSigningIn(false);
   };
 
+  const handleSignUp = async (formData: FormData) => {
+    const { validationError } = await signup(formData);
+    if (validationError) setValidationError(true);
+    setIsSigningIn(false);
+  };
+  const handleFormChangeToLogin = () => {
+    setIsNewUser(false);
+    if (validationError) setValidationError(false);
+  };
+  const handleFormChangeToSignUp = () => {
+    setIsNewUser(true);
+    if (loginError) setLoginError(false);
+  };
+
   return (
     <div className=" z-10">
       {!resetPassword && (
@@ -67,6 +82,20 @@ export default function AuthForm() {
               <h2 className="text-red-500">
                 Ihre E-Mail oder Passwort sind nicht korrekt!
               </h2>
+            )}
+            {validationError && (
+              <div className=" mx-5 text-start bg-gray-900 border bg-opacity-80 border-slate-300 rounded-lg p-2 text-xs">
+                <h2 className="font-bold ">
+                  Ihr Passwort muss folgende Anforderungen erfüllen:
+                </h2>
+                <ul className="text-start text-red-500">
+                  <li>mindestens 10 Zeichen</li>
+                  <li>mindestens 1 kleinen Buchstaben</li>
+                  <li>mindestens 1 großen Buchstaben</li>
+                  <li>mindestens 1 Zahl</li>
+                  <li>mindestens 1 Sonderzeichen</li>
+                </ul>
+              </div>
             )}
           </div>
           <form className="flex flex-col items-center gap-5">
@@ -97,7 +126,7 @@ export default function AuthForm() {
               className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 bg-opacity-80 border border-slate-300 text-lg hover:border-slate-100 "
             />
             <button
-              formAction={isNewUser ? signup : handleLogin}
+              formAction={isNewUser ? handleSignUp : handleLogin}
               className="bg-green-600 text-zinc-900 py-3 flex gap-4 justify-around items-center px-20  rounded-2xl hover:text-slate-100 hover:bg-green-700"
               onClick={() => setIsSigningIn(true)}
             >
@@ -114,7 +143,7 @@ export default function AuthForm() {
                   Haben Sie schon einen Account?{" "}
                   <button
                     type="button"
-                    onClick={() => setIsNewUser(false)}
+                    onClick={handleFormChangeToLogin}
                     className="underline hover:text-green-600"
                   >
                     Anmelden
@@ -126,7 +155,7 @@ export default function AuthForm() {
                     Haben Sie noch keinen Account?{" "}
                     <button
                       type="button"
-                      onClick={() => setIsNewUser(true)}
+                      onClick={handleFormChangeToSignUp}
                       className="underline hover:text-green-600"
                     >
                       Zur Registrierung

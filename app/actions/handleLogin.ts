@@ -28,7 +28,6 @@ export async function login(formData: FormData) {
   }
   revalidatePath("/", "layout");
   redirect("/homepage");
-  return { error: false };
 }
 
 export async function signup(formData: FormData) {
@@ -45,7 +44,7 @@ export async function signup(formData: FormData) {
     },
   };
   if (!validatePassword(data.password)) {
-    redirect("/error");
+    return { error: true, validationError: true };
   }
   const { error } = await supabase.auth.signUp(data);
 
