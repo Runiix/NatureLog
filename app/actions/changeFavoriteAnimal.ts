@@ -11,9 +11,12 @@ export default async function changeFavoriteAnimal(formData: FormData) {
   if (!user) {
     throw new Error("User not authenticated for Value change");
   }
-  const { data, error } = await supabase
+
+  const { error: updateError } = await supabase
     .from("profiles")
     .update({ favorite_animal: favoriteAnimal })
     .eq("user_id", user.id);
-  if (error) console.error("Error changing favorite_animal", error);
+  if (updateError) return { success: false };
+
+  return { success: true };
 }

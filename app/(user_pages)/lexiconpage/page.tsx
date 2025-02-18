@@ -47,12 +47,22 @@ async function getAnimalImageList(supabase: SupabaseClient, genus: string) {
 export default async function LexiconPage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
-  const mammalImages = await getAnimalImageList(supabase, "Saeugetier");
-  const birdImages = await getAnimalImageList(supabase, "Vogel");
-  const amphibiaImages = await getAnimalImageList(supabase, "Amphibie");
-  const reptileImages = await getAnimalImageList(supabase, "Reptil");
-  const spiderImages = await getAnimalImageList(supabase, "Arachnoid");
-  const insectImages = await getAnimalImageList(supabase, "Insekt");
+  const [
+    mammalImages,
+    birdImages,
+    amphibiaImages,
+    reptileImages,
+    spiderImages,
+    insectImages,
+  ] = await Promise.all([
+    getAnimalImageList(supabase, "Saeugetier"),
+    getAnimalImageList(supabase, "Vogel"),
+    getAnimalImageList(supabase, "Amphibie"),
+    getAnimalImageList(supabase, "Reptil"),
+    getAnimalImageList(supabase, "Arachnoid"),
+    getAnimalImageList(supabase, "Insekt"),
+  ]);
+
   const animalImageList = mammalImages.concat(
     birdImages,
     amphibiaImages,

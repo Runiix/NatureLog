@@ -3,9 +3,7 @@ import PictureGrid from "@/app/components/profile/Picturegrid";
 import ProfileInfos from "@/app/components/profile/ProfileInfos";
 import ProfilePicture from "@/app/components/profile/ProfilePicture";
 import { createClient } from "@/utils/supabase/server";
-import { Instagram } from "@mui/icons-material";
 import { SupabaseClient, User } from "@supabase/supabase-js";
-import { sup } from "motion/react-client";
 
 const getUser = async (supabase: SupabaseClient) => {
   const {
@@ -90,16 +88,20 @@ const getFavoriteAnimal = async (supabase: SupabaseClient, userId: string) => {
 
 export default async function profilepage(params: any) {
   const supabase = await createClient();
-  const user = await getUser(supabase);
   const Userparams = await params.params;
-  const paramUser = await getParamUserId(supabase, Userparams.username);
-  const paramUserId = paramUser.id;
-  if (user && user.id === paramUserId) {
-    const profilePic = await checkForProfilePic(supabase, user);
-    const favoriteAnimal = await getFavoriteAnimal(supabase, user.id);
-    const profilePicUrl = await getProfilePictureUrl(supabase, user.id);
-    const animalCount = await getAnimalCount(supabase, user.id);
-    const teamLink = await getTeam(supabase, user.id);
+  const [user, paramUser] = await Promise.all([
+    getUser(supabase),
+    getParamUserId(supabase, Userparams.username),
+  ]);
+  if (user && user.id === paramUser.id) {
+    const [profilePic, favoriteAnimal, profilePicUrl, animalCount, teamLink] =
+      await Promise.all([
+        checkForProfilePic(supabase, user),
+        getFavoriteAnimal(supabase, user.id),
+        getProfilePictureUrl(supabase, user.id),
+        getAnimalCount(supabase, user.id),
+        getTeam(supabase, user.id),
+      ]);
 
     return (
       <>
@@ -126,18 +128,21 @@ export default async function profilepage(params: any) {
       </>
     );
   } else {
-    const profilePic = await checkForProfilePic(supabase, paramUser);
-    const favoriteAnimal = await getFavoriteAnimal(supabase, paramUserId);
-    const profilePicUrl = await getProfilePictureUrl(supabase, paramUserId);
-    const animalCount = await getAnimalCount(supabase, paramUserId);
-    const teamLink = await getTeam(supabase, paramUserId);
+    const [profilePic, favoriteAnimal, profilePicUrl, animalCount, teamLink] =
+      await Promise.all([
+        checkForProfilePic(supabase, paramUser),
+        getFavoriteAnimal(supabase, paramUser.id),
+        getProfilePictureUrl(supabase, paramUser.id),
+        getAnimalCount(supabase, paramUser.id),
+        getTeam(supabase, paramUser.id),
+      ]);
 
     return (
       <>
         <div className="bg-gray-900 w-full lg:w-3/4 m-auto  rounded-lg shadow-xl shadow-slate-900 flex flex-col justify-center items-center pb-10">
           <div className="flex flex-col md:flex-row gap-10 mx-auto py-20 mt-20">
             <ProfilePicture
-              userId={paramUserId}
+              userId={paramUser.id}
               currUser={false}
               profilePic={profilePic}
               profilePicUrl={profilePicUrl}

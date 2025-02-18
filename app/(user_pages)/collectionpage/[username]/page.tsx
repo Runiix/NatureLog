@@ -81,21 +81,32 @@ export default async function collectionpage(params: any) {
   const supabase = await createClient();
   const user = await getUser(supabase);
   const Userparams = await params.params;
-  const paramUser = await getParamUserId(supabase, Userparams.username);
-  const paramUserId = paramUser.id;
-  const mammalCount = await getAnimalCount(supabase, "Säugetier");
-  const birdCount = await getAnimalCount(supabase, "Vogel");
-  const reptileCount = await getAnimalCount(supabase, "Reptil");
-  const amphibiaCount = await getAnimalCount(supabase, "Amphibie");
-  const insectCount = await getAnimalCount(supabase, "Insekt");
-  const arachnoidCount = await getAnimalCount(supabase, "Arachnoid");
-  const animalCount = await getAnimalCount(supabase, "all");
-  console.log(animalCount);
+  const [
+    paramUser,
+    mammalCount,
+    birdCount,
+    reptileCount,
+    amphibiaCount,
+    insectCount,
+    arachnoidCount,
+    animalCount,
+  ] = await Promise.all([
+    getParamUserId(supabase, Userparams.username),
+    getAnimalCount(supabase, "Säugetier"),
+    getAnimalCount(supabase, "Vogel"),
+    getAnimalCount(supabase, "Reptil"),
+    getAnimalCount(supabase, "Amphibie"),
+    getAnimalCount(supabase, "Insekt"),
+    getAnimalCount(supabase, "Arachnoid"),
+    getAnimalCount(supabase, "all"),
+  ]);
 
-  if (user && paramUserId === user.id) {
+  if (user && paramUser.id === user.id) {
     const spottedList = await getSpottedList(supabase, user.id);
-    const animals = await getAnimals(supabase, spottedList);
-    const animalImageList = await getAnimalImageList(supabase, user.id);
+    const [animals, animalImageList] = await Promise.all([
+      getAnimals(supabase, spottedList),
+      getAnimalImageList(supabase, user.id),
+    ]);
 
     return (
       <div>
@@ -117,9 +128,11 @@ export default async function collectionpage(params: any) {
       </div>
     );
   } else {
-    const spottedList = await getSpottedList(supabase, paramUserId);
-    const animals = await getAnimals(supabase, spottedList);
-    const animalImageList = await getAnimalImageList(supabase, paramUserId);
+    const spottedList = await getSpottedList(supabase, paramUser.id);
+    const [animals, animalImageList] = await Promise.all([
+      getAnimals(supabase, spottedList),
+      getAnimalImageList(supabase, paramUser.id),
+    ]);
 
     return (
       <div>
