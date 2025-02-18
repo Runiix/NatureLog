@@ -44,7 +44,7 @@ export async function signup(formData: FormData) {
     },
   };
   if (!validatePassword(data.password)) {
-    return { error: true, validationError: true };
+    return { validationError: true };
   }
   const { error } = await supabase.auth.signUp(data);
 

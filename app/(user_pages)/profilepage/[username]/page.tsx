@@ -148,10 +148,6 @@ export default async function profilepage(params: any) {
               profilePicUrl={profilePicUrl}
             />
             <div className="flex flex-col gap-10">
-              <div className="flex gap-10 text-xl border-b-2 border-gray-950 pb-2">
-                <div>{paramUser.display_name}</div>
-                <div>Mitgleid seit: {paramUser.joyndate}</div>
-              </div>
               <ProfileInfos
                 user={paramUser}
                 animalCount={animalCount}

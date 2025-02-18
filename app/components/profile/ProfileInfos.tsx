@@ -69,8 +69,9 @@ export default function ProfileInfos({
   return (
     <div className="space-y-4">
       <div className="flex gap-10 sm:text-xl border-b-2 border-gray-950 pb-2">
-        <div>{user.user_metadata.displayName}</div>
-        <div>Mitgleid seit: {user.created_at.split("T")[0]}</div>
+        <div>
+          {currUser ? user.user_metadata.displayName : user.display_name}
+        </div>
         <Instagram />
       </div>
       <div className="flex justify-around gap-2 sm:gap-10">
@@ -88,7 +89,11 @@ export default function ProfileInfos({
               )}
             </button>
           ) : (
-            <div className="border-2 rounded-lg p-2 text-xl hover:bg-gray-800 hover:scale-110 transition duration-300 flex justify-center items-center">
+            <div
+              className={`border-2 rounded-lg p-2 text-xl  transition duration-300 flex justify-center items-center ${
+                currUser && "hover:scale-110 hover:bg-gray-800"
+              }`}
+            >
               {team !== null && (
                 <Image src={team} width={80} height={80} alt="" />
               )}

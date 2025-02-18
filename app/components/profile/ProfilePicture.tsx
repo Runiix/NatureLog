@@ -67,7 +67,11 @@ export default function ProfilePicture({
           ) : (
             <label className="group">
               {profilePicExists === false ? (
-                <Person className="text-5xl hover:cursor-pointer border-2 group-hover:text-slate-400 rounded-full w-20 h-20" />
+                <Person
+                  className={`text-5xl border-2 rounded-full w-20 h-20 ${
+                    currUser && "group-hover:text-slate-400 cursor-pointer"
+                  }`}
+                />
               ) : (
                 <Image
                   src={profilePictureUrl}
