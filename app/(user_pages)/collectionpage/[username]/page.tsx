@@ -99,7 +99,6 @@ export default async function collectionpage(params: any) {
 
     return (
       <div>
-        <Nav user={user} />
         <div className="w-full flex items-center justify-center">
           <CollectionAnimalGrid
             animals={animals}
@@ -124,7 +123,6 @@ export default async function collectionpage(params: any) {
 
     return (
       <div>
-        <Nav user={user} />
         <Link
           href={`/profilepage/${paramUser.display_name}`}
           className="fixed top-20 left-5 bg-green-600 rounded-lg p-2 text-gray-900 hover:bg-green-700"

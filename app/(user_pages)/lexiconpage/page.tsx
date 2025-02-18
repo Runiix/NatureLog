@@ -64,8 +64,7 @@ export default async function LexiconPage() {
     const userId = user.id;
     const spottedList = await getSpottedList(supabase, userId);
     return (
-      <main className=" bg-gray-200">
-        <Nav user={user} />
+      <div className=" bg-gray-200">
         <section className="flex flex-col items-center w-full">
           <h2 className="text-green-600 text-center text-2xl sm:text-6xl  mt-24 mb-2">
             Arten-Lexikon{" "}
@@ -76,13 +75,12 @@ export default async function LexiconPage() {
             animalImageList={animalImageList}
           />
         </section>
-      </main>
+      </div>
     );
   } else {
     const spottedList: number[] = [0];
     return (
-      <main className=" bg-gray-200">
-        <Nav user={user} />
+      <div className=" bg-gray-200">
         <section className="flex flex-col items-center w-full">
           <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-24 mb-16">
             Arten-Lexikon{" "}
@@ -93,7 +91,7 @@ export default async function LexiconPage() {
             animalImageList={animalImageList}
           />
         </section>
-      </main>
+      </div>
     );
   }
 }

@@ -103,7 +103,6 @@ export default async function profilepage(params: any) {
 
     return (
       <>
-        <Nav user={user} />
         <div className="bg-gray-900 w-full lg:w-3/4 m-auto  rounded-lg shadow-xl shadow-slate-900 flex flex-col justify-center items-center pb-10">
           <div className="flex flex-col items-center sm:items-baseline md:flex-row gap-10 mx-auto py-20 mt-20">
             <ProfilePicture
@@ -135,7 +134,6 @@ export default async function profilepage(params: any) {
 
     return (
       <>
-        <Nav user={user} />
         <div className="bg-gray-900 w-full lg:w-3/4 m-auto  rounded-lg shadow-xl shadow-slate-900 flex flex-col justify-center items-center pb-10">
           <div className="flex flex-col md:flex-row gap-10 mx-auto py-20 mt-20">
             <ProfilePicture

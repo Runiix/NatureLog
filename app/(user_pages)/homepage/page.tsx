@@ -134,49 +134,46 @@ export default async function homepage() {
   // const users = await getUsers(supabase);
 
   return (
-    <div>
-      <Nav user={user} />
-      <main className="flex flex-col justify-center items-center gap-10 w-full ">
-        <section className="flex flex-col sm:flex-row items-center gap-10 justify-center w-full">
-          {dayImageExists ? (
-            <AnimalOfTheDay
-              data={animalOfTheDay}
-              titel="Tages"
-              imageUrl={animalOfTheDay.image_link}
-            />
-          ) : (
-            <AnimalOfTheDay
-              data={animalOfTheDay}
-              titel="Tages"
-              imageUrl={
-                "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
-              }
-            />
-          )}
-          {monthImageExists ? (
-            <AnimalOfTheDay
-              data={animalOfTheMonth}
-              titel="Monats"
-              imageUrl={animalOfTheMonth.image_link}
-            />
-          ) : (
-            <AnimalOfTheDay
-              data={animalOfTheMonth}
-              titel="Monats"
-              imageUrl={
-                "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
-              }
-            />
-          )}
-        </section>
-        <section className="flex items-center gap-10 justify-center w-full">
-          {/* <ProfileList profiles={users} /> */}
+    <div className="flex flex-col justify-center items-center gap-10 w-full ">
+      <section className="flex flex-col sm:flex-row items-center gap-10 justify-center w-full">
+        {dayImageExists ? (
+          <AnimalOfTheDay
+            data={animalOfTheDay}
+            titel="Tages"
+            imageUrl={animalOfTheDay.image_link}
+          />
+        ) : (
+          <AnimalOfTheDay
+            data={animalOfTheDay}
+            titel="Tages"
+            imageUrl={
+              "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
+            }
+          />
+        )}
+        {monthImageExists ? (
+          <AnimalOfTheDay
+            data={animalOfTheMonth}
+            titel="Monats"
+            imageUrl={animalOfTheMonth.image_link}
+          />
+        ) : (
+          <AnimalOfTheDay
+            data={animalOfTheMonth}
+            titel="Monats"
+            imageUrl={
+              "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
+            }
+          />
+        )}
+      </section>
+      <section className="flex items-center gap-10 justify-center w-full">
+        {/* <ProfileList profiles={users} /> */}
 
-          <DailyChallenge />
-        </section>
+        <DailyChallenge />
+      </section>
 
-        {/* <AnimalRecognizer /> */}
-      </main>
+      {/* <AnimalRecognizer /> */}
     </div>
   );
 }

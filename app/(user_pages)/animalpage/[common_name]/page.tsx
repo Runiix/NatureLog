@@ -60,7 +60,6 @@ export default async function page(props: any) {
 
   return (
     <div className="bg-gray-200 ">
-      <Nav user={user} />
       <div className="h-screen flex flex-col items-center w-full">
         <div className="absolute w-full h-full object-cover ">
           <Image
