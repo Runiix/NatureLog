@@ -121,16 +121,16 @@ export default function CollectionCard({
               width={300}
               height={200}
               priority
-              className="object-cover w-full  rounded-t-lg hover:opacity-90 h-32 sm::h-48"
+              className="object-cover w-full rounded-t-lg hover:opacity-90 h-32 sm:h-48"
               onError={handleError}
               unoptimized
             />
             {currUser !== "false" && (
-              <label className="absolute mr-4 mb-4">
+              <label className="absolute">
                 {loading ? (
                   <CircleLoader color="#16A34A" />
                 ) : (
-                  <Add className="absolute group-hover:text-green-600 group-hover:bg-slate-200 rounded-full w-10 h-10 cursor-pointer" />
+                  <Add className="group-hover:text-green-600 group-hover:bg-slate-200 rounded-full w-10 h-10 cursor-pointer" />
                 )}
                 <input
                   type="file"

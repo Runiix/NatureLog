@@ -90,6 +90,7 @@ export default async function collectionpage(params: any) {
   const insectCount = await getAnimalCount(supabase, "Insekt");
   const arachnoidCount = await getAnimalCount(supabase, "Arachnoid");
   const animalCount = await getAnimalCount(supabase, "all");
+  console.log(animalCount);
 
   if (user && paramUserId === user.id) {
     const spottedList = await getSpottedList(supabase, user.id);

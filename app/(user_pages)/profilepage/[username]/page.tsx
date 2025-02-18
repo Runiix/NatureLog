@@ -3,7 +3,9 @@ import PictureGrid from "@/app/components/profile/Picturegrid";
 import ProfileInfos from "@/app/components/profile/ProfileInfos";
 import ProfilePicture from "@/app/components/profile/ProfilePicture";
 import { createClient } from "@/utils/supabase/server";
+import { Instagram } from "@mui/icons-material";
 import { SupabaseClient, User } from "@supabase/supabase-js";
+import { sup } from "motion/react-client";
 
 const getUser = async (supabase: SupabaseClient) => {
   const {
@@ -76,6 +78,15 @@ const getProfilePictureUrl = async (
   }
   return data.signedUrl;
 };
+const getFavoriteAnimal = async (supabase: SupabaseClient, userId: string) => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("favorite_animal")
+    .eq("user_id", userId);
+  if (error) return "keins";
+  if (data[0].favorite_animal === null) return "keins";
+  return data[0].favorite_animal;
+};
 
 export default async function profilepage(params: any) {
   const supabase = await createClient();
@@ -85,13 +96,13 @@ export default async function profilepage(params: any) {
   const paramUserId = paramUser.id;
   if (user && user.id === paramUserId) {
     const profilePic = await checkForProfilePic(supabase, user);
-
+    const favoriteAnimal = await getFavoriteAnimal(supabase, user.id);
     const profilePicUrl = await getProfilePictureUrl(supabase, user.id);
     const animalCount = await getAnimalCount(supabase, user.id);
     const teamLink = await getTeam(supabase, user.id);
 
     return (
-      <div>
+      <>
         <Nav user={user} />
         <div className="bg-gray-900 w-full lg:w-3/4 m-auto  rounded-lg shadow-xl shadow-slate-900 flex flex-col justify-center items-center pb-10">
           <div className="flex flex-col items-center sm:items-baseline md:flex-row gap-10 mx-auto py-20 mt-20">
@@ -102,31 +113,28 @@ export default async function profilepage(params: any) {
               profilePicUrl={profilePicUrl}
             />
             <div className="flex flex-col gap-10">
-              <div className="flex gap-10 sm:text-xl border-b-2 border-gray-950 pb-2">
-                <div>{user.user_metadata.displayName}</div>
-                <div>Mitgleid seit: {user.created_at.split("T")[0]}</div>
-              </div>
               <ProfileInfos
                 user={user}
                 animalCount={animalCount}
                 teamIcon={teamLink[0].team_link}
+                favoriteAnimal={favoriteAnimal}
                 currUser={true}
               />
             </div>
           </div>
           <PictureGrid user={user} currUser={true} />
         </div>
-      </div>
+      </>
     );
   } else {
     const profilePic = await checkForProfilePic(supabase, paramUser);
-
+    const favoriteAnimal = await getFavoriteAnimal(supabase, paramUserId);
     const profilePicUrl = await getProfilePictureUrl(supabase, paramUserId);
     const animalCount = await getAnimalCount(supabase, paramUserId);
     const teamLink = await getTeam(supabase, paramUserId);
 
     return (
-      <div>
+      <>
         <Nav user={user} />
         <div className="bg-gray-900 w-full lg:w-3/4 m-auto  rounded-lg shadow-xl shadow-slate-900 flex flex-col justify-center items-center pb-10">
           <div className="flex flex-col md:flex-row gap-10 mx-auto py-20 mt-20">
@@ -145,13 +153,14 @@ export default async function profilepage(params: any) {
                 user={paramUser}
                 animalCount={animalCount}
                 teamIcon={teamLink[0].team_link}
+                favoriteAnimal={favoriteAnimal}
                 currUser={false}
               />
             </div>
           </div>
           <PictureGrid user={paramUser} currUser={false} />
         </div>
-      </div>
+      </>
     );
   }
 }
