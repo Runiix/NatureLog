@@ -42,13 +42,17 @@ export default function CollectionCard({
   const [src, setSrc] = useState(imageUrl);
   const [imageModal, setImageModal] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [imageExists, setImageExists] = useState(animalImageExists);
 
   const handleError = () => {
     setSrc(
       "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
     );
   };
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileUpload = async (
+    e: React.ChangeEvent<HTMLInputElement>,
+    id: number
+  ) => {
     setLoading(true);
 
     if (!e.target.files || e.target.files.length === 0) return;
@@ -67,12 +71,16 @@ export default function CollectionCard({
         const formData = new FormData();
         formData.append("file", compressedFile);
         formData.append("common_name", common_name);
+        formData.append("id", String(id));
         console.log(
           `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
         ); // smaller than maxSizeMB
 
         const response = await addCollectionImage(formData);
         if (response) {
+          if (imageExists === false) {
+            setImageExists(true);
+          }
           setLoading(false);
         }
       } catch (error) {
@@ -84,7 +92,7 @@ export default function CollectionCard({
   return (
     <div>
       <div className="flex flex-col w-44 sm:w-80 bg-gray-900 rounded-lg">
-        {animalImageExists ? (
+        {imageExists ? (
           <div className="group relative flex items-end justify-end cursor-pointer">
             <Image
               src={src + `?t=${new Date().getTime()}`}
@@ -107,7 +115,7 @@ export default function CollectionCard({
                 <input
                   type="file"
                   id="photo-upload"
-                  onChange={handleFileUpload}
+                  onChange={(e) => handleFileUpload(e, id)}
                   className="hidden"
                 />
               </label>
@@ -135,7 +143,7 @@ export default function CollectionCard({
                 <input
                   type="file"
                   id="photo-upload"
-                  onChange={handleFileUpload}
+                  onChange={(e) => handleFileUpload(e, id)}
                   className="hidden"
                 />
               </label>

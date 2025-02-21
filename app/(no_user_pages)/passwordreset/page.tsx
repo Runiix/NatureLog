@@ -53,6 +53,7 @@ export default function PasswordReset() {
         <h1 className="text-5xl font-bold mb-4 text-white text-center">
           Passwort zurücksetzen
         </h1>
+
         <div className="flex flex-col gap-2 mb-4">
           <label>Passwort eingaben</label>
           <div className="flex items-center border border-slate-300 text-lg hover:border-slate-100 rounded-xl">
@@ -71,6 +72,7 @@ export default function PasswordReset() {
             </div>
           </div>
         </div>
+
         <div className="flex flex-col gap-2 mb-4">
           <label>Passwort bestätigen</label>
           <div className="flex items-center border border-slate-300 text-lg hover:border-slate-100 rounded-xl">
@@ -89,6 +91,7 @@ export default function PasswordReset() {
             </div>
           </div>
         </div>
+
         <button
           type="submit"
           onClick={confirmPasswords}
@@ -96,6 +99,7 @@ export default function PasswordReset() {
         >
           Passwort zurücksetzen
         </button>
+
         <Link
           href="/loginpage"
           className="underline hover:text-green-600 hover:cursor-pointer"

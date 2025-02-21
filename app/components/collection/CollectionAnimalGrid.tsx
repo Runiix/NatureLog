@@ -33,7 +33,7 @@ export default function CollectionAnimalGrid({
   arachnoidCount: number;
   user: User;
   currUser?: "false";
-  animalImageList: string[];
+  animalImageList: { animal_id: any; image: any }[];
 }) {
   const spottedBirdCount = animals.filter(
     (item: { category: string }) => item.category === "Vogel"
@@ -101,7 +101,7 @@ export default function CollectionAnimalGrid({
   const { ref, inView } = useInView();
   const [genus, setGenus] = useState<string>("all");
   const [animalItems, setAnimalItems] = useState<any>([]);
-  const regex = /[äöüß]/g;
+  const regex = /[äöüß ]/g;
 
   const handleSearch = (term: string) => {
     const params = new URLSearchParams(searchParams);
@@ -241,8 +241,8 @@ export default function CollectionAnimalGrid({
               user={user}
               currUser={currUser}
               spottedList={spottedList}
-              animalImageExists={animalImageList.includes(
-                animal.common_name.replace(regex, "_") + ".jpg"
+              animalImageExists={animalImageList.some(
+                (obj) => obj.animal_id === animal.id && obj.image === true
               )}
             />
           ))}

@@ -4,9 +4,11 @@ import { createClient } from "@/utils/supabase/server";
 
 export default async function addCollectionImage(formData: FormData) {
   const supabase = await createClient();
-  const regex = /[äöüß]/g;
+  const regex = /[äöüß ]/g;
   const common_name = formData.get("common_name") as string;
   const file = formData.get("file") as File | null;
+  const id = formData.get("id");
+
   if (!file) {
     return { success: false, message: "No file uploaded" };
   }
@@ -14,6 +16,7 @@ export default async function addCollectionImage(formData: FormData) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
+    console.log(user?.id, id);
 
     if (!user) {
       throw new Error("User not authenticated for Photo upload!");
@@ -21,6 +24,11 @@ export default async function addCollectionImage(formData: FormData) {
     const filePath = `/${user.id}/Collection/${
       common_name.replace(regex, "_") + ".jpg"
     }`;
+    const { error: updateError } = await supabase
+      .from("spotted")
+      .update({ image: true })
+      .match({ user_id: user.id, animal_id: Number(id) });
+    if (updateError) console.error("Error updating image bool", updateError);
 
     const { error: insertError } = await supabase.storage
       .from("profiles")
@@ -31,6 +39,7 @@ export default async function addCollectionImage(formData: FormData) {
     if (insertError) {
       console.error(insertError);
     }
+
     return { success: true };
   } catch (error) {
     console.error("Error uploading file: ", error);

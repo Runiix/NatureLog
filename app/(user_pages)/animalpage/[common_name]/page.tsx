@@ -50,11 +50,11 @@ const getSpottedCount = async (supabase: SupabaseClient, animalId: string) => {
   return 0;
 };
 
-export default async function page(props: any) {
-  const params = await props.params;
+export default async function page(params: any) {
+  const dynamicParams = await params.params;
   const supabase = await createClient();
   const user = await getUser(supabase);
-  const animalData = await getAnimalData(supabase, params.common_name);
+  const animalData = await getAnimalData(supabase, dynamicParams.common_name);
   const spottedList = user ? await getSpottedList(supabase, user) : [];
   const animalCount = await getSpottedCount(supabase, animalData.id);
 

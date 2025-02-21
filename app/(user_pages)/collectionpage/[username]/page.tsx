@@ -17,12 +17,11 @@ const getUser = async (supabase: SupabaseClient) => {
 const getSpottedList = async (supabase: SupabaseClient, userId: string) => {
   const { data, error } = await supabase
     .from("spotted")
-    .select("animal_id")
+    .select("animal_id, image")
     .eq("user_id", userId);
   if (error) console.error("Error getting spotted List", error);
   else {
-    const spottedIds: number[] = data.map((animal: any) => animal.animal_id);
-    return spottedIds;
+    return data;
   }
   return [];
 };
@@ -51,22 +50,6 @@ const getAnimalCount = async (supabase: SupabaseClient, genus: string) => {
   }
   return 0;
 };
-async function getAnimalImageList(supabase: SupabaseClient, userId: string) {
-  const { data, error } = await supabase.storage
-    .from("profiles")
-    .list(`${userId}/Collection/`, {
-      limit: 400,
-      offset: 0,
-      sortBy: { column: "name", order: "asc" },
-    });
-  if (error) console.error("Error fetching animal images", error);
-  if (data === null) return [];
-  const filteredData = data.filter(
-    (item: { name: string }) => item.name !== ".emptyFolderPlaceholder"
-  );
-  const listData: string[] = filteredData.map((animal) => animal.name);
-  return listData;
-}
 const getParamUserId = async (supabase: SupabaseClient, username: string) => {
   const { data, error } = await supabase
     .from("users")
@@ -103,10 +86,10 @@ export default async function collectionpage(params: any) {
 
   if (user && paramUser.id === user.id) {
     const spottedList = await getSpottedList(supabase, user.id);
-    const [animals, animalImageList] = await Promise.all([
-      getAnimals(supabase, spottedList),
-      getAnimalImageList(supabase, user.id),
-    ]);
+    const spottedIds: number[] = spottedList.map(
+      (animal: any) => animal.animal_id
+    );
+    const animals = await getAnimals(supabase, spottedIds);
 
     return (
       <div>
@@ -114,7 +97,7 @@ export default async function collectionpage(params: any) {
           <CollectionAnimalGrid
             animals={animals}
             animalCount={animalCount}
-            spottedList={spottedList}
+            spottedList={spottedIds}
             mammalCount={mammalCount}
             birdCount={birdCount}
             reptileCount={reptileCount}
@@ -122,17 +105,17 @@ export default async function collectionpage(params: any) {
             insectCount={insectCount}
             arachnoidCount={arachnoidCount}
             user={user}
-            animalImageList={animalImageList}
+            animalImageList={spottedList}
           />
         </div>
       </div>
     );
   } else {
     const spottedList = await getSpottedList(supabase, paramUser.id);
-    const [animals, animalImageList] = await Promise.all([
-      getAnimals(supabase, spottedList),
-      getAnimalImageList(supabase, paramUser.id),
-    ]);
+    const spottedIds: number[] = spottedList.map(
+      (animal: any) => animal.animal_id
+    );
+    const animals = await getAnimals(supabase, spottedIds);
 
     return (
       <div>
@@ -146,7 +129,7 @@ export default async function collectionpage(params: any) {
           <CollectionAnimalGrid
             animals={animals}
             animalCount={animalCount}
-            spottedList={spottedList}
+            spottedList={spottedIds}
             mammalCount={mammalCount}
             birdCount={birdCount}
             reptileCount={reptileCount}
@@ -155,7 +138,7 @@ export default async function collectionpage(params: any) {
             arachnoidCount={arachnoidCount}
             user={paramUser}
             currUser="false"
-            animalImageList={animalImageList}
+            animalImageList={spottedList}
           />
         </div>
       </div>

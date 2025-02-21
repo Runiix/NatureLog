@@ -29,7 +29,7 @@ export default function LexiconGrid({
   const [expandFilter, setExpandFilter] = useState(false);
   const [expandSort, setExpandSort] = useState(false);
   const [sliderValue, setSliderValue] = useState<number[]>([0, 500]);
-  const regex = /[äöüß]/g;
+  const regex = /[äöüß ]/g;
 
   const searchParams = useSearchParams();
   const pathName = usePathname();
