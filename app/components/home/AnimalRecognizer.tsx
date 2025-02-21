@@ -80,6 +80,7 @@ export default function AnimalRecognizer() {
             className="w-40 cursor-pointer hover:opacity-90"
             width={200}
             height={200}
+            unoptimized
           />
         ) : (
           <AddAPhoto className="cursor-pointer hover:text-green-600 text-6xl" />

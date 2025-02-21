@@ -12,7 +12,7 @@ const nextConfig = nextPWA({
 export default {
   ...nextConfig, // Spread the PWA config
   images: {
-    unoptimized: true,
+    //unoptimized: true,
     remotePatterns: [
       {
         protocol: "https",

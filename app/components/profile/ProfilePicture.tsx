@@ -82,6 +82,7 @@ export default function ProfilePicture({
                   height={200}
                   width={200}
                   priority
+                  unoptimized
                 />
               )}
               <p className="hidden group-hover:flex absolute bottom-8 sm:bottom-14 ml-4 sm:ml-5 text-xs hover:cursor-pointer">

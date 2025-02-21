@@ -182,6 +182,7 @@ export default function CollectionCard({
             width={1920}
             height={1080}
             className="relative m-auto z-20"
+            unoptimized
           />
         </div>
       )}
