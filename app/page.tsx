@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import Nav from "./components/general/Nav";
-import HomeHero from "./assets/images/HomeHero.jpg";
+import HomeHero from "./assets/images/HomeHero.webp";
 import { createClient } from "@/utils/supabase/server";
 import LandingInfo from "./components/landing/LandingInfo";
 import Lexikon from "./assets/images/Lexikon.png";

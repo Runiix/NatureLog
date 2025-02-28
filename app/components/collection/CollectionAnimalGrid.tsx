@@ -103,7 +103,7 @@ export default function CollectionAnimalGrid({
   }, [inView, genus, query, spottedList]);
 
   return (
-    <div className="mt-4 sm:mt-20 flex items-center flex-col">
+    <div className="mt-4 sm:mt-10 flex items-center flex-col">
       <div className="flex sm:flex-col items-center justify-center gap-2 ">
         <GenusFilter counts={counts} animals={animals} />
         <Search placeholder="Tier Suchen" />

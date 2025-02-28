@@ -7,6 +7,7 @@ import { User } from "@supabase/supabase-js";
 
 export default function Nav({ user }: { user: User | null }) {
   const [toggleMenu, setToggleMenu] = useState(false);
+  const [showSignOut, setShowSignOut] = useState(false);
 
   return (
     <div>
@@ -64,25 +65,30 @@ export default function Nav({ user }: { user: User | null }) {
                 </div>
               </div>
             </div>
-            <div className="hidden lg:flex items-center gap-6">
-              <div className="text-slate-900">
+            <div className="hidden lg:flex items-center gap-6 relative">
+              <div
+                className="text-slate-900 cursor-pointer hover:text-green-600 mr-8 "
+                onClick={() => setShowSignOut((prev) => !prev)}
+              >
                 <Person />
                 {user.user_metadata.displayName}
               </div>
-              <div>
-                <form
-                  action="/auth/signout"
-                  method="post"
-                  className="hidden lg:flex"
-                >
-                  <button
-                    type="submit"
-                    className="text-zinc-900 bg-green-600 font-bold my-2 py-2 px-4 mr-8 rounded hover:bg-green-700 hover:text-slate-100 text-nowrap"
+              {showSignOut && (
+                <div className="absolute top-6 right-5 bg-slate-200 p-5 rounded-b-lg border-b border-x border-gray-900">
+                  <form
+                    action="/auth/signout"
+                    method="post"
+                    className="hidden lg:flex"
                   >
-                    Abmelden
-                  </button>
-                </form>
-              </div>
+                    <button
+                      type="submit"
+                      className="text-zinc-900 bg-green-600 font-bold py-2 px-4 rounded hover:bg-green-700 hover:text-slate-100 text-nowrap"
+                    >
+                      Abmelden
+                    </button>
+                  </form>
+                </div>
+              )}
             </div>
             <div className="m-2 flex lg:invisible absolute right-5 hover:cursor-pointer">
               {toggleMenu ? (

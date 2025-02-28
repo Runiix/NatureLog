@@ -124,9 +124,9 @@ export default function PictureGrid({
               unoptimized
               src={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${user.id}/ProfileGrid/${profileGrid[index].name}`}
               width={200}
-              height={200}
+              height={100}
               alt=""
-              className="rounded-lg object-cover aspect-square scale-95 sm:scale-100 hover:opacity-90 cursor-pointer"
+              className="rounded-lg object-cover hover:opacity-90 aspect-square cursor-pointer"
               priority
               onClick={() =>
                 setImageModal(
@@ -167,7 +167,7 @@ export default function PictureGrid({
           </div>
         ))}
       {!profileGridFull && currUser && (
-        <label className="group border-2 rounded-lg w-10 h-10 flex justify-center items-center cursor-pointer hover:bg-gray-800 hover:scale-110 p-20 ml-5">
+        <label className="group border-2 rounded-lg w-10 h-10 flex justify-center items-center cursor-pointer hover:bg-gray-800 hover:scale-110 p-16 ml-5">
           <div className="text-xl">{profileGrid.length}/12</div>
           <input
             type="file"

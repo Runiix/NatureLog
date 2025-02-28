@@ -1,4 +1,4 @@
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 
 export default function AnimalOfTheDay({
@@ -8,7 +8,7 @@ export default function AnimalOfTheDay({
 }: {
   data: any;
   titel: string;
-  imageUrl: string;
+  imageUrl: string | StaticImageData;
 }) {
   const link = `/animalpage/${data.common_name}`;
 

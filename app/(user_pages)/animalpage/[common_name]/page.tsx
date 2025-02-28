@@ -1,4 +1,3 @@
-import Nav from "@/app/components/general/Nav";
 import Image from "next/image";
 import { Height, Landscape } from "@mui/icons-material";
 import { createClient } from "@/utils/supabase/server";
@@ -50,7 +49,7 @@ const getSpottedCount = async (supabase: SupabaseClient, animalId: string) => {
   return 0;
 };
 
-export default async function page(params: any) {
+export default async function AnimalPage(params: any) {
   const dynamicParams = await params.params;
   const supabase = await createClient();
   const user = await getUser(supabase);

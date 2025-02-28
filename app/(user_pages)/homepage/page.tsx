@@ -4,6 +4,7 @@ import AnimalRecognizer from "../../components/home/AnimalRecognizer";
 import DailyChallenge from "../../components/home/DailyChallenge";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
+import black from "@/app/assets/images/black.webp";
 
 const getRandomDayId = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase.from("animals").select("id");
@@ -132,9 +133,7 @@ export default async function homepage() {
           <AnimalOfTheDay
             data={animalOfTheDay}
             titel="Tages"
-            imageUrl={
-              "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
-            }
+            imageUrl={black}
           />
         )}
         {monthImageExists ? (
@@ -147,9 +146,7 @@ export default async function homepage() {
           <AnimalOfTheDay
             data={animalOfTheMonth}
             titel="Monats"
-            imageUrl={
-              "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
-            }
+            imageUrl={black}
           />
         )}
       </section>

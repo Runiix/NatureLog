@@ -1,13 +1,14 @@
 "use client";
 
 import { Add, Edit, Favorite } from "@mui/icons-material";
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import { useState } from "react";
 import Link from "next/link";
 import { CircleLoader } from "react-spinners";
 import addCollectionImage from "../../actions/addCollectionImage";
 import FavoriteButton from "../general/FavoriteButton";
 import imageCompression from "browser-image-compression";
+import black from "@/app/assets/images/black.webp";
 
 export default function CollectionCard({
   id,
@@ -39,15 +40,13 @@ export default function CollectionCard({
   animalImageExists: boolean;
 }) {
   const link = `/animalpage/${common_name}`;
-  const [src, setSrc] = useState(imageUrl);
+  const [src, setSrc] = useState<string | StaticImageData>(imageUrl);
   const [imageModal, setImageModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imageExists, setImageExists] = useState(animalImageExists);
 
   const handleError = () => {
-    setSrc(
-      "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
-    );
+    setSrc(black);
   };
   const handleFileUpload = async (
     e: React.ChangeEvent<HTMLInputElement>,
@@ -124,11 +123,10 @@ export default function CollectionCard({
         ) : (
           <div className="group relative flex items-center justify-center cursor-pointer">
             <Image
-              src="https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
+              src={black}
               alt="Placeholder"
               width={300}
               height={200}
-              priority
               className="object-cover w-full rounded-t-lg hover:opacity-90 h-32 sm:h-48"
               onError={handleError}
               unoptimized
@@ -171,19 +169,21 @@ export default function CollectionCard({
       </div>
 
       {imageModal && (
-        <div
-          className="fixed top-0 left-0 w-full h-full z-50 bg-slate-950 bg-opacity-30 flex items-center justify-center"
-          onClick={() => setImageModal((prev) => !prev)}
-        >
-          {" "}
-          <Image
-            src={src}
-            alt=""
-            width={1920}
-            height={1080}
-            className="relative m-auto z-20"
-            unoptimized
-          />
+        <div className="fixed top-0 left-0 w-screen h-screen bg-gray-950 bg-opacity-50 z-40">
+          <div
+            className=" top-0 left-0 w-full xl:w-5/6 mx-auto h-5/6 z-50  bg-opacity-30 flex items-center justify-center"
+            onClick={() => setImageModal((prev) => !prev)}
+          >
+            {" "}
+            <Image
+              src={src}
+              alt=""
+              width={1920}
+              height={1080}
+              className="relative m-auto z-20"
+              unoptimized
+            />
+          </div>
         </div>
       )}
     </div>

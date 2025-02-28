@@ -138,8 +138,8 @@ export default function ProfileInfos({
             {favorite}
           </div>
           {showEditFavoriteAnimal && currUser && (
-            <div className="w-full h-full bg-gray-900 bg-opacity-90 absolute top-0 left-0 flex items-center justify-center">
-              <form className="flex flex-col items-center w-1/2 h-1/4 space-y-2 top-16 bg-gray-900 border border-slate-200 p-10 rounded-lg relative">
+            <div className="w-full h-full bg-gray-900 bg-opacity-90 absolute top-0 left-0 flex items-center justify-center z-40">
+              <form className="flex flex-col items-center w-3/4 sm:w-1/2 2xl:w-1/4 h-1/3 sm:h-1/5 space-y-2 top-16 bg-gray-900 border border-slate-200 p-10 rounded-lg relative z-50">
                 {" "}
                 <h3>
                   Geben sie ein neues Tier ein, dass Sie als Favorit speichern

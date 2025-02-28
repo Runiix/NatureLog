@@ -1,10 +1,11 @@
 "use client";
 
-import Image from "next/image";
+import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import FavoriteButton from "../general/FavoriteButton";
 import { User } from "@supabase/supabase-js";
+import black from "@/app/assets/images/black.webp";
 
 export default function LexiconCard({
   id,
@@ -35,12 +36,6 @@ export default function LexiconCard({
   animalImageExists: boolean;
 }) {
   const link = `/animalpage/${common_name}`;
-  const [src, setSrc] = useState(imageUrl);
-  const handleError = () => {
-    setSrc(
-      "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
-    );
-  };
 
   return (
     <div className="group">
@@ -49,24 +44,22 @@ export default function LexiconCard({
           {animalImageExists ? (
             <div>
               <Image
-                src={src}
+                src={imageUrl}
                 alt="Placeholder"
                 width={300}
                 height={200}
                 priority
                 className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-90 "
-                onError={handleError}
               />
             </div>
           ) : (
             <Image
-              src="https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
+              src={black}
               alt="Placeholder"
-              width={300}
-              height={200}
+              width={3}
+              height={2}
               priority
               className="object-cover w-full  rounded-t-lg hover:opacity-90 h-32 sm:h-48"
-              onError={handleError}
             />
           )}
 

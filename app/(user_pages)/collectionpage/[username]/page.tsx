@@ -20,7 +20,7 @@ const getSpottedList = async (supabase: SupabaseClient, userId: string) => {
 const getAnimals = async (supabase: SupabaseClient, spottedList: number[]) => {
   const { data, error } = await supabase
     .from("animals")
-    .select("*")
+    .select("category")
     .in("id", spottedList)
     .order("common_name", { ascending: true });
   if (error) console.error("Error getting Animals", error);
