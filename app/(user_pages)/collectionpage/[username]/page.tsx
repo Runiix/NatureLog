@@ -1,18 +1,9 @@
 import { createClient } from "@/utils/supabase/server";
 import React from "react";
-import Nav from "@/app/components/general/Nav";
 import CollectionAnimalGrid from "@/app/components/collection/CollectionAnimalGrid";
 import Link from "next/link";
 import { SupabaseClient } from "@supabase/supabase-js";
-
-const getUser = async (supabase: SupabaseClient) => {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error) console.error("Error fetching user", error);
-  return user;
-};
+import { getUser } from "@/app/utils/data";
 
 const getSpottedList = async (supabase: SupabaseClient, userId: string) => {
   const { data, error } = await supabase
@@ -83,6 +74,15 @@ export default async function collectionpage(params: any) {
     getAnimalCount(supabase, "Arachnoid"),
     getAnimalCount(supabase, "all"),
   ]);
+  const counts = [
+    mammalCount,
+    birdCount,
+    reptileCount,
+    amphibiaCount,
+    insectCount,
+    arachnoidCount,
+    animalCount,
+  ];
 
   if (user && paramUser.id === user.id) {
     const spottedList = await getSpottedList(supabase, user.id);
@@ -93,17 +93,14 @@ export default async function collectionpage(params: any) {
 
     return (
       <div>
+        <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-16">
+          Sammlung{" "}
+        </h2>
         <div className="w-full flex items-center justify-center">
           <CollectionAnimalGrid
             animals={animals}
-            animalCount={animalCount}
             spottedList={spottedIds}
-            mammalCount={mammalCount}
-            birdCount={birdCount}
-            reptileCount={reptileCount}
-            amphibiaCount={amphibiaCount}
-            insectCount={insectCount}
-            arachnoidCount={arachnoidCount}
+            counts={counts}
             user={user}
             animalImageList={spottedList}
           />
@@ -125,17 +122,14 @@ export default async function collectionpage(params: any) {
         >
           ZUM PROFIL
         </Link>
+        <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-24 mb-16">
+          Sammlung{" "}
+        </h2>
         <div className="w-full flex items-center justify-center">
           <CollectionAnimalGrid
             animals={animals}
-            animalCount={animalCount}
             spottedList={spottedIds}
-            mammalCount={mammalCount}
-            birdCount={birdCount}
-            reptileCount={reptileCount}
-            amphibiaCount={amphibiaCount}
-            insectCount={insectCount}
-            arachnoidCount={arachnoidCount}
+            counts={counts}
             user={paramUser}
             currUser="false"
             animalImageList={spottedList}

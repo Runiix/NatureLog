@@ -1,18 +1,10 @@
-import Nav from "@/app/components/general/Nav";
 import PictureGrid from "@/app/components/profile/Picturegrid";
 import ProfileInfos from "@/app/components/profile/ProfileInfos";
 import ProfilePicture from "@/app/components/profile/ProfilePicture";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient, User } from "@supabase/supabase-js";
+import { getUser } from "@/app/utils/data";
 
-const getUser = async (supabase: SupabaseClient) => {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error) console.error("Error fetching user", error);
-  return user;
-};
 const getParamUserId = async (supabase: SupabaseClient, username: string) => {
   const { data, error } = await supabase
     .from("users")

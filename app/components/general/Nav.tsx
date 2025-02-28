@@ -11,7 +11,7 @@ export default function Nav({ user }: { user: User | null }) {
   return (
     <div>
       {user ? (
-        <nav className="fixed w-full py-3 flex items-center bg-gray-200 z-50">
+        <nav className="fixed w-full py-2 sm:py-3 flex items-center bg-gray-200 z-50 shadow-sm shadow-slate-400 sm:shadow-none">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center ">
               <div>

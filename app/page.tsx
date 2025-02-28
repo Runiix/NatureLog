@@ -8,15 +8,7 @@ import Lexikon from "./assets/images/Lexikon.png";
 import Sammlung from "./assets/images/Sammlung.png";
 import Profil from "./assets/images/Profil.png";
 import Footer from "./components/general/Footer";
-import { SupabaseClient } from "@supabase/supabase-js";
-
-const getUser = async (supabase: SupabaseClient) => {
-  const { data, error } = await supabase.auth.getUser();
-  if (error) {
-    return null;
-  }
-  return data.user;
-};
+import { getUser } from "@/app/utils/data";
 
 export default async function page() {
   const supabase = await createClient();

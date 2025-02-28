@@ -1,18 +1,7 @@
-import Nav from "../../components/general/Nav";
 import LexiconGrid from "@/app/components/lexicon/LexiconGrid";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
-
-const getUser = async (supabase: SupabaseClient) => {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error) {
-    return null;
-  }
-  return user;
-};
+import { getUser } from "@/app/utils/data";
 
 const getSpottedList = async (supabase: SupabaseClient, userId: string) => {
   const { data, error } = await supabase
@@ -74,9 +63,9 @@ export default async function LexiconPage() {
     const userId = user.id;
     const spottedList = await getSpottedList(supabase, userId);
     return (
-      <div className=" bg-gray-200">
+      <div className=" bg-gray-200 mt-16">
         <section className="flex flex-col items-center w-full">
-          <h2 className="text-green-600 text-center text-2xl sm:text-6xl  mt-24 mb-2">
+          <h2 className="text-green-600 text-center text-2xl sm:text-6xl   sm:mt-24 sm:mb-2">
             Arten-Lexikon{" "}
           </h2>
           <LexiconGrid

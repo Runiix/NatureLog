@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import FavoriteButton from "../general/FavoriteButton";
 import { User } from "@supabase/supabase-js";
 
@@ -28,7 +28,7 @@ export default function LexiconCard({
   endangerment_status: string;
   size_from: string;
   size_to: string;
-  sortBy: string;
+  sortBy: string | null;
   imageUrl: string;
   user: User | null;
   spottedList: number[];
@@ -36,7 +36,6 @@ export default function LexiconCard({
 }) {
   const link = `/animalpage/${common_name}`;
   const [src, setSrc] = useState(imageUrl);
-
   const handleError = () => {
     setSrc(
       "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/animalImages/main/black.png"
@@ -75,13 +74,15 @@ export default function LexiconCard({
             <div>
               <h2 className="text-xs sm:text-2xl">{common_name}</h2>
               <h3 className="text-[0.5rem] sm:text-sm">
-                {sortBy === "common_name"
-                  ? scientific_name
-                  : sortBy === "population_estimate"
+                {sortBy === "population_estimate"
                   ? population_estimate
                   : sortBy === "size_from"
                   ? `${size_from} - ${size_to} cm`
-                  : endangerment_status}
+                  : sortBy === "endangerment_status"
+                  ? endangerment_status
+                  : sortBy === ""
+                  ? scientific_name
+                  : scientific_name}
               </h3>
             </div>
             <FavoriteButton user={user} id={id} spottedList={spottedList} />

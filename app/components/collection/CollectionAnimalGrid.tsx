@@ -7,112 +7,34 @@ import getCollectionAnimals from "../../actions/getCollectionAnimals";
 import { CircleLoader } from "react-spinners";
 import CollectionCard from "./CollectionCard";
 import { User } from "@supabase/supabase-js";
+import Search from "../general/Search";
+import filterSpottedAnimals from "@/app/utils/filterSpottedAnimals";
+import GenusFilter from "./GenusFilter";
 
 export default function CollectionAnimalGrid({
   animals,
   spottedList,
-  animalCount,
-  mammalCount,
-  birdCount,
-  reptileCount,
-  amphibiaCount,
-  insectCount,
-  arachnoidCount,
+  counts,
   user,
   currUser,
   animalImageList,
 }: {
   animals: any;
   spottedList: number[];
-  animalCount: number;
-  mammalCount: number;
-  birdCount: number;
-  reptileCount: number;
-  amphibiaCount: number;
-  insectCount: number;
-  arachnoidCount: number;
+  counts: number[];
   user: User;
   currUser?: "false";
   animalImageList: { animal_id: any; image: any }[];
 }) {
-  const spottedBirdCount = animals.filter(
-    (item: { category: string }) => item.category === "Vogel"
-  ).length;
-  const spottedMammalCount = animals.filter(
-    (item: { category: string }) => item.category === "Säugetier"
-  ).length;
-  const spottedAmphibiaCount = animals.filter(
-    (item: { category: string }) => item.category === "Amphibie"
-  ).length;
-  const spottedReptileCount = animals.filter(
-    (item: { category: string }) => item.category === "Reptil"
-  ).length;
-  const spottedInsectCount = animals.filter(
-    (item: { category: string }) => item.category === "Insekt"
-  ).length;
-  const spottedArachnoidCount = animals.filter(
-    (item: { category: string }) => item.category === "Arachnoid"
-  ).length;
-  const genusList = [
-    {
-      name: "Vögel",
-      value: "Vogel",
-      spottedCount: spottedBirdCount,
-      count: birdCount,
-    },
-    {
-      name: "Säugetiere",
-      value: "Säugetier",
-      spottedCount: spottedMammalCount,
-      count: mammalCount,
-    },
-    {
-      name: "Amphibien",
-      value: "Amphibie",
-      spottedCount: spottedAmphibiaCount,
-      count: amphibiaCount,
-    },
-    {
-      name: "Reptilien",
-      value: "Reptil",
-      spottedCount: spottedReptileCount,
-      count: reptileCount,
-    },
-    {
-      name: "Insekten",
-      value: "Insekt",
-      spottedCount: spottedInsectCount,
-      count: insectCount,
-    },
-    {
-      name: "Spinnen",
-      value: "Arachnoid",
-      spottedCount: spottedArachnoidCount,
-      count: arachnoidCount,
-    },
-  ];
-  const [query, setQuery] = useState("");
+  const genusList = filterSpottedAnimals(animals, counts);
   const searchParams = useSearchParams();
-  const { replace } = useRouter();
-  const pathName = usePathname();
+  const query = searchParams.get("query") || "";
   const [offset, setOffset] = useState(0);
   const [loadingMoreAnimals, setLoadingMoreAnimals] = useState(false);
-  const [loading, setLoading] = useState(true);
   const { ref, inView } = useInView();
   const [genus, setGenus] = useState<string>("all");
   const [animalItems, setAnimalItems] = useState<any>([]);
   const regex = /[äöüß ]/g;
-
-  const handleSearch = (term: string) => {
-    const params = new URLSearchParams(searchParams);
-    if (term) {
-      params.set("query", term);
-    } else {
-      params.delete("query");
-    }
-    replace(`${pathName}?${params.toString()}`);
-    setQuery(term);
-  };
 
   useEffect(() => {
     const loadAnimals = async (offset: number) => {
@@ -178,51 +100,12 @@ export default function CollectionAnimalGrid({
   }, [inView, genus, query, spottedList]);
 
   return (
-    <div className="mt-20 flex items-center flex-col">
-      <div>
-        <div className="flex flex-col items-center justify-center ">
-          <p className="text-gray-900">Arten</p>
-          <div
-            className="bg-gray-900 w-20 text-center rounded-full p-2 mb-4 hover:cursor-pointer hover:scale-105 hover:bg-gray-800 flex justify-center gap-1"
-            onClick={() => setGenus("all")}
-          >
-            <p className="text-green-600">{animals.length} </p>
-            <p>/</p>
-            <p>{animalCount}</p>
-          </div>
-        </div>
-        <div className="flex flex-row flex-wrap gap-3 items-center justify-center">
-          {genusList.map((genus) => (
-            <div
-              className="flex flex-col items-center justify-center"
-              key={genus.value}
-            >
-              <p className="text-gray-900">{genus.name}</p>
-              <div
-                className="bg-gray-900 w-20 text-center rounded-full p-2 mb-4 hover:cursor-pointer hover:scale-105 hover:bg-gray-800 flex justify-center gap-1"
-                onClick={() => setGenus(genus.value)}
-              >
-                <p className="text-green-600">{genus.spottedCount} </p>
-                <p>/</p>
-                <p>{genus.count}</p>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div className="mt-4 sm:mt-20 flex items-center flex-col">
+      <div className="flex sm:flex-col items-center justify-center gap-2 ">
+        <GenusFilter counts={counts} animals={animals} />
+        <Search placeholder="Tier Suchen" />
       </div>
-      <div className="flex items-center justify-center gap-2 ">
-        <input
-          id="Search"
-          value={query}
-          className=" z-0 bg-gray-900 border border-slate-100 hover:bg-gray-800 hover:cursor-pointer p-3 px-5 rounded-md"
-          type="text"
-          placeholder="Tier Suchen"
-          onChange={(e) => {
-            handleSearch(e.target.value);
-          }}
-        />
-      </div>
-      <div className="m-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-4 mt-10">
+      <div className="mx-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-1 sm:gap-4 mt-4 sm:mt-10">
         {animalItems &&
           animalItems.map((animal: any, index: number) => (
             <CollectionCard

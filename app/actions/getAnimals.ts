@@ -19,7 +19,7 @@ export default async function getAnimals(
   const endangerment = params.get("endangerment")?.split(",") || [];
   const sortOrder = params.get("sortOrder") || null;
   let bool = false;
-  if (sortOrder === "ascending") {
+  if (sortOrder === "ascending" || sortOrder === null) {
     bool = true;
   }
 
@@ -58,7 +58,7 @@ export default async function getAnimals(
         .order("id", { ascending: bool });
     }
   } else {
-    query = query.order("common_name", { ascending: true });
+    query = query.order("common_name", { ascending: bool });
   }
   if (search !== "") {
     query = query.ilike("common_name", `%${search}%`);

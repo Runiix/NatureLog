@@ -1,17 +1,9 @@
-import Nav from "../../components/general/Nav";
 import { createClient } from "@/utils/supabase/server";
 import AnimalOfTheDay from "../../components/home/AnimalOfTheDay";
-import ProfileList from "../../components/general/ProfileList";
 import AnimalRecognizer from "../../components/home/AnimalRecognizer";
 import DailyChallenge from "../../components/home/DailyChallenge";
 import { SupabaseClient } from "@supabase/supabase-js";
-
-const getUser = async (supabase: SupabaseClient) => {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-  return user;
-};
+import { getUser } from "@/app/utils/data";
 
 const getRandomDayId = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase.from("animals").select("id");
@@ -80,11 +72,7 @@ const getAnimalOfTheMonth = async (supabase: SupabaseClient) => {
     console.error("Error getting data from DB:", error);
   }
 };
-// const getUsers = async (supabase: any) => {
-//   const { data, error } = await supabase.from("users").select("*");
-//   if (error) console.error("ERROR FETCHING USERS", error);
-//   return data;
-// };
+
 async function fileExists(
   supabase: SupabaseClient,
   imageLink: string,
@@ -131,8 +119,6 @@ export default async function homepage() {
     animalOfTheDay.category
   );
 
-  // const users = await getUsers(supabase);
-
   return (
     <div className="flex flex-col justify-center items-center gap-10 w-full ">
       <section className="flex flex-col sm:flex-row items-center gap-10 justify-center w-full">
@@ -168,8 +154,6 @@ export default async function homepage() {
         )}
       </section>
       <section className="flex items-center gap-10 justify-center w-full">
-        {/* <ProfileList profiles={users} /> */}
-
         <DailyChallenge />
       </section>
 
