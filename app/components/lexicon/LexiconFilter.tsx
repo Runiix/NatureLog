@@ -5,16 +5,15 @@ import { ExpandMore } from "@mui/icons-material";
 
 export default function LexiconFilter() {
   const searchParams = useSearchParams();
+  const pathName = usePathname();
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+  const [expandFilter, setExpandFilter] = useState(false);
   const [sliderValue, setSliderValue] = useState<number[]>(() => {
     const sizeFrom = Number(searchParams.get("sizeFrom")) || 0;
     const sizeTo = Number(searchParams.get("sizeTo")) || 0;
     return sizeFrom === 0 && sizeTo === 0 ? [0, 500] : [sizeFrom, sizeTo];
   });
-
-  const pathName = usePathname();
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
-  const [expandFilter, setExpandFilter] = useState(false);
 
   const handleFilterChange = (param: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());

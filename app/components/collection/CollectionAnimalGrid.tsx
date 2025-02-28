@@ -26,7 +26,6 @@ export default function CollectionAnimalGrid({
   currUser?: "false";
   animalImageList: { animal_id: any; image: any }[];
 }) {
-  const genusList = filterSpottedAnimals(animals, counts);
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
   const [offset, setOffset] = useState(0);
@@ -35,6 +34,10 @@ export default function CollectionAnimalGrid({
   const [genus, setGenus] = useState<string>("all");
   const [animalItems, setAnimalItems] = useState<any>([]);
   const regex = /[äöüß ]/g;
+
+  useEffect(() => {
+    setGenus(searchParams.get("genus") || "all");
+  }, [searchParams]);
 
   useEffect(() => {
     const loadAnimals = async (offset: number) => {
@@ -66,7 +69,7 @@ export default function CollectionAnimalGrid({
       }
     };
     loadAnimals(0);
-  }, [query, genus, spottedList]);
+  }, [query, searchParams, genus, spottedList]);
 
   useEffect(() => {
     const loadMoreAnimals = async () => {

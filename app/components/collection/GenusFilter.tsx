@@ -2,7 +2,8 @@
 
 import filterSpottedAnimals from "@/app/utils/filterSpottedAnimals";
 import { ExpandMore } from "@mui/icons-material";
-import { useState } from "react";
+import { useState, useTransition } from "react";
+import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 export default function GenusFilter({
   counts,
@@ -13,7 +14,23 @@ export default function GenusFilter({
 }) {
   const genusList = filterSpottedAnimals(animals, counts);
   const [expandGenus, setExpandGenus] = useState(false);
-  const [genus, setGenus] = useState("all");
+  const searchParams = useSearchParams();
+  const pathName = usePathname();
+  const [isPending, startTransition] = useTransition();
+  const router = useRouter();
+
+  const handleFilterChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    if (value === "all") {
+      params.delete("genus");
+    } else {
+      params.set("genus", value);
+    }
+    startTransition(() => {
+      router.replace(`${pathName}?${params.toString()}`);
+    });
+    setExpandGenus(false);
+  };
 
   return (
     <div>
@@ -37,7 +54,7 @@ export default function GenusFilter({
           <p className="sm:text-gray-900">Arten</p>
           <div
             className="sm:bg-gray-900 w-20 text-center rounded-full p-1 sm:p-2 sm:mb-4 hover:cursor-pointer hover:scale-105 hover:bg-gray-800 flex justify-center gap-1 border-2 border-slate-200 sm:border-none "
-            onClick={() => setGenus("all")}
+            onClick={() => handleFilterChange("all")}
           >
             <p className="text-green-600">{animals.length} </p>
             <p>/</p>
@@ -53,7 +70,7 @@ export default function GenusFilter({
               <p className="sm:text-gray-900">{genus.name}</p>
               <div
                 className="sm:bg-gray-900 w-20 text-center rounded-full p-1 sm:p-2 sm:mb-4 hover:cursor-pointer hover:scale-105 hover:bg-gray-800 flex justify-center gap-1 border-2 border-slate-200 sm:border-none"
-                onClick={() => setGenus(genus.value)}
+                onClick={() => handleFilterChange(genus.value)}
               >
                 <p className="text-green-600">{genus.spottedCount} </p>
                 <p>/</p>
