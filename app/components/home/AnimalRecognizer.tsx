@@ -65,7 +65,7 @@ export default function AnimalRecognizer() {
   }
 
   return (
-    <div className="flex items-center gap-6 mt-20 bg-gray-950 w-1/2 mx-auto p-4 rounded-lg">
+    <div className="flex items-center gap-6 justify-center bg-gray-900 rounded-lg">
       <label>
         <input
           type="file"

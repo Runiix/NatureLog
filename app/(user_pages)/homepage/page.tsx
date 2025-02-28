@@ -5,6 +5,8 @@ import DailyChallenge from "../../components/home/DailyChallenge";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
 import black from "@/app/assets/images/black.webp";
+import UseFullLinks from "@/app/components/home/UseFullLinks";
+import RecentUploads from "@/app/components/home/RecentUploads";
 
 const getRandomDayId = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase.from("animals").select("id");
@@ -94,10 +96,14 @@ async function fileExists(
 
   return data.length > 0;
 }
+async function getLast10Images(supabase: SupabaseClient) {
+  const { data, error } = await supabase.from("lastimages").select("*");
+  if (error) return [];
+  return data;
+}
 
 export default async function homepage() {
   const supabase = await createClient();
-  const user = await getUser(supabase);
   const animalOfTheMonth = await getAnimalOfTheMonth(supabase);
   const monthUrlparts = animalOfTheMonth.image_link.split(
     `${animalOfTheMonth.category}/`
@@ -108,7 +114,6 @@ export default async function homepage() {
     monthImageUrl,
     animalOfTheMonth.category
   );
-
   const animalOfTheDay = await getAnimalOfTheDay(supabase);
   const dayUrlparts = animalOfTheDay.image_link.split(
     `${animalOfTheDay.category}/`
@@ -119,42 +124,36 @@ export default async function homepage() {
     dayImageUrl,
     animalOfTheDay.category
   );
-
+  const lastImages = await getLast10Images(supabase);
   return (
-    <div className="flex flex-col justify-center items-center gap-10 w-full ">
-      <section className="flex flex-col sm:flex-row items-center gap-10 justify-center w-full">
-        {dayImageExists ? (
-          <AnimalOfTheDay
-            data={animalOfTheDay}
-            titel="Tages"
-            imageUrl={animalOfTheDay.image_link}
-          />
-        ) : (
-          <AnimalOfTheDay
-            data={animalOfTheDay}
-            titel="Tages"
-            imageUrl={black}
-          />
-        )}
-        {monthImageExists ? (
-          <AnimalOfTheDay
-            data={animalOfTheMonth}
-            titel="Monats"
-            imageUrl={animalOfTheMonth.image_link}
-          />
-        ) : (
-          <AnimalOfTheDay
-            data={animalOfTheMonth}
-            titel="Monats"
-            imageUrl={black}
-          />
-        )}
-      </section>
-      <section className="flex items-center gap-10 justify-center w-full">
-        <DailyChallenge />
-      </section>
+    <div className="grid grid-cols-4  gap-6 mx-6 pt-20">
+      {dayImageExists ? (
+        <AnimalOfTheDay
+          data={animalOfTheDay}
+          titel="Tages"
+          imageUrl={animalOfTheDay.image_link}
+        />
+      ) : (
+        <AnimalOfTheDay data={animalOfTheDay} titel="Tages" imageUrl={black} />
+      )}
 
+      <DailyChallenge />
       {/* <AnimalRecognizer /> */}
+      <UseFullLinks />
+      {monthImageExists ? (
+        <AnimalOfTheDay
+          data={animalOfTheMonth}
+          titel="Monats"
+          imageUrl={animalOfTheMonth.image_link}
+        />
+      ) : (
+        <AnimalOfTheDay
+          data={animalOfTheMonth}
+          titel="Monats"
+          imageUrl={black}
+        />
+      )}
+      <RecentUploads data={lastImages} />
     </div>
   );
 }

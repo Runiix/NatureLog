@@ -13,11 +13,11 @@ export default function AnimalOfTheDay({
   const link = `/animalpage/${data.common_name}`;
 
   return (
-    <div className=" sm:w-1/3 relative top-20 sm:left-10 bg-gray-900 rounded-lg  hover:bg-gray-800 max-w-[30rem]">
+    <div className="  bg-gray-900 rounded-lg  hover:bg-gray-800 ">
       <Link href={link}>
         <div className="flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl px-4 py-2 bg-gray-900 bg-opacity-30  absolute w-full">
+            <h2 className="text-2xl px-4 py-2 bg-gray-900 bg-opacity-30 ">
               Tier des {titel}
             </h2>
             <Image

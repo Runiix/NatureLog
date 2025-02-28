@@ -8,7 +8,6 @@ export default async function addCollectionImage(formData: FormData) {
   const common_name = formData.get("common_name") as string;
   const file = formData.get("file") as File | null;
   const id = formData.get("id");
-
   if (!file) {
     return { success: false, message: "No file uploaded" };
   }
@@ -39,6 +38,19 @@ export default async function addCollectionImage(formData: FormData) {
     if (insertError) {
       console.error(insertError);
     }
+
+    const { error: lastImagesError } = await supabase
+      .from("lastimages")
+      .insert([
+        {
+          user_id: user.id,
+          image_url:
+            "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles" +
+            filePath,
+        },
+      ]);
+    if (lastImagesError)
+      console.log("ERROR INSERTING INTO LASTIMAGES", lastImagesError);
 
     return { success: true };
   } catch (error) {

@@ -16,7 +16,7 @@ export default function DailyChallenge() {
   }, []);
 
   return (
-    <div className="bg-gray-950 p-10 sm:w-1/3 rounded-lg flex flex-col gap-4 mt-20">
+    <div className="bg-gray-900 rounded-lg flex flex-col gap-4 items-center justify-center">
       <h2 className="text-2xl">Challenge des Tages</h2>
       <div>Fotografiere {dailyChallenge}</div>
     </div>
