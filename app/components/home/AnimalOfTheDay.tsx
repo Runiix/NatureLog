@@ -17,7 +17,7 @@ export default function AnimalOfTheDay({
       <Link href={link}>
         <div className="flex flex-col gap-4">
           <div>
-            <h2 className="text-2xl px-4 py-2 bg-gray-900 bg-opacity-30 ">
+            <h2 className="2xl:text-2xl px-4 py-2 bg-gray-900 bg-opacity-30 ">
               Tier des {titel}
             </h2>
             <Image
@@ -25,17 +25,17 @@ export default function AnimalOfTheDay({
               alt="Placeholder"
               width={300}
               height={200}
-              className="object-cover aspect-[4/3] w-full group-hover:opacity-90 rounded-t-lg "
+              className="object-cover aspect-[16/9] w-full group-hover:opacity-90 "
             />
           </div>
-          <div className="flex flex-col gap-2 mx-2 mb-2">
-            <div className=" gap-1 text-xl items-center">
+          <div className="flex items-end justify-between mx-2 mb-2">
+            <div className=" gap-1 sm:text-xl items-center">
               <h3>{data.common_name}</h3>
               <h3 className="text-slate-400"> {data.scientific_name}</h3>
             </div>
             <div className="">{data.description}</div>
             <div>
-              <div className="text-2xl flex gap-2">
+              <div className=" 2xl:text-xl flex gap-2">
                 <h3
                   className={
                     data.endangerment_status === "Nicht gefährdet"

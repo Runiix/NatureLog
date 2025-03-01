@@ -3,7 +3,7 @@ import React from "react";
 
 export default function UseFullLinks() {
   return (
-    <div className="bg-gray-900 rounded-lg flex flex-col items-center justify-center text-center gap-4 text-xl">
+    <div className="py-4 sm:py-0 bg-gray-900 rounded-lg flex flex-col items-center justify-center text-center gap-4 text-xl">
       <h2 className="text-2xl">Nützliche Webseiten:</h2>
       <ul className="space-y-4">
         <li className="hover:text-green-600 transition-all duration-300">
