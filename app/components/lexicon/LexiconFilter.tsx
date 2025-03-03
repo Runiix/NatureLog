@@ -70,7 +70,7 @@ export default function LexiconFilter() {
           {[
             "Säugetier",
             "Vogel",
-            "Amphhibie",
+            "Amphibie",
             "Reptil",
             "Insekt",
             "Arachnoid",
