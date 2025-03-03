@@ -49,7 +49,7 @@ export default function ProfileList() {
           value={query?.toString()}
           className=" z-0 bg-gray-900 border border-slate-100 hover:bg-green-600 hover:text-gray-950 hover:cursor-pointer p-3 px-5 rounded-md"
           type="text"
-          placeholder="Tier Suchen"
+          placeholder="Naturelogger Suchen"
           onChange={(e) => {
             handleSearch(e.target.value);
           }}

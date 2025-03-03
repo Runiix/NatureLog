@@ -34,7 +34,7 @@ export default function ImageSlider({ data }: any) {
   }, [slideIndex]);
 
   return (
-    <div className=" relative w-full ">
+    <div className=" relative w-full h-72">
       <div className="w-full h-full overflow-hidden flex">
         {data.map((slide: any) => (
           <Image

@@ -62,7 +62,7 @@ export default function LexiconFilter() {
         />
       </div>
       <div
-        className={`flex flex-col gap-7 left-0 sm:left-auto absolute bg-gray-900 mt-28 p-4 sm:p-10 transition-all duration-500 w-full sm:w-1/2 rounded-b-md border border-slate-400 shadow-lg shadow-black z-50 ${
+        className={`flex flex-col gap-7 left-0 sm:left-auto absolute bg-gray-900 mt-28 sm:mt-0 p-4 sm:p-10 transition-all duration-500 w-full sm:w-1/2 rounded-b-md border border-slate-400 shadow-lg shadow-black z-50 ${
           expandFilter ? "scale-100 opacity-100" : "scale-0 opacity-0"
         }`}
       >
@@ -142,7 +142,7 @@ export default function LexiconFilter() {
               className="text-zinc-900 bg-green-600  p-2 rounded-lg hover:bg-green-700 hover:text-slate-100 text-nowrap"
               onClick={handleSizeChange}
             >
-              Anwenden
+              Größe ändern
             </button>
           </div>
         </div>
