@@ -13,7 +13,7 @@ export default function AnimalOfTheDay({
   const link = `/animalpage/${data.common_name}`;
 
   return (
-    <div className="  bg-gray-900 rounded-lg  hover:bg-gray-800 ">
+    <div className="  bg-gray-900 rounded-lg  hover:bg-gray-800 h-1/3">
       <Link href={link}>
         <div className="flex flex-col gap-4">
           <div>
