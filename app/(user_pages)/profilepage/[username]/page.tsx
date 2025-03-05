@@ -30,10 +30,10 @@ const getTeam = async (supabase: SupabaseClient, userId: string) => {
     .eq("user_id", userId);
   if (error) console.error("Error fetching team", error);
   if (data && data.length < 1) {
-    return [];
+    return null;
   }
   if (data) return data;
-  return [];
+  return null;
 };
 const checkForProfilePic = async (supabase: SupabaseClient, user: User) => {
   const { data: listData, error: listError } = await supabase.storage
@@ -74,7 +74,9 @@ const getFavoriteAnimal = async (supabase: SupabaseClient, userId: string) => {
     .select("favorite_animal")
     .eq("user_id", userId);
   if (error) return "keins";
-  if (data[0].favorite_animal === null) return "keins";
+  if (data === undefined) return "keins";
+  if (!data) return "keins";
+  if (data.length === 0) return "keins";
   return data[0].favorite_animal;
 };
 
@@ -109,7 +111,7 @@ export default async function profilepage(params: any) {
               <ProfileInfos
                 user={user}
                 animalCount={animalCount}
-                teamIcon={teamLink[0].team_link}
+                teamIcon={teamLink ? teamLink[0].team_link : null}
                 favoriteAnimal={favoriteAnimal}
                 currUser={true}
               />
@@ -143,7 +145,7 @@ export default async function profilepage(params: any) {
               <ProfileInfos
                 user={paramUser}
                 animalCount={animalCount}
-                teamIcon={teamLink[0].team_link}
+                teamIcon={teamLink ? teamLink[0].team_link : null}
                 favoriteAnimal={favoriteAnimal}
                 currUser={false}
               />

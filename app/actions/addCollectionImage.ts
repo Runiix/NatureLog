@@ -38,7 +38,6 @@ export default async function addCollectionImage(formData: FormData) {
     if (insertError) {
       console.error(insertError);
     }
-
     const { error: lastImagesError } = await supabase
       .from("lastimages")
       .insert([
@@ -47,10 +46,11 @@ export default async function addCollectionImage(formData: FormData) {
           image_url:
             "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles" +
             filePath,
+          username: user.user_metadata.displayName,
         },
       ]);
     if (lastImagesError)
-      console.log("ERROR INSERTING INTO LASTIMAGES", lastImagesError);
+      console.error("ERROR INSERTING INTO LASTIMAGES", lastImagesError);
 
     return { success: true };
   } catch (error) {

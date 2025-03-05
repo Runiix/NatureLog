@@ -7,6 +7,7 @@ import { getUser } from "@/app/utils/data";
 import black from "@/app/assets/images/black.webp";
 import UseFullLinks from "@/app/components/home/UseFullLinks";
 import RecentUploads from "@/app/components/home/RecentUploads";
+import HomeGridItem from "@/app/components/home/HomeGridItem";
 
 const getRandomDayId = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase.from("animals").select("id");
@@ -126,34 +127,49 @@ export default async function homepage() {
   );
   const lastImages = await getLast10Images(supabase);
   return (
-    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 lg:grid-rows-2   gap-6 mx-6 pt-20 h-3/4 lg:max-h-[90vh]">
-      {dayImageExists ? (
-        <AnimalOfTheDay
-          data={animalOfTheDay}
-          titel="Tages"
-          imageUrl={animalOfTheDay.image_link}
-        />
-      ) : (
-        <AnimalOfTheDay data={animalOfTheDay} titel="Tages" imageUrl={black} />
-      )}
-
-      <DailyChallenge />
+    <div className="flex flex-wrap gap-6 mx-6 mt-12 sm:mt-20  items-center justify-center pb-6">
+      <HomeGridItem>
+        {dayImageExists ? (
+          <AnimalOfTheDay
+            data={animalOfTheDay}
+            titel="Tages"
+            imageUrl={animalOfTheDay.image_link}
+          />
+        ) : (
+          <AnimalOfTheDay
+            data={animalOfTheDay}
+            titel="Tages"
+            imageUrl={black}
+          />
+        )}
+      </HomeGridItem>
+      <HomeGridItem>
+        {monthImageExists ? (
+          <AnimalOfTheDay
+            data={animalOfTheMonth}
+            titel="Monats"
+            imageUrl={animalOfTheMonth.image_link}
+          />
+        ) : (
+          <AnimalOfTheDay
+            data={animalOfTheMonth}
+            titel="Monats"
+            imageUrl={black}
+          />
+        )}
+      </HomeGridItem>
+      <HomeGridItem>
+        {" "}
+        <DailyChallenge />
+      </HomeGridItem>
+      <HomeGridItem>
+        <UseFullLinks />
+      </HomeGridItem>
+      <HomeGridItem>
+        {" "}
+        <RecentUploads data={lastImages} />
+      </HomeGridItem>
       {/* <AnimalRecognizer /> */}
-      <UseFullLinks />
-      {monthImageExists ? (
-        <AnimalOfTheDay
-          data={animalOfTheMonth}
-          titel="Monats"
-          imageUrl={animalOfTheMonth.image_link}
-        />
-      ) : (
-        <AnimalOfTheDay
-          data={animalOfTheMonth}
-          titel="Monats"
-          imageUrl={black}
-        />
-      )}
-      <RecentUploads data={lastImages} />
     </div>
   );
 }

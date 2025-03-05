@@ -1,35 +1,54 @@
-import Link from "next/link";
 import React from "react";
 
-export default function UseFullLinks() {
+export default function UseFullaLinks() {
   return (
-    <div className="py-4 sm:py-0 bg-gray-900 rounded-lg flex flex-col items-center justify-center text-center gap-4 text-xl">
+    <div className="py-4 sm:py-0 flex flex-col items-center justify-center text-center gap-4 text-xl">
       <h2 className="text-2xl">Nützliche Webseiten:</h2>
       <ul className="space-y-4">
         <li className="hover:text-green-600 transition-all duration-300">
-          <Link href="www.ornitho.de">
+          <a
+            href="https://www.ornitho.de"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             <p>Ornitho</p>
-          </Link>{" "}
+          </a>{" "}
         </li>
         <li className="hover:text-green-600 transition-all duration-300">
-          <Link href="www.naturgucker.de">
+          <a
+            href="https://www.naturgucker.de"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             <p>Naturgucker</p>
-          </Link>{" "}
+          </a>{" "}
         </li>
         <li className="hover:text-green-600 transition-all duration-300">
-          <Link href="www.vogelmeldung.de">
+          <a
+            href="https://www.vogelmeldung.de"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             <p>Vogelmeldung</p>
-          </Link>{" "}
+          </a>{" "}
         </li>
         <li className="hover:text-green-600 transition-all duration-300">
-          <Link href="www.waarneming.nl">
+          <a
+            href="https://www.waarneming.nl"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             <p>Waarneming</p>
-          </Link>{" "}
+          </a>{" "}
         </li>
         <li className="hover:text-green-600 transition-all duration-300">
-          <Link href="www.ebird.org">
+          <a
+            href="https://www.ebird.org"
+            rel="noopener noreferrer"
+            target="_blank"
+          >
             <p>eBird</p>
-          </Link>{" "}
+          </a>{" "}
         </li>
       </ul>
     </div>

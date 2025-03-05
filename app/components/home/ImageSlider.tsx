@@ -4,6 +4,7 @@ import { useState, useEffect } from "react";
 import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function ImageSlider({ data }: any) {
   const [slideIndex, setSlideIndex] = useState(0);
@@ -34,12 +35,12 @@ export default function ImageSlider({ data }: any) {
   }, [slideIndex]);
 
   return (
-    <div className=" relative w-full h-72">
-      <div className="w-full h-full overflow-hidden flex">
+    <div className="relative overflow-hidden h-[85%] flex flex-col gap-3">
+      <div className=" overflow-hidden flex relative h-[90%]">
         {data.map((slide: any) => (
           <Image
             key={slide.id}
-            className=" object-cover translate-all duration-500 ease-in-out"
+            className=" object-cover h-full translate-all duration-500 ease-in-out aspect-video"
             src={slide.image_url}
             alt="Slide Image"
             width="600"
@@ -47,32 +48,38 @@ export default function ImageSlider({ data }: any) {
             style={{ translate: `${-100 * slideIndex}%` }}
           />
         ))}
+        <button
+          className="block absolute top-0 bottom-0 left-0 cursor-pointer p-4"
+          onClick={showPrevImage}
+        >
+          <ArrowBackIosIcon />
+        </button>
+        <button
+          className="block absolute top-0 bottom-0 right-0 cursor-pointer p-4"
+          onClick={showNextImage}
+        >
+          <ArrowForwardIosIcon />
+        </button>
+        <div className="flex gap-2 absolute bottom-2 z-50    transform translate-x-1/2">
+          {[...Array(data.length).keys()].map((index) => (
+            <button
+              key={index}
+              className={`p-2 rounded-full transition-all duration-500 ease-out  ${
+                slideIndex === index
+                  ? "bg-slate-200 w-8"
+                  : "bg-gray-900 bg-opacity-50"
+              }`}
+              onClick={() => setSlideIndex(index)}
+            />
+          ))}
+        </div>
       </div>
-      <button
-        className="block absolute top-0 bottom-0 left-0 cursor-pointer p-4"
-        onClick={showPrevImage}
+      <Link
+        href={`profilepage/${data[slideIndex].username}`}
+        className="hover:text-green-600 ml-4 decoration-solid underline transition-all duration-200 ease-in-out"
       >
-        <ArrowBackIosIcon />
-      </button>
-      <button
-        className="block absolute top-0 bottom-0 right-0 cursor-pointer p-4"
-        onClick={showNextImage}
-      >
-        <ArrowForwardIosIcon />
-      </button>
-      <div className="flex gap-1 absolute bottom-1 z-50 left-4">
-        {[...Array(data.length).keys()].map((index) => (
-          <button
-            key={index}
-            className={`p-2 rounded-full  ${
-              slideIndex === index
-                ? "bg-slate-200"
-                : "bg-gray-900 bg-opacity-50"
-            }`}
-            onClick={() => setSlideIndex(index)}
-          />
-        ))}
-      </div>
+        Von: {data[slideIndex].username}
+      </Link>
     </div>
   );
 }

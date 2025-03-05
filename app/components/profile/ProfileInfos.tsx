@@ -17,7 +17,7 @@ export default function ProfileInfos({
 }: {
   user: any;
   animalCount: number;
-  teamIcon: string;
+  teamIcon: string | null;
   favoriteAnimal: string;
   currUser: boolean;
 }) {
