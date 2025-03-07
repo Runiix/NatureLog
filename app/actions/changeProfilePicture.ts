@@ -5,7 +5,8 @@ import { createClient } from "@/utils/supabase/server";
 export default async function changeProfilePicture(formData: FormData) {
   const supabase = await createClient();
   const file = formData.get("file") as File;
-
+  const exists = formData.get("exists") as string;
+  console.log("Exists: ", exists);
   try {
     const {
       data: { user },
@@ -14,15 +15,26 @@ export default async function changeProfilePicture(formData: FormData) {
       throw new Error("User not authenticated for Photo upload!");
     }
     const filePath = `/${user.id}/ProfilePicture/ProfilePic.jpg`;
-
-    const { error: insertError } = await supabase.storage
-      .from("profiles")
-      .update(filePath, file, {
-        cacheControl: "3600",
-        upsert: true,
-      });
-    if (insertError) {
-      console.error(insertError);
+    if (exists === "true") {
+      const { error: updateError } = await supabase.storage
+        .from("profiles")
+        .update(filePath, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+      if (updateError) {
+        console.error(updateError);
+      }
+    } else {
+      const { error: insertError } = await supabase.storage
+        .from("profiles")
+        .upload(filePath, file, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+      if (insertError) {
+        console.error(insertError);
+      }
     }
     return { success: true };
   } catch (error) {

@@ -37,20 +37,18 @@ export default function ProfilePicture({
       };
 
       try {
-        if (file.size > 5 * 1024 * 1024) {
-          // If file is >5MB, compress
-          const compressedFile = await imageCompression(file, options);
-          const formData = new FormData();
-          formData.append("file", compressedFile);
+        const compressedFile = await imageCompression(file, options);
+        const formData = new FormData();
+        formData.append("file", compressedFile);
+        formData.append("exists", profilePicExists.toString());
 
-          const response = await changeProfilePicture(formData);
-          if (response) {
-            setProfilePictureUrl(
-              `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${userId}/ProfilePicture/ProfilePic.jpg?t=${new Date().getTime()}`
-            );
-            setProfilePicExists(true);
-            setLoading(false);
-          }
+        const response = await changeProfilePicture(formData);
+        if (response) {
+          setProfilePictureUrl(
+            `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${userId}/ProfilePicture/ProfilePic.jpg?t=${new Date().getTime()}`
+          );
+          setProfilePicExists(true);
+          setLoading(false);
         }
       } catch (error) {
         console.error("Compression failed:", error);

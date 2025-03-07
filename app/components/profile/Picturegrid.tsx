@@ -116,89 +116,92 @@ export default function PictureGrid({
   };
 
   return (
-    <div className="items-center justify-center grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-1 sm:gap-4 border-t-2 border-gray-950 pt-4">
-      {profileGrid &&
-        profileGrid.map((imageId: number, index: number) => (
-          <div key={profileGrid[index].id} className="relative">
+    <div>
+      <h2 className="text-xl">Lieblingsfotos</h2>
+      <div className="items-center justify-center grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-1 sm:gap-4 border-t-2 border-gray-950 pt-4">
+        {profileGrid &&
+          profileGrid.map((imageId: number, index: number) => (
+            <div key={profileGrid[index].id} className="relative">
+              <Image
+                unoptimized
+                src={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${user.id}/ProfileGrid/${profileGrid[index].name}`}
+                width={200}
+                height={100}
+                alt=""
+                className="rounded-lg object-cover hover:opacity-90 aspect-square cursor-pointer"
+                priority
+                onClick={() =>
+                  setImageModal(
+                    `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${user.id}/ProfileGrid/${profileGrid[index].name}`
+                  )
+                }
+              />
+              {currUser && (
+                <div className="flex items-center">
+                  <label
+                    className="group cursor-pointer"
+                    onClick={() =>
+                      setOldImageUrl(
+                        `${user.id}/ProfileGrid/${profileGrid[index].name}`
+                      )
+                    }
+                  >
+                    <Edit className="absolute bottom-4 right-4 hover:bg-gray-700 hover:bg-opacity-40 rounded-full hover:scale-125" />
+                    <input
+                      type="file"
+                      id="photo-upload"
+                      onChange={handleFileChange}
+                      className="hidden"
+                    />
+                  </label>
+                  <button
+                    className="group cursor-pointer"
+                    onClick={() =>
+                      handleFileDelete(
+                        `${user.id}/ProfileGrid/${profileGrid[index].name}`
+                      )
+                    }
+                  >
+                    <Delete className="absolute bottom-4 left-4 hover:bg-gray-700 hover:bg-opacity-40 rounded-full hover:scale-125" />
+                  </button>
+                </div>
+              )}
+            </div>
+          ))}
+        {!profileGridFull && currUser && (
+          <label className="group border-2 rounded-lg w-10 h-10 flex justify-center items-center cursor-pointer hover:bg-gray-800 hover:scale-110 p-16 ml-5">
+            <div className="text-xl">{profileGrid.length}/12</div>
+            <input
+              type="file"
+              id="photo-upload"
+              onChange={handleFileUpload}
+              className="hidden"
+            />
+          </label>
+        )}
+        {imageModal !== "" && (
+          <div
+            className="fixed top-0 left-0 w-full h-full z-10 bg-slate-950 bg-opacity-30 flex items-center justify-center"
+            onClick={() => setImageModal("")}
+          >
+            {" "}
             <Image
               unoptimized
-              src={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${user.id}/ProfileGrid/${profileGrid[index].name}`}
-              width={200}
-              height={100}
+              src={imageModal}
               alt=""
-              className="rounded-lg object-cover hover:opacity-90 aspect-square cursor-pointer"
-              priority
-              onClick={() =>
-                setImageModal(
-                  `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${user.id}/ProfileGrid/${profileGrid[index].name}`
-                )
-              }
+              width={1920}
+              height={1920}
+              className="relative m-auto z-20 sm:w-2/3 max-h-full object-contain"
             />
-            {currUser && (
-              <div className="flex items-center">
-                <label
-                  className="group cursor-pointer"
-                  onClick={() =>
-                    setOldImageUrl(
-                      `${user.id}/ProfileGrid/${profileGrid[index].name}`
-                    )
-                  }
-                >
-                  <Edit className="absolute bottom-4 right-4 hover:bg-gray-700 hover:bg-opacity-40 rounded-full hover:scale-125" />
-                  <input
-                    type="file"
-                    id="photo-upload"
-                    onChange={handleFileChange}
-                    className="hidden"
-                  />
-                </label>
-                <button
-                  className="group cursor-pointer"
-                  onClick={() =>
-                    handleFileDelete(
-                      `${user.id}/ProfileGrid/${profileGrid[index].name}`
-                    )
-                  }
-                >
-                  <Delete className="absolute bottom-4 left-4 hover:bg-gray-700 hover:bg-opacity-40 rounded-full hover:scale-125" />
-                </button>
-              </div>
-            )}
           </div>
-        ))}
-      {!profileGridFull && currUser && (
-        <label className="group border-2 rounded-lg w-10 h-10 flex justify-center items-center cursor-pointer hover:bg-gray-800 hover:scale-110 p-16 ml-5">
-          <div className="text-xl">{profileGrid.length}/12</div>
-          <input
-            type="file"
-            id="photo-upload"
-            onChange={handleFileUpload}
-            className="hidden"
-          />
-        </label>
-      )}
-      {imageModal !== "" && (
-        <div
-          className="fixed top-0 left-0 w-full h-full z-10 bg-slate-950 bg-opacity-30 flex items-center justify-center"
-          onClick={() => setImageModal("")}
-        >
-          {" "}
-          <Image
-            unoptimized
-            src={imageModal}
-            alt=""
-            width={1920}
-            height={1920}
-            className="relative m-auto z-20 sm:w-2/3 max-h-full object-contain"
-          />
-        </div>
-      )}
-      {loading && (
-        <div className="fixed top-0 left-0 w-full h-full z-10 bg-slate-950 bg-opacity-30 flex items-center justify-center">
-          Bild wird hochgeladen
-          <CircleLoader color="#16A34A" />
-        </div>
-      )}
+        )}
+        {loading && (
+          <div className="fixed top-0 left-0 w-full h-full z-10 bg-slate-950 bg-opacity-30 flex items-center justify-center">
+            Bild wird hochgeladen
+            <CircleLoader color="#16A34A" />
+          </div>
+        )}
+      </div>
     </div>
   );
 }
