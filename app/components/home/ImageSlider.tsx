@@ -9,10 +9,6 @@ import Link from "next/link";
 export default function ImageSlider({ data }: any) {
   const [slideIndex, setSlideIndex] = useState(0);
 
-  useEffect(() => {
-    console.log("Slide Index", slideIndex);
-  }, [slideIndex]);
-
   function showPrevImage() {
     setSlideIndex((index) => {
       if (index === 0) return data.length - 1;

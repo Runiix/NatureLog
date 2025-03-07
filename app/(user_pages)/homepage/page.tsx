@@ -8,6 +8,8 @@ import black from "@/app/assets/images/black.webp";
 import UseFullLinks from "@/app/components/home/UseFullLinks";
 import RecentUploads from "@/app/components/home/RecentUploads";
 import HomeGridItem from "@/app/components/home/HomeGridItem";
+import DailyQuiz from "@/app/components/home/DailyQuiz";
+import ImageSearch from "@/app/components/home/ImageSearch";
 
 const getRandomDayId = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase.from("animals").select("id");
@@ -24,6 +26,7 @@ const getRandomDayId = async (supabase: SupabaseClient) => {
   }
   return 1;
 };
+
 const getRandomMonthId = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase.from("animals").select("id");
   if (error) console.error("Fehler bei Abfrage der Tier ID", error);
@@ -38,6 +41,15 @@ const getRandomMonthId = async (supabase: SupabaseClient) => {
     return IdData[index];
   }
   return 1;
+};
+const getRandomIds = async (supabase: SupabaseClient) => {
+  const { data, error } = await supabase.from("animals").select("id");
+  if (error) console.error("Fehler bei Abfrage der Tier ID", error);
+  const IdData = data && data.map((animal: any) => animal.id);
+  if (IdData) {
+    return IdData.sort(() => 0.5 - Math.random()).slice(0, 4);
+  }
+  return [1, 2, 3, 4];
 };
 
 const getAnimalOfTheDay = async (supabase: SupabaseClient) => {
@@ -76,7 +88,25 @@ const getAnimalOfTheMonth = async (supabase: SupabaseClient) => {
     console.error("Error getting data from DB:", error);
   }
 };
-
+const getQuizAnimals = async (supabase: SupabaseClient) => {
+  const rand = await getRandomIds(supabase);
+  try {
+    if (rand !== null && rand !== undefined) {
+      const { data, error } = await supabase
+        .from("animals")
+        .select("*")
+        .in("id", rand);
+      if (error) console.error("Error getting Animal", error);
+      if (data) return data;
+    } else {
+      console.error("Rand is undefined or null");
+    }
+    return [];
+  } catch (error) {
+    console.error("Error getting data from DB:", error);
+    return [];
+  }
+};
 async function fileExists(
   supabase: SupabaseClient,
   imageLink: string,
@@ -105,26 +135,29 @@ async function getLast10Images(supabase: SupabaseClient) {
 
 export default async function homepage() {
   const supabase = await createClient();
+  const user = await getUser(supabase);
   const animalOfTheMonth = await getAnimalOfTheMonth(supabase);
-  const monthUrlparts = animalOfTheMonth.image_link.split(
+  const monthImageUrl = animalOfTheMonth.image_link.split(
     `${animalOfTheMonth.category}/`
-  );
-  const monthImageUrl = monthUrlparts[1];
+  )[1];
   const monthImageExists = await fileExists(
     supabase,
     monthImageUrl,
     animalOfTheMonth.category
   );
+
   const animalOfTheDay = await getAnimalOfTheDay(supabase);
-  const dayUrlparts = animalOfTheDay.image_link.split(
+  const dayImageUrl = animalOfTheDay.image_link.split(
     `${animalOfTheDay.category}/`
-  );
-  const dayImageUrl = dayUrlparts[1];
+  )[1];
   const dayImageExists = await fileExists(
     supabase,
     dayImageUrl,
     animalOfTheDay.category
   );
+
+  const quizAnimals = await getQuizAnimals(supabase);
+
   const lastImages = await getLast10Images(supabase);
   return (
     <div className="flex flex-wrap gap-6 mx-6 mt-12 sm:mt-20  items-center justify-center pb-6">
@@ -169,6 +202,14 @@ export default async function homepage() {
         {" "}
         <RecentUploads data={lastImages} />
       </HomeGridItem>
+      {/* <HomeGridItem>
+        {" "}
+        <DailyQuiz data={quizAnimals} />
+      </HomeGridItem>
+      <HomeGridItem>
+        {" "}
+        <ImageSearch user={user} />
+      </HomeGridItem> */}
       {/* <AnimalRecognizer /> */}
     </div>
   );

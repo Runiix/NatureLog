@@ -16,7 +16,7 @@ export default function DailyChallenge() {
   }, []);
 
   return (
-    <div className="py-4 sm:py-0 bg-gray-900 rounded-lg flex flex-col gap-4 items-center justify-center">
+    <div className="py-4 sm:py-0 flex flex-col gap-4 items-center justify-center">
       <h2 className="text-2xl">Challenge des Tages</h2>
       <div>Fotografiere {dailyChallenge}</div>
     </div>

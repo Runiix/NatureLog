@@ -131,11 +131,20 @@ export default function ProfileInfos({
         </Link>
         <div className="flex flex-col gap-2 items-center">
           <p>Lieblingstier</p>
-          <div
-            className={` ${currUser && "hover:text-green-600 cursor-pointer"}`}
-            onClick={() => setShowEditFavoriteAnimal((prev) => !prev)}
-          >
-            {favorite}
+          <div className="flex gap-2">
+            <div
+              className={` ${
+                currUser && "hover:text-green-600 cursor-pointer"
+              }`}
+            >
+              {favorite}
+            </div>
+            {currUser && (
+              <Edit
+                onClick={() => setShowEditFavoriteAnimal((prev) => !prev)}
+                className="cursor-pointer hover:text-green-600"
+              />
+            )}
           </div>
           {showEditFavoriteAnimal && currUser && (
             <div className="w-full h-full bg-gray-900 bg-opacity-90 absolute top-0 left-0 flex items-center justify-center z-40">
