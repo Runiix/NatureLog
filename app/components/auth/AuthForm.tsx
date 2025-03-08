@@ -101,7 +101,17 @@ export default function AuthForm() {
           <form className="flex flex-col items-center gap-5">
             {isNewUser && (
               <input
+                pattern="\S*"
                 id="username"
+                onInvalid={(e) => {
+                  (e.target as HTMLInputElement).setCustomValidity(
+                    "Benutzername darf keine Leerzeichen enthalten"
+                  );
+                  setIsSigningIn(false);
+                }}
+                onInput={(e) => {
+                  (e.target as HTMLInputElement).setCustomValidity("");
+                }}
                 name="username"
                 type="text"
                 placeholder="Benutzername"
@@ -113,6 +123,7 @@ export default function AuthForm() {
               id="email"
               name="email"
               type="email"
+              onInvalid={() => setIsSigningIn(false)}
               required
               placeholder="E-Mail"
               className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
@@ -189,6 +200,8 @@ export default function AuthForm() {
                 type="email"
                 placeholder="E-Mail"
                 value={emailData}
+                onInvalid={() => setIsSigningIn(false)}
+                required
                 onChange={handleEmailChange}
                 className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
               />
