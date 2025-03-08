@@ -107,14 +107,18 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
 
   return (
     <div className="flex flex-col items-center gap-4 p-6">
-      <h1 className="text-xl font-bold text-center">
+      <h1 className="sm:text-xl font-bold text-center">
         Tier mit Google Lens bestimmen
       </h1>
       <label className="text-center group">
         <div className="bg-green-600 text-gray-900  rounded-lg hover:bg-green-700 hover:text-slate-200 transition h-10 px-4 cursor-pointer flex items-center justify-center">
           1. Datei auswählen
         </div>
-        {selectedFile && <div>{selectedFile.name}</div>}
+        {selectedFile && (
+          <div className="truncate text-xs sm:text-base mt-2">
+            {selectedFile.name}
+          </div>
+        )}
         <input
           type="file"
           accept="image/*"
@@ -133,7 +137,7 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
         <img
           src={imageUrl}
           alt="Uploaded"
-          className="w-32 h-32 object-cover rounded-lg"
+          className=" h-24 sm:w-32 sm:h-32 object-cover rounded-lg"
         />
       )}
       <button
