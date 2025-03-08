@@ -205,11 +205,11 @@ export default async function homepage() {
       {/* <HomeGridItem>
         {" "}
         <DailyQuiz data={quizAnimals} />
-      </HomeGridItem>
+      </HomeGridItem> */}
       <HomeGridItem>
         {" "}
         <ImageSearch user={user} />
-      </HomeGridItem> */}
+      </HomeGridItem>
       {/* <AnimalRecognizer /> */}
     </div>
   );

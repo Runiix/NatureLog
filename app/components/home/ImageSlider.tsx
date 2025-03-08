@@ -56,7 +56,7 @@ export default function ImageSlider({ data }: any) {
         >
           <ArrowForwardIosIcon />
         </button>
-        <div className="flex gap-2 absolute bottom-2 z-50    transform translate-x-1/2">
+        <div className="flex gap-2 absolute bottom-2 z-50 left-1/2 transform -translate-x-1/2">
           {[...Array(data.length).keys()].map((index) => (
             <button
               key={index}

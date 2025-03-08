@@ -2,6 +2,7 @@
 
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
+import { i } from "motion/react-client";
 import { ReactEventHandler, useState } from "react";
 import { CircleLoader } from "react-spinners";
 
@@ -15,6 +16,7 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
     if (!e.target.files) return;
     const file = e.target.files[0];
     setSelectedFile(file);
+    console.log("Selected File:", file);
   };
 
   const uploadImage = async () => {
@@ -28,9 +30,46 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
     }
 
     setLoading(true);
-    const fileName = `${Date.now()}-${selectedFile.name}`;
-    const filePath = `/${user.id}/`;
 
+    let imageExists = false;
+    const fileName = `${Date.now()}-${selectedFile.name}`;
+    const filePath = `/${user.id}/${fileName}`;
+
+    const { data: listData, error: listError } = await supabase.storage
+      .from("imagesearch")
+      .list(user?.id, {
+        limit: 2,
+        offset: 0,
+        sortBy: { column: "name", order: "asc" },
+      });
+    if (listError) {
+      console.error(listError);
+    }
+
+    const filteredData = listData?.filter(
+      (item: any) => item.name !== ".emptyFolderPlaceholder"
+    );
+    if (filteredData?.length === 0) {
+      imageExists = false;
+    }
+    imageExists = true;
+    if (imageExists && filteredData) {
+      console.log(
+        "Filtered Data:",
+        filteredData[0],
+        user.id + "/" + filteredData[0].name
+      );
+
+      const { error } = await supabase.storage
+        .from("imagesearch")
+        .remove([user.id + "/" + filteredData[0].name]);
+      if (error) {
+        console.error("Upload error:", error.message);
+        alert("Failed to upload image.");
+        setLoading(false);
+        return;
+      }
+    }
     const { error } = await supabase.storage
       .from("imagesearch")
       .upload(filePath, selectedFile, {
@@ -39,7 +78,7 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
       });
     if (error) {
       console.error("Upload error:", error.message);
-      alert("Failed to upload image.");
+      alert("Hochladen des Bildes fehlgeschlagen.");
       setLoading(false);
       return;
     }
@@ -50,16 +89,17 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
     const publicUrl = publicUrlData.publicUrl;
 
     setImageUrl(publicUrl);
+    console.log("Public URL:", publicUrl);
     setLoading(false);
   };
 
   // Open Google Reverse Image Search
   const handleSearch = () => {
     if (!imageUrl) {
-      alert("No image URL found. Please upload an image first.");
+      alert("Bitte Zuerst ein Bild hochladen");
       return;
     }
-    const searchUrl = `https://www.google.com/searchbyimage?image_url=${encodeURIComponent(
+    const searchUrl = `https://lens.google.com/uploadbyurl?url=${encodeURIComponent(
       imageUrl
     )}`;
     window.open(searchUrl, "_blank");
@@ -68,33 +108,39 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
   return (
     <div className="flex flex-col items-center gap-4 p-6">
       <h1 className="text-xl font-bold text-center">
-        Tier mit der Google reverse image Search bestimmen
+        Tier mit Google Lens bestimmen
       </h1>
-      <input
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        className="border p-2 rounded"
-      />
+      <label className="text-center group">
+        <div className="bg-green-600 text-gray-900  rounded-lg hover:bg-green-700 hover:text-slate-200 transition h-10 px-4 cursor-pointer flex items-center justify-center">
+          1. Datei auswählen
+        </div>
+        {selectedFile && <div>{selectedFile.name}</div>}
+        <input
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          className="hidden"
+        />
+      </label>
       <button
         onClick={uploadImage}
         disabled={loading}
-        className="bg-green-600 text-gray-900 px-4 py-2 rounded hover:bg-green-700 hover:text-slate-200 transition"
+        className="bg-green-600 text-gray-900 px-4 rounded-lg hover:bg-green-700 hover:text-slate-200 transition h-12"
       >
-        {loading ? <CircleLoader /> : "Bild hochladen"}
+        {loading ? <CircleLoader /> : " 2. Bild hochladen"}
       </button>
       {imageUrl && (
         <img
           src={imageUrl}
           alt="Uploaded"
-          className="w-32 h-32 object-cover mt-2 rounded"
+          className="w-32 h-32 object-cover rounded-lg"
         />
       )}
       <button
         onClick={handleSearch}
-        className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600 transition"
+        className="bg-green-600 text-gray-900 px-4 rounded-lg hover:bg-green-700 hover:text-slate-200 transition h-12"
       >
-        Bild auf Google Suchen
+        3. Bild auf Google Suchen
       </button>
     </div>
   );
