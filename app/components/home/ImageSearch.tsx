@@ -45,15 +45,15 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
     if (listError) {
       console.error(listError);
     }
-
     const filteredData = listData?.filter(
       (item: any) => item.name !== ".emptyFolderPlaceholder"
     );
+    console.log("Filtered Data:", filteredData);
     if (filteredData?.length === 0) {
       imageExists = false;
     }
     imageExists = true;
-    if (imageExists && filteredData) {
+    if (imageExists && filteredData && filteredData.length > 0) {
       console.log(
         "Filtered Data:",
         filteredData[0],
@@ -125,9 +125,9 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
       <button
         onClick={uploadImage}
         disabled={loading}
-        className="bg-green-600 text-gray-900 px-4 rounded-lg hover:bg-green-700 hover:text-slate-200 transition h-12"
+        className="bg-green-600 text-gray-900 px-4 rounded-lg hover:bg-green-700 hover:text-slate-200 transition h-12 "
       >
-        {loading ? <CircleLoader /> : " 2. Bild hochladen"}
+        {loading ? <CircleLoader size={20} /> : " 2. Bild hochladen"}
       </button>
       {imageUrl && (
         <img
