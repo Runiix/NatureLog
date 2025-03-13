@@ -5,15 +5,15 @@ import { getUser } from "@/app/utils/data";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
 
-export const getFollowing = async (
-  supabase: SupabaseClient,
-  userId: string
-) => {
+const getFollowing = async (supabase: SupabaseClient, userId: string) => {
   const { data, error } = await supabase
     .from("follows")
     .select("following_id")
     .eq("follower_id", userId);
-  if (error) throw error;
+  if (error) {
+    console.error(error);
+    return [];
+  }
   const following = data.map((f) => f.following_id);
   return following;
 };
