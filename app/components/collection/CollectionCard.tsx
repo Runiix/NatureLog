@@ -90,7 +90,7 @@ export default function CollectionCard({
 
   return (
     <div>
-      <div className="flex flex-col w-44 sm:w-80 bg-gray-900 rounded-lg">
+      <div className="flex flex-col w-44 sm:w-80 bg-gray-900 rounded-lg shadow-md shadow-gray-800">
         {imageExists ? (
           <div className="group relative flex items-end justify-end cursor-pointer">
             <Image
@@ -171,18 +171,19 @@ export default function CollectionCard({
       {imageModal && (
         <div className="fixed top-0 left-0 w-screen h-screen bg-gray-950 bg-opacity-50 z-40">
           <div
-            className=" top-0 left-0 w-full xl:w-5/6 mx-auto h-5/6 z-50  bg-opacity-30 flex items-center justify-center"
+            className=" top-0 left-0 w-full xl:w-5/6 mx-auto h-5/6 z-50  bg-opacity-30 flex items-center justify-center relative"
             onClick={() => setImageModal((prev) => !prev)}
           >
-            {" "}
-            <Image
-              src={src}
-              alt=""
-              width={1920}
-              height={1080}
-              className="relative m-auto z-20"
-              unoptimized
-            />
+            <div className="relative flex items-center justify-center w-screen h-screen">
+              <Image
+                src={src}
+                alt=""
+                width={800}
+                height={800}
+                className="max-w-full max-h-full object-contain"
+                unoptimized
+              />
+            </div>
           </div>
         </div>
       )}

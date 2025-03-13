@@ -35,25 +35,15 @@ const getTeam = async (supabase: SupabaseClient, userId: string) => {
   if (data) return data;
   return null;
 };
-const checkForProfilePic = async (supabase: SupabaseClient, user: User) => {
-  const { data: listData, error: listError } = await supabase.storage
+const checkForProfilePic = async (supabase: SupabaseClient, userId: string) => {
+  const { data: listData, error: listError } = await supabase
     .from("profiles")
-    .list(user?.id + "/ProfilePicture/", {
-      limit: 2,
-      offset: 0,
-      sortBy: { column: "name", order: "asc" },
-    });
-  if (listError) {
-    console.error(listError);
-    return false;
+    .select("profile_picture")
+    .eq("user_id", userId);
+  if (listError) console.error("Error fetching profile picture", listError);
+  if (listData && listData.length > 0) {
+    return listData[0].profile_picture;
   }
-  const filteredData = listData.filter(
-    (item: any) => item.name !== ".emptyFolderPlaceholder"
-  );
-  if (filteredData.length === 0) {
-    return false;
-  }
-  return true;
 };
 
 const getProfilePictureUrl = async (
@@ -90,7 +80,7 @@ export default async function profilepage(params: any) {
   if (user && user.id === paramUser.id) {
     const [profilePic, favoriteAnimal, profilePicUrl, animalCount, teamLink] =
       await Promise.all([
-        checkForProfilePic(supabase, user),
+        checkForProfilePic(supabase, user.id),
         getFavoriteAnimal(supabase, user.id),
         getProfilePictureUrl(supabase, user.id),
         getAnimalCount(supabase, user.id),
@@ -124,7 +114,7 @@ export default async function profilepage(params: any) {
   } else {
     const [profilePic, favoriteAnimal, profilePicUrl, animalCount, teamLink] =
       await Promise.all([
-        checkForProfilePic(supabase, paramUser),
+        checkForProfilePic(supabase, paramUser.id),
         getFavoriteAnimal(supabase, paramUser.id),
         getProfilePictureUrl(supabase, paramUser.id),
         getAnimalCount(supabase, paramUser.id),

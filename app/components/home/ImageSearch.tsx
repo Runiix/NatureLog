@@ -2,8 +2,7 @@
 
 import { createClient } from "@/utils/supabase/client";
 import { User } from "@supabase/supabase-js";
-import { i } from "motion/react-client";
-import { ReactEventHandler, useState } from "react";
+import { useState } from "react";
 import { CircleLoader } from "react-spinners";
 
 export default function ReverseImageSearch({ user }: { user: User | null }) {

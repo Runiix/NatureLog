@@ -77,7 +77,7 @@ export default function PictureGrid({
     const file = e.target.files[0];
     if (file) {
       const options = {
-        maxSizeMB: 0.4,
+        maxSizeMB: 0.2,
         useWebWorker: true,
       };
       console.log(`originalFile size ${file.size / 1024 / 1024} MB`);

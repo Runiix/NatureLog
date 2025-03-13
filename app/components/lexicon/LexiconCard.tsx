@@ -38,50 +38,51 @@ export default function LexiconCard({
   const link = `/animalpage/${common_name}`;
 
   return (
-    <div className="group">
-      <Link href={link}>
-        <div className="flex flex-col w-44 sm:w-80 bg-gray-900 rounded-lg">
-          {animalImageExists ? (
-            <div>
-              <Image
-                src={imageUrl}
-                alt="Placeholder"
-                width={300}
-                height={200}
-                priority
-                className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-90 "
-              />
-            </div>
-          ) : (
+    <Link
+      href={link}
+      className="flex flex-col w-44 sm:w-80 bg-gray-900 rounded-lg group shadow-md shadow-gray-800"
+    >
+      <div>
+        {animalImageExists ? (
+          <div>
             <Image
-              src={black}
+              src={imageUrl}
               alt="Placeholder"
-              width={3}
-              height={2}
+              width={300}
+              height={200}
               priority
-              className="object-cover w-full  rounded-t-lg hover:opacity-90 h-32 sm:h-48"
+              className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-90 "
             />
-          )}
-
-          <div className=" p-4 w-full flex justify-between items-center">
-            <div>
-              <h2 className="text-xs sm:text-2xl">{common_name}</h2>
-              <h3 className="text-[0.5rem] sm:text-sm">
-                {sortBy === "population_estimate"
-                  ? population_estimate
-                  : sortBy === "size_from"
-                  ? `${size_from} - ${size_to} cm`
-                  : sortBy === "endangerment_status"
-                  ? endangerment_status
-                  : sortBy === ""
-                  ? scientific_name
-                  : scientific_name}
-              </h3>
-            </div>
-            <FavoriteButton user={user} id={id} spottedList={spottedList} />
           </div>
+        ) : (
+          <Image
+            src={black}
+            alt="Placeholder"
+            width={3}
+            height={2}
+            priority
+            className="object-cover w-full  rounded-t-lg hover:opacity-90 h-32 sm:h-48"
+          />
+        )}
+
+        <div className=" p-4 w-full flex justify-between items-center">
+          <div>
+            <h2 className="text-xs sm:text-2xl">{common_name}</h2>
+            <h3 className="text-[0.5rem] sm:text-sm">
+              {sortBy === "population_estimate"
+                ? population_estimate
+                : sortBy === "size_from"
+                ? `${size_from} - ${size_to} cm`
+                : sortBy === "endangerment_status"
+                ? endangerment_status
+                : sortBy === ""
+                ? scientific_name
+                : scientific_name}
+            </h3>
+          </div>
+          <FavoriteButton user={user} id={id} spottedList={spottedList} />
         </div>
-      </Link>
-    </div>
+      </div>
+    </Link>
   );
 }

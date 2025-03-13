@@ -35,6 +35,13 @@ export default async function changeProfilePicture(formData: FormData) {
       if (insertError) {
         console.error(insertError);
       }
+      const { error: profileError } = await supabase
+        .from("profiles")
+        .update({ profile_picture: true })
+        .eq("user_id", user.id);
+      if (profileError) {
+        console.error(profileError);
+      }
     }
     return { success: true };
   } catch (error) {

@@ -118,11 +118,11 @@ export default async function collectionpage(params: any) {
       <div>
         <Link
           href={`/profilepage/${paramUser.display_name}`}
-          className="fixed top-20 left-5 bg-green-600 rounded-lg p-2 text-gray-900 hover:bg-green-700"
+          className="text-xs sm:text-base absolute top-12 sm:top-20 left-5 bg-green-600 rounded-lg p-1 sm:p-2 text-gray-900 hover:bg-green-700"
         >
           ZUM PROFIL
         </Link>
-        <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-24 mb-16">
+        <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-16">
           Sammlung{" "}
         </h2>
         <div className="w-full flex items-center justify-center">
