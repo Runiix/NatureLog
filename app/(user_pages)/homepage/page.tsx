@@ -8,7 +8,7 @@ import black from "@/app/assets/images/black.webp";
 import UseFullLinks from "@/app/components/home/UseFullLinks";
 import RecentUploads from "@/app/components/home/RecentUploads";
 import HomeGridItem from "@/app/components/home/HomeGridItem";
-import DailyQuiz from "@/app/components/home/DailyQuiz";
+import AnimalQuiz from "@/app/components/home/AnimalQuiz";
 import ImageSearch from "@/app/components/home/ImageSearch";
 
 const getRandomDayId = async (supabase: SupabaseClient) => {
@@ -41,15 +41,6 @@ const getRandomMonthId = async (supabase: SupabaseClient) => {
     return IdData[index];
   }
   return 1;
-};
-const getRandomIds = async (supabase: SupabaseClient) => {
-  const { data, error } = await supabase.from("animals").select("id");
-  if (error) console.error("Fehler bei Abfrage der Tier ID", error);
-  const IdData = data && data.map((animal: any) => animal.id);
-  if (IdData) {
-    return IdData.sort(() => 0.5 - Math.random()).slice(0, 4);
-  }
-  return [1, 2, 3, 4];
 };
 
 const getAnimalOfTheDay = async (supabase: SupabaseClient) => {
@@ -88,25 +79,7 @@ const getAnimalOfTheMonth = async (supabase: SupabaseClient) => {
     console.error("Error getting data from DB:", error);
   }
 };
-const getQuizAnimals = async (supabase: SupabaseClient) => {
-  const rand = await getRandomIds(supabase);
-  try {
-    if (rand !== null && rand !== undefined) {
-      const { data, error } = await supabase
-        .from("animals")
-        .select("*")
-        .in("id", rand);
-      if (error) console.error("Error getting Animal", error);
-      if (data) return data;
-    } else {
-      console.error("Rand is undefined or null");
-    }
-    return [];
-  } catch (error) {
-    console.error("Error getting data from DB:", error);
-    return [];
-  }
-};
+
 async function fileExists(
   supabase: SupabaseClient,
   imageLink: string,
@@ -156,8 +129,6 @@ export default async function homepage() {
     animalOfTheDay.category
   );
 
-  const quizAnimals = await getQuizAnimals(supabase);
-
   const lastImages = await getLast10Images(supabase);
   return (
     <div className="flex flex-wrap gap-6 mx-6 mt-12 sm:mt-20  items-center justify-center pb-6">
@@ -202,10 +173,10 @@ export default async function homepage() {
         {" "}
         <RecentUploads data={lastImages} />
       </HomeGridItem>
-      {/* <HomeGridItem>
+      <HomeGridItem>
         {" "}
-        <DailyQuiz data={quizAnimals} />
-      </HomeGridItem> */}
+        <AnimalQuiz />
+      </HomeGridItem>
       <HomeGridItem>
         {" "}
         <ImageSearch user={user} />

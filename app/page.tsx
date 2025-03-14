@@ -7,6 +7,7 @@ import LandingInfo from "./components/landing/LandingInfo";
 import Lexikon from "./assets/images/Lexikon.png";
 import Sammlung from "./assets/images/Sammlung.png";
 import Profil from "./assets/images/Profil.png";
+import Community from "./assets/images/community.png";
 import Footer from "./components/general/Footer";
 import { getUser } from "@/app/utils/data";
 
@@ -31,6 +32,12 @@ export default async function page() {
       position: "left" as "right" | "left",
       titel: "Das Profil",
       text: "Lade ein Profilblid hoch, wähle ein Team aus und lade deine Liblingsfotos hoch",
+    },
+    {
+      src: Community,
+      position: "right" as "right" | "left",
+      titel: "Interagiere mit der Community",
+      text: "Sieh die an welche Arten andere bereits gesichtet haben und entdecke ihre Profile",
     },
   ];
 

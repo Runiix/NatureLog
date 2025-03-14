@@ -13,6 +13,8 @@ export default function AuthForm() {
   const [emailData, setEmailData] = useState("");
   const [loginError, setLoginError] = useState(false);
   const [validationError, setValidationError] = useState(false);
+  const [usernameError, setUsernameError] = useState(false);
+  const [regsisterSuccess, setRegisterSuccess] = useState(false);
   const supabase = createClient();
 
   const sendResetPassword = async () => {
@@ -35,7 +37,9 @@ export default function AuthForm() {
 
   let signInMessage = "Anmelden";
 
-  if (isSigningIn) {
+  if (isSigningIn && isNewUser) {
+    signInMessage = "Die Registirerung läuft";
+  } else if (isSigningIn) {
     signInMessage = "Sie werden angemeldet";
   } else if (isNewUser) {
     signInMessage = "Registrieren";
@@ -54,8 +58,10 @@ export default function AuthForm() {
   };
 
   const handleSignUp = async (formData: FormData) => {
-    const { validationError } = await signup(formData);
+    const { validationError, usernameError, success } = await signup(formData);
     if (validationError) setValidationError(true);
+    if (usernameError) setUsernameError(true);
+    if (success) setRegisterSuccess(true);
     setIsSigningIn(false);
   };
   const handleFormChangeToLogin = () => {
@@ -96,6 +102,17 @@ export default function AuthForm() {
                   <li>mindestens 1 Sonderzeichen</li>
                 </ul>
               </div>
+            )}
+            {usernameError && (
+              <h2 className="text-red-500">
+                Der Benutzername ist bereits vergeben!
+              </h2>
+            )}
+            {regsisterSuccess && (
+              <h2 className="text-green-600 bg-gray-900 bg-opacity-70 p-1 rounded-lg">
+                Eine E-Mail zur Bestätigung Ihres Accounts wurde an die von
+                Ihnen angegeben E-Mail Adresse gesendet!
+              </h2>
             )}
           </div>
           <form className="flex flex-col items-center gap-5">

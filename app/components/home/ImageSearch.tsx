@@ -110,7 +110,7 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
         Tier mit Google Lens bestimmen
       </h1>
       <label className="text-center group">
-        <div className="bg-green-600 text-gray-900  rounded-lg hover:bg-green-700 hover:text-slate-200 transition h-10 px-4 cursor-pointer flex items-center justify-center">
+        <div className="bg-green-600   rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-10 px-4 cursor-pointer flex items-center justify-center">
           1. Datei auswählen
         </div>
         {selectedFile && (
@@ -128,7 +128,7 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
       <button
         onClick={uploadImage}
         disabled={loading}
-        className="bg-green-600 text-gray-900 px-4 rounded-lg hover:bg-green-700 hover:text-slate-200 transition h-12 "
+        className="bg-green-600 px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12 "
       >
         {loading ? <CircleLoader size={20} /> : " 2. Bild hochladen"}
       </button>
@@ -141,7 +141,7 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
       )}
       <button
         onClick={handleSearch}
-        className="bg-green-600 text-gray-900 px-4 rounded-lg hover:bg-green-700 hover:text-slate-200 transition h-12"
+        className="bg-green-600  px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12"
       >
         3. Bild auf Google Suchen
       </button>
