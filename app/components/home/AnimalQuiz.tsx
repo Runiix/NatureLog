@@ -38,9 +38,10 @@ export default function AnimalQuiz() {
     const getQuizData = async () => {
       const data = await getQuizAnimals();
       if (data) setQuizAnimals(data);
+      const randomValue = Math.floor(Math.random() * 4);
+      setRandomIndex(randomValue);
     };
-    const randomValue = Math.floor(Math.random() * 4);
-    setRandomIndex(randomValue);
+
     getQuizData();
   }, [nextAnimalSwitch]);
 
