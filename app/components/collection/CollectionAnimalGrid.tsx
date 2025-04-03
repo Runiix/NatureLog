@@ -33,7 +33,7 @@ export default function CollectionAnimalGrid({
   const { ref, inView } = useInView();
   const [genus, setGenus] = useState<string>("all");
   const [animalItems, setAnimalItems] = useState<any>([]);
-  const regex = /[äöüß ]/g;
+  const regex = /[äöüß\s]/g;
 
   useEffect(() => {
     setGenus(searchParams.get("genus") || "all");

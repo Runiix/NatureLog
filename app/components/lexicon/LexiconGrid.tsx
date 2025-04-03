@@ -29,7 +29,7 @@ export default function LexiconGrid({
   const [sortOrder, setSortOrder] = useState("ascending");
   const [animals, setAnimals] = useState<any>([]);
   const { ref, inView } = useInView();
-  const regex = /[äöüß ]/g;
+  const regex = /[äöüß\s]/g;
 
   useEffect(() => {
     const sortBy = searchParams.get("sortBy") || null;
