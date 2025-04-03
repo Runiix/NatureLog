@@ -130,7 +130,7 @@ export default function LexiconGrid({
               user={user}
               spottedList={spottedList}
               animalImageExists={animalImageList.includes(
-                animal.common_name.replace(regex, "_") + ".jpg"
+                animal.common_name.replace(regex, "_") + ".webp"
               )}
             />
           ))}
