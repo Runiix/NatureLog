@@ -99,7 +99,8 @@ export default function CollectionCard({
               width={300}
               height={200}
               priority
-              className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-80 "
+              className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-80   transition-opacity duration-[1s] opacity-0"
+              onLoadingComplete={(image) => image.classList.remove("opacity-0")}
               onError={handleError}
               onClick={() => setImageModal((prev) => !prev)}
               unoptimized

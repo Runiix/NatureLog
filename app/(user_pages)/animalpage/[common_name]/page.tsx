@@ -3,6 +3,7 @@ import { Height, Landscape } from "@mui/icons-material";
 import { createClient } from "@/utils/supabase/server";
 import FavoriteButton from "@/app/components/general/FavoriteButton";
 import { SupabaseClient, User } from "@supabase/supabase-js";
+import AnimalBanner from "@/app/components/animals/AnimalBanner";
 
 const getUser = async (supabase: SupabaseClient) => {
   const {
@@ -61,14 +62,7 @@ export default async function AnimalPage(params: any) {
     <div className="bg-gray-200 ">
       <div className="h-screen flex flex-col items-center w-full">
         <div className="absolute w-full h-full object-cover ">
-          <Image
-            src={animalData.image_link}
-            alt="animal Banner"
-            width={1200}
-            height={800}
-            className="absolute w-full h-1/2 sm:h-full object-cover"
-            priority
-          />
+          {animalData && <AnimalBanner image={animalData.image_link} />}
           <div className="absolute w-full h-1/2 object-cover top-1/2 m-auto bg-gradient-to-t from-gray-200/100 via-gray-200/0 to-gray-200/0"></div>
           <FavoriteButton
             user={user}

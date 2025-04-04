@@ -51,7 +51,8 @@ export default function LexiconCard({
               width={300}
               height={200}
               priority
-              className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-90 "
+              className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-90  transition-opacity duration-[2s] opacity-0"
+              onLoadingComplete={(image) => image.classList.remove("opacity-0")}
             />
           </div>
         ) : (
