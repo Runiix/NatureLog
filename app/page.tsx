@@ -31,7 +31,7 @@ export default async function page() {
       src: Profil,
       position: "left" as "right" | "left",
       titel: "Das Profil",
-      text: "Lade ein Profilblid hoch, wähle ein Team aus und lade deine Liblingsfotos hoch",
+      text: "Lade ein Profilblid hoch, wähle ein Team aus und lade deine Lieblingsfotos hoch",
     },
     {
       src: Community,
@@ -62,8 +62,8 @@ export default async function page() {
         </div>
         <div className="flex flex-col items-center gap-4">
           <p className="text-center mx-10 sm:mx-20 text-xs sm:text-base">
-            Melde dich an, um deine Naturbeobachtungen deine Naturbeobachtungen
-            zu organisieren und mit Anderen zu teilen
+            Melde dich an, um deine Naturbeobachtungen zu organisieren und mit
+            Anderen zu teilen
           </p>
           <Link
             href="/loginpage"
