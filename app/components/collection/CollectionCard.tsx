@@ -59,8 +59,8 @@ export default function CollectionCard({
     const file = e.target.files[0];
     if (file) {
       const options = {
-        maxSizeMB: 0.2,
-        maxWidthOrHeight: 1920,
+        maxSizeMB: 0.02,
+        maxWidthOrHeight: 500,
         useWebWorker: true,
       };
       console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
