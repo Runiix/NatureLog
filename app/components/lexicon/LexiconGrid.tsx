@@ -126,7 +126,7 @@ export default function LexiconGrid({
               size_from={animal.size_from}
               size_to={animal.size_to}
               sortBy={sortBy}
-              imageUrl={animal.image_link}
+              imageUrl={animal.lexicon_link}
               user={user}
               spottedList={spottedList}
               animalImageExists={animalImageList.includes(
