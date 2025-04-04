@@ -19,25 +19,25 @@ export default async function page() {
       src: Lexikon,
       position: "left" as "right" | "left",
       titel: "Das Lexikon",
-      text: "Entdecke unsere heimische Tierwelt - durch Filter und die Suchfunktion ganz einfach",
+      text: "Entdecke unsere heimische Tierwelt - durch Filter und die Suchfunktion ganz einfach.",
     },
     {
       src: Sammlung,
       position: "right" as "right" | "left",
       titel: "Die Sammlung",
-      text: "Tracke deine Sichtungen und lade dein Lieblingsfoto für jede Art hoch",
+      text: "Tracke deine Sichtungen und lade dein Lieblingsfoto für jede Art hoch.",
     },
     {
       src: Profil,
       position: "left" as "right" | "left",
       titel: "Das Profil",
-      text: "Lade ein Profilblid hoch, wähle ein Team aus und lade deine Lieblingsfotos hoch",
+      text: "Lade ein Profilblid hoch, wähle ein Team aus und lade deine Lieblingsfotos hoch.",
     },
     {
       src: Community,
       position: "right" as "right" | "left",
       titel: "Interagiere mit der Community",
-      text: "Sieh die an welche Arten andere bereits gesichtet haben und entdecke ihre Profile",
+      text: "Sieh dir an, welche Arten andere bereits gesichtet haben, und entdecke ihre Profile.",
     },
   ];
 

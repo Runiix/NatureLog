@@ -32,49 +32,29 @@ export default function LandingInfo({
 
     return () => observer.disconnect();
   }, []);
-  if (position === "right") {
-    return (
-      <div
-        className={`transition-all duration-700 ease-in-out transform flex items-center justify-around w-full p-20 gap-10 border-b-2 border-gray-900 ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-20"
-        }`}
-        ref={ref}
-      >
-        {" "}
-        <div className="">
-          <h2 className="text-xl sm:text-3xl  text-gray-900">{title} </h2>
-          <p className="text-xs sm:text-base text-gray-800">{text}</p>
-        </div>
-        <Image
-          src={src}
-          alt=""
-          width={500}
-          height={500}
-          className="rounded-2xl w-1/2  object-cover"
-        />
+  return (
+    <div
+      className={`transition-all duration-700 ease-in-out transform  items-center justify-around w-full px-4 sm:py-20 py-12 gap-10 border-b-2 border-gray-900 ${
+        isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-20"
+      } ${
+        position === "right"
+          ? "flex flex-col sm:flex-row"
+          : "flex flex-col sm:flex-row-reverse"
+      }`}
+      ref={ref}
+    >
+      {" "}
+      <div className="">
+        <h2 className="text-xl sm:text-3xl  text-gray-900">{title} </h2>
+        <p className="text-xs sm:text-base text-gray-800">{text}</p>
       </div>
-    );
-  } else {
-    return (
-      <div
-        className={`transition-all duration-700 ease-in-out transform flex items-center justify-around w-full p-20 gap-10 border-b-2 border-gray-900 ${
-          isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-20"
-        }`}
-        ref={ref}
-      >
-        {" "}
-        <Image
-          src={src}
-          alt=""
-          width={500}
-          height={500}
-          className="rounded-2xl w-1/2  object-cover"
-        />
-        <div className="">
-          <h2 className="text-xl sm:text-3xl  text-gray-900">{title} </h2>
-          <p className="text-xs sm:text-base text-gray-800">{text}</p>
-        </div>
-      </div>
-    );
-  }
+      <Image
+        src={src}
+        alt=""
+        width={500}
+        height={500}
+        className="rounded-2xl sm:w-1/2  object-cover"
+      />
+    </div>
+  );
 }
