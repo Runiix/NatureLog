@@ -32,14 +32,15 @@ export default function ImageSlider({ data }: any) {
 
   return (
     <div className="relative overflow-hidden h-[85%] flex flex-col gap-3">
-      <div className=" overflow-hidden flex relative h-[90%]">
+      <div className=" overflow-hidden flex relative ">
         {data.map((slide: any) => (
           <Image
             key={slide.id}
-            className=" object-cover h-full translate-all duration-500 ease-in-out aspect-video"
+            className=" object-cover translate-all duration-500 ease-in-out "
             src={slide.image_url}
             alt="Slide Image"
-            width="600"
+            layout="responsive"
+            width="500"
             height="200"
             style={{ translate: `${-100 * slideIndex}%` }}
           />

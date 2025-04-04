@@ -131,7 +131,7 @@ export default async function homepage() {
 
   const lastImages = await getLast10Images(supabase);
   return (
-    <div className="flex flex-wrap gap-6 mx-6 mt-12 sm:mt-20  items-center justify-center pb-6">
+    <div className="flex flex-wrap gap-6 mx-2  sm:mx-6 mt-12 sm:mt-20  items-center justify-center pb-6">
       <HomeGridItem>
         {dayImageExists ? (
           <AnimalOfTheDay

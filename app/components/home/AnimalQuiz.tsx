@@ -52,26 +52,19 @@ export default function AnimalQuiz() {
           src={quizAnimals[randomIndex].image_link}
           alt={quizAnimals[randomIndex].scientific_name}
           width="300"
-          height="200"
+          height="100"
           className="w-full aspect-video mb-2 rounded-t-lg"
         />
       ) : (
-        <Image
-          src={black}
-          alt="QuizImage"
-          width="300"
-          height="200"
-          className="w-full aspect-video mb-2 rounded-t-lg"
-        />
+        <CircleLoader />
       )}
-
       {easyQuiz ? (
         <div className="grid grid-cols-2 grid-rows-2 gap-2 mb-2">
           {quizAnimals ? (
             quizAnimals.map((animal: any, index: number) => (
               <button
                 key={animal.id}
-                className={`flex items-center gap-1  hover:border-slate-400 border-2 w-44 mx-auto px-1 py-2 rounded-lg group hover:bg-gray-800 transition-all duration-200 ${
+                className={`flex items-center gap-1  hover:border-slate-400 border-2 w-32 sm:w-44  mx-auto px-1 py-2 rounded-lg group hover:bg-gray-800 transition-all duration-200 ${
                   answer !== 0 &&
                   animal.id === answer &&
                   answer === quizAnimals[randomIndex].id
@@ -96,7 +89,7 @@ export default function AnimalQuiz() {
                   answer !== quizAnimals[randomIndex].id && (
                     <Cancel className="bg-red-600 w-6 h-6 rounded-full min-w-6" />
                   )}
-                <p className="text-sm">{animal.common_name}</p>
+                <p className="text-xs overflow-hidden">{animal.common_name}</p>
               </button>
             ))
           ) : (
@@ -118,7 +111,7 @@ export default function AnimalQuiz() {
           />
 
           {rightTextAnswer && (
-            <div className="absolute right-6 bottom-4">
+            <div className="absolute right-6 bottom-4 text-xs">
               <CheckCircle />
             </div>
           )}
