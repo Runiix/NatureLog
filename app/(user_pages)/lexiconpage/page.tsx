@@ -81,7 +81,7 @@ export default async function LexiconPage() {
     return (
       <div className=" bg-gray-200">
         <section className="flex flex-col items-center w-full">
-          <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-24 mb-16">
+          <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-16 mb-16">
             Arten-Lexikon{" "}
           </h2>
           <LexiconGrid

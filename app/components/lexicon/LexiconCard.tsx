@@ -2,16 +2,19 @@
 
 import Image, { StaticImageData } from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import FavoriteButton from "../general/FavoriteButton";
 import { User } from "@supabase/supabase-js";
 import black from "@/app/assets/images/black.webp";
+import { usePathname, useRouter } from "next/navigation";
+import { addOrRemoveAnimals } from "@/app/actions/addOrRemoveAnimal";
+import { Add, Close, Favorite } from "@mui/icons-material";
+import FavoriteFunctionality from "../general/FavoriteFunctionality";
 
 export default function LexiconCard({
   id,
   common_name,
   scientific_name,
-
   population_estimate,
   endangerment_status,
   size_from,
@@ -36,23 +39,34 @@ export default function LexiconCard({
   animalImageExists: boolean;
 }) {
   const link = `/animalpage/${common_name}`;
+  const imageRef = useRef<HTMLImageElement | null>(null);
+  const router = useRouter();
 
+  const handleImageLoad = () => {
+    if (imageRef.current) {
+      imageRef.current.classList.remove("opacity-0");
+    }
+  };
+  const handleNavigation = () => {
+    router.push(link);
+  };
   return (
-    <Link
-      href={link}
-      className="flex flex-col w-44 sm:w-80 bg-gray-900 rounded-lg group shadow-md shadow-gray-800"
-    >
-      <div>
+    <div>
+      <div
+        onClick={handleNavigation}
+        className="flex flex-col w-44 sm:w-80 bg-gray-900 rounded-lg group shadow-md shadow-gray-800 cursor-pointer"
+      >
         {animalImageExists ? (
           <div>
             <Image
+              ref={imageRef}
               src={imageUrl}
               alt="Placeholder"
               width={300}
               height={200}
               priority
               className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-90  transition-opacity duration-[2s] opacity-0"
-              onLoadingComplete={(image) => image.classList.remove("opacity-0")}
+              onLoad={handleImageLoad}
             />
           </div>
         ) : (
@@ -81,9 +95,19 @@ export default function LexiconCard({
                 : scientific_name}
             </h3>
           </div>
-          <FavoriteButton user={user} id={id} spottedList={spottedList} />
+          <div>
+            {user && (
+              <FavoriteFunctionality
+                user={user}
+                id={id}
+                spottedList={spottedList}
+                buttonStyles=""
+                modalStyles=""
+              />
+            )}
+          </div>
         </div>
       </div>
-    </Link>
+    </div>
   );
 }

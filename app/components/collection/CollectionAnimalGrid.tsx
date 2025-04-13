@@ -1,6 +1,5 @@
 "use client";
-import { usePathname, useSearchParams } from "next/navigation";
-import { useRouter } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import getCollectionAnimals from "../../actions/getCollectionAnimals";
@@ -8,7 +7,6 @@ import { CircleLoader } from "react-spinners";
 import CollectionCard from "./CollectionCard";
 import { User } from "@supabase/supabase-js";
 import Search from "../general/Search";
-import filterSpottedAnimals from "@/app/utils/filterSpottedAnimals";
 import GenusFilter from "./GenusFilter";
 
 export default function CollectionAnimalGrid({
@@ -24,7 +22,7 @@ export default function CollectionAnimalGrid({
   counts: number[];
   user: User;
   currUser?: "false";
-  animalImageList: { animal_id: any; image: any }[];
+  animalImageList: { animal_id: any; image: any; first_spotted_at: any }[];
 }) {
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
@@ -37,6 +35,7 @@ export default function CollectionAnimalGrid({
 
   useEffect(() => {
     setGenus(searchParams.get("genus") || "all");
+    console.log(animalImageList[211].first_spotted_at);
   }, [searchParams]);
 
   useEffect(() => {
@@ -101,7 +100,12 @@ export default function CollectionAnimalGrid({
       loadMoreAnimals();
     }
   }, [inView, genus, query, spottedList]);
-
+  const searchFirstSpotted = (animalId: number) => {
+    const animal = animalImageList.find(
+      (animal) => animal.animal_id === animalId
+    );
+    return animal ? animal.first_spotted_at : null;
+  };
   return (
     <div className="mt-4 sm:mt-10 flex items-center flex-col">
       <div className="flex sm:flex-col items-center justify-center gap-2 ">
@@ -115,18 +119,18 @@ export default function CollectionAnimalGrid({
               key={animal.id}
               id={animal.id}
               common_name={animal.common_name}
-              scientific_name={animal.scientific_name}
-              population_estimate={animal.population_estimate}
-              endangerment_status={animal.endangerment_status}
-              size_from={animal.size_from}
-              size_to={animal.size_to}
-              sortBy="common_name"
               imageUrl={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${
                 user.id
               }/Collection/${animal.common_name.replace(regex, "_") + ".jpg"}`}
+              modalUrl={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${
+                user.id
+              }/CollectionModals/${
+                animal.common_name.replace(regex, "_") + ".jpg"
+              }`}
               user={user}
               currUser={currUser}
               spottedList={spottedList}
+              first_spotted_at={searchFirstSpotted(animal.id)}
               animalImageExists={animalImageList.some(
                 (obj) => obj.animal_id === animal.id && obj.image === true
               )}

@@ -4,6 +4,7 @@ import { createClient } from "@/utils/supabase/server";
 import FavoriteButton from "@/app/components/general/FavoriteButton";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import AnimalBanner from "@/app/components/animals/AnimalBanner";
+import FavoriteFunctionality from "@/app/components/general/FavoriteFunctionality";
 
 const getUser = async (supabase: SupabaseClient) => {
   const {
@@ -64,13 +65,6 @@ export default async function AnimalPage(params: any) {
         <div className="absolute w-full h-full object-cover ">
           {animalData && <AnimalBanner image={animalData.image_link} />}
           <div className="absolute w-full h-1/2 object-cover top-1/2 m-auto bg-gradient-to-t from-gray-200/100 via-gray-200/0 to-gray-200/0"></div>
-          <FavoriteButton
-            user={user}
-            id={animalData.id}
-            spottedList={spottedList}
-            styles="absolute right-7
-             md:right-36 xl:right-[20%] top-[38%] sm:top-[78%] z-50 scale-150 sm:scale-[2]"
-          />
         </div>
         <div className="bg-gray-900 absolute  lg:w-10/12 xl:w-2/3 sm:h-1/2 m-auto top-[45%] sm:top-[85%] rounded-lg shadow-xl shadow-slate-900">
           <div className="m-10 flex-col flex gap-8">
@@ -147,6 +141,14 @@ export default async function AnimalPage(params: any) {
         </div>
         <div>RECENT IMAGE SILDER</div>
       </div>
+      <FavoriteFunctionality
+        user={user}
+        id={animalData.id}
+        spottedList={spottedList}
+        buttonStyles="absolute z-50 right-7
+             md:right-36 xl:right-[20%] top-[38%] sm:top-[78%] scale-150 sm:scale-[2]"
+        modalStyles="fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center"
+      />
     </div>
   );
 }

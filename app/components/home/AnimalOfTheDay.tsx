@@ -21,6 +21,7 @@ export default function AnimalOfTheDay({
           alt="Placeholder"
           width={300}
           height={200}
+          priority
           className="object-cover aspect-[3/2] w-full group-hover:opacity-90 min-h-[256px]"
         />
       </div>

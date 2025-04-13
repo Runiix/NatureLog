@@ -8,7 +8,7 @@ import { getUser } from "@/app/utils/data";
 const getSpottedList = async (supabase: SupabaseClient, userId: string) => {
   const { data, error } = await supabase
     .from("spotted")
-    .select("animal_id, image")
+    .select("animal_id, image, first_spotted_at")
     .eq("user_id", userId);
   if (error) console.error("Error getting spotted List", error);
   else {

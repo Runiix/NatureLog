@@ -8,7 +8,6 @@ import Lexikon from "./assets/images/Lexikon.png";
 import Sammlung from "./assets/images/Sammlung.png";
 import Profil from "./assets/images/Profil.png";
 import Community from "./assets/images/community.png";
-import Footer from "./components/general/Footer";
 import { getUser } from "@/app/utils/data";
 
 export default async function page() {
@@ -98,7 +97,6 @@ export default async function page() {
           />
         ))}
       </section>
-      <Footer />
     </main>
   );
 }

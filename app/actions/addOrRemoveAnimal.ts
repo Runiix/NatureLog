@@ -6,9 +6,9 @@ import { revalidatePath } from "next/cache";
 export async function addOrRemoveAnimals(formData: FormData) {
   const pathName = formData.get("pathname") as string;
   const animalId = formData.get("animalId");
-  const spotted = formData.get("isSpotted");
+  const spotted = formData.get("isSpotted") as string;
   const supabase = await createClient();
-
+  console.log(animalId, spotted, pathName);
   const {
     data: { user },
   } = await supabase.auth.getUser();
