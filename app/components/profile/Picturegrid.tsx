@@ -18,6 +18,7 @@ export default function PictureGrid({
 }) {
   const [profileGridFull, setProfileGridFull] = useState(false);
   const [oldImageUrl, setOldImageUrl] = useState("");
+  const [oldModalUrl, setOldModalUrl] = useState("");
   const [profileGrid, setProfileGrid] = useState<any>([]);
   const [refresh, setRefresh] = useState(false);
   const [imageModal, setImageModal] = useState("");
@@ -45,19 +46,28 @@ export default function PictureGrid({
 
     const file = e.target.files[0];
     if (file) {
-      const options = {
-        maxSizeMB: 0.4, // Target size
+      const options1 = {
+        maxSizeMB: 0.02,
+        maxWidthOrHeight: 500,
+        useWebWorker: true,
+      };
+      const options2 = {
+        maxSizeMB: 0.2,
+        maxWidthOrHeight: 1920,
         useWebWorker: true,
       };
       console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
 
       try {
-        const compressedFile = await imageCompression(file, options);
+        const compressedFile = await imageCompression(file, options1);
+        const modalFile = await imageCompression(file, options2);
+
         console.log(
           `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
         ); // smaller than maxSizeMB
         const formData = new FormData();
         formData.append("file", compressedFile);
+        formData.append("modalFile", modalFile);
         formData.append("fileName", file.name);
         const response = await addProfileGridImage(formData);
         if (response) {
@@ -70,26 +80,40 @@ export default function PictureGrid({
       }
     }
   };
+  const handleUrlChange = (index: number) => {
+    setOldImageUrl(`${user.id}/ProfileGrid/${profileGrid[index].name}`);
+    setOldModalUrl(`${user.id}/ProfileGridModals/${profileGrid[index].name}`);
+  };
+
   const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     setLoading(true);
     if (!e.target.files || e.target.files.length === 0) return;
 
     const file = e.target.files[0];
     if (file) {
-      const options = {
+      const options1 = {
+        maxSizeMB: 0.02,
+        maxWidthOrHeight: 500,
+        useWebWorker: true,
+      };
+      const options2 = {
         maxSizeMB: 0.2,
+        maxWidthOrHeight: 1920,
         useWebWorker: true,
       };
       console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
 
       try {
-        const compressedFile = await imageCompression(file, options);
+        const compressedFile = await imageCompression(file, options1);
+        const modalFile = await imageCompression(file, options2);
         console.log(
           `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
         ); // smaller than maxSizeMB
         const formData = new FormData();
         formData.append("file", compressedFile);
+        formData.append("modalFile", modalFile);
         formData.append("old_file", oldImageUrl);
+        formData.append("old_modalFile", oldModalUrl);
         formData.append("fileName", file.name);
 
         const response = await changeProfileGridImage(formData);
@@ -103,10 +127,10 @@ export default function PictureGrid({
     }
   };
 
-  const handleFileDelete = async (url: string) => {
+  const handleFileDelete = async (fileUrl: string, modalUrl: string) => {
     const formData = new FormData();
-    formData.append("file", url);
-
+    formData.append("file", fileUrl);
+    formData.append("modalFile", modalUrl);
     const response = await removeProfileGridImage(formData);
     if (response) {
       setProfileGridFull(response.profileGridFull);
@@ -132,7 +156,7 @@ export default function PictureGrid({
                 priority
                 onClick={() =>
                   setImageModal(
-                    `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${user.id}/ProfileGrid/${profileGrid[index].name}`
+                    `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${user.id}/ProfileGridModals/${profileGrid[index].name}`
                   )
                 }
               />
@@ -140,11 +164,7 @@ export default function PictureGrid({
                 <div className="flex items-center">
                   <label
                     className="group cursor-pointer"
-                    onClick={() =>
-                      setOldImageUrl(
-                        `${user.id}/ProfileGrid/${profileGrid[index].name}`
-                      )
-                    }
+                    onClick={() => handleUrlChange(index)}
                   >
                     <Edit className="absolute bottom-4 right-4 hover:bg-gray-700 hover:bg-opacity-40 rounded-full hover:scale-125" />
                     <input
@@ -158,7 +178,8 @@ export default function PictureGrid({
                     className="group cursor-pointer"
                     onClick={() =>
                       handleFileDelete(
-                        `${user.id}/ProfileGrid/${profileGrid[index].name}`
+                        `${user.id}/ProfileGrid/${profileGrid[index].name}`,
+                        `${user.id}/ProfileGridModal/${profileGrid[index].name}`
                       )
                     }
                   >

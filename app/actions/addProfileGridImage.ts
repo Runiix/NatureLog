@@ -1,11 +1,11 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { formControlClasses } from "@mui/material";
 
 export default async function addProfileGridImage(formData: FormData) {
   const supabase = await createClient();
   const file = formData.get("file") as File;
+  const modalFile = formData.get("modalFile") as File;
   const fileName = formData.get("fileName") as string;
   try {
     const {
@@ -16,6 +16,7 @@ export default async function addProfileGridImage(formData: FormData) {
       throw new Error("User not authenticated for Photo upload!");
     }
     const filePath = `/${user.id}/ProfileGrid/${fileName}`;
+    const modalPath = `/${user.id}/ProfileGridModals/${fileName}`;
 
     const { data: listData, error: listError } = await supabase.storage
       .from("profiles")
@@ -29,14 +30,23 @@ export default async function addProfileGridImage(formData: FormData) {
     }
 
     if (listData === null || listData.length < 13) {
-      const { error: insertError } = await supabase.storage
+      const { error: insertError1 } = await supabase.storage
         .from("profiles")
         .upload(filePath, file, {
           cacheControl: "3600",
           upsert: true,
         });
-      if (insertError) {
-        console.error(insertError);
+      if (insertError1) {
+        console.error(insertError1);
+      }
+      const { error: insertError2 } = await supabase.storage
+        .from("profiles")
+        .upload(modalPath, modalFile, {
+          cacheControl: "3600",
+          upsert: true,
+        });
+      if (insertError2) {
+        console.error(insertError2);
       }
     } else {
       return { success: false, profileGridFull: true };
