@@ -49,7 +49,7 @@ export default function AnimalQuiz() {
     <div>
       {quizAnimals.length > 0 ? (
         <Image
-          src={quizAnimals[randomIndex].image_link}
+          src={quizAnimals[randomIndex].lexicon_link}
           alt={quizAnimals[randomIndex].scientific_name}
           width="300"
           height="100"

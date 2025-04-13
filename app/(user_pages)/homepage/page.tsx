@@ -137,7 +137,7 @@ export default async function homepage() {
           <AnimalOfTheDay
             data={animalOfTheDay}
             titel="Tages"
-            imageUrl={animalOfTheDay.image_link}
+            imageUrl={animalOfTheDay.lexicon_link}
           />
         ) : (
           <AnimalOfTheDay
@@ -152,7 +152,7 @@ export default async function homepage() {
           <AnimalOfTheDay
             data={animalOfTheMonth}
             titel="Monats"
-            imageUrl={animalOfTheMonth.image_link}
+            imageUrl={animalOfTheMonth.lexicon_link}
           />
         ) : (
           <AnimalOfTheDay

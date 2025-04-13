@@ -75,7 +75,6 @@ export default function CollectionCard({
               alt="Placeholder"
               width={300}
               height={200}
-              priority
               className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-80   transition-opacity duration-[1s] opacity-0"
               onLoad={handleImageLoad}
               onError={handleError}
