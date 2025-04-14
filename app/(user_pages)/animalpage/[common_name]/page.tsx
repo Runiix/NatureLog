@@ -5,6 +5,7 @@ import FavoriteButton from "@/app/components/general/FavoriteButton";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import AnimalBanner from "@/app/components/animals/AnimalBanner";
 import FavoriteFunctionality from "@/app/components/general/FavoriteFunctionality";
+import Link from "next/link";
 
 const getUser = async (supabase: SupabaseClient) => {
   const {
@@ -60,20 +61,27 @@ export default async function AnimalPage(params: any) {
   const animalCount = await getSpottedCount(supabase, animalData.id);
 
   return (
-    <div className="bg-gray-200 ">
-      <div className="h-screen flex flex-col items-center w-full">
-        <div className="absolute w-full h-full object-cover ">
-          {animalData && <AnimalBanner image={animalData.image_link} />}
-          <div className="absolute w-full h-1/2 object-cover top-1/2 m-auto bg-gradient-to-t from-gray-200/100 via-gray-200/0 to-gray-200/0"></div>
-        </div>
-        <div className="bg-gray-900 absolute  lg:w-10/12 xl:w-2/3 sm:h-1/2 m-auto top-[45%] sm:top-[85%] rounded-lg shadow-xl shadow-slate-900">
+    <div className="flex flex-col items-center w-full ">
+      <div className="w-full relative pb-24">
+        {animalData && <AnimalBanner image={animalData.image_link} />}
+        <div className="absolute bottom-[20%] sm:bottom-1/3 lg:bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900 w-full sm:w-11/12 lg:w-10/12 xl:w-2/3 z-40 rounded-lg shadow-xl shadow-slate-900 ">
           <div className="m-10 flex-col flex gap-8">
-            <div className="flex sm:flex-row flex-col justify-between w-full border-b pb-4 border-slate-400 gap-4 sm:gap-0">
+            <div className="flex flex-col sm:flex-row justify-between w-full border-b pb-4 border-slate-400 gap-4 sm:gap-0">
               <div className="flex flex-col gap-4 ">
                 <div>
-                  <h2 className="text-3xl lg:text-4xl">
-                    {animalData.common_name}
-                  </h2>
+                  <div className="flex items-center gap-8">
+                    <h2 className="text-3xl lg:text-4xl">
+                      {animalData.common_name}
+                    </h2>
+                    <FavoriteFunctionality
+                      user={user}
+                      id={animalData.id}
+                      spottedList={spottedList}
+                      buttonStyles=" sm:top-[44%] lg:top-[74%] scale-125 sm:scale-[2]"
+                      modalStyles="fixed w-full h-full top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-lg  z-50 shadow-xl shadow-black flex items-center justify-center"
+                    />
+                  </div>
+
                   <h3 className="text-xl lg:text-2xl">
                     {animalData.scientific_name}
                   </h3>
@@ -126,6 +134,22 @@ export default async function AnimalPage(params: any) {
                     </h3>
                     <h3>{animalData.population_estimate}</h3>
                   </div>
+                  {animalData.similar_animals && (
+                    <div className="flex gap-2 items-center mt-2 flex-wrap">
+                      <h3 className="text-xl">Ähnliche Tiere:</h3>
+                      {animalData.similar_animals.map(
+                        (animal: any, index: number) => (
+                          <Link
+                            className="hover:text-green-600 hover:underline"
+                            key={index}
+                            href={`/animalpage/${animal}`}
+                          >
+                            {animal}
+                          </Link>
+                        )
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 <h3 className="text-xl flex items-start gap-4 max-w-[40rem]">
@@ -139,16 +163,9 @@ export default async function AnimalPage(params: any) {
             </div>
           </div>
         </div>
-        <div>RECENT IMAGE SILDER</div>
       </div>
-      <FavoriteFunctionality
-        user={user}
-        id={animalData.id}
-        spottedList={spottedList}
-        buttonStyles="absolute z-50 right-7
-             md:right-36 xl:right-[20%] top-[38%] sm:top-[78%] scale-150 sm:scale-[2]"
-        modalStyles="fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center"
-      />
+
+      <div>RECENT IMAGE SILDER</div>
     </div>
   );
 }

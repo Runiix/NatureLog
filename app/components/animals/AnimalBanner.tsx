@@ -12,17 +12,21 @@ export default function AnimalBanner({ image }: any) {
     }
   };
   return (
-    <div>
-      <Image
-        ref={imageRef}
-        src={image}
-        alt="animal Banner"
-        width={1200}
-        height={800}
-        className="absolute w-full h-1/2 sm:h-full object-cover transition-opacity duration-[2s] opacity-0"
-        onLoad={handleImageLoad}
-        priority
-      />
+    <div className="relative w-full h-screen flex flex-col">
+      <div className="relative w-full aspect-square lg:aspect-auto h-1/2 sm:min-h-2/3 lg:min-h-full">
+        <Image
+          ref={imageRef}
+          src={image}
+          alt="animal Banner"
+          width={1920}
+          height={1080}
+          className="w-full h-full object-cover transition-opacity duration-[2s]"
+          onLoad={handleImageLoad}
+          priority
+        />
+
+        <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-gray-200/100 via-gray-200/0 to-transparent pointer-events-none" />
+      </div>
     </div>
   );
 }
