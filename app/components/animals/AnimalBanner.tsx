@@ -12,8 +12,8 @@ export default function AnimalBanner({ image }: any) {
     }
   };
   return (
-    <div className="relative w-full h-screen flex flex-col">
-      <div className="relative w-full aspect-square lg:aspect-auto h-1/2 sm:min-h-2/3 lg:min-h-full">
+    <div className="relative w-full flex flex-col">
+      <div className="relative w-full aspect-square md:aspect-[5/4] lg:aspect-video h-1/2 sm:min-h-2/3 lg:min-h-full lg:max-h-[800px]">
         <Image
           ref={imageRef}
           src={image}

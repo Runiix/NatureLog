@@ -1,5 +1,5 @@
 import Image from "next/image";
-import { Height, Landscape } from "@mui/icons-material";
+import { CalendarMonth, Compare, Height, Landscape } from "@mui/icons-material";
 import { createClient } from "@/utils/supabase/server";
 import FavoriteButton from "@/app/components/general/FavoriteButton";
 import { SupabaseClient, User } from "@supabase/supabase-js";
@@ -64,12 +64,12 @@ export default async function AnimalPage(params: any) {
     <div className="flex flex-col items-center w-full ">
       <div className="w-full relative pb-24">
         {animalData && <AnimalBanner image={animalData.image_link} />}
-        <div className="absolute bottom-[20%] sm:bottom-1/3 lg:bottom-10 left-1/2 transform -translate-x-1/2 bg-gray-900 w-full sm:w-11/12 lg:w-10/12 xl:w-2/3 z-40 rounded-lg shadow-xl shadow-slate-900 ">
+        <div className="bg-gray-900 rounded-lg py-2  lg:w-11/12 xl:w-10/12 mx-auto">
           <div className="m-10 flex-col flex gap-8">
-            <div className="flex flex-col sm:flex-row justify-between w-full border-b pb-4 border-slate-400 gap-4 sm:gap-0">
+            <div className="flex flex-col lg:flex-row justify-between w-full border-b pb-4 border-slate-400 gap-4 sm:gap-0">
               <div className="flex flex-col gap-4 ">
                 <div>
-                  <div className="flex items-center gap-8">
+                  <div className="flex items-center gap-2 mr-2 lg:gap-8">
                     <h2 className="text-3xl lg:text-4xl">
                       {animalData.common_name}
                     </h2>
@@ -77,8 +77,8 @@ export default async function AnimalPage(params: any) {
                       user={user}
                       id={animalData.id}
                       spottedList={spottedList}
-                      buttonStyles=" sm:top-[44%] lg:top-[74%] scale-125 sm:scale-[2]"
-                      modalStyles="fixed w-full h-full top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 rounded-lg  z-50 shadow-xl shadow-black flex items-center justify-center"
+                      buttonStyles=" scale-125 sm:scale-[2] "
+                      modalStyles=""
                     />
                   </div>
 
@@ -99,19 +99,20 @@ export default async function AnimalPage(params: any) {
                       } mm`}
                 </h3>
               </div>
-              <div className="flex flex-col sm:items-end gap-4">
+
+              <div className="flex flex-col gap-4 text-xl text-nowrap">
                 <h3 className="text-xl">
-                  {animalCount} haben diese Art gesehen
+                  {animalCount} Mitglieder haben diese Art gesehen
                 </h3>
                 <div>
-                  <div className="flex gap-5 ml-5">
+                  <div className="flex gap-5 ml-2">
                     <div className="rounded-full bg-green-600 p-1"></div>
                     <div className="rounded-full bg-gray-400 p-1"></div>
                     <div className="rounded-full bg-yellow-500 p-1"></div>
                     <div className="rounded-full bg-orange-600 p-1"></div>
                     <div className="rounded-full bg-red-600 p-1"></div>
                   </div>
-                  <div className="text-xl flex flex-col md:flex-row gap-2">
+                  <div className="text-xl flex gap-2">
                     <h3
                       className={
                         animalData.endangerment_status === "Nicht gefährdet"
@@ -134,13 +135,19 @@ export default async function AnimalPage(params: any) {
                     </h3>
                     <h3>{animalData.population_estimate}</h3>
                   </div>
-                  {animalData.similar_animals && (
-                    <div className="flex gap-2 items-center mt-2 flex-wrap">
-                      <h3 className="text-xl">Ähnliche Tiere:</h3>
+                </div>
+
+                {animalData.similar_animals && (
+                  <div className="flex flex-col 2xl:flex-row gap-2 2xl:items-start mt-2">
+                    <div className="flex gap-2 items-center">
+                      <Compare />
+                      <h3 className="text-xl">Ähnliche Arten:</h3>
+                    </div>
+                    <div className="flex gap-2 flex-wrap">
                       {animalData.similar_animals.map(
                         (animal: any, index: number) => (
                           <Link
-                            className="hover:text-green-600 hover:underline"
+                            className="text-green-600 hover:underline"
                             key={index}
                             href={`/animalpage/${animal}`}
                           >
@@ -149,16 +156,28 @@ export default async function AnimalPage(params: any) {
                         )
                       )}
                     </div>
-                  )}
+                  </div>
+                )}
+
+                <div className="flex flex-col 2xl:flex-row gap-2 2xl:items-center">
+                  <div className="flex gap-2 items-center">
+                    <CalendarMonth />
+
+                    <h3> In Deutschland zu sehen:</h3>
+                  </div>
+                  <h3 className="text-green-600">{animalData.presence_time}</h3>
                 </div>
 
-                <h3 className="text-xl flex items-start gap-4 max-w-[40rem]">
-                  <Landscape className="scale-150" />
-                  {animalData.habitat}
-                </h3>
+                <div className="flex flex-col 2xl:flex-row gap-2 2xl:items-center">
+                  <div className="flex gap-2 items-center">
+                    <Landscape className="scale-150 -mt-1" />
+                    <h3>Habitate:</h3>
+                  </div>
+                  <h3 className="text-green-600">{animalData.habitat}</h3>
+                </div>
               </div>
             </div>
-            <div className="text-lg sm:mx-16">
+            <div className="text-lg md:mx-16">
               <p>{animalData.description}</p>
             </div>
           </div>
