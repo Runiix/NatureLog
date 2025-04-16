@@ -19,24 +19,28 @@ export default async function page() {
       position: "left" as "right" | "left",
       titel: "Das Lexikon",
       text: "Entdecke unsere heimische Tierwelt - durch Filter und die Suchfunktion ganz einfach.",
+      video: false,
     },
     {
       src: Sammlung,
       position: "right" as "right" | "left",
       titel: "Die Sammlung",
       text: "Tracke deine Sichtungen und lade dein Lieblingsfoto für jede Art hoch.",
+      video: false,
     },
     {
       src: Profil,
       position: "left" as "right" | "left",
       titel: "Das Profil",
       text: "Lade ein Profilblid hoch, wähle ein Team aus und lade deine Lieblingsfotos hoch.",
+      video: false,
     },
     {
       src: Community,
       position: "right" as "right" | "left",
       titel: "Interagiere mit der Community",
       text: "Sieh dir an, welche Arten andere bereits gesichtet haben, und entdecke ihre Profile.",
+      video: false,
     },
   ];
 
@@ -94,6 +98,7 @@ export default async function page() {
             position={info.position}
             title={info.titel}
             text={info.text}
+            video={info.video}
           />
         ))}
       </section>

@@ -22,7 +22,7 @@ export default function AuthForm() {
       const { data, error } = await supabase.auth.resetPasswordForEmail(
         emailData,
         {
-          redirectTo: "https://localhost:3000/passwordreset",
+          redirectTo: "https://naturelog.de/passwordreset",
         }
       );
     } catch (error) {
