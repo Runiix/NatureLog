@@ -35,7 +35,6 @@ export default function CollectionAnimalGrid({
 
   useEffect(() => {
     setGenus(searchParams.get("genus") || "all");
-    console.log(animalImageList[211].first_spotted_at);
   }, [searchParams]);
 
   useEffect(() => {

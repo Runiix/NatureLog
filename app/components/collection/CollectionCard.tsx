@@ -63,6 +63,7 @@ export default function CollectionCard({
     const year = date.getFullYear();
 
     setSpottedAt(`${day}. ${month} ${year}`);
+    console.log("Spotted At:", spottedAt);
   }, [spottedAt]);
   return (
     <div>
@@ -104,6 +105,7 @@ export default function CollectionCard({
                     setEditModal={() => setEditModal(false)}
                     imageExists={imageExists}
                     setImageExists={() => setImageExists(true)}
+                    spottedAt={spottedAt}
                     setSpottedAt={() => setSpottedAt(spottedAt)}
                   />
                 )}
@@ -141,6 +143,7 @@ export default function CollectionCard({
                     setEditModal={() => setEditModal(false)}
                     imageExists={imageExists}
                     setImageExists={() => setImageExists(true)}
+                    spottedAt={spottedAt}
                     setSpottedAt={() => setSpottedAt(spottedAt)}
                   />
                 )}

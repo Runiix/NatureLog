@@ -102,7 +102,7 @@ export default function LexiconGrid({
   }, [inView, searchParams, spottedList]);
 
   return (
-    <div className="flex flex-col ">
+    <div className="flex flex-col overflow-wrap">
       <LexiconFilterList />
       <div className="flex-col sm:flex-row flex gap-2 sm:gap-0 justify-between items-center">
         <LexiconFilter />

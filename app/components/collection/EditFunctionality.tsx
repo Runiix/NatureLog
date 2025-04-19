@@ -16,6 +16,7 @@ type Props = {
   setEditModal: React.Dispatch<React.SetStateAction<boolean>>;
   imageExists: boolean;
   setImageExists: React.Dispatch<React.SetStateAction<boolean>>;
+  spottedAt: string;
   setSpottedAt: React.Dispatch<React.SetStateAction<string>>;
 };
 
@@ -27,6 +28,7 @@ export default function EditFunctionality({
   setEditModal,
   imageExists,
   setImageExists,
+  spottedAt,
   setSpottedAt,
 }: Props) {
   const [selectedFile, setSelectedFile] = useState<null | File>(null);
@@ -165,7 +167,7 @@ export default function EditFunctionality({
                 className="hidden"
               />
             </label>
-            <label> </label>
+            {spottedAt && <label>Aktuelles Datum: {spottedAt}</label>}
             <input
               className="bg-gray-800 p-4 rounded-lg text-slate-200"
               type="date"

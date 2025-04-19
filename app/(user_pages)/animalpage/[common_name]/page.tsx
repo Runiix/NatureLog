@@ -1,5 +1,11 @@
 import Image from "next/image";
-import { CalendarMonth, Compare, Height, Landscape } from "@mui/icons-material";
+import {
+  ArrowBack,
+  CalendarMonth,
+  Compare,
+  Height,
+  Landscape,
+} from "@mui/icons-material";
 import { createClient } from "@/utils/supabase/server";
 import FavoriteButton from "@/app/components/general/FavoriteButton";
 import { SupabaseClient, User } from "@supabase/supabase-js";
@@ -63,6 +69,12 @@ export default async function AnimalPage(params: any) {
   return (
     <div className="flex flex-col items-center w-full ">
       <div className="w-full relative pb-24">
+        <Link
+          href="/lexiconpage"
+          className="absolute left-10 top-20 rounded-full size-12 flex items-center justify-center hover:text-green-600 hover:bg-gray-900/70 bg-gray-900/50 z-40"
+        >
+          <ArrowBack className="scale-125" />
+        </Link>
         {animalData && <AnimalBanner image={animalData.image_link} />}
         <div className="bg-gray-900 rounded-lg py-2  lg:w-11/12 xl:w-10/12 mx-auto">
           <div className="m-10 flex-col flex gap-8">
@@ -167,14 +179,15 @@ export default async function AnimalPage(params: any) {
                   </div>
                   <h3 className="text-green-600">{animalData.presence_time}</h3>
                 </div>
-
-                <div className="flex flex-col 2xl:flex-row gap-2 2xl:items-center">
-                  <div className="flex gap-2 items-center">
-                    <Landscape className="scale-150 -mt-1" />
-                    <h3>Habitate:</h3>
+                {animalData.habitat && (
+                  <div className="flex flex-col 2xl:flex-row gap-2 2xl:items-center">
+                    <div className="flex gap-2 items-center">
+                      <Landscape className="scale-150 -mt-1" />
+                      <h3>Habitate:</h3>
+                    </div>
+                    <h3 className="text-green-600">{animalData.habitat}</h3>
                   </div>
-                  <h3 className="text-green-600">{animalData.habitat}</h3>
-                </div>
+                )}
               </div>
             </div>
             <div className="text-lg md:mx-16">

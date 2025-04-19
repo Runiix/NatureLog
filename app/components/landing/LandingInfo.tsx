@@ -7,13 +7,11 @@ export default function LandingInfo({
   position,
   title,
   text,
-  video,
 }: {
   src: StaticImageData | any;
   position: "left" | "right";
   title: string;
   text: string;
-  video: boolean;
 }) {
   const [isVisible, setIsVisible] = useState(false);
   const ref = useRef<HTMLDivElement | null>(null);
@@ -50,28 +48,13 @@ export default function LandingInfo({
         <h2 className="text-xl sm:text-3xl  text-gray-900">{title} </h2>
         <p className="text-xs sm:text-base text-gray-800">{text}</p>
       </div>
-      {video ? (
-        <video
-          autoPlay
-          loop
-          muted
-          playsInline
-          width="200"
-          height="400"
-          className="rounded-lg shadow-lg w-full max-w-md"
-        >
-          <source src={src} type="video/mp4" />
-          Dein Browser unterstützt keine Videos
-        </video>
-      ) : (
-        <Image
-          src={src}
-          alt=""
-          width={500}
-          height={500}
-          className="rounded-2xl sm:w-1/2  object-cover"
-        />
-      )}
+      <Image
+        src={src}
+        alt=""
+        width={500}
+        height={500}
+        className="rounded-lg sm:w-1/2 max-w-[700px] max-h-[400px] object-contain"
+      />
     </div>
   );
 }

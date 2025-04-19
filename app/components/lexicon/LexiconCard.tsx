@@ -86,7 +86,7 @@ export default function LexiconCard({
             <h3 className="text-[0.5rem] sm:text-sm">
               {sortBy === "population_estimate"
                 ? population_estimate
-                : sortBy === "size_from"
+                : sortBy === "size_to"
                 ? `${size_from} - ${size_to} cm`
                 : sortBy === "endangerment_status"
                 ? endangerment_status

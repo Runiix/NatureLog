@@ -28,7 +28,7 @@ export default function AuthForm() {
     } catch (error) {
       console.error(error);
     }
-    alert("Email sent successfully");
+    alert("E-Mail erfolgreich versendet!");
   };
 
   const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
