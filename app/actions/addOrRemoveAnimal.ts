@@ -8,7 +8,6 @@ export async function addOrRemoveAnimals(formData: FormData) {
   const animalId = formData.get("animalId");
   const spotted = formData.get("isSpotted") as string;
   const supabase = await createClient();
-  console.log(animalId, spotted, pathName);
   const {
     data: { user },
   } = await supabase.auth.getUser();

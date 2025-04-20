@@ -36,7 +36,6 @@ export async function signup(formData: FormData) {
     .from("users")
     .select("display_name")
     .eq("display_name", formData.get("username") as string);
-  console.log("USERNAME DATA", userNameData);
   if (userNameError) {
     console.error("Error getting username data", userNameError);
   }

@@ -25,6 +25,7 @@ export default function FavoriteModal({
     e.stopPropagation();
     changeFavoriteModal(false);
   }
+
   return (
     <div>
       {" "}
@@ -46,7 +47,7 @@ export default function FavoriteModal({
             <form
               id="removeForm"
               onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
-                e.preventDefault();
+                e.stopPropagation();
                 const response = await addOrRemoveAnimals(
                   new FormData(e.currentTarget)
                 );

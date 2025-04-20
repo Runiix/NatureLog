@@ -27,7 +27,6 @@ export default function FavoriteButton({
   }
   function handleButtonClick(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
-    console.log("Button clicked");
     changeFavoriteModal(true);
   }
   return (

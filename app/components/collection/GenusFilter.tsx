@@ -7,12 +7,12 @@ import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
 export default function GenusFilter({
   counts,
-  animals,
+  categoryCounts,
 }: {
   counts: number[];
-  animals: any;
+  categoryCounts: any;
 }) {
-  const genusList = filterSpottedAnimals(animals, counts);
+  const genusList = filterSpottedAnimals(categoryCounts, counts);
   const [expandGenus, setExpandGenus] = useState(false);
   const searchParams = useSearchParams();
   const pathName = usePathname();
@@ -57,7 +57,7 @@ export default function GenusFilter({
               className="sm:bg-gray-900 w-20 text-center rounded-full p-1 sm:p-2 sm:mb-4 hover:cursor-pointer hover:scale-105 hover:bg-gray-800 flex justify-center gap-1 border-2 border-slate-200 sm:border-none "
               onClick={() => handleFilterChange("all")}
             >
-              <p className="text-green-600">{animals.length} </p>
+              <p className="text-green-600">{categoryCounts.length} </p>
               <p>/</p>
               <p>{counts[6]}</p>
             </div>

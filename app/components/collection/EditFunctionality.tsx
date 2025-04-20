@@ -3,7 +3,7 @@
 import Image, { StaticImageData } from "next/image";
 import addCollectionImage from "../../actions/addCollectionImage";
 import imageCompression from "browser-image-compression";
-import { useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { Close } from "@mui/icons-material";
 import { CircleLoader } from "react-spinners";
 import addSpottedDate from "@/app/actions/addSpottedDate";
@@ -35,7 +35,9 @@ export default function EditFunctionality({
   const [loading, setLoading] = useState(false);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const [firstSeen, setFirstSeen] = useState("");
-
+  useEffect(() => {
+    console.log(spottedAt);
+  }, []);
   function handleClose(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
     setEditModal(false);
@@ -46,11 +48,11 @@ export default function EditFunctionality({
       imageRef.current.classList.remove("opacity-0");
     }
   };
+
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const file = e.target.files[0];
     setSelectedFile(file);
-    console.log("Selected File:", file);
   };
   const handleFileUpload = async (id: number) => {
     setLoading(true);
@@ -66,7 +68,6 @@ export default function EditFunctionality({
         maxWidthOrHeight: 1920,
         useWebWorker: true,
       };
-      console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
 
       try {
         const compressedFile = await imageCompression(file, options1);
@@ -78,9 +79,6 @@ export default function EditFunctionality({
         formData.append("common_name", common_name);
         formData.append("id", String(id));
         formData.append("date", firstSeen);
-        console.log(
-          `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
-        ); // smaller than maxSizeMB
 
         const response = await addCollectionImage(formData);
         if (response) {
@@ -94,7 +92,6 @@ export default function EditFunctionality({
         console.error("Compression failed:", error);
       }
     } else {
-      console.log("No file selected, uploading date only.");
       const formData = new FormData();
       formData.append("date", firstSeen);
       formData.append("id", String(id));
@@ -167,7 +164,9 @@ export default function EditFunctionality({
                 className="hidden"
               />
             </label>
-            {spottedAt && <label>Aktuelles Datum: {spottedAt}</label>}
+            {spottedAt !== "01. January 1970" && (
+              <label>Aktuelles Datum: {spottedAt}</label>
+            )}
             <input
               className="bg-gray-800 p-4 rounded-lg text-slate-200"
               type="date"

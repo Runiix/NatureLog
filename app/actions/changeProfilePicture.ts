@@ -6,7 +6,6 @@ export default async function changeProfilePicture(formData: FormData) {
   const supabase = await createClient();
   const file = formData.get("file") as File;
   const exists = formData.get("exists") as string;
-  console.log("Exists: ", exists);
   try {
     const {
       data: { user },

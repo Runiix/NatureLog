@@ -12,7 +12,6 @@ export default async function addSpottedDate(formData: FormData) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    console.log(user?.id, id);
 
     if (!user) {
       throw new Error("User not authenticated for Photo upload!");

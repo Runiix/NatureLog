@@ -56,15 +56,11 @@ export default function PictureGrid({
         maxWidthOrHeight: 1920,
         useWebWorker: true,
       };
-      console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
 
       try {
         const compressedFile = await imageCompression(file, options1);
         const modalFile = await imageCompression(file, options2);
 
-        console.log(
-          `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
-        ); // smaller than maxSizeMB
         const formData = new FormData();
         formData.append("file", compressedFile);
         formData.append("modalFile", modalFile);
@@ -101,14 +97,11 @@ export default function PictureGrid({
         maxWidthOrHeight: 1920,
         useWebWorker: true,
       };
-      console.log(`originalFile size ${file.size / 1024 / 1024} MB`);
 
       try {
         const compressedFile = await imageCompression(file, options1);
         const modalFile = await imageCompression(file, options2);
-        console.log(
-          `compressedFile size ${compressedFile.size / 1024 / 1024} MB`
-        ); // smaller than maxSizeMB
+
         const formData = new FormData();
         formData.append("file", compressedFile);
         formData.append("modalFile", modalFile);

@@ -34,7 +34,6 @@ export default function LexiconGrid({
   useEffect(() => {
     const sortBy = searchParams.get("sortBy") || null;
     const sortOrder = searchParams.get("sortOrder") || null;
-    console.log("sortBy", sortBy);
     if (sortBy) {
       setSortBy(sortBy);
     } else {
@@ -90,7 +89,6 @@ export default function LexiconGrid({
           setLoadingMoreAnimals(false);
         }
         setAnimals((prevAnimals: any) => [...prevAnimals, ...data]);
-        console.log(data);
         setOffset((prev) => prev + 1);
       } catch (error) {
         console.error("Error loading more animals:", error);

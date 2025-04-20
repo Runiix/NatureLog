@@ -14,7 +14,6 @@ export default function SocialList({
   following: string[];
 }) {
   const searchParams = useSearchParams();
-  console.log(following);
   const [loading, setLoading] = useState(false);
   const [users, setUsers] = useState<any[]>([]);
 
@@ -30,7 +29,6 @@ export default function SocialList({
         setLoading(false);
 
         setUsers(data);
-        console.log(data);
       } catch (error) {
         console.error("Error loading Animals:", error);
       }

@@ -53,7 +53,6 @@ const getSpottedCount = async (supabase: SupabaseClient, animalId: string) => {
     .select("animal_id")
     .eq("animal_id", animalId);
   if (error) console.error("Error getting animal count", error);
-  console.log(data);
   if (data) return data.length;
   return 0;
 };

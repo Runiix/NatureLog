@@ -15,7 +15,6 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
     if (!e.target.files) return;
     const file = e.target.files[0];
     setSelectedFile(file);
-    console.log("Selected File:", file);
   };
 
   const uploadImage = async () => {
@@ -47,18 +46,11 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
     const filteredData = listData?.filter(
       (item: any) => item.name !== ".emptyFolderPlaceholder"
     );
-    console.log("Filtered Data:", filteredData);
     if (filteredData?.length === 0) {
       imageExists = false;
     }
     imageExists = true;
     if (imageExists && filteredData && filteredData.length > 0) {
-      console.log(
-        "Filtered Data:",
-        filteredData[0],
-        user.id + "/" + filteredData[0].name
-      );
-
       const { error } = await supabase.storage
         .from("imagesearch")
         .remove([user.id + "/" + filteredData[0].name]);
@@ -88,7 +80,6 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
     const publicUrl = publicUrlData.publicUrl;
 
     setImageUrl(publicUrl);
-    console.log("Public URL:", publicUrl);
     setLoading(false);
   };
 

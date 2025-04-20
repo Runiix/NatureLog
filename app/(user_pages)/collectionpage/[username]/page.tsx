@@ -17,7 +17,10 @@ const getSpottedList = async (supabase: SupabaseClient, userId: string) => {
   return [];
 };
 
-const getAnimals = async (supabase: SupabaseClient, spottedList: number[]) => {
+const getCategoryCounts = async (
+  supabase: SupabaseClient,
+  spottedList: number[]
+) => {
   const { data, error } = await supabase
     .from("animals")
     .select("category")
@@ -36,7 +39,7 @@ const getAnimalCount = async (supabase: SupabaseClient, genus: string) => {
       .from("animals")
       .select("id")
       .eq("category", genus);
-    if (error) console.error("Error getting Mammal Count", error);
+    if (error) console.error("Error getting Animal Count", error);
     else return data.length;
   }
   return 0;
@@ -89,8 +92,7 @@ export default async function collectionpage(params: any) {
     const spottedIds: number[] = spottedList.map(
       (animal: any) => animal.animal_id
     );
-    const animals = await getAnimals(supabase, spottedIds);
-
+    const categoryCounts = await getCategoryCounts(supabase, spottedIds);
     return (
       <div>
         <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-16">
@@ -98,11 +100,9 @@ export default async function collectionpage(params: any) {
         </h2>
         <div className="w-full flex items-center justify-center">
           <CollectionAnimalGrid
-            animals={animals}
-            spottedList={spottedIds}
+            categoryCounts={categoryCounts}
             counts={counts}
             user={user}
-            animalImageList={spottedList}
           />
         </div>
       </div>
@@ -112,7 +112,7 @@ export default async function collectionpage(params: any) {
     const spottedIds: number[] = spottedList.map(
       (animal: any) => animal.animal_id
     );
-    const animals = await getAnimals(supabase, spottedIds);
+    const categoryCounts = await getCategoryCounts(supabase, spottedIds);
 
     return (
       <div>
@@ -127,12 +127,10 @@ export default async function collectionpage(params: any) {
         </h2>
         <div className="w-full flex items-center justify-center">
           <CollectionAnimalGrid
-            animals={animals}
-            spottedList={spottedIds}
+            categoryCounts={categoryCounts}
             counts={counts}
             user={paramUser}
             currUser="false"
-            animalImageList={spottedList}
           />
         </div>
       </div>

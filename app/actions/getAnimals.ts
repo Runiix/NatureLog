@@ -22,7 +22,6 @@ export default async function getAnimals(
   if (sortOrder === "ascending" || sortOrder === null) {
     bool = true;
   }
-
   const from = offset * pageSize;
   const to = (offset + 1) * pageSize - 1;
 

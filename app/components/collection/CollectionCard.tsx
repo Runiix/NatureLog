@@ -18,6 +18,7 @@ export default function CollectionCard({
   user,
   currUser,
   spottedList,
+  idList,
   first_spotted_at,
   animalImageExists,
 }: {
@@ -27,7 +28,12 @@ export default function CollectionCard({
   modalUrl: string;
   user: any;
   currUser?: "false";
-  spottedList: number[];
+  spottedList: {
+    animal_id: number;
+    image: boolean;
+    first_spotted_at: string;
+  }[];
+  idList: number[];
   first_spotted_at: string;
   animalImageExists: boolean;
 }) {
@@ -56,15 +62,13 @@ export default function CollectionCard({
   };
 
   useEffect(() => {
-    const date = new Date(first_spotted_at); // convert to Date object
-
+    const date = new Date(first_spotted_at);
     const day = date.getDate().toString().padStart(2, "0");
     const month = date.toLocaleString("en-GB", { month: "long" });
     const year = date.getFullYear();
-
     setSpottedAt(`${day}. ${month} ${year}`);
-    console.log("Spotted At:", spottedAt);
   }, [spottedAt]);
+
   return (
     <div>
       <div className="flex flex-col w-44 sm:w-80 bg-gray-900 rounded-lg shadow-md shadow-gray-800">
@@ -166,7 +170,7 @@ export default function CollectionCard({
           <FavoriteFunctionality
             user={user}
             id={id}
-            spottedList={spottedList}
+            spottedList={idList}
             buttonStyles=""
             modalStyles=""
           />

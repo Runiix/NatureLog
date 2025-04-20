@@ -30,7 +30,6 @@ export default async function getUsers(
       .eq("follower_id", userId);
     if (error) throw error;
     const following = data.map((f) => f.following_id);
-    console.log("DATA", following);
     let query = supabase.from("users").select("*").in("id", following);
     if (search !== "") {
       query = query.ilike("display_name", `%${search}%`);
