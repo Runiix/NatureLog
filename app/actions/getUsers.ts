@@ -16,7 +16,9 @@ export default async function getUsers(
     const { data, error } = await supabase
       .from("users")
       .select("*")
+      .neq("id", userId)
       .ilike("display_name", `%${search}%`);
+
     if (error) {
       console.error(error);
       return [];

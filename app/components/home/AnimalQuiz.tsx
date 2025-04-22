@@ -53,18 +53,18 @@ export default function AnimalQuiz() {
           alt={quizAnimals[randomIndex].scientific_name}
           width="300"
           height="100"
-          className="w-full aspect-video mb-2 rounded-t-lg"
+          className="w-full aspect-video mb-2 rounded-t-lg max-h-64"
         />
       ) : (
         <CircleLoader />
       )}
       {easyQuiz ? (
-        <div className="grid grid-cols-2 grid-rows-2 gap-2 mb-2">
+        <div className="grid grid-cols-2 grid-rows-2 gap-2 mb-2 h-24">
           {quizAnimals ? (
             quizAnimals.map((animal: any, index: number) => (
               <button
                 key={animal.id}
-                className={`flex items-center gap-1  hover:border-slate-400 border-2 w-32 sm:w-44  mx-auto px-1 py-2 rounded-lg group hover:bg-gray-800 transition-all duration-200 ${
+                className={`flex items-center gap-1  hover:border-slate-400 border-2 w-44  mx-auto px-1 py-2 rounded-lg group hover:bg-gray-800 transition-all duration-200 ${
                   answer !== 0 &&
                   animal.id === answer &&
                   answer === quizAnimals[randomIndex].id

@@ -1,6 +1,6 @@
 "use client";
 import LexiconCard from "./LexiconCard";
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 import { useInView } from "react-intersection-observer";
 import getAnimals from "../../actions/getAnimals";
 import { CircleLoader } from "react-spinners";
@@ -10,6 +10,8 @@ import Search from "../general/Search";
 import LexiconFilter from "./LexiconFilter";
 import LexiconFilterList from "./LexiconFilterList";
 import LexiconSort from "./LexiconSort";
+import { CheckCircle, VisibilityOff } from "@mui/icons-material";
+import { only } from "node:test";
 
 export default function LexiconGrid({
   user,
@@ -27,9 +29,15 @@ export default function LexiconGrid({
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "");
   const [sortOrder, setSortOrder] = useState("ascending");
+  const [onlyUnseen, setOnlyUnseen] = useState(false);
   const [animals, setAnimals] = useState<any>([]);
+
   const { ref, inView } = useInView();
   const regex = /[äöüß\s]/g;
+
+  useEffect(() => {
+    console.log(onlyUnseen);
+  }, [onlyUnseen]);
 
   useEffect(() => {
     const sortBy = searchParams.get("sortBy") || null;
@@ -102,8 +110,23 @@ export default function LexiconGrid({
   return (
     <div className="flex flex-col overflow-wrap">
       <LexiconFilterList />
-      <div className="flex-col sm:flex-row flex gap-2 sm:gap-0 justify-between items-center">
-        <LexiconFilter />
+      <div className="flex-col md:flex-row flex gap-2 md:gap-0 justify-between items-center">
+        <div className="flex items-center gap-[1px]">
+          <LexiconFilter />
+          <div className="flex items-center  bg-gray-900 w-20 h-10 justify-center gap-2 rounded-lg p-2">
+            <VisibilityOff />
+            <button
+              onClick={() => setOnlyUnseen((prev) => !prev)}
+              className="text-green-600"
+            >
+              {onlyUnseen ? (
+                <CheckCircle />
+              ) : (
+                <div className="rounded-full size-5 bg-gray-200 hover:bg-green-600 transition-all duration-200"></div>
+              )}
+            </button>
+          </div>
+        </div>
 
         <div className="flex items-center gap-2 border-">
           <Search placeholder="Tier suchen" />
@@ -127,6 +150,7 @@ export default function LexiconGrid({
               imageUrl={animal.lexicon_link}
               user={user}
               spottedList={spottedList}
+              onlyUnseen={onlyUnseen}
               animalImageExists={animalImageList.includes(
                 animal.common_name.replace(regex, "_") + ".webp"
               )}

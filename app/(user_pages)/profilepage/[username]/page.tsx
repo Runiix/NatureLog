@@ -4,6 +4,7 @@ import ProfilePicture from "@/app/components/profile/ProfilePicture";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
+import { get } from "http";
 
 const getParamUserId = async (supabase: SupabaseClient, username: string) => {
   const { data, error } = await supabase
@@ -69,6 +70,17 @@ const getFavoriteAnimal = async (supabase: SupabaseClient, userId: string) => {
   if (data.length === 0) return "keins";
   return data[0].favorite_animal;
 };
+const getInstaLink = async (supabase: SupabaseClient, userId: string) => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("insta_link")
+    .eq("user_id", userId);
+  if (error) return null;
+  if (data === undefined) return null;
+  if (!data) return null;
+  if (data.length === 0) return null;
+  return data[0].insta_link;
+};
 
 export default async function profilepage(params: any) {
   const supabase = await createClient();
@@ -78,14 +90,21 @@ export default async function profilepage(params: any) {
     getParamUserId(supabase, Userparams.username),
   ]);
   if (user && user.id === paramUser.id) {
-    const [profilePic, favoriteAnimal, profilePicUrl, animalCount, teamLink] =
-      await Promise.all([
-        checkForProfilePic(supabase, user.id),
-        getFavoriteAnimal(supabase, user.id),
-        getProfilePictureUrl(supabase, user.id),
-        getAnimalCount(supabase, user.id),
-        getTeam(supabase, user.id),
-      ]);
+    const [
+      profilePic,
+      favoriteAnimal,
+      profilePicUrl,
+      animalCount,
+      teamLink,
+      instaLink,
+    ] = await Promise.all([
+      checkForProfilePic(supabase, user.id),
+      getFavoriteAnimal(supabase, user.id),
+      getProfilePictureUrl(supabase, user.id),
+      getAnimalCount(supabase, user.id),
+      getTeam(supabase, user.id),
+      getInstaLink(supabase, user.id),
+    ]);
 
     return (
       <>
@@ -104,6 +123,7 @@ export default async function profilepage(params: any) {
                 teamIcon={teamLink ? teamLink[0].team_link : null}
                 favoriteAnimal={favoriteAnimal}
                 currUser={true}
+                instaLink={instaLink}
               />
             </div>
           </div>
@@ -112,14 +132,21 @@ export default async function profilepage(params: any) {
       </>
     );
   } else {
-    const [profilePic, favoriteAnimal, profilePicUrl, animalCount, teamLink] =
-      await Promise.all([
-        checkForProfilePic(supabase, paramUser.id),
-        getFavoriteAnimal(supabase, paramUser.id),
-        getProfilePictureUrl(supabase, paramUser.id),
-        getAnimalCount(supabase, paramUser.id),
-        getTeam(supabase, paramUser.id),
-      ]);
+    const [
+      profilePic,
+      favoriteAnimal,
+      profilePicUrl,
+      animalCount,
+      teamLink,
+      instaLink,
+    ] = await Promise.all([
+      checkForProfilePic(supabase, paramUser.id),
+      getFavoriteAnimal(supabase, paramUser.id),
+      getProfilePictureUrl(supabase, paramUser.id),
+      getAnimalCount(supabase, paramUser.id),
+      getTeam(supabase, paramUser.id),
+      getInstaLink(supabase, paramUser.id),
+    ]);
 
     return (
       <>
@@ -138,6 +165,7 @@ export default async function profilepage(params: any) {
                 teamIcon={teamLink ? teamLink[0].team_link : null}
                 favoriteAnimal={favoriteAnimal}
                 currUser={false}
+                instaLink={instaLink}
               />
             </div>
           </div>

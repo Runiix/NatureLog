@@ -66,17 +66,17 @@ export default async function AnimalPage(params: any) {
   const animalCount = await getSpottedCount(supabase, animalData.id);
 
   return (
-    <div className="flex flex-col items-center w-full ">
+    <div className="flex flex-col items-center w-full">
       <div className="w-full relative pb-24">
         <Link
           href="/lexiconpage"
-          className="absolute left-10 top-20 rounded-full size-12 flex items-center justify-center hover:text-green-600 hover:bg-gray-900/70 bg-gray-900/50 z-40"
+          className="absolute left-2 sm:left-10 top-12 sm:top-20 rounded-full size-8 sm:size-12 flex items-center justify-center hover:text-green-600 hover:bg-gray-900/70 bg-gray-900/50 z-40"
         >
-          <ArrowBack className="scale-125" />
+          <ArrowBack className="sm:scale-125" />
         </Link>
         {animalData && <AnimalBanner image={animalData.image_link} />}
-        <div className="bg-gray-900 rounded-lg py-2  lg:w-11/12 xl:w-10/12 mx-auto">
-          <div className="m-10 flex-col flex gap-8">
+        <div className="bg-gray-900 rounded-lg py-2 w-[98%] lg:w-11/12 xl:w-10/12 mx-auto">
+          <div className=" m-4 sm:m-10 flex-col flex gap-8">
             <div className="flex flex-col lg:flex-row justify-between w-full border-b pb-4 border-slate-400 gap-4 sm:gap-0">
               <div className="flex flex-col gap-4 ">
                 <div>
@@ -112,7 +112,7 @@ export default async function AnimalPage(params: any) {
               </div>
 
               <div className="flex flex-col gap-4 text-xl text-nowrap">
-                <h3 className="text-xl">
+                <h3 className="text-xl text-wrap">
                   {animalCount} Mitglieder haben diese Art gesehen
                 </h3>
                 <div>
@@ -123,7 +123,7 @@ export default async function AnimalPage(params: any) {
                     <div className="rounded-full bg-orange-600 p-1"></div>
                     <div className="rounded-full bg-red-600 p-1"></div>
                   </div>
-                  <div className="text-xl flex gap-2">
+                  <div className="text-xl flex flex-col sm:flex-row gap-2">
                     <h3
                       className={
                         animalData.endangerment_status === "Nicht gefährdet"
@@ -176,7 +176,9 @@ export default async function AnimalPage(params: any) {
 
                     <h3> In Deutschland zu sehen:</h3>
                   </div>
-                  <h3 className="text-green-600">{animalData.presence_time}</h3>
+                  <h3 className="text-green-600 text-wrap">
+                    {animalData.presence_time}
+                  </h3>
                 </div>
                 {animalData.habitat && (
                   <div className="flex flex-col 2xl:flex-row gap-2 2xl:items-center">
@@ -184,12 +186,14 @@ export default async function AnimalPage(params: any) {
                       <Landscape className="scale-150 -mt-1" />
                       <h3>Habitate:</h3>
                     </div>
-                    <h3 className="text-green-600">{animalData.habitat}</h3>
+                    <h3 className="text-green-600 text-wrap">
+                      {animalData.habitat}
+                    </h3>
                   </div>
                 )}
               </div>
             </div>
-            <div className="text-lg md:mx-16">
+            <div className="text-lg md:mx-16 text-wrap">
               <p>{animalData.description}</p>
             </div>
           </div>

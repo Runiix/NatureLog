@@ -73,22 +73,25 @@ export default function Nav({ user }: { user: User | null }) {
                 <Person />
                 {user.user_metadata.displayName}
               </div>
-              {showSignOut && (
-                <div className="absolute top-6 right-5 bg-slate-200 p-5 rounded-b-lg border-b border-x border-gray-900">
-                  <form
-                    action="/auth/signout"
-                    method="post"
-                    className="hidden lg:flex"
+
+              <div
+                className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12 rounded-lg flex flex-col gap-3 text-center bg-gray-200 px-4 py-4 justify-center text-slate-100 ${
+                  showSignOut ? "scale-100 opacity-100" : "scale-0 opacity-0"
+                }`}
+              >
+                <form
+                  action="/auth/signout"
+                  method="post"
+                  className="hidden lg:flex"
+                >
+                  <button
+                    type="submit"
+                    className="text-zinc-900 bg-green-600 font-bold py-2 px-4 rounded hover:bg-green-700 hover:text-slate-100 text-nowrap"
                   >
-                    <button
-                      type="submit"
-                      className="text-zinc-900 bg-green-600 font-bold py-2 px-4 rounded hover:bg-green-700 hover:text-slate-100 text-nowrap"
-                    >
-                      Abmelden
-                    </button>
-                  </form>
-                </div>
-              )}
+                    Abmelden
+                  </button>
+                </form>
+              </div>
             </div>
             <div className="m-2 flex lg:invisible absolute right-5 hover:cursor-pointer">
               {toggleMenu ? (
@@ -106,7 +109,7 @@ export default function Nav({ user }: { user: User | null }) {
           </div>
 
           <div
-            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12 sm:top-20 text-xl w-fdivl rounded-md flex lg:hidden flex-col gap-3 text-center bg-slate-200 border-y  px-4 pt-4  ${
+            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12  text-xl w-fdivl rounded-md flex lg:hidden flex-col gap-3 text-center bg-gray-200 border-y  px-4 pt-4  ${
               toggleMenu ? "scale-100 opacity-100" : "scale-0 opacity-0"
             } `}
           >
@@ -193,7 +196,7 @@ export default function Nav({ user }: { user: User | null }) {
             {toggleMenu ? <Close /> : <Menu />}
           </div>
           <div
-            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12 sm:top-20 text-xl w-fdivl rounded-md flex lg:hidden flex-col gap-3 text-center bg-slate-200 border-y  px-4 pt-4  ${
+            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12 sm:top-20 text-xl w-fdivl rounded-md flex lg:hidden flex-col gap-3 text-center bg-gray-200 border-y  px-4 pt-4  ${
               toggleMenu ? "scale-100 opacity-100" : "scale-0 opacity-0"
             } `}
           >

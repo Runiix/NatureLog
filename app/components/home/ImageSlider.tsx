@@ -36,7 +36,7 @@ export default function ImageSlider({ data }: any) {
         {data.map((slide: any) => (
           <Image
             key={slide.id}
-            className=" object-cover translate-all duration-500 ease-in-out  w-full"
+            className=" object-cover translate-all duration-500 ease-in-out min-w-full w-full"
             src={slide.image_url}
             alt="Slide Image"
             width="800"

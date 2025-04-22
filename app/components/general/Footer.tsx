@@ -4,8 +4,8 @@ import React from "react";
 
 export default function Footer() {
   return (
-    <div className="p-5 bg-gray-950 flex gap-10 items-center">
-      <p className="text-xs ml-20 flex items-center">
+    <div className="p-5 bg-gray-950 flex flex-col sm:flex-row gap-4 sm:gap-10 items-center">
+      <p className="text-xs sm:ml-20 flex items-center">
         <Copyright />
         Ruben Liebert 2025
       </p>

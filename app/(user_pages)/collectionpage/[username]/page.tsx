@@ -95,7 +95,7 @@ export default async function collectionpage(params: any) {
     const categoryCounts = await getCategoryCounts(supabase, spottedIds);
     return (
       <div>
-        <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-16">
+        <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-20">
           Sammlung{" "}
         </h2>
         <div className="w-full flex items-center justify-center">

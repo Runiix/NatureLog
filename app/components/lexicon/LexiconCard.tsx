@@ -24,6 +24,7 @@ export default function LexiconCard({
   user,
   spottedList,
   animalImageExists,
+  onlyUnseen,
 }: {
   id: number;
   common_name: string;
@@ -37,11 +38,21 @@ export default function LexiconCard({
   user: User | null;
   spottedList: number[];
   animalImageExists: boolean;
+  onlyUnseen: boolean;
 }) {
   const link = `/animalpage/${common_name}`;
   const imageRef = useRef<HTMLImageElement | null>(null);
   const router = useRouter();
-
+  const [isSpotted, setIsSpotted] = useState("false");
+  useEffect(() => {
+    const checkIfSpotted = () => {
+      if (spottedList !== undefined) {
+        const isSpotted = spottedList.some((item) => item === id);
+        if (isSpotted) setIsSpotted("true");
+      }
+    };
+    checkIfSpotted();
+  }, [id, spottedList]);
   const handleImageLoad = () => {
     if (imageRef.current) {
       imageRef.current.classList.remove("opacity-0");
@@ -51,7 +62,7 @@ export default function LexiconCard({
     router.push(link);
   };
   return (
-    <div>
+    <div className={onlyUnseen && isSpotted === "true" ? "hidden" : ""}>
       <div
         onClick={handleNavigation}
         className="flex flex-col w-44 sm:w-80 bg-gray-900 rounded-lg group shadow-md shadow-gray-800 cursor-pointer"

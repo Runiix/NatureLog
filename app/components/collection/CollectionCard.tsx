@@ -134,7 +134,7 @@ export default function CollectionCard({
                     <CircleLoader color="#16A34A" />
                   ) : (
                     <button onClick={() => setEditModal(true)}>
-                      <Add className="group-hover:text-green-600 group-hover:bg-slate-200 rounded-full w-10 h-10 cursor-pointer" />
+                      <Add className="group-hover:text-green-600 group-hover:bg-slate-200 rounded-full w-10 h-10 cursor-pointer transition-all duration-300" />
                     </button>
                   )}
                 </div>

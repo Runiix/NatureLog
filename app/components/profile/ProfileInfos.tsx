@@ -7,6 +7,7 @@ import { useState } from "react";
 import changeTeam from "../../actions/changeTeam";
 import { useParams } from "next/navigation";
 import changeFavoriteAnimal from "@/app/actions/changeFavoriteAnimal";
+import changeInstaLink from "@/app/actions/changeInstaLink";
 
 export default function ProfileInfos({
   user,
@@ -14,12 +15,14 @@ export default function ProfileInfos({
   teamIcon,
   favoriteAnimal,
   currUser,
+  instaLink,
 }: {
   user: any;
   animalCount: number;
   teamIcon: string | null;
   favoriteAnimal: string;
   currUser: boolean;
+  instaLink: string | null;
 }) {
   const collectionLink = currUser
     ? `/collectionpage/${user.user_metadata.displayName}`
@@ -27,7 +30,9 @@ export default function ProfileInfos({
   const [team, setTeam] = useState<string | null>(teamIcon);
   const [teamSelect, setTeamSelect] = useState(false);
   const [showEditFavoriteAnimal, setShowEditFavoriteAnimal] = useState(false);
+  const [showEditInstaLink, setShowEditInstaLink] = useState(false);
   const [favorite, setFavorite] = useState(favoriteAnimal);
+  const [insta, setInsta] = useState(instaLink);
   const params = useParams();
   const teamList = [
     {
@@ -65,6 +70,15 @@ export default function ProfileInfos({
     setFavorite(favoriteAnimal);
     setShowEditFavoriteAnimal(false);
   };
+  const handelInstaChange = async (formData: FormData) => {
+    const { success } = await changeInstaLink(formData);
+    if (success === false) {
+      alert("Link konnte nicht geändert werden");
+    }
+    const instaLink = formData.get("link") as string;
+    setInsta(instaLink);
+    setShowEditInstaLink(false);
+  };
 
   return (
     <div className="space-y-4">
@@ -72,7 +86,27 @@ export default function ProfileInfos({
         <div>
           {currUser ? user.user_metadata.displayName : user.display_name}
         </div>
-        <Instagram />
+        <div className="flex gap-2 items-center">
+          {insta ? (
+            <a
+              href={insta}
+              rel="noopener noreferrer"
+              target="_blank"
+              className="hover:text-green-600"
+            >
+              <Instagram />
+            </a>
+          ) : (
+            <Instagram />
+          )}
+
+          {currUser && (
+            <Edit
+              onClick={() => setShowEditInstaLink((prev) => !prev)}
+              className="cursor-pointer hover:text-green-600"
+            />
+          )}
+        </div>
       </div>
       <div className="flex justify-around gap-2 sm:gap-10">
         <div className="flex flex-col items-center  gap-2">
@@ -157,7 +191,7 @@ export default function ProfileInfos({
                 </h3>
                 <button
                   aria-label="button for opening the edit favorite animal form"
-                  onClick={() => setShowEditFavoriteAnimal((prev) => false)}
+                  onClick={() => setShowEditFavoriteAnimal(false)}
                   className="text-red-600 absolute top-1 right-2"
                 >
                   <Close />
@@ -172,6 +206,36 @@ export default function ProfileInfos({
                   <button
                     aria-label="button for changing the favorite animal"
                     formAction={handelFavoriteChange}
+                    className="bg-green-600 rounded-lg px-2 hover:bg-green-700 hover:text-gray-900"
+                  >
+                    ändern
+                  </button>
+                </div>
+              </form>
+            </div>
+          )}
+          {showEditInstaLink && currUser && (
+            <div className="w-full h-full bg-gray-900 bg-opacity-90 absolute top-0 left-0 flex items-center justify-center z-40">
+              <form className="flex flex-col items-center w-3/4 sm:w-1/2 2xl:w-1/4 h-1/3 sm:h-1/5 space-y-2 top-16 bg-gray-900 border border-slate-200 p-10 rounded-lg relative z-50">
+                {" "}
+                <h3>Geben sie ihren Instagram Link ein</h3>
+                <button
+                  aria-label="button for opening the edit instagram link form"
+                  onClick={() => setShowEditInstaLink(false)}
+                  className="text-red-600 absolute top-1 right-2"
+                >
+                  <Close />
+                </button>
+                <div className="flex  gap-4">
+                  <input
+                    type="text"
+                    name="link"
+                    placeholder="link eingeben"
+                    className="w-36 border border-slate-200 rounded-lg bg-gray-900 p-1"
+                  />
+                  <button
+                    aria-label="button for changing the instageam link"
+                    formAction={handelInstaChange}
                     className="bg-green-600 rounded-lg px-2 hover:bg-green-700 hover:text-gray-900"
                   >
                     ändern
