@@ -1,4 +1,3 @@
-import { supabase } from "@/__mocks__/supabase";
 import follow from "@/app/actions/follow";
 import unfollow from "@/app/actions/unfollow";
 import { createClient } from "@/utils/supabase/client";
@@ -7,7 +6,6 @@ import { SupabaseClient, User } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useEffect, useState } from "react";
-// import FollowingButton from "./FollowingButton";
 
 type ProfileElement = {
   username: string;
@@ -32,7 +30,6 @@ const checkForProfilePic = async (supabase: SupabaseClient, userId: string) => {
   const filteredData = listData.filter(
     (item: { name: string }) => item.name !== ".emptyFolderPlaceholder"
   );
-  console.log(filteredData);
   if (filteredData.length === 0) {
     return false;
   }
@@ -43,7 +40,6 @@ export default function SocialListElement({
   user,
   username,
   userId,
-  profilepicture,
   profilelink,
   following,
 }: ProfileElement) {
@@ -55,7 +51,6 @@ export default function SocialListElement({
       const exists = await checkForProfilePic(supabase, userId);
       setProfilePicExists(exists);
     };
-    console.log(profilePicExists);
     checkProfilePic();
   }, [user, supabase]);
   const handleFollowing = (event: React.MouseEvent<HTMLButtonElement>) => {

@@ -42,16 +42,11 @@ export default function CollectionAnimalGrid({
   useEffect(() => {
     setGenus(searchParams.get("genus") || "all");
     setNoImages(searchParams.get("noImages") || "false");
-    console.log(
-      "searchParams changed:",
-      Object.fromEntries(searchParams.entries())
-    );
   }, [searchParams]);
 
   useEffect(() => {
     const loadAnimals = async (offset: number) => {
       try {
-        console.log("Loading animals");
         let pageSize = 0;
         if (window.innerWidth > 1500) {
           pageSize = 12;
@@ -70,7 +65,6 @@ export default function CollectionAnimalGrid({
         } else {
           setLoadingMoreAnimals(true);
         }
-        console.log(data[1]);
 
         setAnimalItems(data[0]);
         setSpottedList(data[1]);

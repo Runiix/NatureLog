@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useTransition } from "react";
+import { useState, useTransition } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { colorsList, SizeSlider } from "../../constants/constants";
 import { ExpandMore } from "@mui/icons-material";

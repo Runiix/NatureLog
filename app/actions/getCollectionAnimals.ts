@@ -16,7 +16,6 @@ export default async function getCollectionAnimals(
   const noImages = params.get("noImages") || "false";
   const supabase = await createClient();
   if (noImages === "true") {
-    console.log("no images");
     const { data: spottedData, error } = await supabase
       .from("spotted")
       .select("animal_id, image, first_spotted_at")

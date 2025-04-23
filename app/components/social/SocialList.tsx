@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import ProfileListElement from "./SocialListElement";
 import { useEffect, useState } from "react";
 import getUsers from "@/app/actions/getUsers";

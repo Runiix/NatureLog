@@ -1,6 +1,5 @@
 import { createClient } from "@/utils/supabase/server";
 import AnimalOfTheDay from "../../components/home/AnimalOfTheDay";
-import AnimalRecognizer from "../../components/home/AnimalRecognizer";
 import DailyChallenge from "../../components/home/DailyChallenge";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
@@ -71,7 +70,6 @@ const getAnimalOfTheMonth = async (supabase: SupabaseClient) => {
         .eq("id", rand);
       if (error) console.error("Error getting Animal", error);
       if (data) {
-        console.log("ANIMAL OF THE MONTH", data[0]);
         return data[0];
       }
     } else {
@@ -106,7 +104,6 @@ async function fileExists(
 async function getLast10Images(supabase: SupabaseClient) {
   const { data, error } = await supabase.from("lastimages").select("*");
   if (error) return [];
-  console.log(data);
   return data;
 }
 

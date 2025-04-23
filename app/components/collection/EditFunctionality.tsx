@@ -3,7 +3,7 @@
 import Image, { StaticImageData } from "next/image";
 import addCollectionImage from "../../actions/addCollectionImage";
 import imageCompression from "browser-image-compression";
-import { use, useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Close } from "@mui/icons-material";
 import { CircleLoader } from "react-spinners";
 import addSpottedDate from "@/app/actions/addSpottedDate";
@@ -35,9 +35,7 @@ export default function EditFunctionality({
   const [loading, setLoading] = useState(false);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const [firstSeen, setFirstSeen] = useState("");
-  useEffect(() => {
-    console.log(spottedAt);
-  }, []);
+
   function handleClose(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
     setEditModal(false);

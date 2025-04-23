@@ -2,7 +2,6 @@
 
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
-import black from "@/app/assets/images/black.webp";
 import { ArrowForward, Cancel, CheckCircle } from "@mui/icons-material";
 import getQuizAnimals from "@/app/actions/getQuizAnimals";
 import { CircleLoader } from "react-spinners";

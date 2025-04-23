@@ -1,6 +1,6 @@
 "use client";
 import LexiconCard from "./LexiconCard";
-import { useState, useEffect, use } from "react";
+import { useState, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
 import getAnimals from "../../actions/getAnimals";
 import { CircleLoader } from "react-spinners";
@@ -34,10 +34,6 @@ export default function LexiconGrid({
 
   const { ref, inView } = useInView();
   const regex = /[äöüß\s]/g;
-
-  useEffect(() => {
-    console.log(onlyUnseen);
-  }, [onlyUnseen]);
 
   useEffect(() => {
     const sortBy = searchParams.get("sortBy") || null;

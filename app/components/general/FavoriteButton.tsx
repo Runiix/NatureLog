@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import { addOrRemoveAnimals } from "../../actions/addOrRemoveAnimal";
 import { usePathname } from "next/navigation";
 import { Add, Favorite } from "@mui/icons-material";

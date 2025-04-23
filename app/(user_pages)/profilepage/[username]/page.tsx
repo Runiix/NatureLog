@@ -4,7 +4,6 @@ import ProfilePicture from "@/app/components/profile/ProfilePicture";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
-import { get } from "http";
 
 const getParamUserId = async (supabase: SupabaseClient, username: string) => {
   const { data, error } = await supabase
@@ -13,7 +12,6 @@ const getParamUserId = async (supabase: SupabaseClient, username: string) => {
     .eq("display_name", username);
   if (error) console.error("Error fetching user id", error);
   if (data) {
-    console.log(data[0]);
     return data[0];
   }
   return [];

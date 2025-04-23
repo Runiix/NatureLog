@@ -1,14 +1,10 @@
 "use client";
 
 import Image, { StaticImageData } from "next/image";
-import Link from "next/link";
 import { useEffect, useRef, useState } from "react";
-import FavoriteButton from "../general/FavoriteButton";
 import { User } from "@supabase/supabase-js";
 import black from "@/app/assets/images/black.webp";
-import { usePathname, useRouter } from "next/navigation";
-import { addOrRemoveAnimals } from "@/app/actions/addOrRemoveAnimal";
-import { Add, Close, Favorite } from "@mui/icons-material";
+import { useRouter } from "next/navigation";
 import FavoriteFunctionality from "../general/FavoriteFunctionality";
 
 export default function LexiconCard({
