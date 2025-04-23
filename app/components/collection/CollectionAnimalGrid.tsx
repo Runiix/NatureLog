@@ -113,14 +113,14 @@ export default function CollectionAnimalGrid({
   };
   return (
     <div className="mt-4 sm:mt-10 flex items-center flex-col">
-      <div className="flex sm:flex-col items-center justify-center gap-2 ">
+      <div className="flex flex-col items-center justify-center gap-2 ">
         <GenusFilter counts={counts} categoryCounts={categoryCounts} />
         <div className="flex gap-4 items-center">
           <Search placeholder="Tier Suchen" />
           <ImageExistsFilter />
         </div>
       </div>
-      <div className="mx-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-1 sm:gap-4 mt-4 sm:mt-10">
+      <div className="mx-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mt-4 sm:mt-10">
         {animalItems &&
           animalItems.map((animal: Animal, index: number) => (
             <CollectionCard
@@ -129,7 +129,9 @@ export default function CollectionAnimalGrid({
               common_name={animal.common_name}
               imageUrl={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${
                 user.id
-              }/Collection/${animal.common_name.replace(regex, "_") + ".jpg"}`}
+              }/Collection/${
+                animal.common_name.replace(regex, "_").toString() + ".jpg"
+              }`}
               modalUrl={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${
                 user.id
               }/CollectionModals/${

@@ -25,7 +25,7 @@ export default function ImageExistsFilter() {
   };
 
   return (
-    <div className="flex justify-center items-center gap-5 bg-gray-900 shadow-md p-2 rounded-lg h-12 w-32">
+    <div className="flex justify-center items-center gap-5 bg-gray-900 shadow-md p-2 rounded-lg h-12 w-28">
       <label
         className={`${
           noImages === "true" && "text-green-600"

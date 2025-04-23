@@ -3,7 +3,7 @@
 import Image, { StaticImageData } from "next/image";
 import addCollectionImage from "../../actions/addCollectionImage";
 import imageCompression from "browser-image-compression";
-import { useRef, useState } from "react";
+import { use, useEffect, useRef, useState } from "react";
 import { Close } from "@mui/icons-material";
 import { CircleLoader } from "react-spinners";
 import addSpottedDate from "@/app/actions/addSpottedDate";
@@ -11,6 +11,7 @@ import addSpottedDate from "@/app/actions/addSpottedDate";
 type Props = {
   id: number;
   src: string | StaticImageData;
+  setSrc: React.Dispatch<React.SetStateAction<string | StaticImageData>>;
   common_name: string;
   animalImageExists: boolean;
   setEditModal: React.Dispatch<React.SetStateAction<boolean>>;
@@ -23,6 +24,7 @@ type Props = {
 export default function EditFunctionality({
   id,
   src,
+  setSrc,
   common_name,
   animalImageExists,
   setEditModal,
@@ -83,6 +85,7 @@ export default function EditFunctionality({
           if (imageExists === false) {
             setImageExists(true);
           }
+          setSrc(src + `?t=${new Date().getTime()}`);
           setEditModal(false);
           setLoading(false);
         }
@@ -162,7 +165,7 @@ export default function EditFunctionality({
                 className="hidden"
               />
             </label>
-            {spottedAt !== "01. January 1970" && (
+            {spottedAt !== null && spottedAt !== "NaN. Invalid Date NaN" && (
               <label>Aktuelles Datum: {spottedAt}</label>
             )}
             <input

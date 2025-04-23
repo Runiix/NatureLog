@@ -109,7 +109,7 @@ export default function Nav({ user }: { user: User | null }) {
           </div>
 
           <div
-            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12  text-xl w-fdivl rounded-md flex lg:hidden flex-col gap-3 text-center bg-gray-200 border-y  px-4 pt-4  ${
+            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12  text-xl w-fdivl rounded-lg flex lg:hidden flex-col gap-3 text-center bg-gray-200 border-y  px-4 pt-4  ${
               toggleMenu ? "scale-100 opacity-100" : "scale-0 opacity-0"
             } `}
           >
@@ -184,7 +184,7 @@ export default function Nav({ user }: { user: User | null }) {
           <div className="hidden sm:flex">
             <Link
               href="/loginpage"
-              className="text-slate-100 hover:text-slate-900 bg-green-600 transition-all duration-200 p-2 px-4 rounded-md mr-10"
+              className="text-slate-100 hover:text-slate-900 bg-green-600 transition-all duration-200 p-2 px-4 rounded-lg mr-10"
             >
               Anmelden
             </Link>
@@ -196,7 +196,7 @@ export default function Nav({ user }: { user: User | null }) {
             {toggleMenu ? <Close /> : <Menu />}
           </div>
           <div
-            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12 sm:top-20 text-xl w-fdivl rounded-md flex lg:hidden flex-col gap-3 text-center bg-gray-200 border-y  px-4 pt-4  ${
+            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12 sm:top-20 text-xl w-fdivl rounded-lg flex lg:hidden flex-col gap-3 text-center bg-gray-200 border-y  px-4 pt-4  ${
               toggleMenu ? "scale-100 opacity-100" : "scale-0 opacity-0"
             } `}
           >
@@ -209,7 +209,7 @@ export default function Nav({ user }: { user: User | null }) {
 
             <Link
               href="/loginpage"
-              className="text-slate-200 hover:text-slate-900 bg-green-600 transition-all duration-200 p-2 px-4 rounded-md"
+              className="text-slate-200 hover:text-slate-900 bg-green-600 transition-all duration-200 p-2 px-4 rounded-lg"
             >
               Anmelden
             </Link>

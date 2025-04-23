@@ -48,7 +48,7 @@ export default function LexiconSort() {
     <div className="flex flex-col">
       <div className="flex items-center gap-4">
         <div
-          className="flex items-center gap-6 bg-gray-900 shadow-md py-2 pl-6 pr-2 sm:text-xl rounded-md hover:bg-green-600 hover:text-gray-900 hover:cursor-pointer"
+          className="flex items-center gap-6 bg-gray-900 shadow-md py-2 pl-6 pr-2 sm:text-xl rounded-lg hover:bg-green-600 hover:text-gray-900 hover:cursor-pointer"
           onClick={() => setExpandSort(!expandSort)}
         >
           <p>
@@ -69,7 +69,7 @@ export default function LexiconSort() {
 
         <div
           onClick={handleSortOrder}
-          className={`transition-all duration-200 "bg-gray-900 shadow-md p-2 sm:text-xl rounded-md hover:bg-green-600 hover:text-gray-900 bg-gray-900 hover:cursor-pointer ${
+          className={`transition-all duration-200 "bg-gray-900 shadow-md p-2 sm:text-xl rounded-lg hover:bg-green-600 hover:text-gray-900 bg-gray-900 hover:cursor-pointer ${
             sortOrder === "ascending" ? "rotate-0" : "rotate-180"
           }`}
         >

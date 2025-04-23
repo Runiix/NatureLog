@@ -1,6 +1,6 @@
 "use client";
 
-import { Add, Edit } from "@mui/icons-material";
+import { Add, Edit, Visibility } from "@mui/icons-material";
 import Image, { StaticImageData } from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { CircleLoader } from "react-spinners";
@@ -10,11 +10,6 @@ import { useRouter } from "next/navigation";
 import FavoriteFunctionality from "../general/FavoriteFunctionality";
 import EditFunctionality from "./EditFunctionality";
 import { User } from "@supabase/supabase-js";
-type SpottedAnimal = {
-  animal_id: number;
-  image: string;
-  first_spotted_at: string;
-};
 
 export default function CollectionCard({
   id,
@@ -29,7 +24,7 @@ export default function CollectionCard({
 }: {
   id: number;
   common_name: string;
-  imageUrl: string;
+  imageUrl: string | StaticImageData;
   modalUrl: string;
   user: User;
   currUser?: "false";
@@ -43,7 +38,7 @@ export default function CollectionCard({
   const [imageModal, setImageModal] = useState(false);
   const [loading, setLoading] = useState(false);
   const [imageExists, setImageExists] = useState(animalImageExists);
-  const [spottedAt, setSpottedAt] = useState(first_spotted_at);
+  const [spottedAt, setSpottedAt] = useState<string>(first_spotted_at);
   const [editModal, setEditModal] = useState(false);
   const imageRef = useRef<HTMLImageElement | null>(null);
   const router = useRouter();
@@ -62,12 +57,15 @@ export default function CollectionCard({
   };
 
   useEffect(() => {
-    const date = new Date(first_spotted_at);
-    const day = date.getDate().toString().padStart(2, "0");
-    const month = date.toLocaleString("en-GB", { month: "long" });
-    const year = date.getFullYear();
-    setSpottedAt(`${day}. ${month} ${year}`);
-  }, [spottedAt]);
+    if (first_spotted_at === null) setSpottedAt("");
+    else {
+      const date = new Date(first_spotted_at);
+      const day = date.getDate().toString().padStart(2, "0");
+      const month = date.toLocaleString("ger", { month: "long" });
+      const year = date.getFullYear();
+      setSpottedAt(`${day}. ${month} ${year}`);
+    }
+  }, []);
 
   return (
     <div>
@@ -75,7 +73,7 @@ export default function CollectionCard({
         {imageExists ? (
           <div className="group relative flex items-end justify-end cursor-pointer">
             <Image
-              src={src + `?t=${new Date().getTime()}`}
+              src={src}
               ref={imageRef}
               alt="Placeholder"
               width={300}
@@ -88,13 +86,13 @@ export default function CollectionCard({
             />
             {currUser !== "false" && (
               <div>
-                <div className="absolute right-0 bottom-0  sm:mr-4 sm:mb-4">
+                <div className="absolute right-1 bottom-1  sm:mr-4 sm:mb-4">
                   {loading ? (
                     <CircleLoader color="#16A34A" />
                   ) : (
                     <button
                       onClick={() => setEditModal(true)}
-                      className="hover:text-green-600 bg-gray-900/70 hover:bg-slate-200 rounded-full w-10 h-10 p-2 cursor-pointer flex items-center justify-center"
+                      className="hover:text-green-600 bg-gray-900/70 hover:bg-slate-200 rounded-full sm:size-10 p-1 sm:p-2 cursor-pointer flex items-center justify-center"
                     >
                       <Edit />
                     </button>
@@ -104,6 +102,7 @@ export default function CollectionCard({
                   <EditFunctionality
                     id={id}
                     src={src}
+                    setSrc={() => setSrc(src + `?t=${new Date().getTime()}`)}
                     common_name={common_name}
                     animalImageExists={animalImageExists}
                     setEditModal={() => setEditModal(false)}
@@ -142,6 +141,7 @@ export default function CollectionCard({
                   <EditFunctionality
                     id={id}
                     src={src}
+                    setSrc={() => setSrc(src + `?t=${new Date().getTime()}`)}
                     common_name={common_name}
                     animalImageExists={animalImageExists}
                     setEditModal={() => setEditModal(false)}
@@ -157,14 +157,15 @@ export default function CollectionCard({
         )}
         <div
           onClick={handleNavigation}
-          className=" p-4 w-full flex justify-between items-center cursor-pointer"
+          className=" px-4 py-2 sm:p-4 w-full flex justify-between items-center cursor-pointer"
         >
           <div>
             <h2 className="text-xs sm:text-2xl">{common_name}</h2>
             {first_spotted_at && (
-              <h3 className="text-[0.5rem] sm:text-sm">
-                Erstsichtung am: {spottedAt}
-              </h3>
+              <div className="flex items-center sm:gap-1 text-[0.5rem] sm:text-sm -ml-1">
+                <Visibility className="scale-75 sm:scale-100" />
+                <h3 className="text-[0.5rem] sm:text-sm">{spottedAt}</h3>
+              </div>
             )}
           </div>
           <FavoriteFunctionality

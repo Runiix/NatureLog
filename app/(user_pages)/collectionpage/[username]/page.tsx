@@ -93,7 +93,7 @@ export default async function collectionpage(params: any) {
     animalCount,
   ];
 
-  if (user && paramUser.id === user.id) {
+  if (user && paramUser && paramUser.id === user.id) {
     const spottedList = await getSpottedList(supabase, user.id);
     const spottedIds: number[] = spottedList.map(
       (animal: SpottedAnimal) => animal.animal_id
@@ -114,31 +114,33 @@ export default async function collectionpage(params: any) {
       </div>
     );
   } else {
-    const spottedList = await getSpottedList(supabase, paramUser.id);
-    const spottedIds: number[] = spottedList.map(
-      (animal: SpottedAnimal) => animal.animal_id
-    );
-    const categoryCounts = await getCategoryCounts(supabase, spottedIds);
-    return (
-      <div>
-        <Link
-          href={`/profilepage/${paramUser.display_name}`}
-          className="text-xs sm:text-base absolute top-12 sm:top-20 left-5 bg-green-600 rounded-lg p-1 sm:p-2 text-gray-900 hover:bg-green-700"
-        >
-          ZUM PROFIL
-        </Link>
-        <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-16">
-          Sammlung{" "}
-        </h2>
-        <div className="w-full flex items-center justify-center">
-          <CollectionAnimalGrid
-            categoryCounts={categoryCounts || []}
-            counts={counts}
-            user={paramUser}
-            currUser="false"
-          />
+    if (paramUser) {
+      const spottedList = await getSpottedList(supabase, paramUser.id);
+      const spottedIds: number[] = spottedList.map(
+        (animal: SpottedAnimal) => animal.animal_id
+      );
+      const categoryCounts = await getCategoryCounts(supabase, spottedIds);
+      return (
+        <div>
+          <Link
+            href={`/profilepage/${paramUser.display_name}`}
+            className="text-xs sm:text-base absolute top-12 sm:top-20 left-5 bg-green-600 rounded-lg p-1 sm:p-2 text-gray-900 hover:bg-green-700"
+          >
+            ZUM PROFIL
+          </Link>
+          <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-16">
+            Sammlung{" "}
+          </h2>
+          <div className="w-full flex items-center justify-center">
+            <CollectionAnimalGrid
+              categoryCounts={categoryCounts || []}
+              counts={counts}
+              user={paramUser}
+              currUser="false"
+            />
+          </div>
         </div>
-      </div>
-    );
+      );
+    }
   }
 }

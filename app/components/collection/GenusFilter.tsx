@@ -35,7 +35,7 @@ export default function GenusFilter({
   return (
     <div className="flex justify-center sm:w-screen ">
       <div
-        className="flex sm:hidden items-center gap-2 bg-gray-900 shadow-md py-2 pl-2 pr-1 sm:text-xl rounded-md hover:bg-green-600 hover:text-gray-900 hover:cursor-pointer"
+        className="flex sm:hidden items-center gap-2 bg-gray-900 shadow-md py-2 pl-2 pr-1 sm:text-xl rounded-lg hover:bg-green-600 hover:text-gray-900 hover:cursor-pointer"
         onClick={() => setExpandGenus(!expandGenus)}
       >
         <p>Sichtungen</p>

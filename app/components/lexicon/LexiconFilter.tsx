@@ -51,7 +51,7 @@ export default function LexiconFilter() {
   return (
     <div>
       <div
-        className="flex items-center text-base gap-6 bg-gray-900 shadow-md py-2 pl-6 pr-2 sm:text-xl rounded-md hover:bg-green-600 hover:text-gray-900 hover:cursor-pointer"
+        className="flex items-center text-base gap-6 bg-gray-900 shadow-md py-2 pl-6 pr-2 sm:text-xl rounded-lg hover:bg-green-600 hover:text-gray-900 hover:cursor-pointer"
         onClick={() => setExpandFilter(!expandFilter)}
       >
         <p>Filter</p>
@@ -81,7 +81,7 @@ export default function LexiconFilter() {
                 searchParams.get("genus")?.includes(genus)
                   ? "bg-slate-200 text-green-600"
                   : ""
-              } rounded-md p-2 cursor-pointer hover:bg-slate-200 hover:text-green-600 transition-colors duration-200`}
+              } rounded-lg p-2 cursor-pointer hover:bg-slate-200 hover:text-green-600 transition-colors duration-200`}
               onClick={() => handleFilterChange("genus", genus)}
             >
               {genus}
@@ -118,9 +118,9 @@ export default function LexiconFilter() {
               key={endangerment}
               className={`${
                 searchParams.get("endangerment")?.includes(endangerment)
-                  ? "bg-slate-200 text-green-600"
+                  ? "bg-gray-200 text-green-600"
                   : ""
-              } rounded-md p-2 cursor-pointer hover:bg-slate-200 hover:text-green-600 transition-colors duration-200`}
+              } rounded-lg p-2 cursor-pointer hover:bg-slate-200 hover:text-green-600 transition-colors duration-200`}
               onClick={() => handleFilterChange("endangerment", endangerment)}
             >
               {endangerment}
