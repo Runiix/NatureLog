@@ -9,6 +9,13 @@ import { User } from "@supabase/supabase-js";
 import Search from "../general/Search";
 import GenusFilter from "./GenusFilter";
 import ImageExistsFilter from "./ImageExistsFilter";
+import Animal from "@/app/utils/AnimalType";
+
+type SpottedAnimal = {
+  animal_id: number;
+  image: boolean;
+  first_spotted_at: string;
+};
 
 export default function CollectionAnimalGrid({
   categoryCounts,
@@ -16,7 +23,7 @@ export default function CollectionAnimalGrid({
   user,
   currUser,
 }: {
-  categoryCounts: any;
+  categoryCounts: { category: string }[];
   counts: number[];
   user: User;
   currUser?: "false";
@@ -28,8 +35,8 @@ export default function CollectionAnimalGrid({
   const { ref, inView } = useInView();
   const [genus, setGenus] = useState<string>("all");
   const [noImages, setNoImages] = useState("false");
-  const [spottedList, setSpottedList] = useState<any>([]);
-  const [animalItems, setAnimalItems] = useState<any>([]);
+  const [spottedList, setSpottedList] = useState<SpottedAnimal[]>([]);
+  const [animalItems, setAnimalItems] = useState<Animal[]>([]);
   const regex = /[äöüß\s]/g;
 
   useEffect(() => {
@@ -52,7 +59,6 @@ export default function CollectionAnimalGrid({
           pageSize = 8;
         }
         const data = await getCollectionAnimals(
-          spottedList,
           user,
           offset,
           pageSize,
@@ -64,6 +70,8 @@ export default function CollectionAnimalGrid({
         } else {
           setLoadingMoreAnimals(true);
         }
+        console.log(data[1]);
+
         setAnimalItems(data[0]);
         setSpottedList(data[1]);
         setOffset(1);
@@ -84,7 +92,6 @@ export default function CollectionAnimalGrid({
           pageSize = 8;
         }
         const data = await getCollectionAnimals(
-          spottedList,
           user,
           offset,
           pageSize,
@@ -94,7 +101,7 @@ export default function CollectionAnimalGrid({
         if (data[0].length < pageSize) {
           setLoadingMoreAnimals(false);
         }
-        setAnimalItems((prevAnimals: any) => [...prevAnimals, ...data[0]]);
+        setAnimalItems((prevAnimals: Animal[]) => [...prevAnimals, ...data[0]]);
         setOffset((prev) => prev + 1);
       } catch (error) {
         console.error("Error loading more animals:", error);
@@ -106,7 +113,7 @@ export default function CollectionAnimalGrid({
   }, [inView, genus, query, noImages]);
   const searchFirstSpotted = (animalId: number) => {
     const animal = spottedList.find(
-      (animal: any) => animal.animal_id === animalId
+      (animal: { animal_id: number }) => animal.animal_id === animalId
     );
     return animal ? animal.first_spotted_at : null;
   };
@@ -121,7 +128,7 @@ export default function CollectionAnimalGrid({
       </div>
       <div className="mx-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-1 sm:gap-4 mt-4 sm:mt-10">
         {animalItems &&
-          animalItems.map((animal: any, index: number) => (
+          animalItems.map((animal: Animal, index: number) => (
             <CollectionCard
               key={animal.id}
               id={animal.id}
@@ -136,11 +143,13 @@ export default function CollectionAnimalGrid({
               }`}
               user={user}
               currUser={currUser}
-              spottedList={spottedList}
-              idList={spottedList.map((animal: any) => animal.animal_id)}
-              first_spotted_at={searchFirstSpotted(animal.id)}
+              idList={spottedList.map(
+                (animal: SpottedAnimal) => animal.animal_id
+              )}
+              first_spotted_at={searchFirstSpotted(animal.id) || ""}
               animalImageExists={spottedList.some(
-                (obj: any) => obj.animal_id === animal.id && obj.image === true
+                (obj: SpottedAnimal) =>
+                  obj.animal_id === animal.id && obj.image === true
               )}
             />
           ))}

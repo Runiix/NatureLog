@@ -6,6 +6,11 @@ import { useEffect, useState } from "react";
 import getUsers from "@/app/actions/getUsers";
 import { User } from "@supabase/supabase-js";
 
+type UserType = {
+  id: string;
+  display_name: string;
+  joyn_date: string;
+};
 export default function SocialList({
   user,
   following,
@@ -15,7 +20,7 @@ export default function SocialList({
 }) {
   const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<UserType[]>([]);
 
   useEffect(() => {
     const params = new URLSearchParams(searchParams.toString());
@@ -39,7 +44,7 @@ export default function SocialList({
   return (
     <div className="flex flex-col items-center gap-4">
       {users &&
-        users.map((profile: any, index: number) => (
+        users.map((profile: UserType, index: number) => (
           <ProfileListElement
             key={profile.id}
             user={user}

@@ -9,6 +9,12 @@ import black from "@/app/assets/images/black.webp";
 import { useRouter } from "next/navigation";
 import FavoriteFunctionality from "../general/FavoriteFunctionality";
 import EditFunctionality from "./EditFunctionality";
+import { User } from "@supabase/supabase-js";
+type SpottedAnimal = {
+  animal_id: number;
+  image: string;
+  first_spotted_at: string;
+};
 
 export default function CollectionCard({
   id,
@@ -17,7 +23,6 @@ export default function CollectionCard({
   modalUrl,
   user,
   currUser,
-  spottedList,
   idList,
   first_spotted_at,
   animalImageExists,
@@ -26,13 +31,8 @@ export default function CollectionCard({
   common_name: string;
   imageUrl: string;
   modalUrl: string;
-  user: any;
+  user: User;
   currUser?: "false";
-  spottedList: {
-    animal_id: number;
-    image: boolean;
-    first_spotted_at: string;
-  }[];
   idList: number[];
   first_spotted_at: string;
   animalImageExists: boolean;

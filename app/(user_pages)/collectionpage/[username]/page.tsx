@@ -5,6 +5,12 @@ import Link from "next/link";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
 
+type SpottedAnimal = {
+  animal_id: number;
+  image: string;
+  first_spotted_at: string;
+};
+
 const getSpottedList = async (supabase: SupabaseClient, userId: string) => {
   const { data, error } = await supabase
     .from("spotted")
@@ -90,7 +96,7 @@ export default async function collectionpage(params: any) {
   if (user && paramUser.id === user.id) {
     const spottedList = await getSpottedList(supabase, user.id);
     const spottedIds: number[] = spottedList.map(
-      (animal: any) => animal.animal_id
+      (animal: SpottedAnimal) => animal.animal_id
     );
     const categoryCounts = await getCategoryCounts(supabase, spottedIds);
     return (
@@ -100,7 +106,7 @@ export default async function collectionpage(params: any) {
         </h2>
         <div className="w-full flex items-center justify-center">
           <CollectionAnimalGrid
-            categoryCounts={categoryCounts}
+            categoryCounts={categoryCounts || []}
             counts={counts}
             user={user}
           />
@@ -110,10 +116,9 @@ export default async function collectionpage(params: any) {
   } else {
     const spottedList = await getSpottedList(supabase, paramUser.id);
     const spottedIds: number[] = spottedList.map(
-      (animal: any) => animal.animal_id
+      (animal: SpottedAnimal) => animal.animal_id
     );
     const categoryCounts = await getCategoryCounts(supabase, spottedIds);
-
     return (
       <div>
         <Link
@@ -127,7 +132,7 @@ export default async function collectionpage(params: any) {
         </h2>
         <div className="w-full flex items-center justify-center">
           <CollectionAnimalGrid
-            categoryCounts={categoryCounts}
+            categoryCounts={categoryCounts || []}
             counts={counts}
             user={paramUser}
             currUser="false"

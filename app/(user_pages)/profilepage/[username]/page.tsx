@@ -12,7 +12,10 @@ const getParamUserId = async (supabase: SupabaseClient, username: string) => {
     .select("*")
     .eq("display_name", username);
   if (error) console.error("Error fetching user id", error);
-  if (data) return data[0];
+  if (data) {
+    console.log(data[0]);
+    return data[0];
+  }
   return [];
 };
 const getAnimalCount = async (supabase: SupabaseClient, userId: string) => {

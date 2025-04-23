@@ -6,7 +6,7 @@ export default async function getQuizAnimals() {
   const supabase = await createClient();
   const { data, error } = await supabase.from("animals").select("id");
   if (error) console.error("Fehler bei Abfrage der Tier ID", error);
-  const IdData = data && data.map((animal: any) => animal.id);
+  const IdData = data && data.map((animal: { id: number }) => animal.id);
 
   const rand = IdData?.sort(() => 0.5 - Math.random()).slice(0, 4);
 

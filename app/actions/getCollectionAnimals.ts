@@ -2,11 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
-import { getUser } from "../utils/data";
 import { User } from "@supabase/supabase-js";
 
 export default async function getCollectionAnimals(
-  spottedList: { animal_id: any; image: any; first_spotted_at: any }[],
   user: User,
   offset: number,
   pageSize: number,
@@ -29,7 +27,7 @@ export default async function getCollectionAnimals(
       return [];
     }
     const spottedIds: number[] = spottedData.map(
-      (animal: any) => animal.animal_id
+      (animal: { animal_id: number }) => animal.animal_id
     );
     const from = offset * pageSize;
     const to = (offset + 1) * pageSize - 1;
@@ -73,7 +71,7 @@ export default async function getCollectionAnimals(
       return [];
     }
     const spottedIds: number[] = spottedData.map(
-      (animal: any) => animal.animal_id
+      (animal: { animal_id: number }) => animal.animal_id
     );
     const from = offset * pageSize;
     const to = (offset + 1) * pageSize - 1;

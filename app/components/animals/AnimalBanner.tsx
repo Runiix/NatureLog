@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React, { useRef } from "react";
 
-export default function AnimalBanner({ image }: any) {
+export default function AnimalBanner({ image }: { image: string }) {
   const imageRef = useRef<HTMLImageElement | null>(null);
 
   const handleImageLoad = () => {

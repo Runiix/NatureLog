@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import FavoriteButton from "./FavoriteButton";
 import FavoriteModal from "./FavoriteModal";
+import { User } from "@supabase/supabase-js";
 
 export default function FavoriteFunctionality({
   user,
@@ -12,7 +13,7 @@ export default function FavoriteFunctionality({
   buttonStyles,
   modalStyles,
 }: {
-  user: any;
+  user: User;
   id: number;
   spottedList: number[];
   buttonStyles?: string;

@@ -31,8 +31,8 @@ export default function LexiconCard({
   scientific_name: string;
   population_estimate: string;
   endangerment_status: string;
-  size_from: string;
-  size_to: string;
+  size_from: number;
+  size_to: number;
   sortBy: string | null;
   imageUrl: string;
   user: User | null;

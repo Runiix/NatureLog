@@ -44,7 +44,7 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
       console.error(listError);
     }
     const filteredData = listData?.filter(
-      (item: any) => item.name !== ".emptyFolderPlaceholder"
+      (item: { name: string }) => item.name !== ".emptyFolderPlaceholder"
     );
     if (filteredData?.length === 0) {
       imageExists = false;

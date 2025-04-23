@@ -8,6 +8,7 @@ import changeTeam from "../../actions/changeTeam";
 import { useParams } from "next/navigation";
 import changeFavoriteAnimal from "@/app/actions/changeFavoriteAnimal";
 import changeInstaLink from "@/app/actions/changeInstaLink";
+import { User } from "@supabase/supabase-js";
 
 export default function ProfileInfos({
   user,
@@ -17,7 +18,7 @@ export default function ProfileInfos({
   currUser,
   instaLink,
 }: {
-  user: any;
+  user: User | any;
   animalCount: number;
   teamIcon: string | null;
   favoriteAnimal: string;

@@ -10,7 +10,9 @@ const getSpottedList = async (supabase: SupabaseClient, userId: string) => {
     .eq("user_id", userId);
   if (error) console.error("Error getting spotted List", error);
   else {
-    const spottedIds: number[] = data.map((animal: any) => animal.animal_id);
+    const spottedIds: number[] = data.map(
+      (animal: { animal_id: number }) => animal.animal_id
+    );
     return spottedIds;
   }
   return [];

@@ -11,7 +11,7 @@ import LexiconFilter from "./LexiconFilter";
 import LexiconFilterList from "./LexiconFilterList";
 import LexiconSort from "./LexiconSort";
 import { CheckCircle, VisibilityOff } from "@mui/icons-material";
-import { only } from "node:test";
+import Animal from "@/app/utils/AnimalType";
 
 export default function LexiconGrid({
   user,
@@ -30,7 +30,7 @@ export default function LexiconGrid({
   const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "");
   const [sortOrder, setSortOrder] = useState("ascending");
   const [onlyUnseen, setOnlyUnseen] = useState(false);
-  const [animals, setAnimals] = useState<any>([]);
+  const [animals, setAnimals] = useState<Animal[]>([]);
 
   const { ref, inView } = useInView();
   const regex = /[äöüß\s]/g;
@@ -96,7 +96,7 @@ export default function LexiconGrid({
         if (data.length < pageSize) {
           setLoadingMoreAnimals(false);
         }
-        setAnimals((prevAnimals: any) => [...prevAnimals, ...data]);
+        setAnimals((prevAnimals: Animal[]) => [...prevAnimals, ...data]);
         setOffset((prev) => prev + 1);
       } catch (error) {
         console.error("Error loading more animals:", error);
@@ -136,7 +136,7 @@ export default function LexiconGrid({
 
       <div className="items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-1 sm:gap-4 mt-2 sm:mt-10">
         {animals &&
-          animals.map((animal: any, index: number) => (
+          animals.map((animal: Animal, index: number) => (
             <LexiconCard
               key={animal.id}
               id={animal.id}

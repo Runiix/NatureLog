@@ -14,7 +14,7 @@ import ImageSearch from "@/app/components/home/ImageSearch";
 const getRandomDayId = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase.from("animals").select("id");
   if (error) console.error("Fehler bei Abfrage der Tier ID", error);
-  const IdData = data && data.map((animal: any) => animal.id);
+  const IdData = data && data.map((animal: { id: number }) => animal.id);
   const today = new Date().toISOString().split("T")[0];
   let seed = 0;
   for (let i = 0; i < today.length; i++) {
@@ -30,7 +30,7 @@ const getRandomDayId = async (supabase: SupabaseClient) => {
 const getRandomMonthId = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase.from("animals").select("id");
   if (error) console.error("Fehler bei Abfrage der Tier ID", error);
-  const IdData = data && data.map((animal: any) => animal.id);
+  const IdData = data && data.map((animal: { id: number }) => animal.id);
   const month = new Date().toISOString().split("-")[1];
   let seed = 0;
   for (let i = 0; i < month.length; i++) {
@@ -70,7 +70,10 @@ const getAnimalOfTheMonth = async (supabase: SupabaseClient) => {
         .select("*")
         .eq("id", rand);
       if (error) console.error("Error getting Animal", error);
-      if (data) return data[0];
+      if (data) {
+        console.log("ANIMAL OF THE MONTH", data[0]);
+        return data[0];
+      }
     } else {
       console.error("Rand is undefined or null");
     }
@@ -103,6 +106,7 @@ async function fileExists(
 async function getLast10Images(supabase: SupabaseClient) {
   const { data, error } = await supabase.from("lastimages").select("*");
   if (error) return [];
+  console.log(data);
   return data;
 }
 

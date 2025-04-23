@@ -8,18 +8,35 @@ import addProfileGridImage from "../../actions/addProfileGridImage";
 import removeProfileGridImage from "../../actions/removeProfileGridImage";
 import changeProfileGridImage from "../../actions/changeProfileGridImage";
 import imageCompression from "browser-image-compression";
+import { User } from "@supabase/supabase-js";
 
+type ProfileGridImage = {
+  name: string;
+  id: string;
+  updated_at: string;
+  created_at: string;
+  last_accessed_at: string;
+  metadata: {
+    eTag: string;
+    size: number;
+    mimetype: string;
+    cacheControl: string;
+    lastModified: string;
+    contentLength: number;
+    httpStatusCode: number;
+  };
+};
 export default function PictureGrid({
   user,
   currUser,
 }: {
-  user: any;
+  user: User;
   currUser: boolean;
 }) {
   const [profileGridFull, setProfileGridFull] = useState(false);
   const [oldImageUrl, setOldImageUrl] = useState("");
   const [oldModalUrl, setOldModalUrl] = useState("");
-  const [profileGrid, setProfileGrid] = useState<any>([]);
+  const [profileGrid, setProfileGrid] = useState<ProfileGridImage[]>([]);
   const [refresh, setRefresh] = useState(false);
   const [imageModal, setImageModal] = useState("");
   const [loading, setLoading] = useState(false);
@@ -28,7 +45,20 @@ export default function PictureGrid({
     const loadProfileGrid = async () => {
       const gridData = await getProfileGrid(user.id);
       if (Array.isArray(gridData)) {
-        setProfileGrid(gridData);
+        setProfileGrid(
+          gridData.map((item: any) => ({
+            ...item,
+            metadata: {
+              eTag: item.metadata.eTag || "",
+              size: item.metadata.size || 0,
+              mimetype: item.metadata.mimetype || "",
+              cacheControl: item.metadata.cacheControl || "",
+              lastModified: item.metadata.lastModified || "",
+              contentLength: item.metadata.contentLength || 0,
+              httpStatusCode: item.metadata.httpStatusCode || 0,
+            },
+          }))
+        );
         if (gridData.length === 12) {
           setProfileGridFull(true);
         }
@@ -137,7 +167,7 @@ export default function PictureGrid({
       <h2 className="text-xl">Lieblingsfotos</h2>
       <div className="items-center justify-center grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-1 sm:gap-4 border-t-2 border-gray-950 pt-4">
         {profileGrid &&
-          profileGrid.map((imageId: number, index: number) => (
+          profileGrid.map((image: ProfileGridImage, index: number) => (
             <div key={profileGrid[index].id} className="relative">
               <Image
                 unoptimized

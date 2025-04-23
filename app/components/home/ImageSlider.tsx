@@ -5,8 +5,14 @@ import ArrowBackIosIcon from "@mui/icons-material/ArrowBackIos";
 import ArrowForwardIosIcon from "@mui/icons-material/ArrowForwardIos";
 import Image from "next/image";
 import Link from "next/link";
-
-export default function ImageSlider({ data }: any) {
+type RecentUploadsType = {
+  id: number;
+  user_id: string;
+  image_url: string;
+  created_at: string;
+  username: string;
+};
+export default function ImageSlider({ data }: { data: RecentUploadsType[] }) {
   const [slideIndex, setSlideIndex] = useState(0);
 
   function showPrevImage() {
@@ -33,7 +39,7 @@ export default function ImageSlider({ data }: any) {
   return (
     <div className="relative overflow-hidden h-[85%] flex flex-col gap-3">
       <div className=" overflow-hidden flex relative ">
-        {data.map((slide: any) => (
+        {data.map((slide: RecentUploadsType) => (
           <Image
             key={slide.id}
             className=" object-cover translate-all duration-500 ease-in-out min-w-full w-full"

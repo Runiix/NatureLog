@@ -6,12 +6,13 @@ import black from "@/app/assets/images/black.webp";
 import { ArrowForward, Cancel, CheckCircle } from "@mui/icons-material";
 import getQuizAnimals from "@/app/actions/getQuizAnimals";
 import { CircleLoader } from "react-spinners";
+import Animal from "@/app/utils/AnimalType";
 
 export default function AnimalQuiz() {
   const [randomIndex, setRandomIndex] = useState(0);
   const [answer, setAnswer] = useState(0);
   const [easyQuiz, setEasyQuiz] = useState(true);
-  const [quizAnimals, setQuizAnimals] = useState<any[]>([]);
+  const [quizAnimals, setQuizAnimals] = useState<Animal[]>([]);
   const [nextAnimalSwitch, setNextAnimalSwitch] = useState(false);
   const [rightTextAnswer, setRightTextAnswer] = useState(false);
   const [textInput, setTextInput] = useState("");
@@ -61,7 +62,7 @@ export default function AnimalQuiz() {
       {easyQuiz ? (
         <div className="grid grid-cols-2 grid-rows-2 gap-2 mb-2 h-24">
           {quizAnimals ? (
-            quizAnimals.map((animal: any, index: number) => (
+            quizAnimals.map((animal: Animal, index: number) => (
               <button
                 key={animal.id}
                 className={`flex items-center gap-1  hover:border-slate-400 border-2 w-44  mx-auto px-1 py-2 rounded-lg group hover:bg-gray-800 transition-all duration-200 ${

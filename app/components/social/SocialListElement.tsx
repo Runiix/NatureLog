@@ -1,3 +1,4 @@
+import { supabase } from "@/__mocks__/supabase";
 import follow from "@/app/actions/follow";
 import unfollow from "@/app/actions/unfollow";
 import { createClient } from "@/utils/supabase/client";
@@ -5,7 +6,7 @@ import { Avatar } from "@mui/material";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 // import FollowingButton from "./FollowingButton";
 
 type ProfileElement = {
@@ -16,26 +17,27 @@ type ProfileElement = {
   following: boolean;
   user: User;
 };
-// const checkForProfilePic = async (supabase: SupabaseClient, user: User) => {
-//   const { data: listData, error: listError } = await supabase.storage
-//     .from("profiles")
-//     .list(user?.id + "/ProfilePicture/", {
-//       limit: 2,
-//       offset: 0,
-//       sortBy: { column: "name", order: "asc" },
-//     });
-//   if (listError) {
-//     console.error(listError);
-//     return false;
-//   }
-//   const filteredData = listData.filter(
-//     (item: any) => item.name !== ".emptyFolderPlaceholder"
-//   );
-//   if (filteredData.length === 0) {
-//     return false;
-//   }
-//   return true;
-// };
+const checkForProfilePic = async (supabase: SupabaseClient, userId: string) => {
+  const { data: listData, error: listError } = await supabase.storage
+    .from("profiles")
+    .list(userId + "/ProfilePicture/", {
+      limit: 2,
+      offset: 0,
+      sortBy: { column: "name", order: "asc" },
+    });
+  if (listError) {
+    console.error(listError);
+    return false;
+  }
+  const filteredData = listData.filter(
+    (item: { name: string }) => item.name !== ".emptyFolderPlaceholder"
+  );
+  console.log(filteredData);
+  if (filteredData.length === 0) {
+    return false;
+  }
+  return true;
+};
 
 export default function SocialListElement({
   user,
@@ -45,11 +47,20 @@ export default function SocialListElement({
   profilelink,
   following,
 }: ProfileElement) {
+  const supabase = createClient();
   const [isFollowing, setIsFollowing] = useState(following);
-
+  const [profilePicExists, setProfilePicExists] = useState(false);
+  useEffect(() => {
+    const checkProfilePic = async () => {
+      const exists = await checkForProfilePic(supabase, userId);
+      setProfilePicExists(exists);
+    };
+    console.log(profilePicExists);
+    checkProfilePic();
+  }, [user, supabase]);
   const handleFollowing = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault(); // Stops the <Link> from navigating
-    event.stopPropagation(); // Stops event bubbling
+    event.preventDefault();
+    event.stopPropagation();
     following ? unfollow(user.id, userId) : follow(user.id, userId);
     setIsFollowing(!isFollowing);
   };
@@ -62,7 +73,17 @@ export default function SocialListElement({
         className="flex items-center justify-between
       mx-6 "
       >
-        <Avatar />
+        {profilePicExists === true ? (
+          <Image
+            src={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${userId}/ProfilePicture/ProfilePic.jpg?t=${new Date().getTime()}`}
+            alt="Profilbild"
+            width="200"
+            height="200"
+            className="rounded-full w-16 h-16 object-cover"
+          />
+        ) : (
+          <Avatar />
+        )}
         <h2>{username}</h2>
         <button
           onClick={handleFollowing}

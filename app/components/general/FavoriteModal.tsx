@@ -1,5 +1,6 @@
 import { addOrRemoveAnimals } from "@/app/actions/addOrRemoveAnimal";
 import { Close } from "@mui/icons-material";
+import { User } from "@supabase/supabase-js";
 import React from "react";
 
 export default function FavoriteModal({
@@ -12,7 +13,7 @@ export default function FavoriteModal({
   setIsSpotted,
   pathName,
 }: {
-  user: any;
+  user: User;
   id: number;
   styles?: string;
   favoriteModal: boolean;

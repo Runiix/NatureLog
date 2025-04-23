@@ -8,7 +8,7 @@ export default function LandingInfo({
   title,
   text,
 }: {
-  src: StaticImageData | any;
+  src: StaticImageData;
   position: "left" | "right";
   title: string;
   text: string;
@@ -25,7 +25,7 @@ export default function LandingInfo({
           }
         });
       },
-      { threshold: 0.5 } // 50% sichtbar
+      { threshold: 0.5 }
     );
 
     if (ref.current) observer.observe(ref.current);

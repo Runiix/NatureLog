@@ -10,7 +10,7 @@ export default function GenusFilter({
   categoryCounts,
 }: {
   counts: number[];
-  categoryCounts: any;
+  categoryCounts: { category: string }[];
 }) {
   const genusList = filterSpottedAnimals(categoryCounts, counts);
   const [expandGenus, setExpandGenus] = useState(false);

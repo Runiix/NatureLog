@@ -7,7 +7,6 @@ import {
   Landscape,
 } from "@mui/icons-material";
 import { createClient } from "@/utils/supabase/server";
-import FavoriteButton from "@/app/components/general/FavoriteButton";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import AnimalBanner from "@/app/components/animals/AnimalBanner";
 import FavoriteFunctionality from "@/app/components/general/FavoriteFunctionality";
@@ -41,7 +40,9 @@ const getSpottedList = async (supabase: SupabaseClient, user: User) => {
       .eq("user_id", user.id);
     if (error) console.error("Error getting spotted List", error);
     else {
-      const spottedIds: number[] = data.map((animal: any) => animal.animal_id);
+      const spottedIds: number[] = data.map(
+        (animal: { animal_id: number }) => animal.animal_id
+      );
       return spottedIds;
     }
   }
@@ -84,13 +85,15 @@ export default async function AnimalPage(params: any) {
                     <h2 className="text-3xl lg:text-4xl">
                       {animalData.common_name}
                     </h2>
-                    <FavoriteFunctionality
-                      user={user}
-                      id={animalData.id}
-                      spottedList={spottedList}
-                      buttonStyles=" scale-125 sm:scale-[2] "
-                      modalStyles=""
-                    />
+                    {user && (
+                      <FavoriteFunctionality
+                        user={user}
+                        id={animalData.id}
+                        spottedList={spottedList}
+                        buttonStyles=" scale-125 sm:scale-[2] "
+                        modalStyles=""
+                      />
+                    )}
                   </div>
 
                   <h3 className="text-xl lg:text-2xl">
@@ -156,7 +159,7 @@ export default async function AnimalPage(params: any) {
                     </div>
                     <div className="flex gap-2 flex-wrap">
                       {animalData.similar_animals.map(
-                        (animal: any, index: number) => (
+                        (animal: string, index: number) => (
                           <Link
                             className="text-green-600 hover:underline"
                             key={index}

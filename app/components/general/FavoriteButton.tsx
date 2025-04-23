@@ -4,6 +4,7 @@ import { useState } from "react";
 import { addOrRemoveAnimals } from "../../actions/addOrRemoveAnimal";
 import { usePathname } from "next/navigation";
 import { Add, Favorite } from "@mui/icons-material";
+import { User } from "@supabase/supabase-js";
 
 export default function FavoriteButton({
   user,
@@ -13,7 +14,7 @@ export default function FavoriteButton({
   changeFavoriteModal,
   changeSpotted,
 }: {
-  user: any;
+  user: User;
   id: number;
   isSpotted: string;
   styles?: string;
