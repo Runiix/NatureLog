@@ -33,7 +33,7 @@ export default function AnimalOfTheDay({
         </div>
         <div className="">{data.description}</div>
         <div>
-          <div className=" 2xl:text-xl flex gap-2">
+          <div className=" flex gap-2">
             <h3
               className={
                 data.endangerment_status === "Nicht gefährdet"

@@ -82,7 +82,7 @@ export default function AuthForm() {
               NatureLog{" "}
             </h1>
             <h1 className="mb-4 text-slate-100 text-3xl sm:text-4xl">
-              Anmeldung
+              {isNewUser ? "Registrierung" : "Anmeldung"}
             </h1>
             {loginError && (
               <h2 className="text-red-500">
@@ -133,7 +133,7 @@ export default function AuthForm() {
                 type="text"
                 placeholder="Benutzername"
                 required
-                className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
+                className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
               />
             )}
             <input
@@ -143,7 +143,7 @@ export default function AuthForm() {
               onInvalid={() => setIsSigningIn(false)}
               required
               placeholder="E-Mail"
-              className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
+              className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
             />
             <input
               id="password"
@@ -151,11 +151,11 @@ export default function AuthForm() {
               type="password"
               required
               placeholder="Passwort"
-              className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 bg-opacity-80 border border-slate-300 text-lg hover:border-slate-100 "
+              className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 bg-opacity-80 border border-slate-300 text-lg hover:border-slate-100 "
             />
             <button
               formAction={isNewUser ? handleSignUp : handleLogin}
-              className="bg-green-600 text-zinc-900 py-3 flex gap-4 justify-around items-center px-20  rounded-2xl hover:text-slate-100 hover:bg-green-700"
+              className="bg-green-600 hover:text-gray-900 py-3 flex gap-4 justify-around items-center px-20 rounded-lg hover:bg-green-700 transition-all duration-200"
               onClick={() => setIsSigningIn(true)}
             >
               <p className="text-2xl">{signInMessage} </p>
@@ -172,7 +172,7 @@ export default function AuthForm() {
                   <button
                     type="button"
                     onClick={handleFormChangeToLogin}
-                    className="underline hover:text-green-600"
+                    className="underline hover:text-green-600 transition-all duration-200"
                   >
                     Anmelden
                   </button>
@@ -184,7 +184,7 @@ export default function AuthForm() {
                     <button
                       type="button"
                       onClick={handleFormChangeToSignUp}
-                      className="underline hover:text-green-600"
+                      className="underline hover:text-green-600 transition-all duration-200"
                     >
                       Zur Registrierung
                     </button>
@@ -220,11 +220,11 @@ export default function AuthForm() {
                 onInvalid={() => setIsSigningIn(false)}
                 required
                 onChange={handleEmailChange}
-                className="text-slate-100 w-80 py-5 pl-3 rounded-2xl bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
+                className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
               />
               <button
                 type="submit"
-                className="bg-green-600 text-zinc-900 py-4 shadow-md px-10 text-2xl rounded-lg hover:text-slate-100 hover:bg-green-700"
+                className="bg-green-600 text-gray-900 py-4 shadow-md px-10 text-2xl rounded-lg hover:text-slate-100 hover:bg-green-700"
                 onClick={sendResetPassword}
               >
                 E-Mail versenden

@@ -11,7 +11,7 @@ export const colorsList = [
   {
     eng: "white",
     ger: "weiß",
-    styleBg: "bg-slate-200",
+    styleBg: "bg-gray-200",
     styleBorder: "border-slate-400",
   },
   {

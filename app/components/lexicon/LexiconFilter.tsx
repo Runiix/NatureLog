@@ -79,9 +79,9 @@ export default function LexiconFilter() {
               key={genus}
               className={`${
                 searchParams.get("genus")?.includes(genus)
-                  ? "bg-slate-200 text-green-600"
+                  ? "bg-gray-200 text-green-600"
                   : ""
-              } rounded-lg p-2 cursor-pointer hover:bg-slate-200 hover:text-green-600 transition-colors duration-200`}
+              } rounded-lg p-2 cursor-pointer hover:bg-gray-200 hover:text-green-600 transition-colors duration-200`}
               onClick={() => handleFilterChange("genus", genus)}
             >
               {genus}
@@ -96,7 +96,7 @@ export default function LexiconFilter() {
                 searchParams.get("color")?.includes(color.eng)
                   ? color.styleBg
                   : color.styleBorder
-              }  cursor-pointer hover:bg-slate-200 hover:text-gray-950 p-2 rounded-lg border-2 text-sm sm:text-base transition-colors duration-200 `}
+              }  cursor-pointer hover:bg-gray-200 hover:text-gray-900 p-2 rounded-lg border-2 text-sm sm:text-base transition-colors duration-200 `}
               onClick={() => handleFilterChange("color", color.eng)}
             >
               <p>{color.ger}</p>
@@ -120,7 +120,7 @@ export default function LexiconFilter() {
                 searchParams.get("endangerment")?.includes(endangerment)
                   ? "bg-gray-200 text-green-600"
                   : ""
-              } rounded-lg p-2 cursor-pointer hover:bg-slate-200 hover:text-green-600 transition-colors duration-200`}
+              } rounded-lg p-2 cursor-pointer hover:bg-gray-200 hover:text-green-600 transition-colors duration-200`}
               onClick={() => handleFilterChange("endangerment", endangerment)}
             >
               {endangerment}
@@ -139,7 +139,7 @@ export default function LexiconFilter() {
               max={500}
             />
             <button
-              className="text-zinc-900 bg-green-600  p-2 rounded-lg hover:bg-green-700 hover:text-slate-100 text-nowrap "
+              className="hover:text-gray-900 bg-green-600 p-2 sm:p-4 rounded-lg hover:bg-green-700  text-nowrap "
               onClick={handleSizeChange}
             >
               Größe ändern

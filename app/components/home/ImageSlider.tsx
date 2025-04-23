@@ -68,7 +68,7 @@ export default function ImageSlider({ data }: { data: RecentUploadsType[] }) {
               key={index}
               className={`p-2 rounded-full transition-all duration-500 ease-out  ${
                 slideIndex === index
-                  ? "bg-slate-200 w-8"
+                  ? "bg-gray-200 w-8"
                   : "bg-gray-900 bg-opacity-50"
               }`}
               onClick={() => setSlideIndex(index)}

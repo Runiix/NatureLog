@@ -43,7 +43,7 @@ export default function ImageExistsFilter() {
         </button>
       ) : (
         <button
-          className="rounded-full bg-slate-200 size-5 hover:bg-green-600"
+          className="rounded-full bg-gray-200 size-5 hover:bg-green-600"
           onClick={() => handleFilterChange("true")}
         ></button>
       )}

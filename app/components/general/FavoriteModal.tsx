@@ -34,7 +34,7 @@ export default function FavoriteModal({
         <div
           className={`${styles}fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center`}
         >
-          <div className="bg-gray-900 rounded-lg w-10/12 py-10 flex flex-col items-center justify-center gap-4 relative">
+          <div className="bg-gray-900 rounded-lg w-10/12 py-10 flex flex-col items-center justify-center gap-4 relative max-w-[50%] shadow-lg shadow-black">
             <button
               onClick={handleButtonClick}
               className="absolute top-2 right-2 hover:text-slate-400"
@@ -66,7 +66,7 @@ export default function FavoriteModal({
 
               <button
                 type="submit"
-                className="bg-red-600 text-slate-200 hover:text-gray-900 rounded-lg p-2 hover:bg-red-700 transition duration-300"
+                className="bg-red-600 hover:text-gray-900 rounded-lg p-4 text-xl hover:bg-red-700 transition duration-300"
               >
                 Tier entfernen
               </button>

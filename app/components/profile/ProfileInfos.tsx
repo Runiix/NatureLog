@@ -110,12 +110,12 @@ export default function ProfileInfos({
         </div>
       </div>
       <div className="flex justify-around gap-2 sm:gap-10">
-        <div className="flex flex-col items-center  gap-2">
+        <div className="flex flex-col items-center  gap-2 relative">
           <div>Team</div>
           {currUser ? (
             <button
               aria-label="button for selecting a team"
-              className="border-2 rounded-lg p-2 text-xl hover:bg-gray-800 hover:scale-110 transition duration-300 flex justify-center items-center"
+              className="border-2 rounded-lg p-2 text-xl hover:scale-110 transition duration-300 flex justify-center items-center"
               onClick={() => setTeamSelect(!teamSelect)}
             >
               {team === null ? (
@@ -127,7 +127,7 @@ export default function ProfileInfos({
           ) : (
             <div
               className={`border-2 rounded-lg p-2 text-xl  transition duration-300 flex justify-center items-center ${
-                currUser && "hover:scale-110 hover:bg-gray-800"
+                currUser && "hover:scale-110 "
               }`}
             >
               {team !== null && (
@@ -137,7 +137,7 @@ export default function ProfileInfos({
           )}
           {teamSelect && (
             <div
-              className=" bg-gray-800 p-2 rounded-lg flex gap-2 absolute "
+              className=" bg-gray-900 top-36 -left-44 p-2 rounded-lg flex gap-2 absolute"
               onClick={() => setTeamSelect(false)}
             >
               {teamList.map((team) => (
@@ -147,7 +147,7 @@ export default function ProfileInfos({
                   width={80}
                   height={80}
                   alt={team.alt}
-                  className="rounded-full cursor-pointer hover:opacity-90"
+                  className="rounded-lg cursor-pointer hover:opacity-90"
                   onClick={() =>
                     changeTeam(team.name, user.id).then(() => setTeam(team.src))
                   }
@@ -183,43 +183,45 @@ export default function ProfileInfos({
             )}
           </div>
           {showEditFavoriteAnimal && currUser && (
-            <div className="w-full h-full bg-gray-900 bg-opacity-90 absolute top-0 left-0 flex items-center justify-center z-40">
-              <form className="flex flex-col items-center w-3/4 sm:w-1/2 2xl:w-1/4 h-1/3 sm:h-1/5 space-y-2 top-16 bg-gray-900 border border-slate-200 p-10 rounded-lg relative z-50">
+            <div className="fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center">
+              <form className="bg-gray-900 rounded-lg w-10/12 py-10 flex flex-col items-center justify-center gap-4 relative max-w-[50%] shadow-lg shadow-black">
                 {" "}
-                <h3>
+                <h3 className="xl:text-xl text-center">
                   Geben sie ein neues Tier ein, dass Sie als Favorit speichern
-                  möchten
+                  möchten.
                 </h3>
                 <button
                   aria-label="button for opening the edit favorite animal form"
                   onClick={() => setShowEditFavoriteAnimal(false)}
-                  className="text-red-600 absolute top-1 right-2"
+                  className="hover:text-red-600 absolute top-1 right-2"
                 >
                   <Close />
                 </button>
-                <div className="flex  gap-4">
+                <div className="flex flex-col gap-4">
                   <input
                     type="text"
                     name="favorite_animal"
-                    placeholder="favorit eingeben"
-                    className="w-36 border border-slate-200 rounded-lg bg-gray-900 p-1"
+                    placeholder="Favorit eingeben"
+                    className="w-44 sm:w-64 border border-slate-200 rounded-lg bg-gray-900 p-4"
                   />
                   <button
                     aria-label="button for changing the favorite animal"
                     formAction={handelFavoriteChange}
-                    className="bg-green-600 rounded-lg px-2 hover:bg-green-700 hover:text-gray-900"
+                    className="bg-green-600 rounded-lg p-4 hover:bg-green-700 hover:text-gray-900"
                   >
-                    ändern
+                    Ändern
                   </button>
                 </div>
               </form>
             </div>
           )}
           {showEditInstaLink && currUser && (
-            <div className="w-full h-full bg-gray-900 bg-opacity-90 absolute top-0 left-0 flex items-center justify-center z-40">
-              <form className="flex flex-col items-center w-3/4 sm:w-1/2 2xl:w-1/4 h-1/3 sm:h-1/5 space-y-2 top-16 bg-gray-900 border border-slate-200 p-10 rounded-lg relative z-50">
+            <div className="fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center">
+              <form className="bg-gray-900 rounded-lg w-10/12 py-10 flex flex-col items-center justify-center gap-4 relative max-w-[50%] shadow-lg shadow-black">
                 {" "}
-                <h3>Geben sie ihren Instagram Link ein</h3>
+                <h3 className="xl:text-xl text-center">
+                  Geben Sie Ihren Instagram Link ein.
+                </h3>
                 <button
                   aria-label="button for opening the edit instagram link form"
                   onClick={() => setShowEditInstaLink(false)}
@@ -227,19 +229,19 @@ export default function ProfileInfos({
                 >
                   <Close />
                 </button>
-                <div className="flex  gap-4">
+                <div className="flex flex-col gap-4">
                   <input
                     type="text"
                     name="link"
-                    placeholder="link eingeben"
-                    className="w-36 border border-slate-200 rounded-lg bg-gray-900 p-1"
+                    placeholder="Link eingeben"
+                    className="w-44 sm:w-64 border border-slate-200 rounded-lg bg-gray-900 p-4"
                   />
                   <button
-                    aria-label="button for changing the instageam link"
+                    aria-label="button for changing the instagram link"
                     formAction={handelInstaChange}
-                    className="bg-green-600 rounded-lg px-2 hover:bg-green-700 hover:text-gray-900"
+                    className="bg-green-600 rounded-lg p-4 hover:bg-green-700 hover:text-gray-900"
                   >
-                    ändern
+                    Ändern
                   </button>
                 </div>
               </form>

@@ -109,8 +109,8 @@ export default async function profilepage(params: any) {
 
     return (
       <>
-        <div className="bg-gray-900 w-full lg:w-3/4 m-auto  rounded-lg shadow-xl shadow-slate-900 flex flex-col justify-center items-center pb-10">
-          <div className="flex flex-col items-center sm:items-baseline md:flex-row gap-10 mx-auto py-20 mt-20">
+        <div className="bg-gray-900 w-full lg:w-3/4 m-auto mt-20 rounded-lg shadow-xl shadow-slate-900 flex flex-col justify-center items-center pb-10">
+          <div className="flex flex-col items-center sm:items-baseline md:flex-row gap-10 mx-auto py-20 ">
             <ProfilePicture
               userId={user.id}
               currUser={true}

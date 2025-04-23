@@ -165,7 +165,7 @@ export default function PictureGrid({
   return (
     <div>
       <h2 className="text-xl">Lieblingsfotos</h2>
-      <div className="items-center justify-center grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-1 sm:gap-4 border-t-2 border-gray-950 pt-4">
+      <div className="items-center justify-center grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-1 sm:gap-4 border-t-2 border-gray-200 pt-4">
         {profileGrid &&
           profileGrid.map((image: ProfileGridImage, index: number) => (
             <div key={profileGrid[index].id} className="relative">
@@ -225,7 +225,7 @@ export default function PictureGrid({
         )}
         {imageModal !== "" && (
           <div
-            className="fixed top-0 left-0 w-full h-full z-10 bg-slate-950 bg-opacity-30 flex items-center justify-center"
+            className="fixed top-0 left-0 w-full h-full z-10 bg-black/70 flex items-center justify-center"
             onClick={() => setImageModal("")}
           >
             {" "}
@@ -241,7 +241,7 @@ export default function PictureGrid({
           </div>
         )}
         {loading && (
-          <div className="fixed top-0 left-0 w-full h-full z-10 bg-slate-950 bg-opacity-30 flex items-center justify-center">
+          <div className="fixed top-0 left-0 w-full h-full z-10 bg-black/70 flex items-center justify-center">
             Bild wird hochgeladen
             <CircleLoader color="#16A34A" />
           </div>

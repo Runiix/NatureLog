@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { useState } from "react";
-import { Close, Menu, Person } from "@mui/icons-material";
+import { Close, Menu, Person, PowerSettingsNew } from "@mui/icons-material";
 import { User } from "@supabase/supabase-js";
 
 export default function Nav({ user }: { user: User | null }) {
@@ -86,8 +86,9 @@ export default function Nav({ user }: { user: User | null }) {
                 >
                   <button
                     type="submit"
-                    className="text-zinc-900 bg-green-600 font-bold py-2 px-4 rounded hover:bg-green-700 hover:text-slate-100 text-nowrap"
+                    className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700  text-nowrap flex items-center gap-2"
                   >
+                    <PowerSettingsNew />
                     Abmelden
                   </button>
                 </form>
@@ -154,7 +155,7 @@ export default function Nav({ user }: { user: User | null }) {
               <form action="/auth/signout" method="post">
                 <button
                   type="submit"
-                  className="text-zinc-900 bg-green-600 font-bold my-2 py-2 px-4 rounded hover:bg-green-700 hover:text-slate-100"
+                  className="text-gray-900 bg-green-600 font-bold my-2 py-2 px-4 rounded hover:bg-green-700 hover:text-slate-100"
                 >
                   Abmelden
                 </button>

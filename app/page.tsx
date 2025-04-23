@@ -73,7 +73,7 @@ export default async function page() {
           </p>
           <Link
             href="/loginpage"
-            className="bg-green-600 text-center py-5 px-10 text-2xl sm:text-3xl rounded-lg hover:cursor-pointer hover:bg-green-700 hover:text-zinc-900 transition-all
+            className="bg-green-600 text-center py-5 px-10 text-2xl sm:text-3xl rounded-lg hover:cursor-pointer hover:bg-green-700 hover:text-gray-900 transition-all
            duration-200 shadow-md"
           >
             Zur Anmeldung
@@ -86,14 +86,14 @@ export default async function page() {
           </p>
           <Link
             href="/lexiconpage"
-            className="bg-green-600 text-center py-5 px-10  text-2xl sm:text-3xl rounded-lg hover:cursor-pointer hover:bg-green-700 hover:text-zinc-900 transition-all
+            className="bg-green-600 text-center py-5 px-10  text-2xl sm:text-3xl rounded-lg hover:cursor-pointer hover:bg-green-700 hover:text-gray-900 transition-all
            duration-200 shadow-md"
           >
             Zum Lexikon
           </Link>
         </div>
       </section>
-      <section className="bg-slate-200 w-full max-w-screen overflow-hidden px-0 mx-0">
+      <section className="bg-gray-200 w-full max-w-screen overflow-hidden px-0 mx-0">
         {LandingInfoData.map((info) => (
           <LandingInfo
             key={info.titel}

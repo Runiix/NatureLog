@@ -60,7 +60,7 @@ export default function FavoriteButton({
 
                 <button
                   type="submit"
-                  className="bg-transparent border-none text-slate-400 cursor-pointer hover:text-green-600 hover:scale-110 transition duration-300"
+                  className="bg-transparent border-none text-slate-400 hover:text-green-600 hover:scale-110 transition duration-300"
                   onClick={handleClick}
                 >
                   <Add className="text-slate-200" />

@@ -85,7 +85,7 @@ export default function SocialListElement({
           className={`${
             isFollowing
               ? " hover:text-red-600"
-              : "bg-green-600 rounded-lg p-2 text-gray-950 hover:bg-green-600 hover:text-slate-200"
+              : "bg-green-600 rounded-lg p-2 text-gray-900 hover:bg-green-600 hover:text-slate-200"
           }`}
         >
           {isFollowing ? "entfolgen" : "folgen"}

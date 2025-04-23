@@ -8,7 +8,7 @@ export default function ErrorPage() {
       </p>
       <Link
         href="/loginpage"
-        className="bg-green-600 text-center py-5 px-10 text-2xl sm:text-3xl rounded-lg hover:cursor-pointer hover:bg-green-700 hover:text-zinc-900 transition-all
+        className="bg-green-600 text-center py-5 px-10 text-2xl sm:text-3xl rounded-lg hover:cursor-pointer hover:bg-green-700 hover:text-gray-900 transition-all
            duration-200 shadow-md m-auto "
       >
         Zurück zur Anmeldung

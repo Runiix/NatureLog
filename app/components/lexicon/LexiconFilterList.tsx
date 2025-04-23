@@ -1,3 +1,4 @@
+import { Close } from "@mui/icons-material";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useTransition } from "react";
 
@@ -38,14 +39,14 @@ export default function LexiconFilterList() {
         values.map((value) => (
           <span
             key={`${key}-${value}`}
-            className="px-3 py-1 bg-gray-900 border  text-white rounded-full  flex items-center gap-2 text-xs sm:text-sm"
+            className="px-3 py-1 bg-gray-900 border text-white rounded-lg flex items-center gap-2 text-xs sm:text-sm"
           >
             {key}: {value}
             <button
               onClick={() => removeFilter(key, value)}
-              className="ml-2 text-xs sm:text-base text-red-500 rounded-full px-2 hover:bg-gray-800 cursor-pointer border-[1px]"
+              className="ml-2 text-xs sm:text-base hover:text-red-600 rounded-lg px-2  cursor-pointer border-[1px] flex items-center justify-center"
             >
-              ✕
+              <Close />
             </button>
           </span>
         ))

@@ -92,7 +92,7 @@ export default function CollectionCard({
                   ) : (
                     <button
                       onClick={() => setEditModal(true)}
-                      className="hover:text-green-600 bg-gray-900/70 hover:bg-slate-200 rounded-full sm:size-10 p-1 sm:p-2 cursor-pointer flex items-center justify-center"
+                      className="hover:text-green-600 bg-gray-900/70 hover:bg-gray-200 rounded-full sm:size-10 p-1 sm:p-2 cursor-pointer flex items-center justify-center"
                     >
                       <Edit />
                     </button>
@@ -133,7 +133,7 @@ export default function CollectionCard({
                     <CircleLoader color="#16A34A" />
                   ) : (
                     <button onClick={() => setEditModal(true)}>
-                      <Add className="group-hover:text-green-600 group-hover:bg-slate-200 rounded-full w-10 h-10 cursor-pointer transition-all duration-300" />
+                      <Add className="group-hover:text-green-600 group-hover:bg-gray-200 rounded-full w-10 h-10 cursor-pointer transition-all duration-300" />
                     </button>
                   )}
                 </div>
@@ -179,7 +179,7 @@ export default function CollectionCard({
       </div>
 
       {imageModal && (
-        <div className="fixed top-0 left-0 w-screen h-screen bg-gray-950 bg-opacity-50 z-40">
+        <div className="fixed top-0 left-0 w-screen h-screen bg-black/70 z-40">
           <div
             className=" top-0 left-0 w-full xl:w-5/6 mx-auto h-5/6 z-50  bg-opacity-30 flex items-center justify-center relative"
             onClick={() => setImageModal((prev) => !prev)}

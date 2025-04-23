@@ -110,7 +110,7 @@ export default function EditFunctionality({
     <div
       className={`fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center`}
     >
-      <div className="bg-gray-900 rounded-lg w-10/12 py-10 flex flex-col items-center justify-center gap-4 relative shadow-lg shadow-black">
+      <div className="bg-gray-900 rounded-lg w-10/12 max-w-[50%] py-10 flex flex-col items-center justify-center gap-4 relative shadow-lg shadow-black">
         <button
           onClick={handleClose}
           className="absolute top-2 right-2 hover:text-slate-400"
@@ -177,7 +177,7 @@ export default function EditFunctionality({
               onClick={() => handleFileUpload(id)}
               type="submit"
               disabled={loading}
-              className="bg-green-600 px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12 "
+              className="bg-green-600 p-4 flex justify-center items-center text-xl rounded-lg hover:bg-green-700 hover:text-gray-900 transition-all duration-200 shadow-md shadow-black"
             >
               {loading ? <CircleLoader size={20} /> : "Änderungen speichern"}
             </button>
