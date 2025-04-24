@@ -1,10 +1,4 @@
-import {
-  ArrowBack,
-  CalendarMonth,
-  Compare,
-  Height,
-  Landscape,
-} from "@mui/icons-material";
+import { CalendarMonth, Compare, Height, Landscape } from "@mui/icons-material";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import AnimalBanner from "@/app/components/animals/AnimalBanner";
