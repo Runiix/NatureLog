@@ -5,7 +5,7 @@ import { useInView } from "react-intersection-observer";
 import { CircleLoader } from "react-spinners";
 import AnimalListItem from "./AnimalListItem";
 import getAnimalListItems from "@/app/actions/getAnimalListItems";
-import { Add, Delete, Edit } from "@mui/icons-material";
+import { Add, Close, Delete, Edit } from "@mui/icons-material";
 import Search from "../general/Search";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import getAnimalListSearchItems from "@/app/actions/getAnimalListSearchItems";
@@ -147,32 +147,34 @@ export default function AnimalList({
     }
   }, [inView]);
   return (
-    <div className="bg-gray-900 rounded-lg p-4 w-full sm:w-auto  max-w-96 sm:min-w-96 flex flex-col gap-4 max-h-full mx-auto max-w-screen">
+    <div className="p-4 w-full sm:w-auto  max-w-96 sm:min-w-96  flex-col gap-4 max-h-full mx-auto max-w-screen rounded-lg shadow-black shadow-lg flex justify-center bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200">
       <div className="flex ">
         {" "}
         <div>
-          <h2 className="text-2xl pb-2 border-b border-gray-200">
-            {currTitle}
-          </h2>
+          <div className=" border-b border-gray-200 flex">
+            {" "}
+            <h2 className="text-2xl pb-2">{currTitle}</h2>
+            <div className=" ml-auto mr-2 flex gap-2">
+              <button
+                className="hover:text-green-600"
+                onClick={() => setEditListModalOpen(true)}
+              >
+                <Edit />
+              </button>
+              <button
+                className="hover:text-red-600"
+                onClick={() => setDeleteListModalOpen(true)}
+              >
+                <Delete />
+              </button>
+            </div>
+          </div>
+
           <p className="text-gray-300"> {currDescription}</p>
-        </div>
-        <div className=" ml-auto mr-2 flex flex-col gap-2">
-          <button
-            className="hover:text-green-600"
-            onClick={() => setEditListModalOpen(true)}
-          >
-            <Edit />
-          </button>
-          <button
-            className="hover:text-red-600"
-            onClick={() => setDeleteListModalOpen(true)}
-          >
-            <Delete />
-          </button>
         </div>
       </div>
 
-      <div className="flex flex-col overflow-y-auto max-h-64 border-x-2 border-gray-200 rounded-lg  h-full">
+      <div className="flex flex-col overflow-y-auto max-h-64 gap-2 py-2 pr-2  h-full">
         {animalItems.map(
           (animal: {
             id: number;
@@ -186,6 +188,7 @@ export default function AnimalList({
               name={animal.common_name}
               image={animal.lexicon_link}
               user={user}
+              spottedList={spottedList}
               deleteRefresh={() => setDeleteRefresh(!deleteRefresh)}
               currUser={currUser}
             />
@@ -203,30 +206,43 @@ export default function AnimalList({
       {currUser && (
         <button
           onClick={() => setAddNewAnimalModalOpen(true)}
-          className="mt-auto border rounded-lg w-11/12 mx-auto py-2 hover:text-green-600 hover:bg-gray-800"
+          className="mt-auto rounded-lg w-11/12 mx-auto py-2 transition-all duration-200 bg-green-600 hover:bg-green-700 hover:text-gray-900"
         >
-          <Add />
+          Tier hinzufügen
         </button>
       )}
       {addNewAnimalModalOpen && (
-        <Modal closeModal={() => setAddNewAnimalModalOpen(false)}>
-          <Search placeholder="Tier suchen" />
-          <div className="overflow-y-auto">
-            {animalSearchItems.map((animal: AnimalListItemType) => (
-              <AnimalListSearchItem
-                key={animal.id}
-                listId={listId}
-                animalId={animal.id}
-                name={animal.common_name}
-                image={animal.lexicon_link}
-                user={user}
-                spottedList={spottedList}
-                inList={animalItems.some((obj) => obj.id === animal.id)}
-                refresh={() => setDeleteRefresh(!deleteRefresh)}
-              />
-            ))}
+        <div
+          className={`fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center`}
+        >
+          <div className=" bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200 rounded-lg w-full sm:w-10/12 sm:max-w-[50%] py-10 flex flex-col items-center justify-center gap-4 relative shadow-lg shadow-black max-h-[80%]">
+            <button
+              onClick={(e) => handleClose(e)}
+              className="absolute top-2 right-2 hover:text-red-600"
+            >
+              <Close />
+            </button>
+            <h2 className="sm:text-2xl text-center">
+              Geben Sie einen Tiernamen ein und fügen Sie es zu Ihrere Liste
+              hinzu.
+            </h2>
+            <Search placeholder="Tier suchen" />
+            <div className="overflow-y-auto pr-4 space-y-2 ">
+              {animalSearchItems.map((animal: AnimalListItemType) => (
+                <AnimalListSearchItem
+                  key={animal.id}
+                  listId={listId}
+                  animalId={animal.id}
+                  name={animal.common_name}
+                  image={animal.lexicon_link}
+                  user={user}
+                  inList={animalItems.some((obj) => obj.id === animal.id)}
+                  refresh={() => setDeleteRefresh(!deleteRefresh)}
+                />
+              ))}
+            </div>
           </div>
-        </Modal>
+        </div>
       )}
       {editListModalOpen && (
         <Modal closeModal={() => setEditListModalOpen(false)}>

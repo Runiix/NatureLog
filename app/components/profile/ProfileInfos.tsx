@@ -96,7 +96,7 @@ export default function ProfileInfos({
               href={insta}
               rel="noopener noreferrer"
               target="_blank"
-              className="hover:text-green-600"
+              className="hover:text-green-600 transition duration-300"
             >
               <Instagram />
             </a>
@@ -105,7 +105,7 @@ export default function ProfileInfos({
           {currUser && (
             <Edit
               onClick={() => setShowEditInstaLink((prev) => !prev)}
-              className="cursor-pointer hover:text-green-600"
+              className="cursor-pointer hover:text-green-600 transition duration-300"
             />
           )}
         </div>
@@ -188,7 +188,7 @@ export default function ProfileInfos({
             {currUser && (
               <Edit
                 onClick={() => setShowEditFavoriteAnimal((prev) => !prev)}
-                className="cursor-pointer hover:text-green-600"
+                className="cursor-pointer hover:text-green-600 transition duration-300"
               />
             )}
           </div>

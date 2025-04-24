@@ -48,7 +48,7 @@ export default function LexiconSort() {
     <div className="flex flex-col">
       <div className="flex items-center gap-4">
         <div
-          className="flex items-center gap-6 bg-gray-900 shadow-md py-2 pl-6 pr-2 sm:text-xl rounded-lg hover:bg-green-600 hover:text-gray-900 hover:cursor-pointer"
+          className="flex items-center gap-6 shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 py-2 pl-6 pr-2 sm:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950"
           onClick={() => setExpandSort(!expandSort)}
         >
           <p>
@@ -69,7 +69,7 @@ export default function LexiconSort() {
 
         <div
           onClick={handleSortOrder}
-          className={`transition-all duration-200 "bg-gray-900 shadow-md p-2 sm:text-xl rounded-lg hover:bg-green-600 hover:text-gray-900 bg-gray-900 hover:cursor-pointer ${
+          className={` "bg-gray-900  p-2 sm:text-xl rounded-lg shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200  hover:cursor-pointer hover:from-green-600 hover:to-gray-950  ${
             sortOrder === "ascending" ? "rotate-0" : "rotate-180"
           }`}
         >
@@ -77,7 +77,7 @@ export default function LexiconSort() {
         </div>
       </div>
       <div
-        className={`flex flex-col absolute bg-gray-900 mt-12 transition-all duration-500 rounded-b-md border border-slate-400 shadow-lg shadow-black z-50 ${
+        className={`flex flex-col absolute  bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 hover:border-green-600  mt-12 transition-all duration-500 rounded-b-md border border-slate-400 shadow-lg shadow-black z-50 ${
           expandSort ? "scale-100 opacity-100" : "scale-0 opacity-0"
         }`}
       >
@@ -89,7 +89,7 @@ export default function LexiconSort() {
         ].map((sort) => (
           <div
             key={sort.value}
-            className=" p-3 px-6 hover:bg-green-600 hover:cursor-pointer hover:text-gray-900 text-xl "
+            className=" p-3 px-6 shadow-md bg-gradient-to-br from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:from-green-600 hover:to-gray-950 hover:cursor-pointer text-xl "
             onClick={() => handleSortChange(sort.value)}
           >
             {" "}

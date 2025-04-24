@@ -39,7 +39,7 @@ export default function LexiconFilterList() {
         values.map((value) => (
           <span
             key={`${key}-${value}`}
-            className="px-3 py-1 bg-gray-900 border text-white rounded-lg flex items-center gap-2 text-xs sm:text-sm"
+            className="px-3 py-1 shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 text-white rounded-lg flex items-center gap-2 text-xs sm:text-sm"
           >
             {key}: {value}
             <button

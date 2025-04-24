@@ -109,7 +109,7 @@ export default function LexiconGrid({
       <div className="flex-col md:flex-row flex gap-2 md:gap-0 justify-between items-center">
         <div className="flex items-center gap-[1px]">
           <LexiconFilter />
-          <div className="flex items-center  bg-gray-900 w-20 h-10 justify-center gap-2 rounded-lg p-2">
+          <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 w-20 h-10 justify-center gap-2 rounded-lg p-2">
             <VisibilityOff />
             <button
               onClick={() => setOnlyUnseen((prev) => !prev)}

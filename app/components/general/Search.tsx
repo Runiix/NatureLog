@@ -21,7 +21,7 @@ export default function Search({ placeholder }: { placeholder: string }) {
     <input
       id="Search"
       defaultValue={searchParams.get("query")?.toString()}
-      className=" z-0 bg-gray-900 border border-slate-100 hover:bg-gray-800 hover:cursor-pointer p-3 px-5 rounded-lg w-44 sm:w-auto  focus:outline-green-600 "
+      className=" z-0 border border-gray-200 shadow-black shadow-md bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 hover:border-green-600  hover:cursor-pointer p-3 px-5 rounded-lg w-44 sm:w-auto  focus:border-green-600 focus:outline-none "
       type="text"
       placeholder={placeholder}
       onChange={(e) => {

@@ -14,7 +14,6 @@ export default function AnimalListSearchItem({
   name,
   image,
   user,
-  spottedList,
   inList,
   refresh,
 }: {
@@ -23,7 +22,6 @@ export default function AnimalListSearchItem({
   name: string;
   image: string;
   user: User;
-  spottedList: number[];
   inList: boolean;
   refresh: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
@@ -43,34 +41,31 @@ export default function AnimalListSearchItem({
     }
   };
   return (
-    <div className="flex gap-4 items-center">
+    <div className="flex gap-4 items-center border-x border-gray-200 rounded-lg shadow-black shadow-md bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 hover:border-green-600 ">
       <Image
         src={image}
         alt={name}
         width="100"
         height="100"
-        className="h-auto w-24 "
+        className="h-auto w-24 rounded-l-lg aspect-[3/2] object-cover"
       />
       <h2>{name}</h2>
       <div className="ml-auto flex gap-4 mr-4">
         {isInList ? (
           <button
             onClick={() => handleAnimalDelete()}
-            className="text-green-600"
+            className="text-green-600 hover:text-red-600"
           >
             <CheckCircle />
           </button>
         ) : (
-          <button onClick={() => handleAnimalAdd()}>
+          <button
+            onClick={() => handleAnimalAdd()}
+            className="hover:text-green-600"
+          >
             <Add />
           </button>
         )}
-
-        <FavoriteFunctionality
-          user={user}
-          id={animalId}
-          spottedList={spottedList}
-        />
       </div>
     </div>
   );

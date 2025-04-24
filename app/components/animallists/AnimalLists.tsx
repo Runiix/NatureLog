@@ -59,7 +59,7 @@ export default function AnimalLists({
         ))}
       {currUser && (
         <button
-          className="size-32 rounded-lg border bg-gray-900 border-gray-200 hover:text-green-600  flex items-center justify-center mx-auto my-auto"
+          className="size-32 rounded-lg shadow-black shadow-lg bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200 hover:text-green-600  flex items-center justify-center mx-auto my-auto"
           onClick={() => setNewListModalOpen(true)}
         >
           <Add className="text-4xl" />

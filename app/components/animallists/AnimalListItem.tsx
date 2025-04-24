@@ -6,6 +6,7 @@ import { User } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import React, { useState } from "react";
+import FavoriteFunctionality from "../general/FavoriteFunctionality";
 
 export default function AnimalListItem({
   listId,
@@ -13,6 +14,7 @@ export default function AnimalListItem({
   name,
   image,
   user,
+  spottedList,
   deleteRefresh,
   currUser,
 }: {
@@ -21,6 +23,7 @@ export default function AnimalListItem({
   name: string;
   image: string;
   user: User;
+  spottedList: number[];
   deleteRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   currUser: boolean;
 }) {
@@ -31,23 +34,27 @@ export default function AnimalListItem({
     }
   };
   return (
-    <div
-      className={`flex gap-4 items-center px-4 py-2 h-16 border-y border-gray-200`}
-    >
+    <div className="flex gap-4 items-center border-x border-gray-200 rounded-lg shadow-black shadow-md bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 hover:border-green-600 ">
       <Image
         src={image}
         alt={name}
         width="100"
         height="100"
-        className="object-cover aspect-video"
+        className="object-cover aspect-[3/2] rounded-l-lg"
       />
       <Link href={`/animalpage/${name}`} className="hover:text-green-600">
         <h2>{name}</h2>
       </Link>
-
+      <div className="ml-auto">
+        <FavoriteFunctionality
+          user={user}
+          id={animalId}
+          spottedList={spottedList}
+        />
+      </div>
       {currUser && (
         <button
-          className="hover:text-red-600 ml-auto"
+          className="hover:text-red-600 "
           onClick={() => handleAnimalDelete()}
         >
           <Delete />

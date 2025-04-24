@@ -61,7 +61,7 @@ export default function LexiconCard({
     <div className={onlyUnseen && isSpotted === "true" ? "hidden" : ""}>
       <div
         onClick={handleNavigation}
-        className="flex flex-col w-44 sm:w-80 bg-gray-900 rounded-lg group shadow-md shadow-gray-800 cursor-pointer"
+        className="flex flex-col w-44 sm:w-80 bborder-gray-200 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 rounded-lg cursor-pointer"
       >
         {animalImageExists ? (
           <div>

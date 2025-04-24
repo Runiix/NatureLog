@@ -51,7 +51,7 @@ export default function LexiconFilter() {
   return (
     <div>
       <div
-        className="flex items-center text-base gap-6 bg-gray-900 shadow-md py-2 pl-6 pr-2 sm:text-xl rounded-lg hover:bg-green-600 hover:text-gray-900 hover:cursor-pointer"
+        className="flex items-center text-base gap-6  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 py-2 pl-6 pr-2 sm:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 "
         onClick={() => setExpandFilter(!expandFilter)}
       >
         <p>Filter</p>
@@ -62,7 +62,7 @@ export default function LexiconFilter() {
         />
       </div>
       <div
-        className={`flex flex-col gap-7 left-0 sm:left-auto absolute bg-gray-900 mt-28 sm:mt-0 p-4 sm:p-10 transition-all duration-500 w-full sm:w-1/2 rounded-b-md border border-slate-400 shadow-lg shadow-black z-50 ${
+        className={`flex flex-col gap-7 left-0 sm:left-auto absolute shadow-black shadow-md bg-gradient-to-br  from-gray-900 to-70%  to-gray-950 hover:border-green-600 border border-gray-200 py-2 pl-6 pr-2 sm:text-xl   hover:cursor-pointer  mt-28 sm:mt-0 p-4 sm:p-10 transition-all duration-500 w-full sm:w-1/2 rounded-b-lg rounded-tr-lg z-50 ${
           expandFilter ? "scale-100 opacity-100" : "scale-0 opacity-0"
         }`}
       >
@@ -79,9 +79,9 @@ export default function LexiconFilter() {
               key={genus}
               className={`${
                 searchParams.get("genus")?.includes(genus)
-                  ? "bg-gray-200 text-green-600"
-                  : ""
-              } rounded-lg p-2 cursor-pointer hover:bg-gray-200 hover:text-green-600 transition-colors duration-200`}
+                  ? "bg-gradient-to-br from-green-600  to-70% to-gray-950 border border-green-600"
+                  : "from-gray-950"
+              } rounded-lg p-2 cursor-pointer bg-gradient-to-br  hover:from-green-600  to-70% hover:to-gray-950 to-gray-950 border hover:border-green-600 transition-all duration-500`}
               onClick={() => handleFilterChange("genus", genus)}
             >
               {genus}
@@ -96,7 +96,7 @@ export default function LexiconFilter() {
                 searchParams.get("color")?.includes(color.eng)
                   ? color.styleBg
                   : color.styleBorder
-              }  cursor-pointer hover:bg-gray-200 hover:text-gray-900 p-2 rounded-lg border-2 text-sm sm:text-base transition-colors duration-200 `}
+              }  cursor-pointer bg-gradient-to-br from-gray-950 hover:from-green-600  to-70% hover:to-gray-950 to-gray-950 transition-all duration-500 p-2 rounded-lg border-2 text-sm sm:text-base `}
               onClick={() => handleFilterChange("color", color.eng)}
             >
               <p>{color.ger}</p>
@@ -118,9 +118,9 @@ export default function LexiconFilter() {
               key={endangerment}
               className={`${
                 searchParams.get("endangerment")?.includes(endangerment)
-                  ? "bg-gray-200 text-green-600"
-                  : ""
-              } rounded-lg p-2 cursor-pointer hover:bg-gray-200 hover:text-green-600 transition-colors duration-200`}
+                  ? "bg-gradient-to-br from-green-600  to-70% to-gray-950 border border-green-600"
+                  : "from-gray-950"
+              } rounded-lg p-2 cursor-pointer bg-gradient-to-br  hover:from-green-600  to-70% hover:to-gray-950 to-gray-950 border hover:border-green-600 transition-all duration-500`}
               onClick={() => handleFilterChange("endangerment", endangerment)}
             >
               {endangerment}
