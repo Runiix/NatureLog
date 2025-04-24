@@ -120,7 +120,7 @@ export default function CollectionAnimalGrid({
           <ImageExistsFilter />
         </div>
       </div>
-      <div className="mx-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-4 mt-4 sm:mt-10">
+      <div className="mx-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2  sm:gap-4 mt-4 sm:mt-10">
         {animalItems &&
           animalItems.map((animal: Animal, index: number) => (
             <CollectionCard

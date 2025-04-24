@@ -61,7 +61,7 @@ export default function LexiconCard({
     <div className={onlyUnseen && isSpotted === "true" ? "hidden" : ""}>
       <div
         onClick={handleNavigation}
-        className="flex flex-col w-44 sm:w-80 bborder-gray-200 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 rounded-lg cursor-pointer"
+        className="flex flex-col w-40 sm:w-80 bborder-gray-200 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 rounded-lg cursor-pointer"
       >
         {animalImageExists ? (
           <div>
@@ -71,7 +71,7 @@ export default function LexiconCard({
               alt="Placeholder"
               width={300}
               height={200}
-              className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-90  transition-opacity duration-[2s] opacity-0"
+              className="object-cover w-full h-24 sm:h-48 rounded-t-lg hover:opacity-90  transition-opacity duration-[2s] opacity-0"
               onLoad={handleImageLoad}
             />
           </div>
