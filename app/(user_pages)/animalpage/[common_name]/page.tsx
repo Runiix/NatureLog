@@ -10,6 +10,7 @@ import { SupabaseClient, User } from "@supabase/supabase-js";
 import AnimalBanner from "@/app/components/animals/AnimalBanner";
 import FavoriteFunctionality from "@/app/components/general/FavoriteFunctionality";
 import Link from "next/link";
+import BackButton from "@/app/components/general/BackButton";
 
 const getUser = async (supabase: SupabaseClient) => {
   const {
@@ -68,12 +69,7 @@ export default async function AnimalPage(params: any) {
   return (
     <div className="flex flex-col items-center w-full">
       <div className="w-full relative pb-24">
-        <Link
-          href="/lexiconpage"
-          className="absolute left-2 sm:left-10 top-12 sm:top-20 rounded-full size-8 sm:size-12 flex items-center justify-center hover:text-green-600 hover:bg-gray-900/70 bg-gray-900/50 z-40"
-        >
-          <ArrowBack className="sm:scale-125" />
-        </Link>
+        <BackButton />
         {animalData && <AnimalBanner image={animalData.image_link} />}
         <div className="bg-gray-900 rounded-lg py-2 w-[98%] lg:w-11/12 xl:w-10/12 mx-auto">
           <div className=" m-4 sm:m-10 flex-col flex gap-8">

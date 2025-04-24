@@ -4,6 +4,7 @@ import CollectionAnimalGrid from "@/app/components/collection/CollectionAnimalGr
 import Link from "next/link";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
+import { ArrowBack } from "@mui/icons-material";
 
 type SpottedAnimal = {
   animal_id: number;
@@ -124,8 +125,9 @@ export default async function collectionpage(params: any) {
         <div>
           <Link
             href={`/profilepage/${paramUser.display_name}`}
-            className="text-xs sm:text-base absolute top-12 sm:top-20 left-5 bg-green-600 rounded-lg p-1 sm:p-2 text-gray-900 hover:bg-green-700"
+            className="text-xs sm:text-base absolute top-12 sm:top-20 left-5 bg-green-600 rounded-lg p-1 sm:p-2 text-gray-900 hover:bg-green-700 flex items-center"
           >
+            <ArrowBack />
             ZUM PROFIL
           </Link>
           <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-16">

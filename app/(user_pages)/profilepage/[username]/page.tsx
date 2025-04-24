@@ -25,6 +25,15 @@ const getAnimalCount = async (supabase: SupabaseClient, userId: string) => {
   if (data) return data.length;
   return 0;
 };
+const getListsCount = async (supabase: SupabaseClient, userId: string) => {
+  const { data, error } = await supabase
+    .from("animallists")
+    .select("id")
+    .eq("user_id", userId);
+  if (error) console.error("Error fetching animal count", error);
+  if (data) return data.length;
+  return 0;
+};
 const getTeam = async (supabase: SupabaseClient, userId: string) => {
   const { data, error } = await supabase
     .from("profiles")
@@ -96,6 +105,7 @@ export default async function profilepage(params: any) {
       favoriteAnimal,
       profilePicUrl,
       animalCount,
+      listsCount,
       teamLink,
       instaLink,
     ] = await Promise.all([
@@ -103,6 +113,8 @@ export default async function profilepage(params: any) {
       getFavoriteAnimal(supabase, user.id),
       getProfilePictureUrl(supabase, user.id),
       getAnimalCount(supabase, user.id),
+      getListsCount(supabase, user.id),
+
       getTeam(supabase, user.id),
       getInstaLink(supabase, user.id),
     ]);
@@ -121,6 +133,7 @@ export default async function profilepage(params: any) {
               <ProfileInfos
                 user={user}
                 animalCount={animalCount}
+                listsCount={listsCount}
                 teamIcon={teamLink ? teamLink[0].team_link : null}
                 favoriteAnimal={favoriteAnimal}
                 currUser={true}
@@ -138,6 +151,7 @@ export default async function profilepage(params: any) {
       favoriteAnimal,
       profilePicUrl,
       animalCount,
+      listsCount,
       teamLink,
       instaLink,
     ] = await Promise.all([
@@ -145,6 +159,7 @@ export default async function profilepage(params: any) {
       getFavoriteAnimal(supabase, paramUser.id),
       getProfilePictureUrl(supabase, paramUser.id),
       getAnimalCount(supabase, paramUser.id),
+      getListsCount(supabase, paramUser.id),
       getTeam(supabase, paramUser.id),
       getInstaLink(supabase, paramUser.id),
     ]);
@@ -163,6 +178,7 @@ export default async function profilepage(params: any) {
               <ProfileInfos
                 user={paramUser}
                 animalCount={animalCount}
+                listsCount={listsCount}
                 teamIcon={teamLink ? teamLink[0].team_link : null}
                 favoriteAnimal={favoriteAnimal}
                 currUser={false}

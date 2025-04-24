@@ -18,4 +18,9 @@ type Animal = {
   size_from: number;
   size_to: number;
 };
+export type SpottedAnimal = {
+  animal_id: number;
+  image: boolean;
+  first_spotted_at: string;
+};
 export default Animal;

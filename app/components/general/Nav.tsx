@@ -49,6 +49,14 @@ export default function Nav({ user }: { user: User | null }) {
                 </div>
                 <div>
                   <Link
+                    href={"/animallistspage/" + user.user_metadata.displayName}
+                    className="text-slate-600 hover:text-slate-900 transition-all duration-200"
+                  >
+                    Tier Listen
+                  </Link>
+                </div>
+                <div>
+                  <Link
                     href="/lexiconpage"
                     className="text-slate-600 hover:text-slate-900 transition-all duration-200"
                   >
@@ -135,6 +143,13 @@ export default function Nav({ user }: { user: User | null }) {
               onClick={() => setToggleMenu(false)}
             >
               Sammlung
+            </Link>
+            <Link
+              href={"/animallistspage/" + user.user_metadata.displayName}
+              className="text-slate-600 hover:text-slate-900 transition-all duration-200"
+              onClick={() => setToggleMenu(false)}
+            >
+              Tier Listen
             </Link>
             <Link
               href="/lexiconpage"

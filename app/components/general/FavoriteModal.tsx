@@ -2,6 +2,7 @@ import { addOrRemoveAnimals } from "@/app/actions/addOrRemoveAnimal";
 import { Close } from "@mui/icons-material";
 import { User } from "@supabase/supabase-js";
 import React from "react";
+import Modal from "./Modal";
 
 export default function FavoriteModal({
   user,
@@ -22,57 +23,42 @@ export default function FavoriteModal({
   setIsSpotted: React.Dispatch<React.SetStateAction<string>>;
   pathName: string;
 }) {
-  function handleButtonClick(e: React.MouseEvent<HTMLButtonElement>) {
-    e.stopPropagation();
-    changeFavoriteModal(false);
-  }
-
   return (
     <div>
       {" "}
       {favoriteModal && (
-        <div
-          className={`${styles}fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center`}
-        >
-          <div className="bg-gray-900 rounded-lg w-10/12 py-10 flex flex-col items-center justify-center gap-4 relative max-w-[50%] shadow-lg shadow-black">
+        <Modal closeModal={() => changeFavoriteModal(false)}>
+          <h2 className="sm:text-xl text-center text-slate-200">
+            Möchten sie diese Tier wirklich aus ihrer Sammlung entfernen?
+          </h2>
+
+          <form
+            id="removeForm"
+            onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
+              e.stopPropagation();
+              const response = await addOrRemoveAnimals(
+                new FormData(e.currentTarget)
+              );
+              if (response.success) {
+                setIsSpotted(String(response.isSpotted));
+              } else {
+                console.error(response.error);
+              }
+              changeFavoriteModal(false);
+            }}
+          >
+            <input type="hidden" name="animalId" value={id} />
+            <input type="hidden" name="isSpotted" value={isSpotted} />
+            <input type="hidden" name="pathname" value={pathName} />
+
             <button
-              onClick={handleButtonClick}
-              className="absolute top-2 right-2 hover:text-slate-400"
+              type="submit"
+              className="bg-red-600 hover:text-gray-900 rounded-lg p-4 text-xl hover:bg-red-700 transition duration-300"
             >
-              <Close />
+              Tier entfernen
             </button>
-            <h2 className="sm:text-xl text-center text-slate-200">
-              Möchten sie diese Tier wirklich aus ihrer Sammlung entfernen?
-            </h2>
-
-            <form
-              id="removeForm"
-              onSubmit={async (e: React.FormEvent<HTMLFormElement>) => {
-                e.stopPropagation();
-                const response = await addOrRemoveAnimals(
-                  new FormData(e.currentTarget)
-                );
-                if (response.success) {
-                  setIsSpotted(String(response.isSpotted));
-                } else {
-                  console.error(response.error);
-                }
-                changeFavoriteModal(false);
-              }}
-            >
-              <input type="hidden" name="animalId" value={id} />
-              <input type="hidden" name="isSpotted" value={isSpotted} />
-              <input type="hidden" name="pathname" value={pathName} />
-
-              <button
-                type="submit"
-                className="bg-red-600 hover:text-gray-900 rounded-lg p-4 text-xl hover:bg-red-700 transition duration-300"
-              >
-                Tier entfernen
-              </button>
-            </form>
-          </div>
-        </div>
+          </form>
+        </Modal>
       )}
     </div>
   );

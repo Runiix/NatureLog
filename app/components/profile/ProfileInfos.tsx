@@ -5,7 +5,6 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import changeTeam from "../../actions/changeTeam";
-import { useParams } from "next/navigation";
 import changeFavoriteAnimal from "@/app/actions/changeFavoriteAnimal";
 import changeInstaLink from "@/app/actions/changeInstaLink";
 import { User } from "@supabase/supabase-js";
@@ -13,6 +12,7 @@ import { User } from "@supabase/supabase-js";
 export default function ProfileInfos({
   user,
   animalCount,
+  listsCount,
   teamIcon,
   favoriteAnimal,
   currUser,
@@ -20,6 +20,7 @@ export default function ProfileInfos({
 }: {
   user: User | any;
   animalCount: number;
+  listsCount: number;
   teamIcon: string | null;
   favoriteAnimal: string;
   currUser: boolean;
@@ -28,13 +29,15 @@ export default function ProfileInfos({
   const collectionLink = currUser
     ? `/collectionpage/${user.user_metadata.displayName}`
     : `/collectionpage/${user.display_name}`;
+  const listsLink = currUser
+    ? `/animallistspage/${user.user_metadata.displayName}`
+    : `/animallistspage/${user.display_name}`;
   const [team, setTeam] = useState<string | null>(teamIcon);
   const [teamSelect, setTeamSelect] = useState(false);
   const [showEditFavoriteAnimal, setShowEditFavoriteAnimal] = useState(false);
   const [showEditInstaLink, setShowEditInstaLink] = useState(false);
   const [favorite, setFavorite] = useState(favoriteAnimal);
   const [insta, setInsta] = useState(instaLink);
-  const params = useParams();
   const teamList = [
     {
       name: "wolf",
@@ -88,7 +91,7 @@ export default function ProfileInfos({
           {currUser ? user.user_metadata.displayName : user.display_name}
         </div>
         <div className="flex gap-2 items-center">
-          {insta ? (
+          {insta && (
             <a
               href={insta}
               rel="noopener noreferrer"
@@ -97,8 +100,6 @@ export default function ProfileInfos({
             >
               <Instagram />
             </a>
-          ) : (
-            <Instagram />
           )}
 
           {currUser && (
@@ -163,6 +164,15 @@ export default function ProfileInfos({
           <p>Arten</p>
           <div className="border-2 rounded-lg px-4 py-2 text-xl hover:bg-gray-800 hover:scale-110 transition duration-300">
             {animalCount}
+          </div>
+        </Link>
+        <Link
+          href={listsLink}
+          className=" flex flex-col gap-2 items-center text-center"
+        >
+          <p>Listen</p>
+          <div className="border-2 rounded-lg px-4 py-2 text-xl hover:bg-gray-800 hover:scale-110 transition duration-300">
+            {listsCount}
           </div>
         </Link>
         <div className="flex flex-col gap-2 items-center">
