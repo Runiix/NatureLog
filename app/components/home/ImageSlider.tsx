@@ -48,16 +48,19 @@ export default function ImageSlider({ data }: { data: RecentUploadsType[] }) {
             width="800"
             height="600"
             style={{ translate: `${-100 * slideIndex}%` }}
+            unoptimized
           />
         ))}
         <button
           className="block absolute top-0 bottom-0 left-0 cursor-pointer p-4"
+          aria-label="vorheriges Bild zeigen"
           onClick={showPrevImage}
         >
           <ArrowBackIosIcon />
         </button>
         <button
           className="block absolute top-0 bottom-0 right-0 cursor-pointer p-4"
+          aria-label="nächstes Bild zeigen"
           onClick={showNextImage}
         >
           <ArrowForwardIosIcon />
@@ -66,6 +69,7 @@ export default function ImageSlider({ data }: { data: RecentUploadsType[] }) {
           {[...Array(data.length).keys()].map((index) => (
             <button
               key={index}
+              aria-label="Knopf für die Image Slider Navigation"
               className={`p-2 rounded-full transition-all duration-500 ease-out  ${
                 slideIndex === index
                   ? "bg-gray-200 w-8"

@@ -96,6 +96,7 @@ export default function ProfileInfos({
               href={insta}
               rel="noopener noreferrer"
               target="_blank"
+              aria-label="Instagram Link des Benutzers"
               className="hover:text-green-600 transition duration-300"
             >
               <Instagram />

@@ -176,7 +176,6 @@ export default function PictureGrid({
                 height={200}
                 alt=""
                 className="rounded-lg object-cover hover:opacity-90 aspect-square cursor-pointer"
-                priority
                 onClick={() =>
                   setImageModal(
                     `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${user.id}/ProfileGridModals/${profileGrid[index].name}`
@@ -233,9 +232,9 @@ export default function PictureGrid({
               unoptimized
               src={imageModal}
               alt=""
+              loading="lazy"
               width={1920}
               height={1080}
-              priority
               className="relative m-auto z-20 sm:w-2/3 max-h-full object-contain"
             />
           </div>

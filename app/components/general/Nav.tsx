@@ -75,11 +75,13 @@ export default function Nav({ user }: { user: User | null }) {
             </div>
             <div className="hidden lg:flex items-center gap-6 relative">
               <div
-                className="text-slate-900 cursor-pointer hover:text-green-600 mr-8 "
+                className="text-slate-900 cursor-pointer hover:text-green-600 mr-8 flex"
                 onClick={() => setShowSignOut((prev) => !prev)}
               >
                 <Person />
-                {user.user_metadata.displayName}
+                <p className="hidden xl:block">
+                  {user.user_metadata.displayName}
+                </p>
               </div>
 
               <div

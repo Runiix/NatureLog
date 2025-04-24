@@ -75,6 +75,7 @@ export default function SocialListElement({
             width="200"
             height="200"
             className="rounded-full w-16 h-16 object-cover"
+            unoptimized
           />
         ) : (
           <Avatar />

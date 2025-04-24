@@ -54,6 +54,7 @@ export default function AnimalQuiz() {
           width="300"
           height="100"
           className="w-full aspect-video mb-2 rounded-t-lg max-h-64"
+          unoptimized
         />
       ) : (
         <CircleLoader />

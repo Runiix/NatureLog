@@ -71,7 +71,6 @@ export default function LexiconCard({
               alt="Placeholder"
               width={300}
               height={200}
-              priority
               className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-90  transition-opacity duration-[2s] opacity-0"
               onLoad={handleImageLoad}
             />
@@ -82,7 +81,6 @@ export default function LexiconCard({
             alt="Placeholder"
             width={3}
             height={2}
-            priority
             className="object-cover w-full  rounded-t-lg hover:opacity-90 h-32 sm:h-48"
           />
         )}
