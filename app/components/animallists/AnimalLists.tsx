@@ -44,7 +44,7 @@ export default function AnimalLists({
   };
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 mt-20 lg:w-11/12 2xl:w-10/12 mx-auto items-center gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 mt-20 lg:w-11/12 2xl:w-10/12 mx-auto items-center gap-4 max-w-screen">
       {data &&
         data.map((list: { id: string; title: string; description: string }) => (
           <AnimalList

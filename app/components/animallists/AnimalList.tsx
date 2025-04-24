@@ -147,7 +147,7 @@ export default function AnimalList({
     }
   }, [inView]);
   return (
-    <div className="bg-gray-900 rounded-lg p-4 w-full sm:w-auto  max-w-96 min-w-96 flex flex-col gap-4 max-h-full mx-auto">
+    <div className="bg-gray-900 rounded-lg p-4 w-full sm:w-auto  max-w-96 sm:min-w-96 flex flex-col gap-4 max-h-full mx-auto max-w-screen">
       <div className="flex ">
         {" "}
         <div>
