@@ -16,11 +16,9 @@ import Animal from "@/app/utils/AnimalType";
 export default function LexiconGrid({
   user,
   spottedList,
-  animalImageList,
 }: {
   user: User | null;
   spottedList: number[];
-  animalImageList: string[];
 }) {
   const searchParams = useSearchParams();
 
@@ -147,9 +145,6 @@ export default function LexiconGrid({
               user={user}
               spottedList={spottedList}
               onlyUnseen={onlyUnseen}
-              animalImageExists={animalImageList.includes(
-                animal.common_name.replace(regex, "_") + ".webp"
-              )}
             />
           ))}
       </div>

@@ -5,7 +5,6 @@ import { Delete, Visibility, VisibilityOff } from "@mui/icons-material";
 import { User } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useState } from "react";
 import FavoriteFunctionality from "../general/FavoriteFunctionality";
 
 export default function AnimalListItem({
@@ -40,26 +39,33 @@ export default function AnimalListItem({
         alt={name}
         width="100"
         height="100"
-        className="object-cover aspect-[3/2] rounded-l-lg"
+        className="object-cover aspect-[3/2] w-auto h-auto rounded-l-lg"
       />
-      <Link href={`/animalpage/${name}`} className="hover:text-green-600">
-        <h2>{name}</h2>
-      </Link>
-      <div className="ml-auto">
-        <FavoriteFunctionality
-          user={user}
-          id={animalId}
-          spottedList={spottedList}
-        />
-      </div>
-      {currUser && (
-        <button
-          className="hover:text-red-600 "
-          onClick={() => handleAnimalDelete()}
+      <div className="flex flex-col sm:flex-row w-full h-full">
+        <Link
+          href={`/animalpage/${name}`}
+          className="hover:text-green-600 text-wrap md:w-auto truncate"
         >
-          <Delete />
-        </button>
-      )}
+          <h2>{name}</h2>
+        </Link>
+        <div className="ml-auto flex gap-2 md:gap-4">
+          <div>
+            <FavoriteFunctionality
+              user={user}
+              id={animalId}
+              spottedList={spottedList}
+            />
+          </div>
+          {currUser && (
+            <button
+              className="hover:text-red-600 mr-4"
+              onClick={() => handleAnimalDelete()}
+            >
+              <Delete />
+            </button>
+          )}
+        </div>
+      </div>
     </div>
   );
 }

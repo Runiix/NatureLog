@@ -19,7 +19,6 @@ export default function LexiconCard({
   imageUrl,
   user,
   spottedList,
-  animalImageExists,
   onlyUnseen,
 }: {
   id: number;
@@ -33,7 +32,6 @@ export default function LexiconCard({
   imageUrl: string;
   user: User | null;
   spottedList: number[];
-  animalImageExists: boolean;
   onlyUnseen: boolean;
 }) {
   const link = `/animalpage/${common_name}`;
@@ -57,33 +55,25 @@ export default function LexiconCard({
   const handleNavigation = () => {
     router.push(link);
   };
+
   return (
     <div className={onlyUnseen && isSpotted === "true" ? "hidden" : ""}>
       <div
         onClick={handleNavigation}
         className="flex flex-col w-40 sm:w-80 bborder-gray-200 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 rounded-lg cursor-pointer"
       >
-        {animalImageExists ? (
-          <div>
-            <Image
-              ref={imageRef}
-              src={imageUrl}
-              alt="Placeholder"
-              width={300}
-              height={200}
-              className="object-cover w-full h-24 sm:h-48 rounded-t-lg hover:opacity-90  transition-opacity duration-[2s] opacity-0"
-              onLoad={handleImageLoad}
-            />
-          </div>
-        ) : (
+        {/* {animalImageExists ? ( */}
+        <div>
           <Image
-            src={black}
+            ref={imageRef}
+            src={imageUrl}
             alt="Placeholder"
-            width={3}
-            height={2}
-            className="object-cover w-full  rounded-t-lg hover:opacity-90 h-32 sm:h-48"
+            width={300}
+            height={200}
+            className="object-cover w-full h-24 sm:h-48 rounded-t-lg hover:opacity-90  transition-opacity duration-[2s] opacity-0"
+            onLoad={handleImageLoad}
           />
-        )}
+        </div>
 
         <div className=" p-4 w-full flex justify-between items-center">
           <div>

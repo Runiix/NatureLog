@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { createClient } from "@/utils/supabase/server";
 import AnimalOfTheDay from "../../components/home/AnimalOfTheDay";
 import DailyChallenge from "../../components/home/DailyChallenge";
@@ -111,57 +113,23 @@ export default async function homepage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
   const animalOfTheMonth = await getAnimalOfTheMonth(supabase);
-  const monthImageUrl = animalOfTheMonth.image_link.split(
-    `${animalOfTheMonth.category}/`
-  )[1];
-  const monthImageExists = await fileExists(
-    supabase,
-    monthImageUrl,
-    animalOfTheMonth.category
-  );
-
   const animalOfTheDay = await getAnimalOfTheDay(supabase);
-  const dayImageUrl = animalOfTheDay.image_link.split(
-    `${animalOfTheDay.category}/`
-  )[1];
-  const dayImageExists = await fileExists(
-    supabase,
-    dayImageUrl,
-    animalOfTheDay.category
-  );
-
   const lastImages = await getLast10Images(supabase);
   return (
     <div className="flex flex-wrap gap-6 mx-2  sm:mx-6 mt-12 sm:mt-20  items-center justify-center pb-6">
       <HomeGridItem>
-        {dayImageExists ? (
-          <AnimalOfTheDay
-            data={animalOfTheDay}
-            titel="Tages"
-            imageUrl={animalOfTheDay.lexicon_link}
-          />
-        ) : (
-          <AnimalOfTheDay
-            data={animalOfTheDay}
-            titel="Tages"
-            imageUrl={black}
-          />
-        )}
+        <AnimalOfTheDay
+          data={animalOfTheDay}
+          titel="Tages"
+          imageUrl={animalOfTheDay.lexicon_link}
+        />
       </HomeGridItem>
       <HomeGridItem>
-        {monthImageExists ? (
-          <AnimalOfTheDay
-            data={animalOfTheMonth}
-            titel="Monats"
-            imageUrl={animalOfTheMonth.lexicon_link}
-          />
-        ) : (
-          <AnimalOfTheDay
-            data={animalOfTheMonth}
-            titel="Monats"
-            imageUrl={black}
-          />
-        )}
+        <AnimalOfTheDay
+          data={animalOfTheMonth}
+          titel="Monats"
+          imageUrl={animalOfTheMonth.lexicon_link}
+        />
       </HomeGridItem>
       <HomeGridItem>
         {" "}

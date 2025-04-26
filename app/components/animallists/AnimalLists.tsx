@@ -48,11 +48,9 @@ export default function AnimalLists({
 
   useEffect(() => {
     const id = searchParams.get("listId");
-    console.log("🔵 Current listId from URL:", id);
 
     if (id) {
       const findList = data.find((item) => item.id === id);
-      console.log("🟠 Found list:", findList);
 
       if (findList) {
         setCurrentAnimalList(findList.title);
@@ -62,8 +60,6 @@ export default function AnimalLists({
         setListData(null);
       }
     } else {
-      console.log("🟣 No listId in URL, resetting.");
-
       setCurrentAnimalList("Liste Aussuchen");
       setListData(null);
     }

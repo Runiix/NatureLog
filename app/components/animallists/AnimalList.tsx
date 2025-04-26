@@ -91,10 +91,8 @@ export default function AnimalList({
 
   useEffect(() => {
     const loadSearchAnimals = async () => {
-      if (query) {
-        const animals = await getAnimalListSearchItems(query);
-        setAnimalSearchItems(animals);
-      }
+      const animals = await getAnimalListSearchItems(query);
+      setAnimalSearchItems(animals);
     };
     loadSearchAnimals();
   }, [query, searchParams, title, description, listId]);
@@ -104,7 +102,7 @@ export default function AnimalList({
       try {
         let pageSize = 0;
         if (window.innerWidth > 1500) {
-          pageSize = 12;
+          pageSize = 10;
         } else {
           pageSize = 8;
         }
@@ -129,7 +127,7 @@ export default function AnimalList({
       try {
         let pageSize = 0;
         if (window.innerWidth > 1500) {
-          pageSize = 12;
+          pageSize = 10;
         } else {
           pageSize = 8;
         }
@@ -151,7 +149,7 @@ export default function AnimalList({
     }
   }, [inView]);
   return (
-    <div className="p-4 w-full sm:w-auto lg:w-1/2 lg:max-w-[1/2] flex-col gap-4  mx-auto rounded-lg shadow-black shadow-lg flex justify-center bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200">
+    <div className="p-4 w-full sm:w-11/12 md:w-10/12 xl:w-1/2 lg:max-w-[1/2] flex-col gap-4  mx-auto rounded-lg shadow-black shadow-lg flex justify-center bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200">
       <div className="flex">
         {" "}
         <div className="w-full">
@@ -219,19 +217,19 @@ export default function AnimalList({
         <div
           className={`fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center`}
         >
-          <div className=" bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200 rounded-lg w-full sm:w-10/12 sm:max-w-[50%] py-10 flex flex-col items-center justify-center gap-4 relative shadow-lg shadow-black max-h-[80%]">
+          <div className=" bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200 rounded-lg w-full sm:w-10/12 lg:max-w-[50%] py-10 flex flex-col items-center justify-center gap-4 relative shadow-lg shadow-black max-h-[80%]">
             <button
               onClick={(e) => handleClose(e)}
               className="absolute top-2 right-2 hover:text-red-600"
             >
               <Close />
             </button>
-            <h2 className="sm:text-2xl text-center">
-              Geben Sie einen Tiernamen ein und fügen Sie es zu Ihrere Liste
+            <h2 className="sm:text-2xl text-center px-2 sm:px-6">
+              Geben Sie einen Tiernamen ein und fügen Sie es zu Ihrer Liste
               hinzu.
             </h2>
             <Search placeholder="Tier suchen" />
-            <div className="overflow-y-auto pr-4 space-y-2 ">
+            <div className="overflow-y-auto px-2 space-y-2 ">
               {animalSearchItems.map((animal: AnimalListItemType) => (
                 <AnimalListSearchItem
                   key={animal.id}

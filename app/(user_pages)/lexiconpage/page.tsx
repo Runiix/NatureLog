@@ -17,50 +17,11 @@ const getSpottedList = async (supabase: SupabaseClient, userId: string) => {
   }
   return [];
 };
-async function getAnimalImageList(supabase: SupabaseClient, genus: string) {
-  const { data, error } = await supabase.storage
-    .from("animalImages")
-    .list(`main/${genus}/`, {
-      limit: 400,
-      offset: 0,
-      sortBy: { column: "name", order: "asc" },
-    });
-  if (error) console.error("Error fetching animal images", error);
-  if (data === null) return [];
-
-  const filteredData = data.filter(
-    (item: { name: string }) => item.name !== ".emptyFolderPlaceholder"
-  );
-  const listData: string[] = filteredData.map((animal) => animal.name);
-  return listData;
-}
 
 export default async function LexiconPage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
-  const [
-    mammalImages,
-    birdImages,
-    amphibiaImages,
-    reptileImages,
-    spiderImages,
-    insectImages,
-  ] = await Promise.all([
-    getAnimalImageList(supabase, "Saeugetier"),
-    getAnimalImageList(supabase, "Vogel"),
-    getAnimalImageList(supabase, "Amphibie"),
-    getAnimalImageList(supabase, "Reptil"),
-    getAnimalImageList(supabase, "Arachnoid"),
-    getAnimalImageList(supabase, "Insekt"),
-  ]);
 
-  const animalImageList = mammalImages.concat(
-    birdImages,
-    amphibiaImages,
-    reptileImages,
-    spiderImages,
-    insectImages
-  );
   if (user) {
     const userId = user.id;
     const spottedList = await getSpottedList(supabase, userId);
@@ -70,11 +31,7 @@ export default async function LexiconPage() {
           <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-14 sm:mt-20 sm:mb-2">
             Arten-Lexikon{" "}
           </h2>
-          <LexiconGrid
-            user={user}
-            spottedList={spottedList}
-            animalImageList={animalImageList}
-          />
+          <LexiconGrid user={user} spottedList={spottedList} />
         </section>
       </div>
     );
@@ -86,11 +43,7 @@ export default async function LexiconPage() {
           <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-14 sm:mt-20 sm:mb-2">
             Arten-Lexikon{" "}
           </h2>
-          <LexiconGrid
-            user={user}
-            spottedList={spottedList}
-            animalImageList={animalImageList}
-          />
+          <LexiconGrid user={user} spottedList={spottedList} />
         </section>
       </div>
     );

@@ -49,7 +49,7 @@ export default function AnimalListSearchItem({
         height="100"
         className="h-auto w-24 rounded-l-lg aspect-[3/2] object-cover"
       />
-      <h2>{name}</h2>
+      <h2 className="truncate">{name}</h2>
       <div className="ml-auto flex gap-4 mr-4">
         {isInList ? (
           <button
