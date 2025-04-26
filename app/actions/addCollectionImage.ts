@@ -27,11 +27,19 @@ export default async function addCollectionImage(formData: FormData) {
     const filePath2 = `/${user.id}/CollectionModals/${
       common_name.replace(regex, "_") + ".jpg"
     }`;
+    const updatedAt = new Date();
+
     const { error: updateError } = await supabase
       .from("spotted")
       .update({ image: true })
       .match({ user_id: user.id, animal_id: Number(id) });
     if (updateError) console.error("Error updating image bool", updateError);
+
+    const { error: dateError } = await supabase
+      .from("spotted")
+      .update({ image_updated_at: updatedAt })
+      .match({ user_id: user.id, animal_id: Number(id) });
+    if (dateError) console.error("Error updating image_updated_at", dateError);
 
     // Upload the image to Supabase Storage
     const { error: insertError1 } = await supabase.storage
