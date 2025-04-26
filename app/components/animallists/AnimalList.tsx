@@ -84,6 +84,10 @@ export default function AnimalList({
       setLoading(false);
     }
   };
+  useEffect(() => {
+    setCurrTitle(title);
+    setCurrDescription(description);
+  }, [title, description]);
 
   useEffect(() => {
     const loadSearchAnimals = async () => {
@@ -93,7 +97,7 @@ export default function AnimalList({
       }
     };
     loadSearchAnimals();
-  }, [query, searchParams]);
+  }, [query, searchParams, title, description, listId]);
 
   useEffect(() => {
     const loadAnimals = async (offset: number) => {
@@ -118,7 +122,7 @@ export default function AnimalList({
       }
     };
     loadAnimals(0);
-  }, [deleteRefresh]);
+  }, [deleteRefresh, title, description, listId]);
 
   useEffect(() => {
     const loadMoreAnimals = async () => {
@@ -147,10 +151,10 @@ export default function AnimalList({
     }
   }, [inView]);
   return (
-    <div className="p-4 w-full sm:w-auto  max-w-96 sm:min-w-96  flex-col gap-4 max-h-full mx-auto max-w-screen rounded-lg shadow-black shadow-lg flex justify-center bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200">
-      <div className="flex ">
+    <div className="p-4 w-full sm:w-auto lg:w-1/2 lg:max-w-[1/2] flex-col gap-4  mx-auto rounded-lg shadow-black shadow-lg flex justify-center bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200">
+      <div className="flex">
         {" "}
-        <div>
+        <div className="w-full">
           <div className=" border-b border-gray-200 flex">
             {" "}
             <h2 className="text-2xl pb-2">{currTitle}</h2>
@@ -174,7 +178,7 @@ export default function AnimalList({
         </div>
       </div>
 
-      <div className="flex flex-col overflow-y-auto max-h-64 gap-2 py-2 pr-2  h-full">
+      <div className="flex flex-col overflow-y-auto  gap-2 py-2 pr-2  h-full">
         {animalItems.map(
           (animal: {
             id: number;
