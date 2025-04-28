@@ -1,6 +1,5 @@
-import Search from "@/app/components/general/Search";
-import SocialFilter from "@/app/components/social/SocialFilter";
-import SocialList from "@/app/components/social/SocialList";
+import FollowerModal from "@/app/components/social/FollowerModal";
+import FollowFeed from "@/app/components/social/FollowFeed";
 import { getUser } from "@/app/utils/data";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
@@ -17,6 +16,16 @@ const getFollowing = async (supabase: SupabaseClient, userId: string) => {
   const following = data.map((f) => f.following_id);
   return following;
 };
+const getFollowingSpottedList = async (
+  supabase: SupabaseClient,
+  followingList: string[]
+) => {
+  const { data, error } = await supabase
+    .from("spotted")
+    .select("*")
+    .in("user_id", followingList)
+    .order("image_updated_at", { ascending: true });
+};
 
 export default async function socialpage() {
   const supabase = await createClient();
@@ -25,10 +34,9 @@ export default async function socialpage() {
     const following = await getFollowing(supabase, user.id);
 
     return (
-      <div className="mt-16 flex flex-col items-center gap-10  rounded-lg  py-10">
-        <SocialFilter />
-        <Search placeholder="NatureLogger Suchen" />
-        <SocialList user={user} following={following} />
+      <div>
+        <FollowerModal user={user} following={following} />
+        <FollowFeed />
       </div>
     );
   }

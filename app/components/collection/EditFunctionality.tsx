@@ -109,7 +109,14 @@ export default function EditFunctionality({
   };
   return (
     <Modal closeModal={() => setEditModal(false)}>
-      <form className="flex flex-col gap-4">
+      <form
+        className="flex flex-col gap-4"
+        onSubmit={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          handleFileUpload(id);
+        }}
+      >
         {" "}
         {animalImageExists && (
           <div>
@@ -165,7 +172,6 @@ export default function EditFunctionality({
           onChange={(e) => setFirstSeen(e.target.value)}
         />
         <button
-          onClick={() => handleFileUpload(id)}
           type="submit"
           disabled={loading}
           className="bg-green-600 p-4 flex justify-center items-center text-xl rounded-lg hover:bg-green-700 hover:text-gray-900 transition-all duration-200 shadow-md shadow-black"

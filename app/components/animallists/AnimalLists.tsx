@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState, useTransition } from "react";
 import AnimalList from "./AnimalList";
-import { Add, Close, ExpandMore } from "@mui/icons-material";
+import { Add, Close, ExpandMore, Public, PublicOff } from "@mui/icons-material";
 import { CircleLoader } from "react-spinners";
 import addAnimalList from "@/app/actions/addAnimalList";
 import Modal from "../general/Modal";
@@ -20,6 +20,8 @@ export default function AnimalLists({
     title: string;
     description: string;
     entry_count: number;
+    upvotes: number;
+    is_public: boolean;
   }[];
   user: User;
   spottedList: number[];
@@ -41,6 +43,8 @@ export default function AnimalLists({
     title: string;
     description: string;
     entry_count: number;
+    upvotes: number;
+    is_public: boolean;
   } | null>();
 
   const handleListChange = (id: string) => {
@@ -115,11 +119,16 @@ export default function AnimalLists({
           {data.map((list) => (
             <div
               key={list.id}
-              className=" p-3 px-6 shadow-md bg-gradient-to-br from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:from-green-600 hover:to-gray-950 hover:cursor-pointer text-xl rounded-lg"
+              className=" p-3 pl-6 pr-4 gap-6 shadow-md bg-gradient-to-br from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:from-green-600 hover:to-gray-950 hover:cursor-pointer text-xl rounded-lg flex justify-between"
               onClick={() => handleListChange(list.id)}
             >
               {" "}
-              {list.title}
+              <p> {list.title}</p>
+              {list.is_public ? (
+                <Public className="text-green-600" />
+              ) : (
+                <PublicOff className="text-red-600" />
+              )}
             </div>
           ))}
         </div>
@@ -132,6 +141,8 @@ export default function AnimalLists({
             title={listData.title}
             description={listData.description}
             entryCount={listData.entry_count}
+            upvotes={listData.upvotes}
+            isPublic={listData.is_public}
             user={user}
             spottedList={spottedList}
             currUser={currUser}

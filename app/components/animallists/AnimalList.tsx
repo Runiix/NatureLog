@@ -5,7 +5,14 @@ import { useInView } from "react-intersection-observer";
 import { CircleLoader } from "react-spinners";
 import AnimalListItem from "./AnimalListItem";
 import getAnimalListItems from "../../actions/getAnimalListItems";
-import { Close, Delete, Edit } from "@mui/icons-material";
+import {
+  Close,
+  Delete,
+  Edit,
+  Public,
+  PublicOff,
+  ThumbUp,
+} from "@mui/icons-material";
 import Search from "../general/Search";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import getAnimalListSearchItems from "@/app/actions/getAnimalListSearchItems";
@@ -18,7 +25,6 @@ import Switch from "../general/Switch";
 
 type AnimalListItemType = {
   id: number;
-
   common_name: string;
   lexicon_link: string;
 };
@@ -28,6 +34,8 @@ export default function AnimalList({
   title,
   description,
   entryCount,
+  upvotes,
+  isPublic,
   user,
   spottedList,
   currUser,
@@ -36,6 +44,8 @@ export default function AnimalList({
   title: string;
   description: string;
   entryCount: number;
+  upvotes: number;
+  isPublic: boolean;
   user: User;
   spottedList: number[];
   currUser: boolean;
@@ -166,7 +176,13 @@ export default function AnimalList({
         <div className="w-full">
           <div className=" border-b border-gray-200 flex">
             {" "}
-            <h2 className="text-2xl pb-2">{currTitle}</h2>
+            <div className="flex items-center gap-4">
+              <h2 className="text-2xl pb-2">{currTitle}</h2>
+              <h2 className="text-2xl pb-2 flex items-center gap-1">
+                <ThumbUp />
+                {upvotes}
+              </h2>
+            </div>
             <div className="ml-auto flex items-center mr-2  gap-2">
               <h2 className="text-2xl pb-2">{currEntryCount} Einträge</h2>
 
@@ -182,6 +198,11 @@ export default function AnimalList({
               >
                 <Delete />
               </button>
+              {isPublic ? (
+                <Public className="text-green-600" />
+              ) : (
+                <PublicOff className="text-red-600" />
+              )}
             </div>
           </div>
 

@@ -6,13 +6,27 @@ import { ArrowBack } from "@mui/icons-material";
 import { SupabaseClient } from "@supabase/supabase-js";
 import Link from "next/link";
 
-const getAnimalLists = async (supabase: SupabaseClient, userId: string) => {
-  const { data, error } = await supabase
-    .from("animallists")
-    .select("id, title, description, entry_count")
-    .eq("user_id", userId);
-  if (error) console.error("Error getting Animal Lists", error);
-  else return data;
+const getAnimalLists = async (
+  supabase: SupabaseClient,
+  userId: string,
+  onlyPublic: boolean
+) => {
+  if (onlyPublic === true) {
+    const { data, error } = await supabase
+      .from("animallists")
+      .select("id, title, description, is_public, entry_count, upvotes")
+      .eq("user_id", userId)
+      .eq("is_public", onlyPublic.toString());
+    if (error) console.error("Error getting Animal Lists", error);
+    else return data;
+  } else {
+    const { data, error } = await supabase
+      .from("animallists")
+      .select("id, title, description, is_public, entry_count, upvotes")
+      .eq("user_id", userId);
+    if (error) console.error("Error getting Animal Lists", error);
+    else return data;
+  }
   return [];
 };
 const getParamUserId = async (supabase: SupabaseClient, username: string) => {
@@ -44,7 +58,7 @@ export default async function AnimalListsPage(params: any) {
   const paramUser = await getParamUserId(supabase, Userparams.username);
 
   if (user && paramUser && paramUser.id === user.id) {
-    const animalLists = await getAnimalLists(supabase, user.id);
+    const animalLists = await getAnimalLists(supabase, user.id, false);
     const spottedList = await getSpottedList(supabase, user.id);
     const spottedIds: number[] = spottedList.map(
       (animal: SpottedAnimal) => animal.animal_id
@@ -61,7 +75,7 @@ export default async function AnimalListsPage(params: any) {
       </div>
     );
   } else {
-    const animalLists = await getAnimalLists(supabase, paramUser.id);
+    const animalLists = await getAnimalLists(supabase, paramUser.id, true);
     const spottedList = await getSpottedList(supabase, paramUser.id);
     const spottedIds: number[] = spottedList.map(
       (animal: SpottedAnimal) => animal.animal_id
