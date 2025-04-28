@@ -5,7 +5,8 @@ import { createClient } from "@/utils/supabase/server";
 export default async function editAnimalList(
   title: string,
   listId: string,
-  description: string
+  description: string,
+  publicList: boolean
 ) {
   const supabase = await createClient();
 
@@ -14,6 +15,7 @@ export default async function editAnimalList(
     .update({
       title: title,
       description: description,
+      public: publicList,
     })
     .eq("id", listId);
   if (error) {

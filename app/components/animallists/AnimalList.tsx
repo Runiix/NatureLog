@@ -14,6 +14,7 @@ import editAnimalList from "@/app/actions/editAnimalList";
 import deleteAnimalList from "@/app/actions/deleteAnimalList";
 import Modal from "../general/Modal";
 import { User } from "@supabase/supabase-js";
+import Switch from "../general/Switch";
 
 type AnimalListItemType = {
   id: number;
@@ -26,6 +27,7 @@ export default function AnimalList({
   listId,
   title,
   description,
+  entryCount,
   user,
   spottedList,
   currUser,
@@ -33,6 +35,7 @@ export default function AnimalList({
   listId: string;
   title: string;
   description: string;
+  entryCount: number;
   user: User;
   spottedList: number[];
   currUser: boolean;
@@ -49,6 +52,8 @@ export default function AnimalList({
   const [loading, setLoading] = useState(false);
   const [currTitle, setCurrTitle] = useState(title);
   const [currDescription, setCurrDescription] = useState(description);
+  const [currEntryCount, setCurrEntryCount] = useState(entryCount);
+  const [publicList, setPublicList] = useState(false);
   const { ref, inView } = useInView();
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || null;
@@ -66,7 +71,12 @@ export default function AnimalList({
   }
   const editList = async () => {
     setLoading(true);
-    const res = await editAnimalList(currTitle, listId, currDescription);
+    const res = await editAnimalList(
+      currTitle,
+      listId,
+      currDescription,
+      publicList
+    );
     if (res.success) {
       setEditListModalOpen(false);
       setLoading(false);
@@ -87,7 +97,8 @@ export default function AnimalList({
   useEffect(() => {
     setCurrTitle(title);
     setCurrDescription(description);
-  }, [title, description]);
+    setCurrEntryCount(entryCount);
+  }, [title, description, entryCount, deleteRefresh]);
 
   useEffect(() => {
     const loadSearchAnimals = async () => {
@@ -156,7 +167,9 @@ export default function AnimalList({
           <div className=" border-b border-gray-200 flex">
             {" "}
             <h2 className="text-2xl pb-2">{currTitle}</h2>
-            <div className=" ml-auto mr-2 flex gap-2">
+            <div className="ml-auto flex items-center mr-2  gap-2">
+              <h2 className="text-2xl pb-2">{currEntryCount} Einträge</h2>
+
               <button
                 className="hover:text-green-600"
                 onClick={() => setEditListModalOpen(true)}
@@ -176,7 +189,7 @@ export default function AnimalList({
         </div>
       </div>
 
-      <div className="flex flex-col overflow-y-auto  gap-2 py-2 pr-2  h-full">
+      <div className="flex flex-col overflow-y-auto max-h-[550px] gap-2 py-2 pr-2  h-full">
         {animalItems.map(
           (animal: {
             id: number;
@@ -193,6 +206,7 @@ export default function AnimalList({
               spottedList={spottedList}
               deleteRefresh={() => setDeleteRefresh(!deleteRefresh)}
               currUser={currUser}
+              entryCount={currEntryCount}
             />
           )
         )}
@@ -217,7 +231,7 @@ export default function AnimalList({
         <div
           className={`fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center`}
         >
-          <div className=" bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200 rounded-lg w-full sm:w-10/12 lg:max-w-[50%] py-10 flex flex-col items-center justify-center gap-4 relative shadow-lg shadow-black max-h-[80%]">
+          <div className=" bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border  h-[600px] hover:border-green-600 border-slate-200 rounded-lg w-full sm:w-10/12 lg:max-w-[50%] py-10 flex flex-col items-center justify-center gap-4 relative shadow-lg shadow-black max-h-[80%]">
             <button
               onClick={(e) => handleClose(e)}
               className="absolute top-2 right-2 hover:text-red-600"
@@ -240,6 +254,7 @@ export default function AnimalList({
                   user={user}
                   inList={animalItems.some((obj) => obj.id === animal.id)}
                   refresh={() => setDeleteRefresh(!deleteRefresh)}
+                  entryCount={currEntryCount}
                 />
               ))}
             </div>
@@ -269,12 +284,19 @@ export default function AnimalList({
             </div>
             <div className="flex flex-col gap-2">
               <label>Beschreibung:</label>
-              <input
-                type="text"
+              <textarea
                 value={currDescription}
                 onChange={(e) => setCurrDescription(e.target.value)}
+                rows={4}
                 placeholder="Beschreibung eingeben"
                 className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <label>Öffentliche Liste:</label>
+              <Switch
+                value={publicList}
+                onChange={() => setPublicList((prev) => !prev)}
               />
             </div>
             <button

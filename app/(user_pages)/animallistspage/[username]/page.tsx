@@ -9,7 +9,7 @@ import Link from "next/link";
 const getAnimalLists = async (supabase: SupabaseClient, userId: string) => {
   const { data, error } = await supabase
     .from("animallists")
-    .select("id, title, description")
+    .select("id, title, description, entry_count")
     .eq("user_id", userId);
   if (error) console.error("Error getting Animal Lists", error);
   else return data;

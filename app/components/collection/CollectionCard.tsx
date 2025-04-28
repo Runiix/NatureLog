@@ -69,7 +69,7 @@ export default function CollectionCard({
 
   return (
     <div>
-      <div className="flex flex-col w-40 sm:w-80 bborder-gray-200 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 rounded-lg cursor-pointer">
+      <div className="flex flex-col w-40 sm:w-80 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 rounded-lg cursor-pointer">
         {imageExists ? (
           <div className="group relative flex items-end justify-end cursor-pointer">
             <Image

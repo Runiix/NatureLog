@@ -5,17 +5,8 @@ import AnimalBanner from "@/app/components/animals/AnimalBanner";
 import FavoriteFunctionality from "@/app/components/general/FavoriteFunctionality";
 import Link from "next/link";
 import BackButton from "@/app/components/general/BackButton";
-
-const getUser = async (supabase: SupabaseClient) => {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error) {
-    return null;
-  }
-  return user;
-};
+import { getUser } from "@/app/utils/data";
+import RecentAnimalImageUploads from "@/app/components/animals/RecentAnimalImageUploads";
 
 const getAnimalData = async (supabase: SupabaseClient, name: string) => {
   const birdName = decodeURIComponent(name);
@@ -51,6 +42,32 @@ const getSpottedCount = async (supabase: SupabaseClient, animalId: string) => {
   if (data) return data.length;
   return 0;
 };
+const getRecentImageUsers = async (
+  supabase: SupabaseClient,
+  animalId: string
+) => {
+  const { data, error } = await supabase
+    .from("spotted")
+    .select("user_id")
+    .eq("animal_id", animalId)
+    .eq("image", true)
+    .order("image_updated_at", { ascending: false })
+    .limit(5);
+  if (error) {
+    console.error("Error getting recent images user list", error);
+    return [];
+  }
+  const idArray = data.map((user) => user.user_id);
+  const { data: nameData, error: nameError } = await supabase
+    .from("users")
+    .select("id, display_name")
+    .in("id", idArray);
+  if (nameError) {
+    console.log("Error getting usernames", error);
+    return [];
+  }
+  return nameData;
+};
 
 export default async function AnimalPage(params: any) {
   const dynamicParams = await params.params;
@@ -59,13 +76,15 @@ export default async function AnimalPage(params: any) {
   const animalData = await getAnimalData(supabase, dynamicParams.common_name);
   const spottedList = user ? await getSpottedList(supabase, user) : [];
   const animalCount = await getSpottedCount(supabase, animalData.id);
+  const userList = await getRecentImageUsers(supabase, animalData.id);
 
+  console.log(userList);
   return (
     <div className="flex flex-col items-center w-full">
-      <div className="w-full relative pb-24">
+      <div className="w-full relative">
         <BackButton />
         {animalData && <AnimalBanner image={animalData.image_link} />}
-        <div className="bg-gray-900 rounded-lg py-2 w-[98%] lg:w-11/12 xl:w-10/12 mx-auto">
+        <div className="shadow-black shadow-lg bg-gradient-to-br border-gray-200 border from-gray-900 to-70% transition-all duration-200 to-gray-950 rounded-lg py-2 w-[98%] lg:w-11/12 xl:w-10/12 mx-auto mb-20">
           <div className=" m-4 sm:m-10 flex-col flex gap-8">
             <div className="flex flex-col lg:flex-row justify-between w-full border-b pb-4 border-slate-400 gap-4 sm:gap-0">
               <div className="flex flex-col gap-4 ">
@@ -188,11 +207,13 @@ export default async function AnimalPage(params: any) {
             <div className="text-lg md:mx-16 text-wrap">
               <p>{animalData.description}</p>
             </div>
+            <RecentAnimalImageUploads
+              data={userList}
+              animalName={animalData.common_name}
+            />
           </div>
         </div>
       </div>
-
-      <div>RECENT IMAGE SILDER</div>
     </div>
   );
 }

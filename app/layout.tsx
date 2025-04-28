@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Open_Sans } from "next/font/google";
 import "./globals.css";
+import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
+
 import CookieConsentBanner from "./components/general/CookieConsentBanner";
 import Footer from "./components/general/Footer";
 
@@ -25,7 +27,9 @@ export default function RootLayout({
       <body
         className={`${open_sans.className} bg-gray-200 font-bold text-slate-100 min-h-screen flex flex-col`}
       >
-        <main className="flex-grow">{children}</main>
+        <main className="flex-grow">
+          <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
+        </main>
         {/* <CookieConsentBanner /> */}
         <footer>
           <Footer />

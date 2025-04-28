@@ -15,7 +15,12 @@ export default function AnimalLists({
   spottedList,
   currUser,
 }: {
-  data: { id: string; title: string; description: string }[];
+  data: {
+    id: string;
+    title: string;
+    description: string;
+    entry_count: number;
+  }[];
   user: User;
   spottedList: number[];
   currUser: boolean;
@@ -35,6 +40,7 @@ export default function AnimalLists({
     id: string;
     title: string;
     description: string;
+    entry_count: number;
   } | null>();
 
   const handleListChange = (id: string) => {
@@ -125,6 +131,7 @@ export default function AnimalLists({
             listId={listData.id}
             title={listData.title}
             description={listData.description}
+            entryCount={listData.entry_count}
             user={user}
             spottedList={spottedList}
             currUser={currUser}

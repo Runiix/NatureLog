@@ -6,6 +6,7 @@ import { User } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import FavoriteFunctionality from "../general/FavoriteFunctionality";
+import { useState } from "react";
 
 export default function AnimalListItem({
   listId,
@@ -16,6 +17,7 @@ export default function AnimalListItem({
   spottedList,
   deleteRefresh,
   currUser,
+  entryCount,
 }: {
   listId: string;
   animalId: number;
@@ -25,9 +27,15 @@ export default function AnimalListItem({
   spottedList: number[];
   deleteRefresh: React.Dispatch<React.SetStateAction<boolean>>;
   currUser: boolean;
+  entryCount: number;
 }) {
   const handleAnimalDelete = async () => {
-    const res = await removeAnimalFromAnimalList(listId, animalId, user.id);
+    const res = await removeAnimalFromAnimalList(
+      listId,
+      animalId,
+      user.id,
+      entryCount
+    );
     if (res) {
       deleteRefresh(!deleteRefresh);
     }

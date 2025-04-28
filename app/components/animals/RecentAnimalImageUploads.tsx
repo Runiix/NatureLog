@@ -5,15 +5,15 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
-type RecentUploadsType = {
-  id: number;
-  user_id: string;
-  image_url: string;
-  created_at: string;
-  username: string;
-};
-export default function ImageSlider({ data }: { data: RecentUploadsType[] }) {
+export default function RecentAnimalImageUploads({
+  data,
+  animalName,
+}: {
+  data: { id: string; display_name: string }[];
+  animalName: string;
+}) {
   const [slideIndex, setSlideIndex] = useState(0);
+  const regex = /[äöüß ]/g;
 
   function showPrevImage() {
     setSlideIndex((index) => {
@@ -36,13 +36,17 @@ export default function ImageSlider({ data }: { data: RecentUploadsType[] }) {
   }, [slideIndex]);
 
   return (
-    <div className="relative overflow-hidden h-[85%] flex flex-col gap-3">
-      <div className=" overflow-hidden flex relative ">
-        {data.map((slide: RecentUploadsType) => (
+    <div className="relative overflow-hidden w-full h-auto flex flex-col items-center gap-3  border-t border-gray-400 px-20 py-10">
+      <h2 className="text-xl">Zuletzt hochgeladene Fotos zu diesem Tier:</h2>
+
+      <div className=" overflow-hidden flex relative w-1/3 mx-auto">
+        {data.map((slide: { id: string; display_name: string }) => (
           <Image
             key={slide.id}
-            className=" object-cover translate-all duration-500 ease-in-out min-w-full w-full"
-            src={slide.image_url}
+            className=" object-cover translate-all duration-500 ease-in-out min-w-full w-full aspect-video"
+            src={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${
+              slide.id
+            }/CollectionModals/${animalName.replace(regex, "_") + ".jpg"}`}
             alt="Slide Image"
             width="800"
             height="600"
@@ -80,10 +84,10 @@ export default function ImageSlider({ data }: { data: RecentUploadsType[] }) {
         </div>
       </div>
       <Link
-        href={`profilepage/${data[slideIndex].username}`}
-        className="hover:text-green-600 ml-4 decoration-solid underline transition-all duration-200 ease-in-out"
+        href={`profilepage/${data[slideIndex].display_name}`}
+        className="hover:text-green-600 decoration-solid underline transition-all duration-200 ease-in-out"
       >
-        Von: {data[slideIndex].username}
+        Von: {data[slideIndex].display_name}
       </Link>
     </div>
   );

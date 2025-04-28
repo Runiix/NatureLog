@@ -16,6 +16,7 @@ export default function AnimalListSearchItem({
   user,
   inList,
   refresh,
+  entryCount,
 }: {
   listId: string;
   animalId: number;
@@ -24,17 +25,28 @@ export default function AnimalListSearchItem({
   user: User;
   inList: boolean;
   refresh: React.Dispatch<React.SetStateAction<boolean>>;
+  entryCount: number;
 }) {
   const [isInList, setIsInList] = useState(inList);
   const handleAnimalAdd = async () => {
-    const res = await addAnimalToAnimalList(listId, animalId, user.id);
+    const res = await addAnimalToAnimalList(
+      listId,
+      animalId,
+      user.id,
+      entryCount
+    );
     if (res) {
       refresh(!refresh);
       setIsInList(true);
     }
   };
   const handleAnimalDelete = async () => {
-    const res = await removeAnimalFromAnimalList(listId, animalId, user.id);
+    const res = await removeAnimalFromAnimalList(
+      listId,
+      animalId,
+      user.id,
+      entryCount
+    );
     if (res) {
       refresh(!refresh);
       setIsInList(false);
