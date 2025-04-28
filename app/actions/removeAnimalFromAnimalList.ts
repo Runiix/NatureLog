@@ -9,7 +9,6 @@ export default async function removeAnimalFromAnimalList(
   entryCount: number
 ) {
   const supabase = await createClient();
-  console.log("DURING REMOVE", entryCount);
 
   const { error } = await supabase
     .from("animallistitems")

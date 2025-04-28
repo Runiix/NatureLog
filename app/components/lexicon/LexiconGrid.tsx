@@ -12,6 +12,7 @@ import LexiconFilterList from "./LexiconFilterList";
 import LexiconSort from "./LexiconSort";
 import { CheckCircle, VisibilityOff } from "@mui/icons-material";
 import Animal from "@/app/utils/AnimalType";
+import Switch from "../general/Switch";
 
 export default function LexiconGrid({
   user,
@@ -107,18 +108,12 @@ export default function LexiconGrid({
       <div className="flex-col md:flex-row flex gap-2 md:gap-0 justify-between items-center">
         <div className="flex items-center gap-[1px]">
           <LexiconFilter />
-          <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 w-20 h-10 justify-center gap-2 rounded-lg p-2">
+          <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 h-11 justify-center gap-2 rounded-lg p-2">
             <VisibilityOff />
-            <button
-              onClick={() => setOnlyUnseen((prev) => !prev)}
-              className="text-green-600"
-            >
-              {onlyUnseen ? (
-                <CheckCircle />
-              ) : (
-                <div className="rounded-full size-5 bg-gray-200 hover:bg-green-600 transition-all duration-200"></div>
-              )}
-            </button>
+            <Switch
+              value={onlyUnseen}
+              onChange={() => setOnlyUnseen((prev) => !prev)}
+            />
           </div>
         </div>
 

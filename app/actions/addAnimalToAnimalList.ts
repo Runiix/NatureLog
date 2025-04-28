@@ -9,7 +9,6 @@ export default async function addAnimalToAnimalList(
   entryCount: number
 ) {
   const supabase = await createClient();
-  console.log("DURING ADD", entryCount);
 
   const { error } = await supabase
     .from("animallistitems")

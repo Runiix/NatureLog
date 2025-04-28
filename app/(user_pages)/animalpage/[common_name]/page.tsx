@@ -63,7 +63,7 @@ const getRecentImageUsers = async (
     .select("id, display_name")
     .in("id", idArray);
   if (nameError) {
-    console.log("Error getting usernames", error);
+    console.error("Error getting usernames", error);
     return [];
   }
   return nameData;
@@ -78,7 +78,6 @@ export default async function AnimalPage(params: any) {
   const animalCount = await getSpottedCount(supabase, animalData.id);
   const userList = await getRecentImageUsers(supabase, animalData.id);
 
-  console.log(userList);
   return (
     <div className="flex flex-col items-center w-full">
       <div className="w-full relative">

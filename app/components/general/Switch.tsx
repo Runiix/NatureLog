@@ -11,7 +11,7 @@ export default function Switch({
 }) {
   return (
     <div
-      className={`w-14 h-8 flex items-center rounded-full p-1 cursor-pointer border shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200  ${
+      className={`w-14 h-8 flex items-center rounded-full p-1 cursor-pointer border shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 hover:border-green-600 ${
         value
           ? "border-green-600 from-green-600 to-gray-950"
           : "border-gray-200 from-gray-950 to-gray-900"
