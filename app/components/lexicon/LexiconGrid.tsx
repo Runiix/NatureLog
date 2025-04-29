@@ -47,12 +47,8 @@ export default function LexiconGrid({
     }
     const loadAnimals = async (offset: number) => {
       try {
-        let pageSize = 0;
-        if (window.innerWidth > 1500) {
-          pageSize = 12;
-        } else {
-          pageSize = 8;
-        }
+        const pageSize = 20;
+
         const data = await getAnimals(
           Object.fromEntries(searchParams.entries()),
           offset,
@@ -77,12 +73,8 @@ export default function LexiconGrid({
   useEffect(() => {
     const loadMoreAnimals = async () => {
       try {
-        let pageSize = 0;
-        if (window.innerWidth > 1500) {
-          pageSize = 12;
-        } else {
-          pageSize = 8;
-        }
+        const pageSize = 20;
+
         const data = await getAnimals(
           Object.fromEntries(searchParams.entries()),
           offset,

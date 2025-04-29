@@ -47,12 +47,8 @@ export default function CollectionAnimalGrid({
   useEffect(() => {
     const loadAnimals = async (offset: number) => {
       try {
-        let pageSize = 0;
-        if (window.innerWidth > 1500) {
-          pageSize = 12;
-        } else {
-          pageSize = 8;
-        }
+        const pageSize = 20;
+
         const data = await getCollectionAnimals(
           user,
           offset,
@@ -79,12 +75,8 @@ export default function CollectionAnimalGrid({
   useEffect(() => {
     const loadMoreAnimals = async () => {
       try {
-        let pageSize = 0;
-        if (window.innerWidth > 1500) {
-          pageSize = 12;
-        } else {
-          pageSize = 8;
-        }
+        const pageSize = 20;
+
         const data = await getCollectionAnimals(
           user,
           offset,
