@@ -4,6 +4,7 @@ import ProfilePicture from "@/app/components/profile/ProfilePicture";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
+import ProfileAnimalLists from "@/app/components/profile/ProfileAnimalLists";
 
 const getParamUserId = async (supabase: SupabaseClient, username: string) => {
   const { data, error } = await supabase
@@ -29,7 +30,8 @@ const getListsCount = async (supabase: SupabaseClient, userId: string) => {
   const { data, error } = await supabase
     .from("animallists")
     .select("id")
-    .eq("user_id", userId);
+    .eq("user_id", userId)
+    .eq("is_public", true);
   if (error) console.error("Error fetching animal count", error);
   if (data) return data.length;
   return 0;
@@ -92,6 +94,20 @@ const getInstaLink = async (supabase: SupabaseClient, userId: string) => {
   return data[0].insta_link;
 };
 
+const getAnimalLists = async (supabase: SupabaseClient, userId: string) => {
+  const { data, error } = await supabase
+    .from("animallists")
+    .select("id, title, description, upvotes, entry_count")
+    .eq("user_id", userId)
+    .eq("is_public", true)
+    .limit(3);
+  if (error) {
+    console.error("Error getting animalLists", error);
+    return [];
+  }
+  return data;
+};
+
 export default async function profilepage(params: any) {
   const supabase = await createClient();
   const Userparams = await params.params;
@@ -108,6 +124,7 @@ export default async function profilepage(params: any) {
       listsCount,
       teamLink,
       instaLink,
+      animalLists,
     ] = await Promise.all([
       checkForProfilePic(supabase, user.id),
       getFavoriteAnimal(supabase, user.id),
@@ -117,8 +134,9 @@ export default async function profilepage(params: any) {
 
       getTeam(supabase, user.id),
       getInstaLink(supabase, user.id),
+      getAnimalLists(supabase, user.id),
     ]);
-
+    const username = user.user_metadata.displayName;
     return (
       <>
         <div className="border-gray-200 shadow-black shadow-lg bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 hover:border-green-600 border rounded-lg cursor-pointer w-full lg:w-3/4 m-auto mt-20   flex flex-col justify-center items-center pb-10">
@@ -142,6 +160,7 @@ export default async function profilepage(params: any) {
             </div>
           </div>
           <PictureGrid user={user} currUser={true} />
+          <ProfileAnimalLists data={animalLists} username={username} />
         </div>
       </>
     );
@@ -154,6 +173,7 @@ export default async function profilepage(params: any) {
       listsCount,
       teamLink,
       instaLink,
+      animalLists,
     ] = await Promise.all([
       checkForProfilePic(supabase, paramUser.id),
       getFavoriteAnimal(supabase, paramUser.id),
@@ -162,8 +182,9 @@ export default async function profilepage(params: any) {
       getListsCount(supabase, paramUser.id),
       getTeam(supabase, paramUser.id),
       getInstaLink(supabase, paramUser.id),
+      getAnimalLists(supabase, paramUser.id),
     ]);
-
+    const username = paramUser.display_name;
     return (
       <>
         <div className="bg-gray-900 w-full lg:w-3/4 m-auto  rounded-lg shadow-xl shadow-slate-900 flex flex-col justify-center items-center pb-10">
@@ -187,6 +208,7 @@ export default async function profilepage(params: any) {
             </div>
           </div>
           <PictureGrid user={paramUser} currUser={false} />
+          <ProfileAnimalLists data={animalLists} username={username} />
         </div>
       </>
     );

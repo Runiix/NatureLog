@@ -27,7 +27,10 @@ export default function FavoriteModal({
     <div>
       {" "}
       {favoriteModal && (
-        <Modal closeModal={() => changeFavoriteModal(false)}>
+        <Modal
+          styles={"justify-center"}
+          closeModal={() => changeFavoriteModal(false)}
+        >
           <h2 className="sm:text-xl text-center text-slate-200">
             Möchten sie diese Tier wirklich aus ihrer Sammlung entfernen?
           </h2>

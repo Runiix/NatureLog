@@ -8,6 +8,7 @@ import addAnimalList from "@/app/actions/addAnimalList";
 import Modal from "../general/Modal";
 import { User } from "@supabase/supabase-js";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import Switch from "../general/Switch";
 
 export default function AnimalLists({
   data,
@@ -38,6 +39,8 @@ export default function AnimalLists({
   const [description, setDescription] = useState("");
   const [currentAnimalList, setCurrentAnimalList] = useState<string | null>();
   const [expandListsSelect, setExpandListsSelect] = useState(false);
+  const [publicList, setPublicList] = useState(false);
+
   const [listData, setListData] = useState<{
     id: string;
     title: string;
@@ -77,7 +80,12 @@ export default function AnimalLists({
 
   const addNewList = async () => {
     setLoading(true);
-    const res = await addAnimalList({ title, description, userId: user.id });
+    const res = await addAnimalList({
+      title,
+      description,
+      userId: user.id,
+      publicList,
+    });
     if (res.success) {
       setNewListModalOpen(false);
       setTitle("");
@@ -151,7 +159,10 @@ export default function AnimalLists({
 
         <div>
           {newListModalOpen && (
-            <Modal closeModal={() => setNewListModalOpen(false)}>
+            <Modal
+              styles={"justify-center"}
+              closeModal={() => setNewListModalOpen(false)}
+            >
               <form
                 className="flex flex-col gap-4"
                 onSubmit={(e) => {
@@ -173,12 +184,19 @@ export default function AnimalLists({
                 </div>
                 <div className="flex flex-col gap-2">
                   <label>Beschreibung:</label>
-                  <input
-                    type="text"
+                  <textarea
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
+                    rows={4}
                     placeholder="Beschreibung eingeben"
                     className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
+                  />
+                </div>
+                <div className="flex flex-col gap-2">
+                  <label>Öffentliche Liste:</label>
+                  <Switch
+                    value={publicList}
+                    onChange={() => setPublicList((prev) => !prev)}
                   />
                 </div>
                 <button

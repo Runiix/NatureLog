@@ -15,7 +15,7 @@ export default async function editAnimalList(
     .update({
       title: title,
       description: description,
-      public: publicList,
+      is_public: publicList,
     })
     .eq("id", listId);
   if (error) {

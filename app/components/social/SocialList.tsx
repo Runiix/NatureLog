@@ -42,7 +42,7 @@ export default function SocialList({
   }, [searchParams]);
 
   return (
-    <div className="flex flex-col items-center gap-4">
+    <div className="flex flex-col items-center gap-4  overflow-y-auto ">
       {users &&
         users.map((profile: UserType, index: number) => (
           <ProfileListElement

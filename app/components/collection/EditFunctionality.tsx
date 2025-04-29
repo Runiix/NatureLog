@@ -108,7 +108,7 @@ export default function EditFunctionality({
     }
   };
   return (
-    <Modal closeModal={() => setEditModal(false)}>
+    <Modal styles={"justify-center"} closeModal={() => setEditModal(false)}>
       <form
         className="flex flex-col gap-4"
         onSubmit={(e) => {

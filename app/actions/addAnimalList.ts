@@ -6,10 +6,12 @@ export default async function addAnimalList({
   title,
   description,
   userId,
+  publicList,
 }: {
   title: string;
   description: string;
   userId: string;
+  publicList: boolean;
 }) {
   const supabase = await createClient();
 
@@ -17,6 +19,7 @@ export default async function addAnimalList({
     user_id: userId,
     title: title,
     description: description,
+    is_public: publicList,
   });
   if (error) {
     console.error("Error adding animal list", error);

@@ -283,7 +283,10 @@ export default function AnimalList({
         </div>
       )}
       {editListModalOpen && (
-        <Modal closeModal={() => setEditListModalOpen(false)}>
+        <Modal
+          styles={"justify-center"}
+          closeModal={() => setEditListModalOpen(false)}
+        >
           <form
             className="flex flex-col gap-4"
             onSubmit={(e) => {
@@ -331,7 +334,10 @@ export default function AnimalList({
         </Modal>
       )}
       {deleteListModalOpen && (
-        <Modal closeModal={() => setDeleteListModalOpen(false)}>
+        <Modal
+          styles={"justify-center"}
+          closeModal={() => setDeleteListModalOpen(false)}
+        >
           <div className="flex flex-col gap-4 items-center">
             <h2>Sind Sie sicher, dass Sie diese Liste Löschen möchten?</h2>
             <button

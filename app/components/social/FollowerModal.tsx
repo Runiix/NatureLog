@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal from "../general/Modal";
 import SocialFilter from "./SocialFilter";
 import Search from "../general/Search";
@@ -15,18 +15,31 @@ export default function FollowerModal({
   following: string[];
 }) {
   const [showFollowerModal, setShowFollowerModal] = useState(false);
+  useEffect(() => {
+    if (showFollowerModal) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [showFollowerModal]);
   return (
     <div>
       <button
-        className="bg-gray-900 border border-gray-200 rounded-lg absolute top-20 right-20 p-4"
+        className="bg-gray-900 border border-gray-200 rounded-lg fixed top-20 right-20 p-4"
         onClick={() => setShowFollowerModal(true)}
       >
         Followers
       </button>
       {showFollowerModal && (
-        <Modal closeModal={() => setShowFollowerModal((prev) => !prev)}>
+        <Modal
+          styles={"h-[600px] overflow-y-auto"}
+          closeModal={() => setShowFollowerModal((prev) => !prev)}
+        >
           {" "}
-          <div className="mt-16 flex flex-col items-center gap-10  rounded-lg  py-10">
+          <div className=" flex flex-col items-center gap-10  rounded-lg  py-10">
             <SocialFilter />
             <Search placeholder="NatureLogger Suchen" />
             <SocialList user={user} following={following} />

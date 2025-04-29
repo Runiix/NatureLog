@@ -62,36 +62,33 @@ export default function SocialListElement({
   return (
     <Link
       href={profilelink}
-      className="py-4 rounded-lg bg-gray-900 w-80 sm:w-96 shadow-md shadow-gray-800 transition-all duration-200 hover:bg-gradient-to-br from-green-600 via-gray-900 to-gray-900 "
+      className="shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 p-2 pr-2  rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 w-80 sm:w-96  h-20  flex items-center justify-between"
     >
-      <div
-        className="flex items-center justify-between
-      mx-6 "
-      >
+      <div className="flex items-center gap-4">
         {profilePicExists === true ? (
           <Image
             src={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${userId}/ProfilePicture/ProfilePic.jpg?t=${new Date().getTime()}`}
             alt="Profilbild"
             width="200"
             height="200"
-            className="rounded-full w-16 h-16 object-cover"
+            className="rounded-full size-16 object-cover"
             unoptimized
           />
         ) : (
           <Avatar />
         )}
         <h2>{username}</h2>
-        <button
-          onClick={handleFollowing}
-          className={`${
-            isFollowing
-              ? " hover:text-red-600"
-              : "bg-green-600 rounded-lg p-2 text-gray-900 hover:bg-green-600 hover:text-slate-200"
-          }`}
-        >
-          {isFollowing ? "entfolgen" : "folgen"}
-        </button>
       </div>
+      <button
+        onClick={handleFollowing}
+        className={`${
+          isFollowing
+            ? "  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-red-600 border border-gray-200 p-2  rounded-lg  hover:cursor-pointer hover:from-red-600 hover:to-gray-950"
+            : "bg-green-600 rounded-lg p-2 text-gray-900 hover:bg-green-600 hover:text-slate-200"
+        }`}
+      >
+        {isFollowing ? "entfolgen" : "folgen"}
+      </button>
     </Link>
   );
 }

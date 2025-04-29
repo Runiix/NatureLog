@@ -25,7 +25,8 @@ export default async function getAnimalListItem(
   const { data: animalData, error: animalDataError } = await supabase
     .from("animals")
     .select("id, common_name, lexicon_link")
-    .in("id", animalIdArray);
+    .in("id", animalIdArray)
+    .order("common_name", { ascending: true });
   if (animalDataError) {
     console.error("Error fetching animal data", animalDataError);
     return [];

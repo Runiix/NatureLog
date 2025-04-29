@@ -16,27 +16,16 @@ const getFollowing = async (supabase: SupabaseClient, userId: string) => {
   const following = data.map((f) => f.following_id);
   return following;
 };
-const getFollowingSpottedList = async (
-  supabase: SupabaseClient,
-  followingList: string[]
-) => {
-  const { data, error } = await supabase
-    .from("spotted")
-    .select("*")
-    .in("user_id", followingList)
-    .order("image_updated_at", { ascending: true });
-};
 
 export default async function socialpage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
   if (user) {
     const following = await getFollowing(supabase, user.id);
-
     return (
-      <div>
+      <div className="w-full flex items-center">
         <FollowerModal user={user} following={following} />
-        <FollowFeed />
+        <FollowFeed following={following} />
       </div>
     );
   }
