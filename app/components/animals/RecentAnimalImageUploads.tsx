@@ -36,12 +36,12 @@ export default function RecentAnimalImageUploads({
   }, [slideIndex]);
 
   return (
-    <div className="relative overflow-hidden w-full h-auto flex flex-col items-center gap-3  border-t border-gray-400 px-20 py-10">
+    <div className="relative overflow-hidden w-full h-auto flex flex-col items-center gap-3  border-t border-gray-400 md:px-20 py-10">
       <h2 className="text-xl">Zuletzt hochgeladene Fotos zu diesem Tier:</h2>
       {data.length > 0 ? (
         <div>
           {" "}
-          <div className=" overflow-hidden flex relative w-1/3 mx-auto">
+          <div className=" overflow-hidden flex relativ max-w-[600px] mx-auto">
             {data.map((slide: { id: string; display_name: string }) => (
               <Image
                 key={slide.id}
@@ -70,7 +70,7 @@ export default function RecentAnimalImageUploads({
             >
               <NavigateNext />
             </button>
-            <div className="flex gap-2 absolute bottom-2 z-40 left-1/2 transform -translate-x-1/2">
+            <div className="flex gap-2 absolute bottom-20 z-40 left-1/2 transform -translate-x-1/2">
               {[...Array(data.length).keys()].map((index) => (
                 <button
                   key={index}

@@ -44,8 +44,8 @@ export default function ImageSlider({ data }: { data: RecentUploadsType[] }) {
             className=" object-cover translate-all duration-500 ease-in-out min-w-full w-full"
             src={slide.image_url}
             alt="Slide Image"
-            width="800"
-            height="600"
+            width="300"
+            height="100"
             style={{ translate: `${-100 * slideIndex}%` }}
             unoptimized
           />
