@@ -7,7 +7,7 @@ import React from "react";
 const getAnimalLists = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase
     .from("animallists")
-    .select("id,user_id, title, description, entry_count, lat, lng")
+    .select("id,user_id, title, description, lat, lng")
     .eq("is_public", true)
     .eq("has_location", true);
   if (error) {
@@ -39,6 +39,17 @@ const getUpvotes = async (supabase: SupabaseClient, listIds: string[]) => {
   }
   return data;
 };
+const getCounts = async (supabase: SupabaseClient, listIds: string[]) => {
+  const { data, error } = await supabase
+    .from("animallistitems")
+    .select("id, list_id")
+    .in("list_id", listIds);
+  if (error) {
+    console.error("Error getting Upvotes", error);
+    return [];
+  }
+  return data;
+};
 
 export default async function listmappage() {
   const supabase = await createClient();
@@ -47,11 +58,17 @@ export default async function listmappage() {
   const animalListIdList = animalLists.map((list) => list.id);
   const userNames = await getUsernames(supabase, userIdList);
   const upvotes = await getUpvotes(supabase, animalListIdList);
+  const counts = await getCounts(supabase, animalListIdList);
 
   const upvoteMap: { [id: string]: number } = {};
   upvotes.forEach((upvote) => {
     const listId = upvote.list_id;
     upvoteMap[listId] = (Number(upvoteMap[listId]) || 0) + 1;
+  });
+  const countMap: { [id: string]: number } = {};
+  counts.forEach((count) => {
+    const listId = count.list_id;
+    countMap[listId] = (Number(countMap[listId]) || 0) + 1;
   });
 
   const userNameMap: { [id: string]: string } = {};
@@ -62,6 +79,7 @@ export default async function listmappage() {
     ...item,
     username: userNameMap[item.user_id],
     upvotes: upvoteMap[item.id] || 0,
+    entry_count: countMap[item.id] || 0,
   }));
   return (
     <div>

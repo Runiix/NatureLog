@@ -8,7 +8,6 @@ type Props = {
   title: string;
   description: string;
   entry_count: number;
-  upvotes: number;
   lat: number;
   lng: number;
   username: string;
