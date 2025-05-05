@@ -1,6 +1,7 @@
 import { createClient } from "@/utils/supabase/server";
 import Nav from "../components/general/Nav";
 import { SupabaseClient } from "@supabase/supabase-js";
+import "leaflet/dist/leaflet.css";
 
 const getUser = async (supabase: SupabaseClient) => {
   const {

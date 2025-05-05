@@ -2,13 +2,15 @@
 
 import React, { useEffect, useState, useTransition } from "react";
 import AnimalList from "./AnimalList";
-import { Add, Close, ExpandMore, Public, PublicOff } from "@mui/icons-material";
+import { Add, ExpandMore, Public, PublicOff } from "@mui/icons-material";
 import { CircleLoader } from "react-spinners";
 import addAnimalList from "@/app/actions/addAnimalList";
 import Modal from "../general/Modal";
 import { User } from "@supabase/supabase-js";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import Switch from "../general/Switch";
+import MapWithNoSSR from "./Map";
+import { LatLng } from "leaflet";
 
 export default function AnimalLists({
   data,
@@ -21,7 +23,6 @@ export default function AnimalLists({
     title: string;
     description: string;
     entry_count: number;
-    upvotes: number;
     is_public: boolean;
   }[];
   user: User;
@@ -35,6 +36,9 @@ export default function AnimalLists({
 
   const [newListModalOpen, setNewListModalOpen] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [hasListLocation, setHasListLocation] = useState(false);
+
+  const [location, setLocation] = useState<LatLng | null>(null);
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [currentAnimalList, setCurrentAnimalList] = useState<string | null>();
@@ -46,10 +50,11 @@ export default function AnimalLists({
     title: string;
     description: string;
     entry_count: number;
-    upvotes: number;
     is_public: boolean;
   } | null>();
-
+  useEffect(() => {
+    console.log(location);
+  }, [location]);
   const handleListChange = (id: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("listId", id);
@@ -85,6 +90,8 @@ export default function AnimalLists({
       description,
       userId: user.id,
       publicList,
+      lat: location?.lat ?? null,
+      lng: location?.lng ?? null,
     });
     if (res.success) {
       setNewListModalOpen(false);
@@ -149,7 +156,6 @@ export default function AnimalLists({
             title={listData.title}
             description={listData.description}
             entryCount={listData.entry_count}
-            upvotes={listData.upvotes}
             isPublic={listData.is_public}
             user={user}
             spottedList={spottedList}
@@ -199,6 +205,20 @@ export default function AnimalLists({
                     onChange={() => setPublicList((prev) => !prev)}
                   />
                 </div>
+                <div className="flex flex-col gap-2">
+                  <label>Standort hinzufügen:</label>
+                  <Switch
+                    value={hasListLocation}
+                    onChange={() => setHasListLocation((prev) => !prev)}
+                  />
+                </div>
+                {hasListLocation && (
+                  <MapWithNoSSR
+                    onLocationSelect={setLocation}
+                    height="200px"
+                    iconUrl="../../icons/marker-icon.png"
+                  />
+                )}{" "}
                 <button
                   type="submit"
                   disabled={loading}

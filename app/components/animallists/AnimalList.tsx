@@ -22,6 +22,8 @@ import deleteAnimalList from "@/app/actions/deleteAnimalList";
 import Modal from "../general/Modal";
 import { User } from "@supabase/supabase-js";
 import Switch from "../general/Switch";
+import handleListUpvotes from "@/app/actions/handleListUpvote";
+import getUpvotes from "@/app/actions/getUpvotes";
 
 type AnimalListItemType = {
   id: number;
@@ -34,7 +36,6 @@ export default function AnimalList({
   title,
   description,
   entryCount,
-  upvotes,
   isPublic,
   user,
   spottedList,
@@ -44,7 +45,6 @@ export default function AnimalList({
   title: string;
   description: string;
   entryCount: number;
-  upvotes: number;
   isPublic: boolean;
   user: User;
   spottedList: number[];
@@ -70,6 +70,8 @@ export default function AnimalList({
   const pathname = usePathname();
   const { replace } = useRouter();
   const [deleteRefresh, setDeleteRefresh] = useState(false);
+  const [upvotes, setUpvotes] = useState(0);
+  const [hasUpvoted, setHasUpvoted] = useState(false);
 
   function handleClose(e: React.MouseEvent<HTMLButtonElement>) {
     e.stopPropagation();
@@ -78,6 +80,15 @@ export default function AnimalList({
     replace(`${pathname}?${params.toString()}`);
     setAnimalSearchItems([]);
     setAddNewAnimalModalOpen(false);
+  }
+  function listUpvoteHandler() {
+    handleListUpvotes(listId, hasUpvoted);
+    if (hasUpvoted) {
+      setUpvotes((prev) => prev - 1);
+    } else {
+      setUpvotes((prev) => prev + 1);
+    }
+    setHasUpvoted((prev) => !prev);
   }
   const editList = async () => {
     setLoading(true);
@@ -110,6 +121,16 @@ export default function AnimalList({
     setCurrEntryCount(entryCount);
   }, [title, description, entryCount, deleteRefresh]);
 
+  useEffect(() => {
+    const loadUpvotes = async () => {
+      const upv = await getUpvotes(listId, user.id);
+      if (upv) {
+        setHasUpvoted(upv.hasUpvoted ?? false);
+        setUpvotes(upv.upvotes);
+      }
+    };
+    loadUpvotes();
+  }, [listId]);
   useEffect(() => {
     const loadSearchAnimals = async () => {
       const animals = await getAnimalListSearchItems(query);
@@ -178,7 +199,12 @@ export default function AnimalList({
             {" "}
             <div className="flex items-center gap-4">
               <h2 className="text-2xl pb-2">{currTitle}</h2>
-              <h2 className="text-2xl pb-2 flex items-center gap-1">
+              <h2
+                className={`text-2xl pb-2 flex items-center gap-1 cursor-pointer hover:text-green-600 ${
+                  hasUpvoted && "text-green-600"
+                }`}
+                onClick={listUpvoteHandler}
+              >
                 <ThumbUp />
                 {upvotes}
               </h2>

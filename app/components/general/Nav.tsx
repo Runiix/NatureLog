@@ -49,20 +49,29 @@ export default function Nav({ user }: { user: User | null }) {
                 </div>
                 <div>
                   <Link
-                    href={"/animallistspage/" + user.user_metadata.displayName}
-                    className="text-slate-600 hover:text-slate-900 transition-all duration-200"
-                  >
-                    Tier Listen
-                  </Link>
-                </div>
-                <div>
-                  <Link
                     href="/lexiconpage"
                     className="text-slate-600 hover:text-slate-900 transition-all duration-200"
                   >
                     Lexikon
                   </Link>
                 </div>
+                <div>
+                  <Link
+                    href={"/animallistspage/" + user.user_metadata.displayName}
+                    className="text-slate-600 hover:text-slate-900 transition-all duration-200"
+                  >
+                    Listen
+                  </Link>
+                </div>
+                <div>
+                  <Link
+                    href={"/listmappage"}
+                    className="text-slate-600 hover:text-slate-900 transition-all duration-200"
+                  >
+                    Karte
+                  </Link>
+                </div>
+
                 <div>
                   <Link
                     href="/socialpage"
@@ -152,6 +161,13 @@ export default function Nav({ user }: { user: User | null }) {
               onClick={() => setToggleMenu(false)}
             >
               Tier Listen
+            </Link>
+            <Link
+              href={"/listmappage"}
+              className="text-slate-600 hover:text-slate-900 transition-all duration-200"
+              onClick={() => setToggleMenu(false)}
+            >
+              Listen Karte
             </Link>
             <Link
               href="/lexiconpage"
