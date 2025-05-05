@@ -14,7 +14,7 @@ const getAnimalLists = async (
   if (onlyPublic === true) {
     const { data, error } = await supabase
       .from("animallists")
-      .select("id, title, description, is_public, entry_count, upvotes")
+      .select("id, title, description, is_public")
       .eq("user_id", userId)
       .eq("is_public", onlyPublic.toString());
     if (error) console.error("Error getting Animal Lists", error);
@@ -22,7 +22,7 @@ const getAnimalLists = async (
   } else {
     const { data, error } = await supabase
       .from("animallists")
-      .select("id, title, description, is_public, entry_count, upvotes")
+      .select("id, title, description, is_public")
       .eq("user_id", userId);
     if (error) console.error("Error getting Animal Lists", error);
     else return data;

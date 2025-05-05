@@ -22,7 +22,6 @@ export default function AnimalLists({
     id: string;
     title: string;
     description: string;
-    entry_count: number;
     is_public: boolean;
   }[];
   user: User;
@@ -49,7 +48,6 @@ export default function AnimalLists({
     id: string;
     title: string;
     description: string;
-    entry_count: number;
     is_public: boolean;
   } | null>();
   useEffect(() => {
@@ -155,7 +153,6 @@ export default function AnimalLists({
             listId={listData.id}
             title={listData.title}
             description={listData.description}
-            entryCount={listData.entry_count}
             isPublic={listData.is_public}
             user={user}
             spottedList={spottedList}

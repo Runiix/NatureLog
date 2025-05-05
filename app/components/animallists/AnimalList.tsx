@@ -24,6 +24,7 @@ import { User } from "@supabase/supabase-js";
 import Switch from "../general/Switch";
 import handleListUpvotes from "@/app/actions/handleListUpvote";
 import getUpvotes from "@/app/actions/getUpvotes";
+import getCount from "@/app/actions/getCount";
 
 type AnimalListItemType = {
   id: number;
@@ -35,7 +36,6 @@ export default function AnimalList({
   listId,
   title,
   description,
-  entryCount,
   isPublic,
   user,
   spottedList,
@@ -44,7 +44,6 @@ export default function AnimalList({
   listId: string;
   title: string;
   description: string;
-  entryCount: number;
   isPublic: boolean;
   user: User;
   spottedList: number[];
@@ -62,7 +61,7 @@ export default function AnimalList({
   const [loading, setLoading] = useState(false);
   const [currTitle, setCurrTitle] = useState(title);
   const [currDescription, setCurrDescription] = useState(description);
-  const [currEntryCount, setCurrEntryCount] = useState(entryCount);
+  const [currEntryCount, setCurrEntryCount] = useState(0);
   const [publicList, setPublicList] = useState(false);
   const { ref, inView } = useInView();
   const searchParams = useSearchParams();
@@ -118,13 +117,14 @@ export default function AnimalList({
   useEffect(() => {
     setCurrTitle(title);
     setCurrDescription(description);
-    setCurrEntryCount(entryCount);
-  }, [title, description, entryCount, deleteRefresh]);
+  }, [title, description, deleteRefresh]);
 
   useEffect(() => {
     const loadUpvotes = async () => {
       const upv = await getUpvotes(listId, user.id);
+      const count = await getCount(listId);
       if (upv) {
+        setCurrEntryCount(count);
         setHasUpvoted(upv.hasUpvoted ?? false);
         setUpvotes(upv.upvotes);
       }
@@ -345,7 +345,7 @@ export default function AnimalList({
             <div className="flex flex-col gap-2">
               <label>Öffentliche Liste:</label>
               <Switch
-                value={publicList}
+                value={isPublic}
                 onChange={() => setPublicList((prev) => !prev)}
               />
             </div>
