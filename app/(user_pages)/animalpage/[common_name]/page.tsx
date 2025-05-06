@@ -82,7 +82,16 @@ export default async function AnimalPage(params: any) {
     <div className="flex flex-col items-center w-full">
       <div className="w-full relative">
         <BackButton />
-        {animalData && <AnimalBanner image={animalData.image_link} />}
+
+        {animalData && (
+          <AnimalBanner
+            image={animalData.image_link}
+            credit_link={animalData.image_credit_link}
+            credit_text={animalData.image_credit_text}
+            license_link={animalData.image_license_link}
+            license_text={animalData.image_license_text}
+          />
+        )}
         <div className="shadow-black shadow-lg bg-gradient-to-br border-gray-200 border from-gray-900 to-70% transition-all duration-200 to-gray-950 rounded-lg py-2 w-[98%] lg:w-11/12 xl:w-10/12 mx-auto mb-20">
           <div className=" m-4 sm:m-10 flex-col flex gap-8">
             <div className="flex flex-col lg:flex-row justify-between w-full border-b pb-4 border-slate-400 gap-4 sm:gap-0">

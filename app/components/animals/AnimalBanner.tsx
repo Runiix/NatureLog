@@ -3,7 +3,19 @@
 import Image from "next/image";
 import React, { useRef } from "react";
 
-export default function AnimalBanner({ image }: { image: string }) {
+export default function AnimalBanner({
+  image,
+  credit_link,
+  credit_text,
+  license_link,
+  license_text,
+}: {
+  image: string;
+  credit_link: string;
+  credit_text: string;
+  license_link: string;
+  license_text: string;
+}) {
   const imageRef = useRef<HTMLImageElement | null>(null);
 
   const handleImageLoad = () => {
@@ -24,6 +36,28 @@ export default function AnimalBanner({ image }: { image: string }) {
           onLoad={handleImageLoad}
           priority
         />
+        {credit_link && (
+          <p className="text-xs text-gray-600 absolute bottom-0 right-10 z-50 ">
+            Foto:{" "}
+            <a
+              className="hover:underline"
+              href={credit_link}
+              target="_blank"
+              rel="noopener"
+            >
+              {credit_text}
+            </a>
+            ,{" "}
+            <a
+              className="hover:underline"
+              href={license_link}
+              target="_blank"
+              rel="noopener"
+            >
+              {license_text}
+            </a>
+          </p>
+        )}
 
         <div className="absolute bottom-0 w-full h-1/2 bg-gradient-to-t from-gray-200/100 via-gray-200/0 to-transparent pointer-events-none" />
       </div>
