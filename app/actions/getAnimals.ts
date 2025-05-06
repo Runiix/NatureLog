@@ -14,6 +14,7 @@ export default async function getAnimals(
   const sizeFrom = params.get("sizeFrom") || null;
   const sizeTo = params.get("sizeTo") || null;
   const genus = params.get("genus")?.split(",") || [];
+  const order = params.get("order")?.split(",") || [];
   const search = params.get("query") || "";
   const sortBy = params.get("sortBy") || null;
   const endangerment = params.get("endangerment")?.split(",") || [];
@@ -29,6 +30,9 @@ export default async function getAnimals(
 
   if (genus.length > 0) {
     query = query.in("category", genus);
+  }
+  if (order.length > 0) {
+    query = query.in("taxonomic_order", order);
   }
   if (endangerment.length > 0) {
     query = query.in("endangerment_status", endangerment);
