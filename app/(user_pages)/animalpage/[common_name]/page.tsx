@@ -115,6 +115,9 @@ export default async function AnimalPage(params: any) {
                   <h3 className="text-xl lg:text-2xl">
                     {animalData.scientific_name}
                   </h3>
+                  <h3 className="text-xl lg:text-2xl">
+                    {animalData.taxonomic_order}
+                  </h3>
                 </div>
                 <h3 className="text-xl lg:text-2xl flex items-center">
                   <Height className="scale-150" />
