@@ -10,10 +10,7 @@ export default function Footer() {
         Ruben Liebert 2025
       </p>
       <Link href="/impressum" className="text-xs hover:text-green-600">
-        Impressum
-      </Link>
-      <Link href="/datasecurity" className="text-xs hover:text-green-600">
-        Datenschutz
+        Impressum & Datenschutz
       </Link>
     </div>
   );
