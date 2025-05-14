@@ -29,9 +29,8 @@ export default function AnimalOfTheDay({
       <div className="flex items-end justify-between mx-2 mb-2">
         <div className=" gap-1 sm:text-xl items-center">
           <h3>{data.common_name}</h3>
-          <h3 className="text-slate-400"> {data.scientific_name}</h3>
+          <h3 className="text-slate-400 truncate"> {data.scientific_name}</h3>
         </div>
-        <div className="">{data.description}</div>
         <div>
           <div className=" flex gap-2">
             <h3
