@@ -21,7 +21,7 @@ export default function Nav({
   following,
 }: {
   user: User | null;
-  following: any;
+  following?: any;
 }) {
   const [toggleMenu, setToggleMenu] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
@@ -100,7 +100,9 @@ export default function Nav({
                     <Settings />
                     Einstellungen
                   </Link>
-                  <FollowerModal user={user} following={following} />
+                  {following && (
+                    <FollowerModal user={user} following={following} />
+                  )}
                 </div>
 
                 <form
@@ -178,7 +180,7 @@ export default function Nav({
               <Summarize />
               Listen
             </Link>
-            <FollowerModal user={user} following={following} />
+            {following && <FollowerModal user={user} following={following} />}
             <form
               action="/auth/signout"
               method="post"
