@@ -18,25 +18,27 @@ export default function FollowFeedItem({ post }: { post: Props }) {
   const regex = /[äöüß ]/g;
 
   return (
-    <div className=" bg-gradient-to-br  from-gray-900 to-70%  to-gray-950 border  border-slate-200 rounded-lg flex flex-col items-center justify-center shadow-lg shadow-black">
+    <div className=" bg-gradient-to-br  from-gray-900 to-70%  to-gray-950 border  border-slate-200 rounded-lg  justify-center shadow-lg shadow-black max-w-80">
       {post.image ? (
         <div className="flex flex-col">
-          <h2 className="border-b border-gray-400 p-4 text-xl">
+          <h2 className="border-b border-gray-200  p-2 text-xl w-full">
+            {" "}
             <Link
-              className="underline hover:text-green-600"
+              className="hover:underline text-green-600  "
               href={`/profilepage/${post.username}`}
             >
               {post.username}
             </Link>{" "}
-            hat ein neues Foto für das Tier{" "}
+          </h2>
+          <div className="px-2 pt-2">
+            <p className="text-sm">hat ein neues Foto hinzugefügt: </p>
             <Link
-              className="underline hover:text-green-600"
+              className="hover:underline text-green-600 text-xl "
               href={`/animalpage/${post.common_name}`}
             >
               {post.common_name}
             </Link>{" "}
-            hinzugefügt:
-          </h2>
+          </div>
           <Image
             src={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${
               post.user_id
@@ -44,7 +46,7 @@ export default function FollowFeedItem({ post }: { post: Props }) {
             alt={post.common_name}
             height="300"
             width="500"
-            className="mx-auto my-4 hover:opacity-80 cursor-pointer h-auto w-auto max-h-[500px]"
+            className="mx-auto mt-2 hover:opacity-80 cursor-pointer h-auto w-auto max-h-[500px] rounded-b-lg"
             onClick={() => setImageModal(true)}
           />
           {imageModal && (
@@ -72,22 +74,26 @@ export default function FollowFeedItem({ post }: { post: Props }) {
           )}
         </div>
       ) : (
-        <h2 className=" p-4 text-xl">
-          <Link
-            className="underline hover:text-green-600"
-            href={`/profilepage/${post.username}`}
-          >
-            {post.username}
-          </Link>{" "}
-          hat das Tier{" "}
-          <Link
-            className="underline hover:text-green-600"
-            href={`/animalpage/${post.common_name}`}
-          >
-            {post.common_name}
-          </Link>{" "}
-          zu seiner/ihrer Sammlung hinzugefügt
-        </h2>
+        <div>
+          <h2 className="border-b border-gray-200  p-2 text-xl w-full">
+            {" "}
+            <Link
+              className="hover:underline text-green-600  "
+              href={`/profilepage/${post.username}`}
+            >
+              {post.username}
+            </Link>{" "}
+          </h2>
+          <div className="p-2">
+            <p className="text-sm">hat eine neue Art hinzugefügt: </p>
+            <Link
+              className="hover:underline text-green-600 text-xl "
+              href={`/animalpage/${post.common_name}`}
+            >
+              {post.common_name}
+            </Link>{" "}
+          </div>
+        </div>
       )}
     </div>
   );

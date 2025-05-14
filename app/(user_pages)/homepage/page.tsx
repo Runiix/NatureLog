@@ -11,6 +11,7 @@ import RecentUploads from "@/app/components/home/RecentUploads";
 import HomeGridItem from "@/app/components/home/HomeGridItem";
 import AnimalQuiz from "@/app/components/home/AnimalQuiz";
 import ImageSearch from "@/app/components/home/ImageSearch";
+import FollowFeed from "@/app/components/social/FollowFeed";
 
 const getRandomDayId = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase.from("animals").select("id");
@@ -83,26 +84,18 @@ const getAnimalOfTheMonth = async (supabase: SupabaseClient) => {
   }
 };
 
-async function fileExists(
-  supabase: SupabaseClient,
-  imageLink: string,
-  genus: string
-) {
-  const { data, error } = await supabase.storage
-    .from("animalImages")
-    .list(`main/${genus}/`, {
-      limit: 1,
-      offset: 0,
-      sortBy: { column: "name", order: "asc" },
-      search: `${imageLink}`,
-    });
+const getFollowing = async (supabase: SupabaseClient, userId: string) => {
+  const { data, error } = await supabase
+    .from("follows")
+    .select("following_id")
+    .eq("follower_id", userId);
   if (error) {
-    console.error("Error listing files:", error);
-    return false;
+    console.error(error);
+    return [];
   }
-
-  return data.length > 0;
-}
+  const following = data.map((f) => f.following_id);
+  return following;
+};
 async function getLast10Images(supabase: SupabaseClient) {
   const { data, error } = await supabase.from("lastimages").select("*");
   if (error) return [];
@@ -115,6 +108,10 @@ export default async function homepage() {
   const animalOfTheMonth = await getAnimalOfTheMonth(supabase);
   const animalOfTheDay = await getAnimalOfTheDay(supabase);
   const lastImages = await getLast10Images(supabase);
+  let following = [];
+  if (user) {
+    following = await getFollowing(supabase, user.id);
+  }
   return (
     <div className="flex flex-wrap gap-6 mx-2  sm:mx-6 mt-12 sm:mt-20  items-center justify-center pb-6">
       <HomeGridItem>
@@ -123,6 +120,9 @@ export default async function homepage() {
           titel="Tages"
           imageUrl={animalOfTheDay.lexicon_link}
         />
+      </HomeGridItem>
+      <HomeGridItem>
+        <FollowFeed following={following} />
       </HomeGridItem>
       <HomeGridItem>
         <AnimalOfTheDay

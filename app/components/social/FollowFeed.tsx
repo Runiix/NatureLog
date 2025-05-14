@@ -73,7 +73,8 @@ export default function FollowFeed({ following }: { following: number[] }) {
     }
   }, [inView]);
   return (
-    <div className="flex flex-col gap-4 mt-44 mx-auto">
+    <div className="flex flex-col gap-4 mt-4 mx-auto">
+      <h2 className="text-xl">Follower Feed</h2>
       {feed &&
         feed.map((post: Props, index: number) => (
           <FollowFeedItem post={post} key={index} />

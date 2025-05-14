@@ -1,5 +1,6 @@
 import { Close } from "@mui/icons-material";
 import React from "react";
+import { createPortal } from "react-dom";
 
 export default function Modal({
   children,
@@ -15,7 +16,7 @@ export default function Modal({
     e.stopPropagation();
     closeModal(false);
   }
-  return (
+  return createPortal(
     <div
       className={`fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center`}
     >
@@ -30,6 +31,7 @@ export default function Modal({
         </button>
         {children}
       </div>
-    </div>
+    </div>,
+    document.body
   );
 }

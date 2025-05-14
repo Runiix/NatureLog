@@ -8,15 +8,21 @@ import {
   Collections,
   Home,
   Menu,
-  People,
   Person,
   PowerSettingsNew,
   Settings,
   Summarize,
 } from "@mui/icons-material";
 import { User } from "@supabase/supabase-js";
+import FollowerModal from "../social/FollowerModal";
 
-export default function Nav({ user }: { user: User | null }) {
+export default function Nav({
+  user,
+  following,
+}: {
+  user: User | null;
+  following: any;
+}) {
   const [toggleMenu, setToggleMenu] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
 
@@ -61,13 +67,6 @@ export default function Nav({ user }: { user: User | null }) {
                   <Summarize />
                   Listen
                 </Link>
-                <Link
-                  href="/socialpage"
-                  className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-                >
-                  <People />
-                  Freunde
-                </Link>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-6 relative">
@@ -101,6 +100,7 @@ export default function Nav({ user }: { user: User | null }) {
                     <Settings />
                     Einstellungen
                   </Link>
+                  <FollowerModal user={user} following={following} />
                 </div>
 
                 <form
@@ -172,21 +172,13 @@ export default function Nav({ user }: { user: User | null }) {
             </Link>
             <Link
               href={"/animallistspage/" + user.user_metadata.displayName}
-              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
+              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1 "
               onClick={() => setToggleMenu(false)}
             >
               <Summarize />
               Listen
             </Link>
-            <Link
-              href="/socialpage"
-              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1 mb-10"
-              onClick={() => setToggleMenu(false)}
-            >
-              <People />
-              Freunde
-            </Link>
-
+            <FollowerModal user={user} following={following} />
             <form
               action="/auth/signout"
               method="post"
