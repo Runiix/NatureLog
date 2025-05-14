@@ -1,4 +1,11 @@
-import { CalendarMonth, Compare, Height, Landscape } from "@mui/icons-material";
+import {
+  CalendarMonth,
+  Compare,
+  Female,
+  Height,
+  Landscape,
+  Male,
+} from "@mui/icons-material";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import AnimalBanner from "@/app/components/animals/AnimalBanner";
@@ -210,6 +217,18 @@ export default async function AnimalPage(params: any) {
                     </div>
                     <h3 className="text-green-600 text-wrap">
                       {animalData.habitat}
+                    </h3>
+                  </div>
+                )}
+                {animalData.sexual_dimorphism !== "Nein" && (
+                  <div className="flex flex-col gap-2">
+                    <div className="flex gap-2 items-center">
+                      <Male className="scale-150 -mt-1" />
+                      <Female className="scale-150 -mt-1" />
+                      <h3>Geschlechtsdemorphismus:</h3>
+                    </div>
+                    <h3 className="text-green-600 text-wrap md:max-w-[30rem]">
+                      {animalData.sexual_dimorphism}
                     </h3>
                   </div>
                 )}
