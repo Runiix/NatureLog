@@ -17,7 +17,7 @@ export default function ClientWrapper({ lists }: { lists: Props[] }) {
     <div className="bg-gray-900 rounded-lg p-2 m-2 border border-gray-200 shadow-lg shadow-black">
       {" "}
       <MapWithNoSSR
-        height="500px"
+        height="700px"
         markers={lists}
         iconUrl="icons/marker-icon.png"
       />

@@ -65,7 +65,16 @@ export default async function AnimalListsPage(params: any) {
     );
 
     return (
-      <div className="w-full">
+      <div className="w-full mt-20 flex flex-col">
+        <div className="flex gap-4 items-center mx-auto my-6 text-xl">
+          <Link href="/animallistspage/map">
+            <p className=" hover:text-green-600 hover:underline text-gray-900 cursor-pointer">
+              Karte
+            </p>
+          </Link>
+
+          <p className="text-green-600 underline">Meine Listen</p>
+        </div>
         <AnimalLists
           data={animalLists}
           user={user}

@@ -103,7 +103,7 @@ export default function AnimalLists({
   };
 
   return (
-    <div className="mt-20 flex flex-col items-center gap-4">
+    <div className=" flex flex-col items-center gap-4">
       <div className="flex gap-4 items-center relative">
         <div
           className="flex items-center gap-6 shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 py-2 pl-6 pr-2 sm:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950"
