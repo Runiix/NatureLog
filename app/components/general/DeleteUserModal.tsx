@@ -27,8 +27,11 @@ export default function DeleteUserModal({ user }: { user: User }) {
           <h2>Wollen Sie Wirklich ihr Konto Löschen?</h2>
           <div className="flex flex-col w-10/12 items-center gap-4">
             <label>
-              Geben Sie Ihren Benutzernamen "{user.user_metadata.displayName}"
-              ein, wenn Sie sicher Ihr Konto löschen möchten:
+              Geben Sie Ihren Benutzernamen &quot;
+              <p className="text-red-600 font-bold">
+                {user.user_metadata.displayName}
+              </p>
+              &quot; ein, wenn Sie sicher Ihr Konto löschen möchten:
             </label>
             <input
               type="text"
