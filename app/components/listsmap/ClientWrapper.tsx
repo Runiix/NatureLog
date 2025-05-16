@@ -19,7 +19,7 @@ export default function ClientWrapper({ lists }: { lists: Props[] }) {
       <MapWithNoSSR
         height="700px"
         markers={lists}
-        iconUrl="icons/marker-icon.png"
+        iconUrl="/icons/marker-icon.png"
       />
     </div>
   );

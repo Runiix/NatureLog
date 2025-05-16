@@ -213,7 +213,7 @@ export default function AnimalLists({
                   <MapWithNoSSR
                     onLocationSelect={setLocation}
                     height="200px"
-                    iconUrl="../../icons/marker-icon.png"
+                    iconUrl="/icons/marker-icon.png"
                   />
                 )}{" "}
                 <button

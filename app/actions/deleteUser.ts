@@ -139,4 +139,11 @@ export default async function deleteUser() {
       console.error("Error deleting search files:", searchFilesError);
     }
   }
+
+  const { error } = await supabase.auth.admin.deleteUser(user.id);
+  if (error) {
+    console.error("Error deleting user", error);
+    return { success: false, error: error.message };
+  }
+  return { succes: true };
 }

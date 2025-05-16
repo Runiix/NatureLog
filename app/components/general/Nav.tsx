@@ -94,7 +94,7 @@ export default function Nav({
                     Profil
                   </Link>
                   <Link
-                    href="/settings"
+                    href="/settingspage"
                     className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
                   >
                     <Settings />
@@ -179,6 +179,14 @@ export default function Nav({
             >
               <Summarize />
               Listen
+            </Link>
+            <Link
+              href={"/settingspage"}
+              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1 "
+              onClick={() => setToggleMenu(false)}
+            >
+              <Settings />
+              Einstellungen
             </Link>
             {following && <FollowerModal user={user} following={following} />}
             <form

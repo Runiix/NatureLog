@@ -97,12 +97,35 @@ const getInstaLink = async (supabase: SupabaseClient, userId: string) => {
 const getAnimalLists = async (supabase: SupabaseClient, userId: string) => {
   const { data, error } = await supabase
     .from("animallists")
-    .select("id, title, description, upvotes, entry_count")
+    .select("id, title, description")
     .eq("user_id", userId)
     .eq("is_public", true)
     .limit(3);
   if (error) {
     console.error("Error getting animalLists", error);
+    console.log(data);
+    return [];
+  }
+  return data;
+};
+const getUpvotes = async (supabase: SupabaseClient, listIds: string[]) => {
+  const { data, error } = await supabase
+    .from("listupvotes")
+    .select("id, list_id")
+    .in("list_id", listIds);
+  if (error) {
+    console.error("Error getting Upvotes", error);
+    return [];
+  }
+  return data;
+};
+const getCounts = async (supabase: SupabaseClient, listIds: string[]) => {
+  const { data, error } = await supabase
+    .from("animallistitems")
+    .select("id, list_id")
+    .in("list_id", listIds);
+  if (error) {
+    console.error("Error getting Upvotes", error);
     return [];
   }
   return data;
@@ -131,11 +154,28 @@ export default async function profilepage(params: any) {
       getProfilePictureUrl(supabase, user.id),
       getAnimalCount(supabase, user.id),
       getListsCount(supabase, user.id),
-
       getTeam(supabase, user.id),
       getInstaLink(supabase, user.id),
       getAnimalLists(supabase, user.id),
     ]);
+    const animalListIdList = animalLists.map((list) => list.id);
+    const upvotes = await getUpvotes(supabase, animalListIdList);
+    const counts = await getCounts(supabase, animalListIdList);
+    const upvoteMap: { [id: string]: number } = {};
+    upvotes.forEach((upvote) => {
+      const listId = upvote.list_id;
+      upvoteMap[listId] = (Number(upvoteMap[listId]) || 0) + 1;
+    });
+    const countMap: { [id: string]: number } = {};
+    counts.forEach((count) => {
+      const listId = count.list_id;
+      countMap[listId] = (Number(countMap[listId]) || 0) + 1;
+    });
+    const animalListsWithCounts = animalLists.map((item) => ({
+      ...item,
+      upvotes: upvoteMap[item.id] || 0,
+      entry_count: countMap[item.id] || 0,
+    }));
     const username = user.user_metadata.displayName;
     return (
       <>
@@ -160,7 +200,10 @@ export default async function profilepage(params: any) {
             </div>
           </div>
           <PictureGrid user={user} currUser={true} />
-          <ProfileAnimalLists data={animalLists} username={username} />
+          <ProfileAnimalLists
+            data={animalListsWithCounts}
+            username={username}
+          />
         </div>
       </>
     );
@@ -184,6 +227,24 @@ export default async function profilepage(params: any) {
       getInstaLink(supabase, paramUser.id),
       getAnimalLists(supabase, paramUser.id),
     ]);
+    const animalListIdList = animalLists.map((list) => list.id);
+    const upvotes = await getUpvotes(supabase, animalListIdList);
+    const counts = await getCounts(supabase, animalListIdList);
+    const upvoteMap: { [id: string]: number } = {};
+    upvotes.forEach((upvote) => {
+      const listId = upvote.list_id;
+      upvoteMap[listId] = (Number(upvoteMap[listId]) || 0) + 1;
+    });
+    const countMap: { [id: string]: number } = {};
+    counts.forEach((count) => {
+      const listId = count.list_id;
+      countMap[listId] = (Number(countMap[listId]) || 0) + 1;
+    });
+    const animalListsWithCounts = animalLists.map((item) => ({
+      ...item,
+      upvotes: upvoteMap[item.id] || 0,
+      entry_count: countMap[item.id] || 0,
+    }));
     const username = paramUser.display_name;
     return (
       <>
@@ -208,7 +269,10 @@ export default async function profilepage(params: any) {
             </div>
           </div>
           <PictureGrid user={paramUser} currUser={false} />
-          <ProfileAnimalLists data={animalLists} username={username} />
+          <ProfileAnimalLists
+            data={animalListsWithCounts}
+            username={username}
+          />
         </div>
       </>
     );
