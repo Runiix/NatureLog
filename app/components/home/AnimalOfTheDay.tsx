@@ -23,7 +23,7 @@ export default function AnimalOfTheDay({
           width={300}
           height={200}
           priority
-          className="object-cover aspect-video sm:aspect-[3/2] w-full group-hover:opacity-90 min-h-[190px] sm:min-h-[256px]"
+          className="object-cover aspect-video  w-full group-hover:opacity-90 min-h-[190px] sm:min-h-[230px]"
         />
       </div>
       <div className="flex flex-col mx-2 mb-2">
