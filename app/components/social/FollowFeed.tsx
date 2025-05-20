@@ -73,7 +73,7 @@ export default function FollowFeed({ following }: { following: number[] }) {
     }
   }, [inView]);
   return (
-    <div className="flex flex-col w-[21rem] sm:w-96 sm:min-w-96 gap-4 rounded-lg shadow-black shadow-lg max-h-[500px] sm:max-h-[792px]  bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200 group">
+    <div className="flex flex-col w-[21rem] sm:w-96 sm:min-w-96 gap-4 rounded-lg shadow-black shadow-lg max-h-[500px] min-h-[500px] sm:min-h-[792px] sm:max-h-[792px]  bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200 group">
       <h2 className="text-2xl px-4 pb-1 pt-4">Follower Feed</h2>
       <div className=" px-4 space-y-4 overflow-auto border-t rounded-t-lg border-gray-200 pt-2 group-hover:border-green-600">
         {feed && feed.length > 0 ? (
