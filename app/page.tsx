@@ -8,6 +8,7 @@ import Lexikon from "./assets/images/Lexikon.png";
 import Sammlung from "./assets/images/Sammlung.png";
 import Profil from "./assets/images/Profil.png";
 import Community from "./assets/images/community.png";
+import Lists from "./assets/images/Listen.png";
 import Mobile from "./assets/images/Mobile.png";
 import { getUser } from "@/app/utils/data";
 
@@ -40,8 +41,14 @@ export default async function page() {
       text: "Sieh dir an, welche Arten andere bereits gesichtet haben, und entdecke ihre Profile.",
     },
     {
-      src: Mobile,
+      src: Lists,
       position: "left" as "right" | "left",
+      titel: "Erstelle Listen",
+      text: "Sieh dir eine interaktive Karte mit Artenlisten an. Erstelle eigene Listen und füge Sie der Karte hinzu oder Benutze provate Listen um deine Zielarten und Sichtungen zu tracken.",
+    },
+    {
+      src: Mobile,
+      position: "right" as "right" | "left",
       titel: "Verfügbar als App",
       text: "Verwende die Web-App auf deinem Handy oder lade sie dir über den Browser als App herunter.",
     },

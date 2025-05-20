@@ -18,7 +18,7 @@ export default function FollowFeedItem({ post }: { post: Props }) {
   const regex = /[äöüß ]/g;
 
   return (
-    <div className=" bg-gradient-to-br  from-gray-900 to-70%  to-gray-950 border  border-slate-200 rounded-lg  justify-center shadow-lg shadow-black max-w-80">
+    <div className=" bg-gradient-to-br  from-gray-900 to-70%  to-gray-950 border  border-slate-200 rounded-lg  justify-center shadow-lg shadow-black">
       {post.image ? (
         <div className="flex flex-col">
           <h2 className="border-b border-gray-200  p-2 text-xl w-full">

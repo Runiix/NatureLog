@@ -46,7 +46,7 @@ export default function AnimalQuiz() {
   }, [nextAnimalSwitch]);
 
   return (
-    <div>
+    <div className="pb-2">
       {quizAnimals.length > 0 ? (
         <Image
           src={quizAnimals[randomIndex].lexicon_link}
@@ -60,12 +60,12 @@ export default function AnimalQuiz() {
         <CircleLoader />
       )}
       {easyQuiz ? (
-        <div className="grid grid-cols-2 grid-rows-2 gap-2 mb-2 h-24">
+        <div className="grid grid-cols-2 grid-rows-2 gap-1 sm:gap-2 mb-2 h-20 sm:h-24">
           {quizAnimals ? (
             quizAnimals.map((animal: Animal, index: number) => (
               <button
                 key={animal.id}
-                className={`flex items-center gap-1  hover:border-slate-400 border-2 w-44  mx-auto px-1 py-2 rounded-lg group hover:bg-gray-800 transition-all duration-200 ${
+                className={`flex items-center gap-1  hover:border-slate-400 border-2 w-40 sm:w-44  mx-auto px-1 py-1 sm:py-2 rounded-lg group hover:bg-gray-800 transition-all duration-200 ${
                   answer !== 0 &&
                   animal.id === answer &&
                   answer === quizAnimals[randomIndex].id

@@ -14,7 +14,7 @@ export default function AnimalOfTheDay({
   const link = `/animalpage/${data.common_name}`;
 
   return (
-    <Link href={link} className="h-full flex flex-col gap-4 justify-between">
+    <Link href={link} className="h-full flex flex-col justify-between">
       <div>
         <h2 className="2xl:text-2xl px-4 py-2 ">Tier des {titel}</h2>
         <Image
@@ -23,10 +23,10 @@ export default function AnimalOfTheDay({
           width={300}
           height={200}
           priority
-          className="object-cover aspect-[3/2] w-full group-hover:opacity-90 min-h-[256px]"
+          className="object-cover aspect-video sm:aspect-[3/2] w-full group-hover:opacity-90 min-h-[190px] sm:min-h-[256px]"
         />
       </div>
-      <div className="flex items-end justify-between mx-2 mb-2">
+      <div className="flex flex-col mx-2 mb-2">
         <div className=" gap-1 sm:text-xl items-center">
           <h3>{data.common_name}</h3>
           <h3 className="text-slate-400 truncate"> {data.scientific_name}</h3>

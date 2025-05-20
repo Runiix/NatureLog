@@ -73,17 +73,23 @@ export default function FollowFeed({ following }: { following: number[] }) {
     }
   }, [inView]);
   return (
-    <div className="flex flex-col gap-4 mt-4 mx-auto">
-      <h2 className="text-xl">Follower Feed</h2>
-      {feed &&
-        feed.map((post: Props, index: number) => (
-          <FollowFeedItem post={post} key={index} />
-        ))}
-      {loadingMoreFeed && (
-        <div className="mb-4" ref={ref}>
-          <CircleLoader color="#16A34A" />{" "}
-        </div>
-      )}
+    <div className="flex flex-col w-[21rem] sm:w-96 sm:min-w-96 gap-4 rounded-lg shadow-black shadow-lg max-h-[500px] sm:max-h-[792px]  bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200 group">
+      <h2 className="text-2xl px-4 pb-1 pt-4">Follower Feed</h2>
+      <div className=" px-4 space-y-4 overflow-auto border-t rounded-t-lg border-gray-200 pt-2 group-hover:border-green-600">
+        {feed && feed.length > 0 ? (
+          feed.map((post: Props, index: number) => (
+            <FollowFeedItem post={post} key={index} />
+          ))
+        ) : (
+          <p>Noch keine Posts</p>
+        )}
+
+        {loadingMoreFeed && (
+          <div className="mb-4" ref={ref}>
+            <CircleLoader color="#16A34A" />{" "}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

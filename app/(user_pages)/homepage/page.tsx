@@ -113,44 +113,51 @@ export default async function homepage() {
     following = await getFollowing(supabase, user.id);
   }
   return (
-    <div className="flex flex-wrap gap-6 mx-2  sm:mx-6 mt-12 sm:mt-20  items-center justify-center pb-6">
-      <HomeGridItem>
-        <AnimalOfTheDay
-          data={animalOfTheDay}
-          titel="Tages"
-          imageUrl={animalOfTheDay.lexicon_link}
-        />
-      </HomeGridItem>
-      <HomeGridItem>
-        <FollowFeed following={following} />
-      </HomeGridItem>
-      <HomeGridItem>
-        <AnimalOfTheDay
-          data={animalOfTheMonth}
-          titel="Monats"
-          imageUrl={animalOfTheMonth.lexicon_link}
-        />
-      </HomeGridItem>
-      <HomeGridItem>
+    <div className="w-full flex items-center">
+      <div
+        className=" px-2 sm:px-0 grid gap-6 mx-auto items-center justify-center
+                grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4
+                 mt-12 sm:mt-20"
+      >
         {" "}
-        <DailyChallenge />
-      </HomeGridItem>
-      <HomeGridItem>
+        <div className="row-span-2">
+          <FollowFeed following={following} />{" "}
+        </div>
+        <HomeGridItem>
+          <AnimalOfTheDay
+            data={animalOfTheDay}
+            titel="Tages"
+            imageUrl={animalOfTheDay.lexicon_link}
+          />
+        </HomeGridItem>
+        <HomeGridItem>
+          <AnimalOfTheDay
+            data={animalOfTheMonth}
+            titel="Monats"
+            imageUrl={animalOfTheMonth.lexicon_link}
+          />
+        </HomeGridItem>
+        <HomeGridItem>
+          {" "}
+          <DailyChallenge />
+        </HomeGridItem>
+        {/* <HomeGridItem>
         <UseFullLinks />
-      </HomeGridItem>
-      <HomeGridItem>
-        {" "}
-        <RecentUploads data={lastImages} />
-      </HomeGridItem>
-      <HomeGridItem>
-        {" "}
-        <AnimalQuiz />
-      </HomeGridItem>
-      <HomeGridItem>
-        {" "}
-        <ImageSearch user={user} />
-      </HomeGridItem>
-      {/* <AnimalRecognizer /> */}
+      </HomeGridItem> */}
+        <HomeGridItem>
+          {" "}
+          <RecentUploads data={lastImages} />
+        </HomeGridItem>
+        <HomeGridItem>
+          {" "}
+          <AnimalQuiz />
+        </HomeGridItem>
+        <HomeGridItem>
+          {" "}
+          <ImageSearch user={user} />
+        </HomeGridItem>
+        {/* <AnimalRecognizer /> */}
+      </div>
     </div>
   );
 }

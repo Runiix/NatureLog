@@ -70,7 +70,7 @@ export default function LexiconCard({
             alt="Placeholder"
             width={300}
             height={200}
-            className="object-cover w-full h-24 sm:h-48 rounded-t-lg hover:opacity-90  transition-opacity duration-[2s] opacity-0"
+            className="object-cover w-full h-24 sm:h-48 rounded-t-lg hover:opacity-90  transition-opacity duration-[1s] opacity-0"
             onLoad={handleImageLoad}
           />
         </div>
