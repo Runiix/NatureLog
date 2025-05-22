@@ -65,8 +65,8 @@ export default async function AnimalListsPage(params: any) {
     );
 
     return (
-      <div className="w-full mt-20 flex flex-col">
-        <div className="flex gap-4 items-center mx-auto my-6 text-xl">
+      <div className="w-full mt-10 sm:mt-20 flex flex-col">
+        <div className="flex gap-4 items-center mx-auto my-4 md:my-6 text-xl">
           <Link href="/animallistspage/map">
             <p className=" hover:text-green-600 hover:underline text-gray-900 cursor-pointer">
               Karte

@@ -17,9 +17,7 @@ export default function ProfileAnimalLists({
 }) {
   return (
     <div>
-      <h2 className="text-xl mt-20 w-full">
-        Öffentliche Listen von {username}:
-      </h2>
+      <h2 className="text-xl mt-20 w-full">Öffentliche Listen:</h2>
 
       <div className="flex flex-col gap-4 md:space-between border-t-2 border-gray-200 pt-4">
         {data.map(
@@ -41,14 +39,14 @@ export default function ProfileAnimalLists({
                   <div className=" border-b border-gray-200 flex">
                     {" "}
                     <div className="flex items-center gap-4">
-                      <h2 className="text-2xl pb-2">{list.title}</h2>
-                      <h2 className="text-2xl pb-2 flex items-center gap-1">
+                      <h2 className="md:text-2xl pb-2">{list.title}</h2>
+                      <h2 className="md:text-2xl pb-2 flex items-center gap-1">
                         <ThumbUp />
                         {list.upvotes}
                       </h2>
                     </div>
                     <div className="ml-auto flex items-center mr-2  gap-2">
-                      <h2 className="text-2xl pb-2">
+                      <h2 className="md:text-2xl pb-2">
                         {list.entry_count} Einträge
                       </h2>
                     </div>

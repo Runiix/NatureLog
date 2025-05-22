@@ -8,8 +8,8 @@ export default async function getAnimalListItem(
   pageSize: number
 ) {
   const supabase = await createClient();
-  const from = offset * pageSize;
-  const to = (offset + 1) * pageSize - 1;
+ const from = offset * pageSize;
+const to = from + pageSize - 1;
   const { data: animalIds, error: animalIdsError } = await supabase
     .from("animallistitems")
     .select("animal_id")
@@ -31,5 +31,6 @@ export default async function getAnimalListItem(
     console.error("Error fetching animal data", animalDataError);
     return [];
   }
+  console.log(animalData.length, animalData)
   return animalData;
 }

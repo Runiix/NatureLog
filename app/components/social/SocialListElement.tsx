@@ -1,6 +1,7 @@
 import follow from "@/app/actions/follow";
 import unfollow from "@/app/actions/unfollow";
 import { createClient } from "@/utils/supabase/client";
+import { Add, Favorite } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import Image from "next/image";
@@ -83,11 +84,15 @@ export default function SocialListElement({
         onClick={handleFollowing}
         className={`${
           isFollowing
-            ? "  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-red-600 border border-gray-200 p-2  rounded-lg  hover:cursor-pointer hover:from-red-600 hover:to-gray-950"
-            : "bg-green-600 rounded-lg p-2 text-gray-900 hover:bg-green-600 hover:text-slate-200"
+            ? "  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-red-600 p-2  rounded-lg  hover:cursor-pointer hover:from-red-600 hover:to-gray-950"
+            : "rounded-lg p-2 hover:bg-green-600 hover:text-slate-200"
         }`}
       >
-        {isFollowing ? "entfolgen" : "folgen"}
+        {isFollowing ? (
+          <Favorite className="text-green-600 hover:text-red-600 target:text-red-600" />
+        ) : (
+          <Add />
+        )}
       </button>
     </Link>
   );

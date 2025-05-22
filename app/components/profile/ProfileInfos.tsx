@@ -85,8 +85,8 @@ export default function ProfileInfos({
   };
 
   return (
-    <div className="space-y-4">
-      <div className="flex gap-10 sm:text-xl border-b-2 border-gray-950 pb-2">
+    <div className="space-y-4 ">
+      <div className="flex gap-4 md:gap-10 items-center justify-center md:text-xl border-b-2 border-gray-950 pb-2">
         <div>
           {currUser ? user.user_metadata.displayName : user.display_name}
         </div>
@@ -111,7 +111,7 @@ export default function ProfileInfos({
           )}
         </div>
       </div>
-      <div className="flex justify-around gap-2 sm:gap-10">
+      <div className="flex justify-around gap-5 sm:gap-10">
         <div className="flex flex-col items-center  gap-2 relative">
           <div>Team</div>
           {currUser ? (
@@ -123,7 +123,12 @@ export default function ProfileInfos({
               {team === null ? (
                 <Add />
               ) : (
-                <Image src={team} width={80} height={80} alt="" />
+                <Image
+                  src={team}
+                  width={60}
+                  height={60}
+                  alt="Tiergruppierung"
+                />
               )}
             </button>
           ) : (
@@ -133,7 +138,12 @@ export default function ProfileInfos({
               }`}
             >
               {team !== null && (
-                <Image src={team} width={80} height={80} alt="" />
+                <Image
+                  src={team}
+                  width={60}
+                  height={60}
+                  alt="Tiergruppierung"
+                />
               )}
             </div>
           )}
@@ -163,7 +173,7 @@ export default function ProfileInfos({
           className=" flex flex-col gap-2 items-center text-center"
         >
           <p>Arten</p>
-          <div className="border-2 rounded-lg px-4 py-2 text-xl hover:bg-gray-800 hover:scale-110 transition duration-300">
+          <div className="  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border p-2 border-gray-200 md:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 h-10">
             {animalCount}
           </div>
         </Link>
@@ -172,27 +182,27 @@ export default function ProfileInfos({
           className=" flex flex-col gap-2 items-center text-center"
         >
           <p>Listen</p>
-          <div className="border-2 rounded-lg px-4 py-2 text-xl hover:bg-gray-800 hover:scale-110 transition duration-300">
+          <div className=" shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border p-2 size-10 border-gray-200 md:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950">
             {listsCount}
           </div>
         </Link>
         <div className="flex flex-col gap-2 items-center">
           <p>Lieblingstier</p>
-          <div className="flex gap-2">
+          {currUser ? (
             <div
               className={` ${
-                currUser && "hover:text-green-600 cursor-pointer"
+                currUser &&
+                " shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border p-2 border-gray-200 md:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 h-10"
               }`}
+              onClick={() => setShowEditFavoriteAnimal((prev) => !prev)}
             >
               {favorite}
             </div>
-            {currUser && (
-              <Edit
-                onClick={() => setShowEditFavoriteAnimal((prev) => !prev)}
-                className="cursor-pointer hover:text-green-600 transition duration-300"
-              />
-            )}
-          </div>
+          ) : (
+            <div className="shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 border p-2 border-gray-200 md:text-xl rounded-lg ">
+              {favorite}
+            </div>
+          )}
           {showEditFavoriteAnimal && currUser && (
             <div className="fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center">
               <form className="bg-gray-900 rounded-lg w-10/12 py-10 flex flex-col items-center justify-center gap-4 relative max-w-[50%] shadow-lg shadow-black">

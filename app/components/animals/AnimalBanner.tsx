@@ -37,7 +37,7 @@ export default function AnimalBanner({
           priority
         />
         {credit_link && (
-          <p className="text-xs text-gray-600 absolute bottom-0 right-10 z-50 ">
+          <p className="text-xs text-gray-600 absolute bottom-0 right-10 z-40 ">
             Foto:{" "}
             <a
               className="hover:underline"

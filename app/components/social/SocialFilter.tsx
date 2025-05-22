@@ -23,13 +23,13 @@ export default function SocialFilter() {
     });
   };
   return (
-    <div className="flex gap-10 border-b border-gray-900 items-center justify-center bg-gray-900 rounded-lg p-10">
+    <div className="flex flex-col md:flex-row md: gap-2 md:gap-10 border-b border-gray-900 items-center justify-center bg-gray-900 rounded-lg p-4 md:p-10">
       <button
         onClick={() => handleFollowerChange("following")}
         className={`${
           followType === "following" &&
           "text-green-600 border-b border-green-600"
-        } hover:text-green-600 hover:border-b hover:border-green-600`}
+        } hover:text-green-600 hover:border-b hover:border-green-600 text-xs md:text-base`}
       >
         Du Folgst
       </button>
@@ -38,7 +38,7 @@ export default function SocialFilter() {
         className={`${
           followType === "followers" &&
           "text-green-600 border-b border-green-600"
-        } hover:text-green-600 hover:border-b hover:border-green-600`}
+        } hover:text-green-600 hover:border-b hover:border-green-600 text-xs md:text-base`}
       >
         Dir Folgen
       </button>
@@ -46,7 +46,7 @@ export default function SocialFilter() {
         onClick={() => handleFollowerChange("all")}
         className={`${
           followType === "all" && "text-green-600 border-b border-green-600"
-        } hover:text-green-600 hover:border-b hover:border-green-600`}
+        } hover:text-green-600 hover:border-b hover:border-green-600 text-xs md:text-base`}
       >
         NatureLogger Suchen
       </button>

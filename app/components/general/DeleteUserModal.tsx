@@ -30,7 +30,7 @@ export default function DeleteUserModal({ user }: { user: User }) {
     <div>
       <button
         onClick={() => setShowModal(true)}
-        className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700  text-nowrap flex items-center gap-2 absolute bottom-20 right-20"
+        className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700  text-nowrap flex items-center gap-2 absolute bottom-32 md:bottom-20 right-10 md:right-20"
       >
         Konto Löschen
       </button>

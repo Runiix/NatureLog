@@ -12,7 +12,7 @@ export default async function getUsers(
 
   const search = params.get("query") || "";
   const following = params.get("following") || "";
-  if (following === "all") {
+  if (following === "all" && search !== "") {
     const { data, error } = await supabase
       .from("users")
       .select("*")

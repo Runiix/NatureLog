@@ -104,6 +104,9 @@ export default function AnimalList({
       setLoading(false);
     }
   };
+  useEffect(() => {
+    console.log(offset);
+  }, [offset]);
   const deleteList = async () => {
     setLoading(true);
     const res = await deleteAnimalList(listId);
@@ -142,14 +145,10 @@ export default function AnimalList({
   useEffect(() => {
     const loadAnimals = async (offset: number) => {
       try {
-        let pageSize = 0;
-        if (window.innerWidth > 1500) {
-          pageSize = 10;
-        } else {
-          pageSize = 8;
-        }
+        const pageSize = 20;
         const data = await getAnimalListItems(listId, offset, pageSize);
         if (data.length < pageSize) {
+          console.log(data);
           setLoadingMoreAnimals(false);
         } else {
           setLoadingMoreAnimals(true);
@@ -167,12 +166,7 @@ export default function AnimalList({
   useEffect(() => {
     const loadMoreAnimals = async () => {
       try {
-        let pageSize = 0;
-        if (window.innerWidth > 1500) {
-          pageSize = 10;
-        } else {
-          pageSize = 8;
-        }
+        const pageSize = 20;
         const data = await getAnimalListItems(listId, offset, pageSize);
         if (data.length < pageSize) {
           setLoadingMoreAnimals(false);
@@ -192,51 +186,48 @@ export default function AnimalList({
   }, [inView]);
   return (
     <div className="p-4 w-full sm:w-11/12 md:w-10/12 xl:w-1/2 lg:max-w-[1/2] flex-col gap-4  mx-auto rounded-lg shadow-black shadow-lg flex justify-center bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200">
-      <div className="flex">
-        {" "}
-        <div className="w-full">
-          <div className=" border-b border-gray-200 flex">
-            {" "}
-            <div className="flex items-center gap-4">
-              <h2 className="text-2xl pb-2">{currTitle}</h2>
-              <h2
-                className={`text-2xl pb-2 flex items-center gap-1 cursor-pointer hover:text-green-600 ${
-                  hasUpvoted && "text-green-600"
-                }`}
-                onClick={listUpvoteHandler}
-              >
-                <ThumbUp />
-                {upvotes}
-              </h2>
-            </div>
-            <div className="ml-auto flex items-center mr-2  gap-2">
-              <h2 className="text-2xl pb-2">{currEntryCount} Einträge</h2>
-
-              <button
-                className="hover:text-green-600"
-                onClick={() => setEditListModalOpen(true)}
-              >
-                <Edit />
-              </button>
-              <button
-                className="hover:text-red-600"
-                onClick={() => setDeleteListModalOpen(true)}
-              >
-                <Delete />
-              </button>
-              {isPublic ? (
-                <Public className="text-green-600" />
-              ) : (
-                <PublicOff className="text-red-600" />
-              )}
-            </div>
+      <div className="flex flex-col">
+        <div className=" border-b border-gray-200 flex flex-col md:flex-row">
+          {" "}
+          <div className="flex items-center gap-4 ">
+            <h2 className=" text-xl md:text-2xl pb-2">{currTitle}</h2>
+            <h2
+              className={`md:text-2xl pb-2 flex items-center gap-1 cursor-pointer hover:text-green-600 ${
+                hasUpvoted && "text-green-600"
+              }`}
+              onClick={listUpvoteHandler}
+            >
+              <ThumbUp />
+              {upvotes}
+            </h2>
           </div>
+          <div className="md:ml-auto flex items-center mr-2  gap-2">
+            <h2 className="md:text-2xl pb-2">{currEntryCount} Einträge</h2>
 
-          <p className="text-gray-300"> {currDescription}</p>
+            <button
+              className="hover:text-green-600 ml-auto md:ml-0"
+              onClick={() => setEditListModalOpen(true)}
+            >
+              <Edit />
+            </button>
+            <button
+              className="hover:text-red-600"
+              onClick={() => setDeleteListModalOpen(true)}
+            >
+              <Delete />
+            </button>
+            {isPublic ? (
+              <Public className="text-green-600" />
+            ) : (
+              <PublicOff className="text-red-600" />
+            )}
+          </div>
         </div>
+
+        <p className="text-gray-300"> {currDescription}</p>
       </div>
 
-      <div className="flex flex-col overflow-y-auto max-h-[550px] gap-2 py-2 pr-2  h-full">
+      <div className="flex flex-col overflow-y-auto max-h-[240px] sm:max-h-[550px] gap-2 py-2 pr-2  h-full">
         {animalItems.map(
           (animal: {
             id: number;

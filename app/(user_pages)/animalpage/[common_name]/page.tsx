@@ -5,6 +5,7 @@ import {
   Height,
   Landscape,
   Male,
+  Numbers,
 } from "@mui/icons-material";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient, User } from "@supabase/supabase-js";
@@ -105,7 +106,7 @@ export default async function AnimalPage(params: any) {
               <div className="flex flex-col gap-4 ">
                 <div>
                   <div className="flex items-center gap-2 mr-2 lg:gap-8">
-                    <h2 className="text-3xl lg:text-4xl">
+                    <h2 className=" text-2xl md:text-3xl lg:text-4xl">
                       {animalData.common_name}
                     </h2>
                     {user && (
@@ -119,75 +120,90 @@ export default async function AnimalPage(params: any) {
                     )}
                   </div>
 
-                  <h3 className="text-xl lg:text-2xl">
+                  <h3 className="text-lg text-gray-300 md:text-xl lg:text-2xl">
                     {animalData.scientific_name}
                   </h3>
-                  <h3 className="text-xl lg:text-2xl">
+                  <h3 className="text-lg text-gray-300 md:text-xl lg:text-2xl mt-4">
                     {animalData.taxonomic_order}
                   </h3>
+                  <h3 className="md:text-xl text-wrap flex gap-1">
+                    <p className="text-green-600">{animalCount}</p> Mitglieder
+                    haben diese Art gesehen
+                  </h3>
+                  <div className="my-4">
+                    <div className="flex gap-5 ml-2">
+                      <div className="rounded-full bg-green-600 p-1"></div>
+                      <div className="rounded-full bg-gray-400 p-1"></div>
+                      <div className="rounded-full bg-yellow-500 p-1"></div>
+                      <div className="rounded-full bg-orange-600 p-1"></div>
+                      <div className="rounded-full bg-red-600 p-1"></div>
+                    </div>
+                    <div className="md:text-xl flex flex-col sm:flex-row gap-2">
+                      <h3
+                        className={
+                          animalData.endangerment_status === "Nicht gefährdet"
+                            ? "text-green-600"
+                            : animalData.endangerment_status === "Extrem selten"
+                            ? "text-gray-400"
+                            : animalData.endangerment_status === "Vorwarnliste"
+                            ? "text-yellow-500"
+                            : animalData.endangerment_status === "Gefährdet"
+                            ? "text-orange-500"
+                            : animalData.endangerment_status ===
+                              "Stark gefährdet"
+                            ? "text-orange-700"
+                            : animalData.endangerment_status ===
+                              "Vom Aussterben bedroht"
+                            ? "text-red-600"
+                            : "text-white"
+                        }
+                      >
+                        {animalData.endangerment_status}{" "}
+                      </h3>
+                    </div>
+                  </div>
                 </div>
-                <h3 className="text-xl lg:text-2xl flex items-center">
-                  <Height className="scale-150" />
-                  {animalData.size_to >= 100
-                    ? `${animalData.size_from / 100}  -  ${
-                        animalData.size_to / 100
-                      } m`
-                    : animalData.size_to > 0
-                    ? `${animalData.size_from}  -  ${animalData.size_to} cm`
-                    : `${animalData.size_from * 100}  -  ${
-                        animalData.size_to * 100
-                      } mm`}
-                </h3>
               </div>
 
-              <div className="flex flex-col gap-4 text-xl text-nowrap">
-                <h3 className="text-xl text-wrap">
-                  {animalCount} Mitglieder haben diese Art gesehen
-                </h3>
-                <div>
-                  <div className="flex gap-5 ml-2">
-                    <div className="rounded-full bg-green-600 p-1"></div>
-                    <div className="rounded-full bg-gray-400 p-1"></div>
-                    <div className="rounded-full bg-yellow-500 p-1"></div>
-                    <div className="rounded-full bg-orange-600 p-1"></div>
-                    <div className="rounded-full bg-red-600 p-1"></div>
+              <div className="flex flex-col gap-4 md:text-xl text-nowrap">
+                <h3 className="text-lg md:text-xl lg:text-2xl flex gap-2 items-center -ml-1">
+                  <div className="flex items-center">
+                    <Height className="md:scale-150" />
+                    <h3> Größe:</h3>
                   </div>
-                  <div className="text-xl flex flex-col sm:flex-row gap-2">
-                    <h3
-                      className={
-                        animalData.endangerment_status === "Nicht gefährdet"
-                          ? "text-green-600"
-                          : animalData.endangerment_status === "Extrem selten"
-                          ? "text-gray-400"
-                          : animalData.endangerment_status === "Vorwarnliste"
-                          ? "text-yellow-500"
-                          : animalData.endangerment_status === "Gefährdet"
-                          ? "text-orange-500"
-                          : animalData.endangerment_status === "Stark gefährdet"
-                          ? "text-orange-700"
-                          : animalData.endangerment_status ===
-                            "Vom Aussterben bedroht"
-                          ? "text-red-600"
-                          : "text-white"
-                      }
-                    >
-                      {animalData.endangerment_status}{" "}
-                    </h3>
-                    <h3>{animalData.population_estimate}</h3>
-                  </div>
-                </div>
 
+                  <h3 className="text-green-600 ">
+                    {animalData.size_to >= 100
+                      ? `${animalData.size_from / 100}  -  ${
+                          animalData.size_to / 100
+                        } m`
+                      : animalData.size_to > 0
+                      ? `${animalData.size_from}  -  ${animalData.size_to} cm`
+                      : `${animalData.size_from * 100}  -  ${
+                          animalData.size_to * 100
+                        } mm`}
+                  </h3>
+                </h3>
+                <div className="flex md:items-center flex-col md:flex-row gap-1">
+                  <div className="flex">
+                    <Numbers />
+                    <h3>Population:</h3>
+                  </div>
+                  <h3 className="text-sm md:text-base text-green-600">
+                    {animalData.population_estimate}
+                  </h3>
+                </div>
                 {animalData.similar_animals && (
-                  <div className="flex flex-col 2xl:flex-row gap-2 2xl:items-start mt-2">
-                    <div className="flex gap-2 items-center">
+                  <div className="flex flex-col 2xl:flex-row md:gap-2 2xl:items-start ">
+                    <div className="flex gap-1 md:gap-2 items-center">
                       <Compare />
-                      <h3 className="text-xl">Ähnliche Arten:</h3>
+                      <h3 className="md:text-xl">Ähnliche Arten:</h3>
                     </div>
-                    <div className="flex gap-2 flex-wrap">
+                    <div className="flex gap-1 md:gap-2 flex-wrap">
                       {animalData.similar_animals.map(
                         (animal: string, index: number) => (
                           <Link
-                            className="text-green-600 hover:underline"
+                            className="text-green-600 hover:underline  text-sm md:text-base"
                             key={index}
                             href={`/animalpage/${animal}`}
                           >
@@ -199,42 +215,42 @@ export default async function AnimalPage(params: any) {
                   </div>
                 )}
 
-                <div className="flex flex-col 2xl:flex-row gap-2 2xl:items-center">
-                  <div className="flex gap-2 items-center">
+                <div className="flex flex-col 2xl:flex-row md:gap-2 2xl:items-center">
+                  <div className="flex gap-1 md:gap-2 items-center">
                     <CalendarMonth />
 
                     <h3> In Deutschland zu sehen:</h3>
                   </div>
-                  <h3 className="text-green-600 text-wrap">
+                  <h3 className="text-green-600 text-wrap  text-sm md:text-base ">
                     {animalData.presence_time}
                   </h3>
                 </div>
                 {animalData.habitat && (
-                  <div className="flex flex-col 2xl:flex-row gap-2 2xl:items-center">
-                    <div className="flex gap-2 items-center">
-                      <Landscape className="scale-150 -mt-1" />
+                  <div className="flex flex-col 2xl:flex-row md:gap-2 2xl:items-center">
+                    <div className="flex gap-1 md:gap-2 items-center md:text-xl">
+                      <Landscape className="md:scale-150 -mt-1" />
                       <h3>Habitate:</h3>
                     </div>
-                    <h3 className="text-green-600 text-wrap">
+                    <h3 className="text-green-600 text-sm md:text-base text-wrap">
                       {animalData.habitat}
                     </h3>
                   </div>
                 )}
                 {animalData.sexual_dimorphism !== "Nein" && (
-                  <div className="flex flex-col gap-2">
-                    <div className="flex gap-2 items-center">
-                      <Male className="scale-150 -mt-1" />
-                      <Female className="scale-150 -mt-1" />
+                  <div className="flex flex-col md:gap-2">
+                    <div className="flex gap-1 md:gap-2 items-center md:text-xl">
+                      <Male className="md:scale-150 -mt-1" />
+                      <Female className="md:scale-150 -mt-1" />
                       <h3>Geschlechtsdemorphismus:</h3>
                     </div>
-                    <h3 className="text-green-600 text-wrap md:max-w-[30rem]">
+                    <h3 className="text-green-600 text-wrap md:max-w-[30rem]  text-sm md:text-base ">
                       {animalData.sexual_dimorphism}
                     </h3>
                   </div>
                 )}
               </div>
             </div>
-            <div className="text-lg md:mx-16 text-wrap">
+            <div className=" text-sm md:text-lg md:mx-16 text-wrap">
               <p>{animalData.description}</p>
             </div>
             <RecentAnimalImageUploads

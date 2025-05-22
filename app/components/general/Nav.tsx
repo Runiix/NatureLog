@@ -151,6 +151,7 @@ export default function Nav({
             <Link
               href={"/profilepage/" + user.user_metadata.displayName}
               className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
+              onClick={() => setToggleMenu(false)}
             >
               <Person />
               Profil

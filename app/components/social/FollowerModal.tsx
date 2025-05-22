@@ -41,7 +41,7 @@ export default function FollowerModal({
           closeModal={() => setShowFollowerModal((prev) => !prev)}
         >
           {" "}
-          <div className=" flex flex-col items-center gap-10  rounded-lg  pb-10">
+          <div className=" flex flex-col items-center gap-4 md:gap-10  rounded-lg  pb-10">
             <SocialFilter />
             <Search placeholder="NatureLogger Suchen" />
             <SocialList user={user} following={following} />
