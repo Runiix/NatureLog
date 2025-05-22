@@ -14,6 +14,7 @@ export default function AnimalListSearchItem({
   name,
   image,
   user,
+  spottedList,
   inList,
   refresh,
   entryCount,
@@ -23,6 +24,7 @@ export default function AnimalListSearchItem({
   name: string;
   image: string;
   user: User;
+  spottedList: number[];
   inList: boolean;
   refresh: React.Dispatch<React.SetStateAction<boolean>>;
   entryCount: number;
@@ -63,6 +65,11 @@ export default function AnimalListSearchItem({
       />
       <h2 className="truncate">{name}</h2>
       <div className="ml-auto flex gap-4 mr-4">
+        <FavoriteFunctionality
+          user={user}
+          id={animalId}
+          spottedList={spottedList}
+        />
         {isInList ? (
           <button
             onClick={() => handleAnimalDelete()}

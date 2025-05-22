@@ -288,6 +288,7 @@ export default function AnimalList({
                   listId={listId}
                   animalId={animal.id}
                   name={animal.common_name}
+                  spottedList={spottedList}
                   image={animal.lexicon_link}
                   user={user}
                   inList={animalItems.some((obj) => obj.id === animal.id)}
