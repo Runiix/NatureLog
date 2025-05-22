@@ -7,7 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
 
-export default function passwordreset() {
+export default function Passwordreset() {
   const supabase = createClient();
   const [data, setData] = useState({ password: "", confirmPassword: "" });
   const [showPassword, setShowPassword] = useState(false);
