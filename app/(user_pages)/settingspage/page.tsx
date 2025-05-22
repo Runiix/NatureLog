@@ -6,5 +6,10 @@ export default async function settingspage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
   if (!user) return <div>No USER</div>;
-  return <div>{/* <DeleteUserModal user={user} /> */}</div>;
+  return (
+    <div>
+      {" "}
+      <DeleteUserModal user={user} />
+    </div>
+  );
 }

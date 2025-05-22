@@ -63,6 +63,7 @@ export default function AuthForm() {
     if (usernameError) setUsernameError(true);
     if (success) setRegisterSuccess(true);
     setIsSigningIn(false);
+    setIsNewUser(false);
   };
   const handleFormChangeToLogin = () => {
     setIsNewUser(false);

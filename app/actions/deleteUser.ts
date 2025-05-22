@@ -6,6 +6,11 @@ import { getUser } from "../utils/data";
 export default async function deleteUser() {
   const supabase = await createClient();
   const user = await getUser(supabase);
+const {
+  data: { session },
+} = await supabase.auth.getSession();
+
+const accessToken = session?.access_token;
   if (!user) return { success: false, error: "User not found" };
 
   const { data: collectionFiles, error: getCollectionFilesError } =
@@ -140,10 +145,18 @@ export default async function deleteUser() {
     }
   }
 
-  const { error } = await supabase.auth.admin.deleteUser(user.id);
-  if (error) {
-    console.error("Error deleting user", error);
-    return { success: false, error: error.message };
+  const res = await fetch(`https://umvtbsrjbvivfkcmvtxk.supabase.co/functions/v1/delete-user-account`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify({ user_id: user.id }), // Or just let the function get the user from JWT
+  })
+
+  if (!res.ok) {
+    const error = await res.text()
+    throw new Error(`Failed to delete user: ${error}`)
   }
   return { succes: true };
 }

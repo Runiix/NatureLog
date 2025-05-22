@@ -4,15 +4,27 @@ import { useState } from "react";
 import Modal from "./Modal";
 import { User } from "@supabase/supabase-js";
 import deleteUser from "@/app/actions/deleteUser";
+import { useRouter } from "next/navigation";
 
 export default function DeleteUserModal({ user }: { user: User }) {
   const [showModal, setShowModal] = useState(false);
   const [input, setInput] = useState("");
+  const router = useRouter();
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setInput(e.target.value);
   };
   const handleUserDelete = async () => {
     const res = await deleteUser();
+    if (res.succes) {
+      router.refresh();
+      router.push("/loginpage");
+      alert("Ihr Konto wurde erfolgreich gelöscht");
+    } else {
+      alert(
+        "Fehler beim Löschen Ihres Accounts, bitte versuchen Sie es erneut oder wenden Sie sich an den Support." +
+          res.error
+      );
+    }
   };
   return (
     <div>

@@ -41,7 +41,8 @@ export async function updateSession(request: NextRequest) {
     (!user && request.nextUrl.pathname.startsWith("/homepage")) ||
     (!user && request.nextUrl.pathname.startsWith("/collectionpage")) ||
     (!user && request.nextUrl.pathname.startsWith("/profilepage")) ||
-    (!user && request.nextUrl.pathname.startsWith("/socialpage"))
+    (!user && request.nextUrl.pathname.startsWith("/socialpage")) ||
+    (!user && request.nextUrl.pathname.startsWith("/settingspage"))
   ) {
     // no user, potentially respond by redirecting the user to the login page
     const url = request.nextUrl.clone();
