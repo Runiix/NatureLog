@@ -47,7 +47,7 @@ export default function MapLeaflet({
       center={[51.1657, 10.4515]}
       zoom={6}
       style={{ height: height, width: "100%" }}
-      className="max-h-[500px] sm:max-h-none"
+      className="max-h-[500px] sm:max-h-none z-40"
     >
       <TileLayer
         attribution="&copy; OpenStreetMap"
