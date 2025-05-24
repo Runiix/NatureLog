@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
-import HomeHero from "../../assets/images/HomeHero.jpg";
+import HomeHero from "../../assets/images/HomeHero.webp";
 import Link from "next/link";
 import Image from "next/image";
 import { createClient } from "@/utils/supabase/client";
