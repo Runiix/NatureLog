@@ -214,6 +214,7 @@ export default function AnimalLists({
                     onLocationSelect={setLocation}
                     height="200px"
                     iconUrl="/icons/marker-icon.png"
+                    setMarker={true}
                   />
                 )}{" "}
                 <button

@@ -8,6 +8,7 @@ import changeTeam from "../../actions/changeTeam";
 import changeFavoriteAnimal from "@/app/actions/changeFavoriteAnimal";
 import changeInstaLink from "@/app/actions/changeInstaLink";
 import { User } from "@supabase/supabase-js";
+import Modal from "../general/Modal";
 
 export default function ProfileInfos({
   user,
@@ -148,24 +149,25 @@ export default function ProfileInfos({
             </div>
           )}
           {teamSelect && (
-            <div
-              className=" bg-gray-900 top-36 -left-44 p-2 rounded-lg flex gap-2 absolute"
-              onClick={() => setTeamSelect(false)}
-            >
-              {teamList.map((team) => (
-                <Image
-                  key={team.name}
-                  src={team.src}
-                  width={80}
-                  height={80}
-                  alt={team.alt}
-                  className="rounded-lg cursor-pointer hover:opacity-90"
-                  onClick={() =>
-                    changeTeam(team.name, user.id).then(() => setTeam(team.src))
-                  }
-                />
-              ))}
-            </div>
+            <Modal closeModal={() => setTeamSelect(!teamSelect)}>
+              <div className="flex gap-2">
+                {teamList.map((team) => (
+                  <Image
+                    key={team.name}
+                    src={team.src}
+                    width={80}
+                    height={80}
+                    alt={team.alt}
+                    className="rounded-lg cursor-pointer hover:opacity-90 bg-gray-900 p-2 border border-gray-200 hover:border-green-600"
+                    onClick={() =>
+                      changeTeam(team.name, user.id).then(() =>
+                        setTeam(team.src)
+                      )
+                    }
+                  />
+                ))}
+              </div>
+            </Modal>
           )}
         </div>
         <Link
@@ -173,7 +175,7 @@ export default function ProfileInfos({
           className=" flex flex-col gap-2 items-center text-center"
         >
           <p>Arten</p>
-          <div className="  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border p-2 border-gray-200 md:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 h-10">
+          <div className="  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border p-2 border-gray-200 md:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 h-10 items-center justify-center flex">
             {animalCount}
           </div>
         </Link>
@@ -182,7 +184,7 @@ export default function ProfileInfos({
           className=" flex flex-col gap-2 items-center text-center"
         >
           <p>Listen</p>
-          <div className=" shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border p-2 size-10 border-gray-200 md:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950">
+          <div className=" shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border p-2 size-10 border-gray-200 md:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 items-center justify-center flex">
             {listsCount}
           </div>
         </Link>
@@ -192,7 +194,7 @@ export default function ProfileInfos({
             <div
               className={` ${
                 currUser &&
-                " shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border p-2 border-gray-200 md:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 h-10"
+                " shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border p-2 border-gray-200 md:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 h-10 items-center justify-center flex"
               }`}
               onClick={() => setShowEditFavoriteAnimal((prev) => !prev)}
             >

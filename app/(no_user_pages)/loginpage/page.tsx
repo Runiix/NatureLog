@@ -1,5 +1,5 @@
 import Image from "next/image";
-import HomeHero from "../../assets/images/HomeHero.jpg";
+import HomeHero from "../../assets/images/HomeHero.webp";
 import AuthForm from "../../components/auth/AuthForm";
 import BackButton from "@/app/components/general/BackButton";
 

@@ -19,11 +19,13 @@ export default function MapLeaflet({
   markers,
   height,
   iconUrl,
+  setMarker,
 }: {
   onLocationSelect?: (location: LatLng) => void;
   markers?: any[];
   height: string;
   iconUrl: string;
+  setMarker: boolean;
 }) {
   const [position, setPosition] = useState<any>(null);
 
@@ -53,7 +55,7 @@ export default function MapLeaflet({
         attribution="&copy; OpenStreetMap"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <LocationPicker />
+      {setMarker && <LocationPicker />}
       <MarkerClusterGroup>
         {markers &&
           markers.map((marker, i) => (

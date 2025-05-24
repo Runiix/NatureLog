@@ -86,7 +86,7 @@ export default function RecentAnimalImageUploads({
             </div>
           </div>
           <Link
-            href={`profilepage/${data[slideIndex].display_name}`}
+            href={`/profilepage/${data[slideIndex].display_name}`}
             className="hover:text-green-600 decoration-solid underline transition-all duration-200 ease-in-out"
           >
             Von: {data[slideIndex].display_name}

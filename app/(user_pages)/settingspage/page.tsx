@@ -23,7 +23,7 @@ const getProfileIsPublic = async (supabase: SupabaseClient, userId: string) => {
 export default async function settingspage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
-  if (!user) return <div>No USER</div>;
+  if (!user) return <div>Kein Benutzer</div>;
   const isPublic = await getProfileIsPublic(supabase, user.id);
   return (
     <div className="m-20 ">
@@ -33,11 +33,11 @@ export default async function settingspage() {
           <div className="flex gap-1 items-center">
             <Public className="text-gray-900" />
             <p className="text-gray-900">
-              Ihr Profil und Ihre Sammlung sind öffentlich
+              Dein Profil und deine Sammlung sind öffentlich
             </p>
             <ChangePublicModal
               user={user}
-              text="Möchten Sie Ihr Profil und Ihre Sammlung wirklich privat Machen?"
+              text="Möchtest du dein Profil und deine Sammlung wirklich privat Machen?"
               isPublic={isPublic}
             />
           </div>
@@ -45,13 +45,13 @@ export default async function settingspage() {
           <div className="flex gap-1">
             <PublicOff className="text-gray-900" />
             <p className="text-gray-900">
-              Ihr Profil und Ihre Sammlung sind privat. <br /> Nur NatrueLogger
-              denen Sie folgen und die Ihnen auch folgen können Ihr Profil und
-              Ihre Sammlung sehen.
+              Dein Profil und deine Sammlung sind privat. <br /> Nur
+              NatrueLogger denen du folgst und die dir auch folgen können dein
+              Profil und deine Sammlung sehen.
             </p>
             <ChangePublicModal
               user={user}
-              text="Möchten Sie Ihr Profil und Ihre Sammlung wirklich öffentlich Machen?"
+              text="Möchtest du dein Profil und deine Sammlung wirklich öffentlich Machen?"
               isPublic={isPublic}
             />
           </div>

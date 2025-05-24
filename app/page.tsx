@@ -44,7 +44,7 @@ export default async function page() {
       src: Lists,
       position: "left" as "right" | "left",
       titel: "Erstelle Listen",
-      text: "Sieh dir eine interaktive Karte mit Artenlisten an. Erstelle eigene Listen und füge Sie der Karte hinzu oder Benutze provate Listen um deine Zielarten und Sichtungen zu tracken.",
+      text: "Sieh dir eine interaktive Karte mit Artenlisten an. Erstelle eigene Listen und füge Sie der Karte hinzu oder Benutze private Listen um deine Zielarten und Sichtungen zu tracken.",
     },
     {
       src: Mobile,

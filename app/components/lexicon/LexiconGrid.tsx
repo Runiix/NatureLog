@@ -100,13 +100,15 @@ export default function LexiconGrid({
       <div className="flex-col md:flex-row flex gap-2 md:gap-0 justify-between items-center">
         <div className="flex items-center gap-[1px]">
           <LexiconFilter />
-          <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 h-11 justify-center gap-2 rounded-lg p-2">
-            <VisibilityOff />
-            <Switch
-              value={onlyUnseen}
-              onChange={() => setOnlyUnseen((prev) => !prev)}
-            />
-          </div>
+          {user && (
+            <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 h-11 justify-center gap-2 rounded-lg p-2">
+              <VisibilityOff />
+              <Switch
+                value={onlyUnseen}
+                onChange={() => setOnlyUnseen((prev) => !prev)}
+              />
+            </div>
+          )}
         </div>
 
         <div className="flex items-center gap-2 border-">

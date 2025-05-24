@@ -12,7 +12,13 @@ type Props = {
   lng: number;
   username: string;
 };
-export default function ClientWrapper({ lists }: { lists: Props[] }) {
+export default function ClientWrapper({
+  lists,
+  setMarker,
+}: {
+  lists: Props[];
+  setMarker: boolean;
+}) {
   return (
     <div className="bg-gray-900 rounded-lg p-2 m-2 border border-gray-200 shadow-lg shadow-black">
       {" "}
@@ -20,6 +26,7 @@ export default function ClientWrapper({ lists }: { lists: Props[] }) {
         height="700px"
         markers={lists}
         iconUrl="/icons/marker-icon.png"
+        setMarker={setMarker}
       />
     </div>
   );

@@ -34,7 +34,7 @@ export default function LandingInfo({
   }, []);
   return (
     <div
-      className={`transition-all duration-700 ease-in-out transform  items-center justify-around w-full px-4 sm:py-20 py-12 gap-10 border-b-2 border-gray-900 ${
+      className={`transition-all duration-700 ease-in-out transform  items-center justify-around w-full px-4 sm:py-20 py-12 2xl:px-32 gap-10 border-b-2 border-gray-900 ${
         isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-20"
       } ${
         position === "right"
@@ -46,7 +46,9 @@ export default function LandingInfo({
       {" "}
       <div className="">
         <h2 className="text-xl sm:text-3xl  text-gray-900">{title} </h2>
-        <p className="text-xs sm:text-base text-gray-800">{text}</p>
+        <p className="text-xs sm:text-base text-gray-800 max-w-[600px]">
+          {text}
+        </p>
       </div>
       <Image
         src={src}

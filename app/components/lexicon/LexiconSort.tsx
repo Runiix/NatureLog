@@ -54,7 +54,7 @@ export default function LexiconSort() {
           <p>
             {sortBy === "common_name"
               ? "Alpabetisch"
-              : sortBy === "size_from"
+              : sortBy === "size_to"
               ? "Größe"
               : sortBy === "population_estimate"
               ? "Population"
@@ -83,8 +83,8 @@ export default function LexiconSort() {
       >
         {[
           { value: "common_name", name: "Alphabetisch" },
-          { value: "size_from", name: "Größe" },
-          { value: "population_estimate", name: "Population" },
+          { value: "size_to", name: "Größe" },
+          // { value: "population_estimate", name: "Population" },
           { value: "endangerment_status", name: "Gefährdung" },
         ].map((sort) => (
           <div

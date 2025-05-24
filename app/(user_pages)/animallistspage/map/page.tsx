@@ -95,7 +95,7 @@ export default async function listmappage() {
           </p>
         </Link>
       </div>
-      <ClientWrapper lists={animalListsWithUsernames} />
+      <ClientWrapper lists={animalListsWithUsernames} setMarker={false} />
     </div>
   );
 }
