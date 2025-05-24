@@ -166,10 +166,10 @@ export default async function AnimalPage(params: any) {
               </div>
 
               <div className="flex flex-col gap-4 md:text-xl text-nowrap">
-                <h3 className="text-lg md:text-xl lg:text-2xl flex gap-2 items-center -ml-1">
+                <div className="text-lg md:text-xl lg:text-2xl flex gap-2 items-center -ml-1">
                   <div className="flex items-center">
                     <Height className="md:scale-150" />
-                    <h3> Größe:</h3>
+                    <p> Größe:</p>
                   </div>
 
                   <h3 className="text-green-600 ">
@@ -183,7 +183,7 @@ export default async function AnimalPage(params: any) {
                           animalData.size_to * 100
                         } mm`}
                   </h3>
-                </h3>
+                </div>
                 <div className="flex md:items-center flex-col md:flex-row gap-1">
                   <div className="flex">
                     <Numbers />

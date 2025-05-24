@@ -60,7 +60,41 @@ const getParamUserId = async (supabase: SupabaseClient, username: string) => {
   if (data) return data[0];
   return [];
 };
-
+const isViewable = async (
+  supabase: SupabaseClient,
+  paramId: string,
+  userId: string
+) => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("is_public")
+    .eq("user_id", paramId);
+  if (error) {
+    console.error("Error getting is_public", error);
+    return false;
+  }
+  if (data[0].is_public) {
+    return true;
+  } else {
+    const { data: data1, error: error1 } = await supabase
+      .from("follows")
+      .select("id")
+      .eq("follower_id", paramId)
+      .eq("following_id", userId);
+    const { data: data2, error: error2 } = await supabase
+      .from("follows")
+      .select("id")
+      .eq("follower_id", userId)
+      .eq("following_id", paramId);
+    if (error1 || error2) {
+      console.error("Error", error);
+      return false;
+    }
+    if (data1.length > 0 && data2.length > 0) {
+      return true;
+    }
+  }
+};
 export default async function collectionpage(params: any) {
   const supabase = await createClient();
   const user = await getUser(supabase);
@@ -115,12 +149,13 @@ export default async function collectionpage(params: any) {
       </div>
     );
   } else {
-    if (paramUser) {
+    if (paramUser && user) {
       const spottedList = await getSpottedList(supabase, paramUser.id);
       const spottedIds: number[] = spottedList.map(
         (animal: SpottedAnimal) => animal.animal_id
       );
       const categoryCounts = await getCategoryCounts(supabase, spottedIds);
+      const viewable = await isViewable(supabase, paramUser.id, user.id);
       return (
         <div>
           <Link
@@ -134,12 +169,18 @@ export default async function collectionpage(params: any) {
             Sammlung{" "}
           </h2>
           <div className="w-full flex items-center justify-center">
-            <CollectionAnimalGrid
-              categoryCounts={categoryCounts || []}
-              counts={counts}
-              user={paramUser}
-              currUser="false"
-            />
+            {viewable ? (
+              <CollectionAnimalGrid
+                categoryCounts={categoryCounts || []}
+                counts={counts}
+                user={paramUser}
+                currUser="false"
+              />
+            ) : (
+              <div className="mt-10 text-gray-900">
+                Diese Sammlung ist Privat
+              </div>
+            )}
           </div>
         </div>
       );

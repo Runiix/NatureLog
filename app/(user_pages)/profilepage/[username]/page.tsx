@@ -5,6 +5,7 @@ import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
 import ProfileAnimalLists from "@/app/components/profile/ProfileAnimalLists";
+import { supabase } from "@/__mocks__/supabase";
 
 const getParamUserId = async (supabase: SupabaseClient, username: string) => {
   const { data, error } = await supabase
@@ -130,6 +131,41 @@ const getCounts = async (supabase: SupabaseClient, listIds: string[]) => {
   }
   return data;
 };
+const isViewable = async (
+  supabase: SupabaseClient,
+  paramId: string,
+  userId: string
+) => {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("is_public")
+    .eq("user_id", paramId);
+  if (error) {
+    console.error("Error getting is_public", error);
+    return false;
+  }
+  if (data[0].is_public) {
+    return true;
+  } else {
+    const { data: data1, error: error1 } = await supabase
+      .from("follows")
+      .select("id")
+      .eq("follower_id", paramId)
+      .eq("following_id", userId);
+    const { data: data2, error: error2 } = await supabase
+      .from("follows")
+      .select("id")
+      .eq("follower_id", userId)
+      .eq("following_id", paramId);
+    if (error1 || error2) {
+      console.error("Error", error);
+      return false;
+    }
+    if (data1.length > 0 && data2.length > 0) {
+      return true;
+    }
+  }
+};
 
 export default async function profilepage(params: any) {
   const supabase = await createClient();
@@ -207,7 +243,7 @@ export default async function profilepage(params: any) {
         </div>
       </>
     );
-  } else {
+  } else if (user) {
     const [
       profilePic,
       favoriteAnimal,
@@ -246,35 +282,45 @@ export default async function profilepage(params: any) {
       entry_count: countMap[item.id] || 0,
     }));
     const username = paramUser.display_name;
-    return (
-      <>
-        <div className="bg-gray-900 w-full lg:w-3/4 m-auto  rounded-lg shadow-xl shadow-slate-900 flex flex-col justify-center items-center pb-10">
-          <div className="flex flex-col md:flex-row gap-10 mx-auto py-20 mt-20">
-            <ProfilePicture
-              userId={paramUser.id}
-              currUser={false}
-              profilePic={profilePic}
-              profilePicUrl={profilePicUrl}
-            />
-            <div className="flex flex-col gap-10">
-              <ProfileInfos
-                user={paramUser}
-                animalCount={animalCount}
-                listsCount={listsCount}
-                teamIcon={teamLink ? teamLink[0].team_link : null}
-                favoriteAnimal={favoriteAnimal}
+    const viewable = await isViewable(supabase, paramUser.id, user.id);
+    if (viewable) {
+      return (
+        <>
+          <div className="bg-gray-900 w-full lg:w-3/4 m-auto  rounded-lg shadow-xl shadow-slate-900 flex flex-col justify-center items-center pb-10">
+            <div className="flex flex-col md:flex-row gap-10 mx-auto py-20 mt-20">
+              <ProfilePicture
+                userId={paramUser.id}
                 currUser={false}
-                instaLink={instaLink}
+                profilePic={profilePic}
+                profilePicUrl={profilePicUrl}
               />
+              <div className="flex flex-col gap-10">
+                <ProfileInfos
+                  user={paramUser}
+                  animalCount={animalCount}
+                  listsCount={listsCount}
+                  teamIcon={teamLink ? teamLink[0].team_link : null}
+                  favoriteAnimal={favoriteAnimal}
+                  currUser={false}
+                  instaLink={instaLink}
+                />
+              </div>
             </div>
+            <PictureGrid user={paramUser} currUser={false} />
+            <ProfileAnimalLists
+              data={animalListsWithCounts}
+              username={username}
+            />
           </div>
-          <PictureGrid user={paramUser} currUser={false} />
-          <ProfileAnimalLists
-            data={animalListsWithCounts}
-            username={username}
-          />
+        </>
+      );
+    } else {
+      return (
+        <div className="bg-gray-900 w-full lg:w-3/4 m-auto  rounded-lg shadow-xl shadow-slate-900 flex flex-col justify-center items-center pb-10 mt-20">
+          {" "}
+          DAS PROFIL IST PRIVAT
         </div>
-      </>
-    );
+      );
+    }
   }
 }
