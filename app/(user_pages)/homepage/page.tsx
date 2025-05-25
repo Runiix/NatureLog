@@ -117,7 +117,7 @@ export default async function homepage() {
       <div
         className=" px-2 sm:px-0 grid gap-6 mx-auto items-center justify-center
                 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4
-                 mt-12 sm:mt-20"
+                 "
       >
         {" "}
         <div className="row-span-2">
