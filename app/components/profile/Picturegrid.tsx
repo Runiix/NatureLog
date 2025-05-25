@@ -163,7 +163,7 @@ export default function PictureGrid({
   };
 
   return (
-    <div>
+    <div className="min-h-[678px]">
       <h2 className="text-xl">Lieblingsfotos</h2>
       <div className="items-center justify-center grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-1 sm:gap-4 border-t-2 border-gray-200 pt-4">
         {profileGrid &&
