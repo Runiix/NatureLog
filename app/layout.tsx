@@ -5,6 +5,7 @@ import { AppRouterCacheProvider } from "@mui/material-nextjs/v15-appRouter";
 
 import CookieConsentBanner from "./components/general/CookieConsentBanner";
 import Footer from "./components/general/Footer";
+import Head from "next/head";
 
 const open_sans = Open_Sans({ subsets: ["latin"] });
 
@@ -21,9 +22,14 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <head>
+      <Head>
         <link rel="manifest" href="/manifest.json" />
-      </head>
+        <link
+          rel="preconnect"
+          href="https://umvtbsrjbvivfkcmvtxk.supabase.co"
+          crossOrigin="anonymous"
+        />
+      </Head>
       <body
         className={`${open_sans.className} bg-gray-200 font-bold text-slate-100 min-h-screen flex flex-col`}
       >
