@@ -79,6 +79,7 @@ export default function AnimalQuiz() {
                     : "border-slate-200"
                 }`}
                 onClick={() => handleCheckbox(animal.id)}
+                aria-label="Quizantwort auswählen"
               >
                 {answer !== 0 &&
                   animal.id === answer &&
@@ -128,12 +129,14 @@ export default function AnimalQuiz() {
               : "bg-red-600 hover:bg-red-700"
           } p-1 rounded-lg   hover:text-gray-900 ml-auto mr-5 transition-all duration-200`}
           onClick={() => setEasyQuiz(!easyQuiz)}
+          aria-label="Quiz Schwierigkeit ändern"
         >
           {easyQuiz ? "Leicht" : "Schwierig"}
         </button>
         <button
           className="flex items-center bg-green-600 p-2 rounded-lg  hover:bg-green-700 hover:text-gray-900 ml-auto mr-5 transition-all duration-200"
           onClick={() => setNextAnimalSwitch(!nextAnimalSwitch)}
+          aria-label="Nächstes Quiz erhalten"
         >
           Nächstes Tier <ArrowForward />
         </button>

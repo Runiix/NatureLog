@@ -58,6 +58,7 @@ export default function FavoriteModal({
             <button
               type="submit"
               className="bg-red-600 hover:text-gray-900 rounded-lg p-4 text-xl hover:bg-red-700 transition duration-300"
+              aria-label="Tier aus Sammlung entfernen"
             >
               Tier entfernen
             </button>

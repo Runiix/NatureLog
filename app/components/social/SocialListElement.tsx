@@ -87,6 +87,7 @@ export default function SocialListElement({
             ? "  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-red-600 p-2  rounded-lg  hover:cursor-pointer hover:from-red-600 hover:to-gray-950"
             : "rounded-lg p-2 hover:bg-green-600 hover:text-slate-200"
         }`}
+        aria-label="NatureLogger folgen oder entfolgen"
       >
         {isFollowing ? (
           <Favorite className="text-green-600 hover:text-red-600 target:text-red-600" />

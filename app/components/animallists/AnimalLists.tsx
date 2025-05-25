@@ -120,6 +120,7 @@ export default function AnimalLists({
           <button
             className="size-10 rounded-lg shadow-black shadow-lg bg-gradient-to-br from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:from-green-600 hover:to-gray-950 border-gray-200 border hover:border-green-600  flex items-center justify-center mx-auto my-auto"
             onClick={() => setNewListModalOpen(true)}
+            aria-label="Neue Liste erstellen"
           >
             <Add className="text-4xl" />
           </button>
@@ -221,6 +222,7 @@ export default function AnimalLists({
                   type="submit"
                   disabled={loading}
                   className="bg-green-600 p-4 flex justify-center items-center text-xl rounded-lg hover:bg-green-700 hover:text-gray-900 transition-all duration-200 shadow-md shadow-black"
+                  aria-label="Erstellte Liste hinzufügen"
                 >
                   {loading ? <CircleLoader size={20} /> : "Liste hinzufügen"}
                 </button>

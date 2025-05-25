@@ -26,6 +26,7 @@ export default function Modal({
         <button
           onClick={(e) => handleClose(e)}
           className="absolute top-2 right-2 hover:text-red-600"
+          aria-label="Modal schließen"
         >
           <Close />
         </button>

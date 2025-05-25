@@ -31,6 +31,7 @@ export default function DeleteUserModal({ user }: { user: User }) {
       <button
         onClick={() => setShowModal(true)}
         className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700  text-nowrap flex items-center gap-2 absolute bottom-32 md:bottom-20 right-10 md:right-20"
+        aria-label="Modal zum Konto löschen öffnen"
       >
         Konto Löschen
       </button>
@@ -59,6 +60,7 @@ export default function DeleteUserModal({ user }: { user: User }) {
                 : " bg-red-600 opacity-50 font-bold p-4 rounded-lg text-nowrap flex items-center gap-2"
             }`}
             onClick={handleUserDelete}
+            aria-label="Konto final löschen"
           >
             Konto Löschen
           </button>

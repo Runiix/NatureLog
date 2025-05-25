@@ -204,6 +204,7 @@ export default function PictureGrid({
                         `${user.id}/ProfileGridModal/${profileGrid[index].name}`
                       )
                     }
+                    aria-label="Bild aus Liebligsbildern entfernen"
                   >
                     <Delete className="absolute bottom-4 left-4 hover:bg-gray-700 hover:bg-opacity-40 rounded-full hover:scale-125" />
                   </button>

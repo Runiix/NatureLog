@@ -93,6 +93,7 @@ export default function CollectionCard({
                     <button
                       onClick={() => setEditModal(true)}
                       className="hover:text-green-600 bg-gray-900/70 hover:bg-gray-200 rounded-full sm:size-10 p-1 sm:p-2 cursor-pointer flex items-center justify-center"
+                      aria-label="Sammlungseintrag bearbeiten"
                     >
                       <Edit />
                     </button>
@@ -132,7 +133,10 @@ export default function CollectionCard({
                   {loading ? (
                     <CircleLoader color="#16A34A" />
                   ) : (
-                    <button onClick={() => setEditModal(true)}>
+                    <button
+                      onClick={() => setEditModal(true)}
+                      aria-label="Sichtungsdaten hinzufügen"
+                    >
                       <Add className="group-hover:text-green-600 group-hover:bg-gray-200 rounded-full w-10 h-10 cursor-pointer transition-all duration-300" />
                     </button>
                   )}

@@ -207,12 +207,14 @@ export default function AnimalList({
             <button
               className="hover:text-green-600 ml-auto md:ml-0"
               onClick={() => setEditListModalOpen(true)}
+              aria-label="Liste bearbeiten"
             >
               <Edit />
             </button>
             <button
               className="hover:text-red-600"
               onClick={() => setDeleteListModalOpen(true)}
+              aria-label="Liste löschen"
             >
               <Delete />
             </button>
@@ -261,6 +263,7 @@ export default function AnimalList({
         <button
           onClick={() => setAddNewAnimalModalOpen(true)}
           className="mt-auto rounded-lg w-11/12 mx-auto py-2 transition-all duration-200 bg-green-600 hover:bg-green-700 hover:text-gray-900"
+          aria-label="Tier hinzufügen"
         >
           Tier hinzufügen
         </button>
@@ -273,6 +276,7 @@ export default function AnimalList({
             <button
               onClick={(e) => handleClose(e)}
               className="absolute top-2 right-2 hover:text-red-600"
+              aria-label="Modal schließen"
             >
               <Close />
             </button>
@@ -345,6 +349,7 @@ export default function AnimalList({
               type="submit"
               disabled={loading}
               className="bg-green-600 p-4 flex justify-center items-center text-xl rounded-lg hover:bg-green-700 hover:text-gray-900 transition-all duration-200 shadow-md shadow-black"
+              aria-label="Liste hinzufügen"
             >
               {loading ? <CircleLoader size={20} /> : "Liste Ändern"}
             </button>
@@ -362,6 +367,7 @@ export default function AnimalList({
               disabled={loading}
               className="bg-red-600 p-4 flex justify-center items-center text-xl rounded-lg hover:bg-red-700 hover:text-gray-900 transition-all duration-200 shadow-md shadow-black"
               onClick={() => deleteList()}
+              aria-label="Liste entgültig löschen"
             >
               {loading ? <CircleLoader size={20} /> : "Liste Löschen"}
             </button>

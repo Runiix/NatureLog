@@ -30,6 +30,7 @@ export default function SocialFilter() {
           followType === "following" &&
           "text-green-600 border-b border-green-600"
         } hover:text-green-600 hover:border-b hover:border-green-600 text-xs md:text-base`}
+        aria-label="NatureLogger denen du folgst anzeigen"
       >
         Du Folgst
       </button>
@@ -39,6 +40,7 @@ export default function SocialFilter() {
           followType === "followers" &&
           "text-green-600 border-b border-green-600"
         } hover:text-green-600 hover:border-b hover:border-green-600 text-xs md:text-base`}
+        aria-label="NatureLogger die dir folgen anzeigen"
       >
         Dir Folgen
       </button>
@@ -47,6 +49,7 @@ export default function SocialFilter() {
         className={`${
           followType === "all" && "text-green-600 border-b border-green-600"
         } hover:text-green-600 hover:border-b hover:border-green-600 text-xs md:text-base`}
+        aria-label="NatureLogger durchsuchen"
       >
         NatureLogger Suchen
       </button>

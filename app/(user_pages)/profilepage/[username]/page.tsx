@@ -215,7 +215,7 @@ export default async function profilepage(params: any) {
     const username = user.user_metadata.displayName;
     return (
       <>
-        <div className="border-gray-200 shadow-black shadow-lg bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 hover:border-green-600 border rounded-lg cursor-pointer w-full lg:w-3/4 m-auto mt-20   flex flex-col justify-center items-center pb-10 px-2">
+        <div className="border-gray-200 shadow-black shadow-lg bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 hover:border-green-600 border rounded-lg cursor-pointer w-full lg:w-3/4 m-auto    flex flex-col justify-center items-center pb-10 px-2">
           <div className="flex flex-col items-center sm:items-baseline md:flex-row gap-10 mx-auto py-10 md:py-20 ">
             <ProfilePicture
               userId={user.id}

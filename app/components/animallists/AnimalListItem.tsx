@@ -68,6 +68,7 @@ export default function AnimalListItem({
             <button
               className="hover:text-red-600 mr-4"
               onClick={() => handleAnimalDelete()}
+              aria-label="Tier von Liste löschen"
             >
               <Delete />
             </button>

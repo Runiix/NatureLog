@@ -35,7 +35,10 @@ export default function FavoriteButton({
         {user && (
           <div>
             {isSpotted === "true" ? (
-              <button onClick={handleButtonClick}>
+              <button
+                onClick={handleButtonClick}
+                aria-label="Sichtungsmodal öffnen umm Tier zu entfernen"
+              >
                 {" "}
                 <Favorite className="text-green-600" />
               </button>
@@ -62,6 +65,7 @@ export default function FavoriteButton({
                   type="submit"
                   className="bg-transparent border-none text-slate-400 hover:text-green-600 hover:scale-110 transition duration-300"
                   onClick={handleClick}
+                  aria-label="Tier zur Sammlung hinzufügen"
                 >
                   <Add className="text-slate-200" />
                 </button>

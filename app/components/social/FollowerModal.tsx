@@ -31,6 +31,7 @@ export default function FollowerModal({
       <button
         className="bg-green-600 hover:bg-green-700 hover:text-gray-900 trasition-all duration-200 border border-gray-200 rounded-lg p-4 flex items-center gap-1"
         onClick={() => setShowFollowerModal(true)}
+        aria-label="Freunde Modal öffnen"
       >
         <Diversity3 />
         Freunde

@@ -120,6 +120,7 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
         onClick={uploadImage}
         disabled={loading}
         className="bg-green-600 px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12 "
+        aria-label="Bild hochladen"
       >
         {loading ? <CircleLoader size={20} /> : " 2. Bild hochladen"}
       </button>
@@ -133,6 +134,7 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
       <button
         onClick={handleSearch}
         className="bg-green-600  px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12"
+        aria-label="Bild mit Google Lens suchen"
       >
         3. Bild auf Google Suchen
       </button>

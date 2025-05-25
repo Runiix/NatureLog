@@ -158,6 +158,7 @@ export default function AuthForm() {
               formAction={isNewUser ? handleSignUp : handleLogin}
               className="bg-green-600 hover:text-gray-900 py-3 flex gap-4 justify-around items-center px-20 rounded-lg hover:bg-green-700 transition-all duration-200"
               onClick={() => setIsSigningIn(true)}
+              aria-label="Anmelden oder Registrieren"
             >
               <p className="text-2xl">{signInMessage} </p>
               {isSigningIn && (
@@ -174,6 +175,7 @@ export default function AuthForm() {
                     type="button"
                     onClick={handleFormChangeToLogin}
                     className="underline hover:text-green-600 transition-all duration-200"
+                    aria-label="Form zu Anmeldungsform ändern"
                   >
                     Anmelden
                   </button>
@@ -186,6 +188,7 @@ export default function AuthForm() {
                       type="button"
                       onClick={handleFormChangeToSignUp}
                       className="underline hover:text-green-600 transition-all duration-200"
+                      aria-label="Form zu Registrierungsform ändern"
                     >
                       Zur Registrierung
                     </button>
@@ -227,6 +230,7 @@ export default function AuthForm() {
                 type="submit"
                 className="bg-green-600 text-gray-900 py-4 shadow-md px-10 text-2xl rounded-lg hover:text-slate-100 hover:bg-green-700"
                 onClick={sendResetPassword}
+                aria-label="Passwort Änderungsvorgang starten"
               >
                 E-Mail versenden
               </button>

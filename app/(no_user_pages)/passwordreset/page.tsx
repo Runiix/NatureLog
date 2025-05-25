@@ -97,6 +97,7 @@ export default function Passwordreset() {
           onClick={confirmPasswords}
           className="bg-green-600 text-center p-4 text-xl rounded-lg hover:cursor-pointer hover:bg-green-700 hover:text-gray-900 transition-all
           duration-200 shadow-md"
+          aria-label="Passwort bestätigen"
         >
           Passwort zurücksetzen
         </button>

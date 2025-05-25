@@ -27,7 +27,6 @@ export default function RootLayout({
         <link
           rel="preconnect"
           href="https://umvtbsrjbvivfkcmvtxk.supabase.co"
-          crossOrigin=""
         />
       </Head>
       <body

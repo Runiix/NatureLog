@@ -27,6 +27,7 @@ export default function ChangePublicModal({
       <button
         onClick={() => setShowModal(true)}
         className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700  text-nowrap flex items-center gap-2   md:right-20 transition-all duration-200"
+        aria-label="Modal für den Profil status Wechsel zwischen Öffentlich und Privat öffnen"
       >
         Ändern
       </button>
@@ -37,6 +38,7 @@ export default function ChangePublicModal({
           <button
             className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700  text-nowrap flex items-center "
             onClick={handleChange}
+            aria-label="Profil status zwischen Öffentlich und Privat wechseln"
           >
             Ändern
           </button>

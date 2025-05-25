@@ -45,6 +45,7 @@ export default function LexiconFilterList() {
             <button
               onClick={() => removeFilter(key, value)}
               className="ml-2 text-xs sm:text-base hover:text-red-600 rounded-lg px-2  cursor-pointer border-[1px] flex items-center justify-center"
+              aria-label="Lexicon Filter schließen"
             >
               <Close />
             </button>

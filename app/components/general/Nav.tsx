@@ -113,6 +113,7 @@ export default function Nav({
                   <button
                     type="submit"
                     className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700  text-nowrap flex items-center gap-2"
+                    aria-label="Konto abmelden"
                   >
                     <PowerSettingsNew />
                     Abmelden
@@ -198,6 +199,7 @@ export default function Nav({
               <button
                 type="submit"
                 className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700 text-md  text-nowrap flex items-center gap-2"
+                aria-label="Konto abmelden"
               >
                 <PowerSettingsNew />
                 Abmelden

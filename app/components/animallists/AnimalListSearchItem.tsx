@@ -74,6 +74,7 @@ export default function AnimalListSearchItem({
           <button
             onClick={() => handleAnimalDelete()}
             className="text-green-600 hover:text-red-600"
+            aria-label="Tier von Liste entfernen"
           >
             <CheckCircle />
           </button>
@@ -81,6 +82,7 @@ export default function AnimalListSearchItem({
           <button
             onClick={() => handleAnimalAdd()}
             className="hover:text-green-600"
+            aria-label="Tier zu Liste hinzufügen"
           >
             <Add />
           </button>

@@ -239,6 +239,7 @@ export default function LexiconFilter() {
             <button
               className="hover:text-gray-900 bg-green-600 p-2 sm:p-4 rounded-lg hover:bg-green-700  text-nowrap "
               onClick={handleSizeChange}
+              aria-label="Größe Filter ändern"
             >
               Größe ändern
             </button>
