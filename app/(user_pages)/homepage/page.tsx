@@ -5,7 +5,6 @@ import AnimalOfTheDay from "../../components/home/AnimalOfTheDay";
 import DailyChallenge from "../../components/home/DailyChallenge";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
-import black from "@/app/assets/images/black.webp";
 import UseFullLinks from "@/app/components/home/UseFullLinks";
 import RecentUploads from "@/app/components/home/RecentUploads";
 import HomeGridItem from "@/app/components/home/HomeGridItem";
@@ -144,10 +143,10 @@ export default async function homepage() {
         {/* <HomeGridItem>
         <UseFullLinks />
       </HomeGridItem> */}
-        <HomeGridItem>
+        {/* <HomeGridItem>
           {" "}
           <RecentUploads data={lastImages} />
-        </HomeGridItem>
+        </HomeGridItem> */}
         <HomeGridItem>
           {" "}
           <AnimalQuiz />

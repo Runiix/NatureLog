@@ -40,7 +40,7 @@ export default function CollectionAnimalGrid({
   const searchParams = useSearchParams();
   const query = searchParams.get("query") || "";
   const [offset, setOffset] = useState(0);
-  const [loadingMoreAnimals, setLoadingMoreAnimals] = useState(false);
+  const [loadingMoreAnimals, setLoadingMoreAnimals] = useState(true);
   const { ref: preloadRef, inView: preloadInView } = useInView();
 
   const [genus, setGenus] = useState<string>("all");
