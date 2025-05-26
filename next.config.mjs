@@ -10,16 +10,18 @@ const nextConfig = nextPWA({
 });
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline';
+  script-src 'self' 'unsafe-eval' 'unsafe-inline'  cdn.jsdelivr.net;
   style-src 'self' 'unsafe-inline';
 img-src 'self' blob: data: https://umvtbsrjbvivfkcmvtxk.supabase.co https://a.tile.openstreetmap.org https://b.tile.openstreetmap.org https://c.tile.openstreetmap.org;
   font-src 'self';
   connect-src 'self' https://umvtbsrjbvivfkcmvtxk.supabase.co;
   object-src 'none';
+  worker-src 'self' blob:;
   base-uri 'self';
   form-action 'self';
   frame-ancestors 'none';
   upgrade-insecure-requests;
+
 `.replace(/\n/g, "");
 
 export default {

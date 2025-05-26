@@ -92,7 +92,6 @@ export default function LexiconFilter() {
         );
         if (matchedEntry && !alreadyIncluded) {
           setOrderValues((prev) => [...prev, matchedEntry]);
-          console.log(matchedEntry);
         }
       }
     }

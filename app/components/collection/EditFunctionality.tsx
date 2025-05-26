@@ -122,7 +122,7 @@ export default function EditFunctionality({
           <div>
             <h3>Aktuelles Bild</h3>
             <Image
-              src={src + `?t=${new Date().getTime()}`}
+              src={src}
               ref={imageRef}
               alt="Placeholder"
               width={300}

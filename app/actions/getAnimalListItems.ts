@@ -33,6 +33,5 @@ const to = from + pageSize - 1;
     console.error("Error fetching animal data", animalDataError);
     return [];
   }
-  console.log(animalData.length, animalData)
   return animalData;
 }

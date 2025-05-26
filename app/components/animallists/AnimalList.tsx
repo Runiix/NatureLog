@@ -104,9 +104,7 @@ export default function AnimalList({
       setLoading(false);
     }
   };
-  useEffect(() => {
-    console.log(offset);
-  }, [offset]);
+  useEffect(() => {}, [offset]);
   const deleteList = async () => {
     setLoading(true);
     const res = await deleteAnimalList(listId);
@@ -148,7 +146,6 @@ export default function AnimalList({
         const pageSize = 20;
         const data = await getAnimalListItems(listId, offset, pageSize);
         if (data.length < pageSize) {
-          console.log(data);
           setLoadingMoreAnimals(false);
         } else {
           setLoadingMoreAnimals(true);

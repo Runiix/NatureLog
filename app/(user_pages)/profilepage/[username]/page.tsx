@@ -66,7 +66,7 @@ const getProfilePictureUrl = async (
 ) => {
   const { data, error } = await supabase.storage
     .from("profiles")
-    .createSignedUrl(`${userId}/ProfilePicture/ProfilePic.jpg`, 60);
+    .createSignedUrl(`${userId}/ProfilePicture/ProfilePic.jpg`, 60 * 60);
   if (error) {
     return "";
   }
@@ -104,7 +104,6 @@ const getAnimalLists = async (supabase: SupabaseClient, userId: string) => {
     .limit(3);
   if (error) {
     console.error("Error getting animalLists", error);
-    console.log(data);
     return [];
   }
   return data;

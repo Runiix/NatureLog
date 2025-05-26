@@ -52,8 +52,11 @@ const getSpottedCount = async (supabase: SupabaseClient, animalId: string) => {
 };
 const getRecentImageUsers = async (
   supabase: SupabaseClient,
-  animalId: string
+  animalId: string,
+  name: string
 ) => {
+  const regex = /[äöüß\s]/g;
+  const decodedName = decodeURIComponent(name).replace(regex, "_");
   const { data, error } = await supabase
     .from("spotted")
     .select("user_id")
@@ -74,7 +77,31 @@ const getRecentImageUsers = async (
     console.error("Error getting usernames", error);
     return [];
   }
-  return nameData;
+  const usersWithImages = await Promise.all(
+    nameData.map(async (user) => {
+      const filePath = `${user.id}/Collection/${decodedName}.jpg`;
+
+      const { data: signedUrlData, error: signedUrlError } =
+        await supabase.storage
+          .from("profiles")
+          .createSignedUrl(filePath, 60 * 60); // 1 hour expiry
+
+      if (signedUrlError) {
+        console.error("Error getting signed URL for", filePath, signedUrlError);
+        return {
+          ...user,
+          imageUrl: "/iamges/black.webp",
+        };
+      }
+
+      return {
+        ...user,
+        imageUrl: signedUrlData.signedUrl,
+      };
+    })
+  );
+
+  return usersWithImages;
 };
 
 export default async function AnimalPage(params: any) {
@@ -84,7 +111,11 @@ export default async function AnimalPage(params: any) {
   const animalData = await getAnimalData(supabase, dynamicParams.common_name);
   const spottedList = user ? await getSpottedList(supabase, user) : [];
   const animalCount = await getSpottedCount(supabase, animalData.id);
-  const userList = await getRecentImageUsers(supabase, animalData.id);
+  const userList = await getRecentImageUsers(
+    supabase,
+    animalData.id,
+    dynamicParams.common_name
+  );
 
   return (
     <div className="flex flex-col items-center w-full">

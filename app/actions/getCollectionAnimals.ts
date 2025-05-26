@@ -15,6 +15,16 @@ export default async function getCollectionAnimals(
   const genus = params.get("genus") || "all";
   const noImages = params.get("noImages") || "false";
   const supabase = await createClient();
+  async function getSignedUrlForImage(userId: string, folder: string, fileName: string) {
+  const { data, error } = await supabase.storage
+    .from("profiles")
+    .createSignedUrl(`${userId}/${folder}/${fileName}`, 60*60); // URL valid for 60 seconds
+  if (error) {
+    console.error("Failed to create signed URL", error);
+    return "/iamges/black.webp"; // fallback or placeholder URL maybe
+  }
+  return data.signedUrl;
+}
   if (noImages === "true") {
     const { data: spottedData, error } = await supabase
       .from("spotted")
@@ -42,8 +52,25 @@ export default async function getCollectionAnimals(
       if (error) {
         throw new Error("Failed to fetch data");
       }
-      revalidatePath;
-      return [animalData, spottedData];
+            const animalsWithSignedUrls = await Promise.all(
+    animalData.map(async (animal) => {
+      const safeName = animal.common_name.replace(/[äöüß\s]/g, "_") + ".jpg";
+
+      // Generate signed URLs for these folders
+      const collectionUrl = await getSignedUrlForImage(user.id, "Collection", safeName);
+      const collectionModalUrl = await getSignedUrlForImage(user.id, "CollectionModals", safeName);
+      // Add more folders if needed...
+
+      return {
+        ...animal,
+        signedUrls: {
+          collection: collectionUrl,
+          collectionModal: collectionModalUrl,
+        },
+      };
+    })) 
+     revalidatePath;
+    return [animalsWithSignedUrls, spottedData];
     } else {
       const { data: animalData, error } = await supabase
         .from("animals")
@@ -55,10 +82,27 @@ export default async function getCollectionAnimals(
         .range(from, to);
       if (error) {
         throw new Error("Failed to fetch data");
-      }
-      revalidatePath;
+      }      
 
-      return [animalData, spottedData];
+            const animalsWithSignedUrls = await Promise.all(
+    animalData.map(async (animal) => {
+      const safeName = animal.common_name.replace(/[äöüß\s]/g, "_") + ".jpg";
+
+      // Generate signed URLs for these folders
+      const collectionUrl = await getSignedUrlForImage(user.id, "Collection", safeName);
+      const collectionModalUrl = await getSignedUrlForImage(user.id, "CollectionModals", safeName);
+      // Add more folders if needed...
+
+      return {
+        ...animal,
+        signedUrls: {
+          collection: collectionUrl,
+          collectionModal: collectionModalUrl,
+        },
+      };
+    })) 
+     revalidatePath;
+    return [animalsWithSignedUrls, spottedData];
     }
   } else {
     const { data: spottedData, error } = await supabase
@@ -85,9 +129,27 @@ export default async function getCollectionAnimals(
         .range(from, to);
       if (error) {
         throw new Error("Failed to fetch data");
-      }
-      revalidatePath;
-      return [animalData, spottedData];
+      }    
+
+      const animalsWithSignedUrls = await Promise.all(
+    animalData.map(async (animal) => {
+      const safeName = animal.common_name.replace(/[äöüß\s]/g, "_") + ".jpg";
+
+      // Generate signed URLs for these folders
+      const collectionUrl = await getSignedUrlForImage(user.id, "Collection", safeName);
+      const collectionModalUrl = await getSignedUrlForImage(user.id, "CollectionModals", safeName);
+      // Add more folders if needed...
+
+      return {
+        ...animal,
+        signedUrls: {
+          collection: collectionUrl,
+          collectionModal: collectionModalUrl,
+        },
+      };
+    })) 
+     revalidatePath;
+    return [animalsWithSignedUrls, spottedData];
     } else {
       const { data: animalData, error } = await supabase
         .from("animals")
@@ -100,9 +162,25 @@ export default async function getCollectionAnimals(
       if (error) {
         throw new Error("Failed to fetch data");
       }
-      revalidatePath;
+            const animalsWithSignedUrls = await Promise.all(
+    animalData.map(async (animal) => {
+      const safeName = animal.common_name.replace(/[äöüß\s]/g, "_") + ".jpg";
 
-      return [animalData, spottedData];
+      // Generate signed URLs for these folders
+      const collectionUrl = await getSignedUrlForImage(user.id, "Collection", safeName);
+      const collectionModalUrl = await getSignedUrlForImage(user.id, "CollectionModals", safeName);
+      // Add more folders if needed...
+
+      return {
+        ...animal,
+        signedUrls: {
+          collection: collectionUrl,
+          collectionModal: collectionModalUrl,
+        },
+      };
+    })) 
+     revalidatePath;
+    return [animalsWithSignedUrls, spottedData];
     }
   }
 }

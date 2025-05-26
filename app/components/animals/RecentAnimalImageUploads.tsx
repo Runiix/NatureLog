@@ -9,7 +9,7 @@ export default function RecentAnimalImageUploads({
   data,
   animalName,
 }: {
-  data: { id: string; display_name: string }[];
+  data: { id: string; display_name: string; imageUrl: string }[];
   animalName: string;
 }) {
   const [slideIndex, setSlideIndex] = useState(0);
@@ -42,20 +42,24 @@ export default function RecentAnimalImageUploads({
         <div>
           {" "}
           <div className=" overflow-hidden flex relativ max-w-[600px] mx-auto">
-            {data.map((slide: { id: string; display_name: string }) => (
-              <Image
-                key={slide.id}
-                className=" object-cover translate-all duration-500 ease-in-out min-w-full w-full aspect-video"
-                src={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${
-                  slide.id
-                }/CollectionModals/${animalName.replace(regex, "_") + ".jpg"}`}
-                alt="Slide Image"
-                width="800"
-                height="600"
-                style={{ translate: `${-100 * slideIndex}%` }}
-                unoptimized
-              />
-            ))}
+            {data.map(
+              (slide: {
+                id: string;
+                display_name: string;
+                imageUrl: string;
+              }) => (
+                <Image
+                  key={slide.id}
+                  className=" object-cover translate-all duration-500 ease-in-out min-w-full w-full aspect-video"
+                  src={slide.imageUrl}
+                  alt="Slide Image"
+                  width="800"
+                  height="600"
+                  style={{ translate: `${-100 * slideIndex}%` }}
+                  unoptimized
+                />
+              )
+            )}
             <button
               className="block absolute top-0 bottom-0 left-0 cursor-pointer p-4"
               aria-label="vorheriges Bild zeigen"

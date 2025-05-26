@@ -16,6 +16,12 @@ type SpottedAnimal = {
   image: boolean;
   first_spotted_at: string;
 };
+type ExtendedAnimal = Animal & {
+  signedUrls: {
+    collection: string;
+    collectionModal: string;
+  };
+};
 
 export default function CollectionAnimalGrid({
   categoryCounts,
@@ -36,7 +42,7 @@ export default function CollectionAnimalGrid({
   const [genus, setGenus] = useState<string>("all");
   const [noImages, setNoImages] = useState("false");
   const [spottedList, setSpottedList] = useState<SpottedAnimal[]>([]);
-  const [animalItems, setAnimalItems] = useState<Animal[]>([]);
+  const [animalItems, setAnimalItems] = useState<ExtendedAnimal[]>([]);
   const regex = /[äöüß\s]/g;
 
   useEffect(() => {
@@ -114,21 +120,13 @@ export default function CollectionAnimalGrid({
       </div>
       <div className="mx-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2  sm:gap-4 mt-4 sm:mt-10">
         {animalItems &&
-          animalItems.map((animal: Animal, index: number) => (
+          animalItems.map((animal: ExtendedAnimal, index: number) => (
             <CollectionCard
               key={animal.id}
               id={animal.id}
               common_name={animal.common_name}
-              imageUrl={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${
-                user.id
-              }/Collection/${
-                animal.common_name.replace(regex, "_").toString() + ".jpg"
-              }`}
-              modalUrl={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${
-                user.id
-              }/CollectionModals/${
-                animal.common_name.replace(regex, "_") + ".jpg"
-              }`}
+              imageUrl={animal.signedUrls.collection}
+              modalUrl={animal.signedUrls.collectionModal}
               user={user}
               currUser={currUser}
               idList={spottedList.map(

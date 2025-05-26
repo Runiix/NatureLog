@@ -50,9 +50,7 @@ export default function AnimalLists({
     description: string;
     is_public: boolean;
   } | null>();
-  useEffect(() => {
-    console.log(location);
-  }, [location]);
+  useEffect(() => {}, [location]);
   const handleListChange = (id: string) => {
     const params = new URLSearchParams(searchParams.toString());
     params.set("listId", id);

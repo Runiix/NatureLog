@@ -12,19 +12,8 @@ import { User } from "@supabase/supabase-js";
 
 type ProfileGridImage = {
   name: string;
-  id: string;
-  updated_at: string;
-  created_at: string;
-  last_accessed_at: string;
-  metadata: {
-    eTag: string;
-    size: number;
-    mimetype: string;
-    cacheControl: string;
-    lastModified: string;
-    contentLength: number;
-    httpStatusCode: number;
-  };
+  gridUrl: string | null;
+  modalUrl: string | null;
 };
 export default function PictureGrid({
   user,
@@ -45,20 +34,7 @@ export default function PictureGrid({
     const loadProfileGrid = async () => {
       const gridData = await getProfileGrid(user.id);
       if (Array.isArray(gridData)) {
-        setProfileGrid(
-          gridData.map((item: any) => ({
-            ...item,
-            metadata: {
-              eTag: item.metadata.eTag || "",
-              size: item.metadata.size || 0,
-              mimetype: item.metadata.mimetype || "",
-              cacheControl: item.metadata.cacheControl || "",
-              lastModified: item.metadata.lastModified || "",
-              contentLength: item.metadata.contentLength || 0,
-              httpStatusCode: item.metadata.httpStatusCode || 0,
-            },
-          }))
-        );
+        setProfileGrid(gridData);
         if (gridData.length === 12) {
           setProfileGridFull(true);
         }
@@ -166,20 +142,18 @@ export default function PictureGrid({
     <div className="min-h-[678px]">
       <h2 className="text-xl">Lieblingsfotos</h2>
       <div className="items-center justify-center grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-1 sm:gap-4 border-t-2 border-gray-200 pt-4">
-        {profileGrid &&
+        {profileGrid && profileGrid.length > 0 ? (
           profileGrid.map((image: ProfileGridImage, index: number) => (
-            <div key={profileGrid[index].id} className="relative">
+            <div key={index} className="relative">
               <Image
                 unoptimized
-                src={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${user.id}/ProfileGrid/${profileGrid[index].name}`}
+                src={image.gridUrl || "/images/black.webp"}
                 width={200}
                 height={200}
                 alt=""
                 className="rounded-lg object-cover hover:opacity-90 aspect-square cursor-pointer"
                 onClick={() =>
-                  setImageModal(
-                    `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${user.id}/ProfileGridModals/${profileGrid[index].name}`
-                  )
+                  setImageModal(image.modalUrl || "/images/black.webp")
                 }
               />
               {currUser && (
@@ -211,7 +185,10 @@ export default function PictureGrid({
                 </div>
               )}
             </div>
-          ))}
+          ))
+        ) : (
+          <CircleLoader color="#16A34A" />
+        )}
         {!profileGridFull && currUser && (
           <label className="group border-2 rounded-lg w-10 h-10 flex justify-center items-center cursor-pointer hover:bg-gray-800 hover:scale-110 p-16 ml-5">
             <div className="text-xl">{profileGrid.length}/12</div>
