@@ -38,7 +38,8 @@ export default function CollectionAnimalGrid({
   const query = searchParams.get("query") || "";
   const [offset, setOffset] = useState(0);
   const [loadingMoreAnimals, setLoadingMoreAnimals] = useState(false);
-  const { ref, inView } = useInView();
+  const { ref: preloadRef, inView: preloadInView } = useInView();
+
   const [genus, setGenus] = useState<string>("all");
   const [noImages, setNoImages] = useState("false");
   const [spottedList, setSpottedList] = useState<SpottedAnimal[]>([]);
@@ -99,10 +100,10 @@ export default function CollectionAnimalGrid({
         console.error("Error loading more animals:", error);
       }
     };
-    if (inView) {
+    if (preloadInView) {
       loadMoreAnimals();
     }
-  }, [inView, genus, query, noImages]);
+  }, [preloadInView, genus, query, noImages]);
   const searchFirstSpotted = (animalId: number) => {
     const animal = spottedList.find(
       (animal: { animal_id: number }) => animal.animal_id === animalId
@@ -120,29 +121,33 @@ export default function CollectionAnimalGrid({
       </div>
       <div className="mx-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2  sm:gap-4 mt-4 sm:mt-10">
         {animalItems &&
-          animalItems.map((animal: ExtendedAnimal, index: number) => (
-            <CollectionCard
-              key={animal.id}
-              id={animal.id}
-              common_name={animal.common_name}
-              imageUrl={animal.signedUrls.collection}
-              modalUrl={animal.signedUrls.collectionModal}
-              user={user}
-              currUser={currUser}
-              idList={spottedList.map(
-                (animal: SpottedAnimal) => animal.animal_id
-              )}
-              first_spotted_at={searchFirstSpotted(animal.id) || ""}
-              animalImageExists={spottedList.some(
-                (obj: SpottedAnimal) =>
-                  obj.animal_id === animal.id && obj.image === true
-              )}
-            />
-          ))}
+          animalItems.map((animal: ExtendedAnimal, index: number) => {
+            const isPreloadTrigger = index === animalItems.length - 10;
+            return (
+              <div
+                ref={isPreloadTrigger ? preloadRef : undefined}
+                key={animal.id}
+              >
+                <CollectionCard
+                  id={animal.id}
+                  common_name={animal.common_name}
+                  imageUrl={animal.signedUrls.collection}
+                  modalUrl={animal.signedUrls.collectionModal}
+                  user={user}
+                  currUser={currUser}
+                  idList={spottedList.map((a) => a.animal_id)}
+                  first_spotted_at={searchFirstSpotted(animal.id) || ""}
+                  animalImageExists={spottedList.some(
+                    (obj) => obj.animal_id === animal.id && obj.image === true
+                  )}
+                />
+              </div>
+            );
+          })}
       </div>
 
       {loadingMoreAnimals && (
-        <div className=" m-10" ref={ref}>
+        <div className=" m-10">
           {" "}
           <CircleLoader color="#16A34A" />{" "}
         </div>

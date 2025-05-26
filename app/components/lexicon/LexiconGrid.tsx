@@ -30,8 +30,7 @@ export default function LexiconGrid({
   const [sortOrder, setSortOrder] = useState("ascending");
   const [onlyUnseen, setOnlyUnseen] = useState(false);
   const [animals, setAnimals] = useState<Animal[]>([]);
-
-  const { ref, inView } = useInView();
+  const { ref: preloadRef, inView: preloadInView } = useInView();
   const regex = /[äöüß\s]/g;
 
   useEffect(() => {
@@ -89,10 +88,10 @@ export default function LexiconGrid({
         console.error("Error loading more animals:", error);
       }
     };
-    if (inView) {
+    if (preloadInView) {
       loadMoreAnimals();
     }
-  }, [inView, searchParams, spottedList]);
+  }, [preloadInView, searchParams, spottedList]);
 
   return (
     <div className="flex flex-col overflow-wrap">
@@ -119,27 +118,31 @@ export default function LexiconGrid({
 
       <div className="items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-4 mt-2 sm:mt-10">
         {animals &&
-          animals.map((animal: Animal, index: number) => (
-            <LexiconCard
-              key={animal.id}
-              id={animal.id}
-              common_name={animal.common_name}
-              scientific_name={animal.scientific_name}
-              population_estimate={animal.population_estimate}
-              endangerment_status={animal.endangerment_status}
-              size_from={animal.size_from}
-              size_to={animal.size_to}
-              sortBy={sortBy}
-              imageUrl={animal.lexicon_link}
-              user={user}
-              spottedList={spottedList}
-              onlyUnseen={onlyUnseen}
-            />
-          ))}
+          animals.map((animal: Animal, index: number) => {
+            const isPreloadTrigger = index === animals.length - 10;
+            return (
+              <div ref={isPreloadTrigger ? preloadRef : undefined} key={index}>
+                <LexiconCard
+                  id={animal.id}
+                  common_name={animal.common_name}
+                  scientific_name={animal.scientific_name}
+                  population_estimate={animal.population_estimate}
+                  endangerment_status={animal.endangerment_status}
+                  size_from={animal.size_from}
+                  size_to={animal.size_to}
+                  sortBy={sortBy}
+                  imageUrl={animal.lexicon_link}
+                  user={user}
+                  spottedList={spottedList}
+                  onlyUnseen={onlyUnseen}
+                />
+              </div>
+            );
+          })}
       </div>
 
       {loadingMoreAnimals && (
-        <div className="mb-4" ref={ref}>
+        <div className="mb-4">
           <CircleLoader color="#16A34A" />{" "}
         </div>
       )}
