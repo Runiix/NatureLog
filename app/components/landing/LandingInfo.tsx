@@ -55,7 +55,7 @@ export default function LandingInfo({
         alt=""
         width={500}
         height={500}
-        className="rounded-lg sm:w-1/2 max-w-[700px] max-h-[400px] object-contain"
+        className="rounded-lg sm:w-1/2 md:max-w-[700px] max-h-[400px] object-contain"
       />
     </div>
   );

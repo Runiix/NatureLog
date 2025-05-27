@@ -69,7 +69,7 @@ export default async function page() {
         />
         <div className="flex flex-col gap-6">
           <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
-            <h1 className="text-4xl sm:text-6xl">
+            <h1 className="text-4xl sm:text-6xl text-center">
               Wilkommen bei <span className="text-green-600">NatureLog</span>
             </h1>
           </div>

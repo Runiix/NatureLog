@@ -241,7 +241,7 @@ export default function Nav({
             {toggleMenu ? <Close /> : <Menu />}
           </div>
           <div
-            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12 sm:top-20 text-xl w-fdivl rounded-lg flex lg:hidden flex-col gap-3 text-center bg-gray-200 border-y  px-4 pt-4  ${
+            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12 sm:top-20 text-xl w-fdivl rounded-lg flex lg:hidden flex-col gap-3 text-center bg-gray-200 border-y  p-4  ${
               toggleMenu ? "scale-100 opacity-100" : "scale-0 opacity-0"
             } `}
           >

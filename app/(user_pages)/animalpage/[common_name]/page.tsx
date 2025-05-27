@@ -6,6 +6,7 @@ import {
   Landscape,
   Male,
   Numbers,
+  Star,
 } from "@mui/icons-material";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient, User } from "@supabase/supabase-js";
@@ -137,9 +138,22 @@ export default async function AnimalPage(params: any) {
               <div className="flex flex-col gap-4 ">
                 <div>
                   <div className="flex items-center gap-2 mr-2 lg:gap-8">
-                    <h2 className=" text-2xl md:text-3xl lg:text-4xl">
-                      {animalData.common_name}
-                    </h2>
+                    <div className="flex gap-1 items-center">
+                      <h2 className=" text-2xl md:text-3xl lg:text-4xl">
+                        {animalData.common_name}
+                      </h2>
+                      {animalData.very_rare && (
+                        <div className="group relative">
+                          {" "}
+                          <Star className="text-red-600 scale-75" />{" "}
+                          <div className="opacity-0 transition-all absolute duration-200 group-hover:opacity-100 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 border border-gray-200 rounded-lg p-2">
+                            <p className="text-xs text-center">
+                              Ausnahemeerscheinung oder Irrgast in Deutschland
+                            </p>
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     {user && (
                       <FavoriteFunctionality
                         user={user}

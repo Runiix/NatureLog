@@ -6,6 +6,7 @@ import { User } from "@supabase/supabase-js";
 import black from "@/app/assets/images/black.webp";
 import { useRouter } from "next/navigation";
 import FavoriteFunctionality from "../general/FavoriteFunctionality";
+import { Star } from "@mui/icons-material";
 
 export default function LexiconCard({
   id,
@@ -16,6 +17,7 @@ export default function LexiconCard({
   size_from,
   size_to,
   sortBy,
+  very_rare,
   imageUrl,
   user,
   spottedList,
@@ -29,6 +31,7 @@ export default function LexiconCard({
   size_from: number;
   size_to: number;
   sortBy: string | null;
+  very_rare: boolean;
   imageUrl: string;
   user: User | null;
   spottedList: number[];
@@ -77,7 +80,22 @@ export default function LexiconCard({
 
         <div className=" p-4 w-full flex justify-between items-center">
           <div>
-            <h2 className="text-xs sm:text-2xl">{common_name}</h2>
+            <div className="flex gap-1 items-center">
+              <h2 className="text-xs sm:text-2xl truncate max-w-56 hover:max-w-full">
+                {common_name}
+              </h2>
+              {very_rare && (
+                <div className="group relative">
+                  {" "}
+                  <Star className="text-red-600 scale-75" />{" "}
+                  <div className="opacity-0 transition-all absolute duration-200 group-hover:opacity-100 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 border border-gray-200 rounded-lg p-2">
+                    <p className="text-xs text-center">
+                      Ausnahemeerscheinung oder Irrgast in Deutschland
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
             <h3 className="text-[0.5rem] sm:text-sm">
               {sortBy === "population_estimate"
                 ? population_estimate

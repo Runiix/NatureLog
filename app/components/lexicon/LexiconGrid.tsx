@@ -132,6 +132,7 @@ export default function LexiconGrid({
                   size_to={animal.size_to}
                   sortBy={sortBy}
                   imageUrl={animal.lexicon_link}
+                  very_rare={animal.very_rare}
                   user={user}
                   spottedList={spottedList}
                   onlyUnseen={onlyUnseen}

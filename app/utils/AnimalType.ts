@@ -17,6 +17,7 @@ type Animal = {
   similar_animals: string[];
   size_from: number;
   size_to: number;
+  very_rare: boolean
 };
 export type SpottedAnimal = {
   animal_id: number;
