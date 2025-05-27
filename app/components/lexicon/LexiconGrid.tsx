@@ -94,9 +94,9 @@ export default function LexiconGrid({
   }, [preloadInView, searchParams, spottedList]);
 
   return (
-    <div className="flex flex-col overflow-wrap">
+    <div className="flex flex-col items-center overflow-wrap">
       <LexiconFilterList />
-      <div className="flex-col md:flex-row flex gap-2 md:gap-0 justify-between items-center">
+      <div className="flex-col md:flex-row flex gap-2 lg:gap-28 2xl:gap-64 justify-between items-center">
         <div className="flex items-center gap-[1px]">
           <LexiconFilter />
           {user && (
@@ -116,7 +116,7 @@ export default function LexiconGrid({
         <LexiconSort />
       </div>
 
-      <div className="items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-4 mt-2 sm:mt-10">
+      <div className="items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-4 mt-2 sm:mt-10 max-w-[1400px]">
         {animals &&
           animals.map((animal: Animal, index: number) => {
             const isPreloadTrigger = index === animals.length - 10;

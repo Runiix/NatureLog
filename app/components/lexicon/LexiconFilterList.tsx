@@ -34,7 +34,7 @@ export default function LexiconFilterList() {
     return acc;
   }, {} as Record<string, string[]>);
   return (
-    <div className="flex flex-wrap sm:gap-2 sm:p-4 mb-1 sm:mb-0 sm:h-16">
+    <div className="flex flex-wrap max-w-[60%] mx-auto items-center justify-center sm:gap-2 sm:p-4 mb-1 sm:mb-0 ">
       {Object.entries(parsedFilters).map(([key, values]) =>
         values.map((value) => (
           <span

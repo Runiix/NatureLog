@@ -17,6 +17,7 @@ const OrderValues = [
       "Insektenfresser (Eulipotyphla)",
       "Paarhufer (Artiodactyla)",
       "Raubtiere (Carnivora)",
+      "Fledertiere (Chiroptera)",
     ],
   },
   {
