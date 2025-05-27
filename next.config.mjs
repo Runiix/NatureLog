@@ -33,6 +33,7 @@ export default {
         hostname: "umvtbsrjbvivfkcmvtxk.supabase.co",
       },
     ],
+    unoptimized: true, // Disable image optimization
   },
   experimental: {
     serverActions: {
