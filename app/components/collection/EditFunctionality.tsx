@@ -1,12 +1,12 @@
 "use client";
 
 import Image, { StaticImageData } from "next/image";
-import addCollectionImage from "../../actions/addCollectionImage";
+import addCollectionImage from "../../actions/collection/addCollectionImage";
 import imageCompression from "browser-image-compression";
 import { use, useEffect, useRef, useState } from "react";
 import { Close } from "@mui/icons-material";
 import { CircleLoader } from "react-spinners";
-import addSpottedDate from "@/app/actions/addSpottedDate";
+import addSpottedDate from "@/app/actions/collection/addSpottedDate";
 import Modal from "../general/Modal";
 
 type Props = {

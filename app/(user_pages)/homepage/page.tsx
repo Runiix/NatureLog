@@ -5,8 +5,8 @@ import AnimalOfTheDay from "../../components/home/AnimalOfTheDay";
 import DailyChallenge from "../../components/home/DailyChallenge";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
-import UseFullLinks from "@/app/components/home/UseFullLinks";
-import RecentUploads from "@/app/components/home/RecentUploads";
+// import UseFullLinks from "@/app/components/home/UseFullLinks";
+// import RecentUploads from "@/app/components/home/RecentUploads";
 import HomeGridItem from "@/app/components/home/HomeGridItem";
 import AnimalQuiz from "@/app/components/home/AnimalQuiz";
 import ImageSearch from "@/app/components/home/ImageSearch";
@@ -95,18 +95,18 @@ const getFollowing = async (supabase: SupabaseClient, userId: string) => {
   const following = data.map((f) => f.following_id);
   return following;
 };
-async function getLast10Images(supabase: SupabaseClient) {
-  const { data, error } = await supabase.from("lastimages").select("*");
-  if (error) return [];
-  return data;
-}
+// async function getLast10Images(supabase: SupabaseClient) {
+//   const { data, error } = await supabase.from("lastimages").select("*");
+//   if (error) return [];
+//   return data;
+// }
 
 export default async function homepage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
   const animalOfTheMonth = await getAnimalOfTheMonth(supabase);
   const animalOfTheDay = await getAnimalOfTheDay(supabase);
-  const lastImages = await getLast10Images(supabase);
+  // const lastImages = await getLast10Images(supabase);
   let following = [];
   if (user) {
     following = await getFollowing(supabase, user.id);

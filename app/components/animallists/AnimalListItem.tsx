@@ -1,6 +1,6 @@
 "use client";
 
-import removeAnimalFromAnimalList from "@/app/actions/removeAnimalFromAnimalList";
+import removeAnimalFromAnimalList from "@/app/actions/animallists/removeAnimalFromAnimalList";
 import { Delete, Visibility, VisibilityOff } from "@mui/icons-material";
 import { User } from "@supabase/supabase-js";
 import Image from "next/image";

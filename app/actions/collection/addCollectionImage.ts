@@ -41,7 +41,6 @@ export default async function addCollectionImage(formData: FormData) {
       .match({ user_id: user.id, animal_id: Number(id) });
     if (dateError) console.error("Error updating image_updated_at", dateError);
 
-    // Upload the image to Supabase Storage
     const { error: insertError1 } = await supabase.storage
       .from("profiles")
       .upload(filePath1, file, {
@@ -51,7 +50,6 @@ export default async function addCollectionImage(formData: FormData) {
     if (insertError1) {
       console.error(insertError1);
     }
-    // Upload the modal image to Supabase Storage
     const { error: insertError2 } = await supabase.storage
       .from("profiles")
       .upload(filePath2, modalFile, {
@@ -61,7 +59,6 @@ export default async function addCollectionImage(formData: FormData) {
     if (insertError1) {
       console.error(insertError2);
     }
-    // Insert the image URL into the recent images database
     const { error: lastImagesError } = await supabase
       .from("lastimages")
       .insert([

@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Modal from "./Modal";
 import { User } from "@supabase/supabase-js";
-import deleteUser from "@/app/actions/deleteUser";
+import deleteUser from "@/app/actions/auth/deleteUser";
 import { useRouter } from "next/navigation";
 
 export default function DeleteUserModal({ user }: { user: User }) {

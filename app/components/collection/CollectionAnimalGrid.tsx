@@ -2,7 +2,7 @@
 import { useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
-import getCollectionAnimals from "../../actions/getCollectionAnimals";
+import getCollectionAnimals from "../../actions/collection/getCollectionAnimals";
 import { CircleLoader } from "react-spinners";
 import CollectionCard from "./CollectionCard";
 import { User } from "@supabase/supabase-js";

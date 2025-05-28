@@ -83,7 +83,6 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
     setLoading(false);
   };
 
-  // Open Google Reverse Image Search
   const handleSearch = () => {
     if (!imageUrl) {
       alert("Bitte Zuerst ein Bild hochladen");

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import { Person } from "@mui/icons-material";
 import { useState } from "react";
-import changeProfilePicture from "../../actions/changeProfilePicture";
+import changeProfilePicture from "../../actions/profile/changeProfilePicture";
 import { CircleLoader } from "react-spinners";
 import imageCompression from "browser-image-compression";
 
@@ -31,8 +31,8 @@ export default function ProfilePicture({
     const file = e.target.files[0];
     if (file) {
       const options = {
-        maxSizeMB: 0.1, // Target size
-        maxWidthOrHeight: 300, // Resize if needed
+        maxSizeMB: 0.1,
+        maxWidthOrHeight: 300,
         useWebWorker: true,
       };
 

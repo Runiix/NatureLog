@@ -4,9 +4,9 @@ import { Add, Close, Edit, Instagram } from "@mui/icons-material";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
-import changeTeam from "../../actions/changeTeam";
-import changeFavoriteAnimal from "@/app/actions/changeFavoriteAnimal";
-import changeInstaLink from "@/app/actions/changeInstaLink";
+import changeTeam from "../../actions/profile/changeTeam";
+import changeFavoriteAnimal from "@/app/actions/profile/changeFavoriteAnimal";
+import changeInstaLink from "@/app/actions/profile/changeInstaLink";
 import { User } from "@supabase/supabase-js";
 import Modal from "../general/Modal";
 

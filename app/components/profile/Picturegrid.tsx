@@ -2,11 +2,11 @@
 import { Delete, Edit } from "@mui/icons-material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import getProfileGrid from "../../actions/getProfileGrid";
+import getProfileGrid from "../../actions/profile/getProfileGrid";
 import { CircleLoader } from "react-spinners";
-import addProfileGridImage from "../../actions/addProfileGridImage";
-import removeProfileGridImage from "../../actions/removeProfileGridImage";
-import changeProfileGridImage from "../../actions/changeProfileGridImage";
+import addProfileGridImage from "../../actions/profile/addProfileGridImage";
+import removeProfileGridImage from "../../actions/profile/removeProfileGridImage";
+import changeProfileGridImage from "../../actions/profile/changeProfileGridImage";
 import imageCompression from "browser-image-compression";
 import { User } from "@supabase/supabase-js";
 

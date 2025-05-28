@@ -12,6 +12,9 @@ export default function Footer() {
       <Link href="/impressum" className="text-xs hover:text-green-600">
         Impressum & Datenschutz
       </Link>
+      <Link href="/contactpage" className="text-xs hover:text-green-600">
+        Kontakt
+      </Link>
     </div>
   );
 }

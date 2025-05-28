@@ -85,7 +85,7 @@ export default function LexiconFilter() {
         setOrderValues((prev) => prev.filter((entry) => entry.class !== value));
       }
     } else {
-      values.push(value); // Add new selection
+      values.push(value);
       if (param === "genus") {
         const matchedEntry = OrderValues.find((entry) => entry.class === value);
         const alreadyIncluded = orderValues.some(

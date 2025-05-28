@@ -1,4 +1,4 @@
-import { addOrRemoveAnimals } from "@/app/actions/addOrRemoveAnimal";
+import { addOrRemoveAnimals } from "@/app/actions/collection/addOrRemoveAnimal";
 import { Close } from "@mui/icons-material";
 import { User } from "@supabase/supabase-js";
 import React from "react";

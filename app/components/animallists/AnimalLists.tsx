@@ -4,7 +4,7 @@ import React, { useEffect, useState, useTransition } from "react";
 import AnimalList from "./AnimalList";
 import { Add, ExpandMore, Public, PublicOff } from "@mui/icons-material";
 import { CircleLoader } from "react-spinners";
-import addAnimalList from "@/app/actions/addAnimalList";
+import addAnimalList from "@/app/actions/animallists/addAnimalList";
 import Modal from "../general/Modal";
 import { User } from "@supabase/supabase-js";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";

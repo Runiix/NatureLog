@@ -6,7 +6,7 @@ async function getSignedUrl(bucket: string, path: string) {
   const supabase = await createClient();
   const { data, error } = await supabase.storage
     .from(bucket)
-    .createSignedUrl(path, 60 * 60); // 1 hour
+    .createSignedUrl(path, 60 * 60);
 
   if (error) {
     console.error(`Error generating signed URL for ${bucket}/${path}:`, error);
@@ -27,7 +27,6 @@ export default async function getProfileGrid(userId: string) {
     return { success: false, error: "User is not authenticated!" };
   }
 
-  // Fetch regular grid files
   const { data: gridFiles, error: gridError } = await supabase.storage
     .from("profiles")
     .list(`${userId}/ProfileGrid/`, {
@@ -36,7 +35,6 @@ export default async function getProfileGrid(userId: string) {
       sortBy: { column: "name", order: "asc" },
     });
 
-  // Fetch modal files
   const { data: modalFiles, error: modalError } = await supabase.storage
     .from("profiles")
     .list(`${userId}/ProfileGridModals/`, {
@@ -55,7 +53,6 @@ export default async function getProfileGrid(userId: string) {
     return [];
   }
 
-  // Create a Map of modal file signed URLs by name
   const modalFileEntries = await Promise.all(
     modalFiles.map(async (file) => {
       const signedUrl = await getSignedUrl("profiles", `${userId}/ProfileGridModals/${file.name}`);
@@ -65,7 +62,6 @@ export default async function getProfileGrid(userId: string) {
 
   const modalUrlMap = new Map(modalFileEntries);
 
-  // Construct array of combined objects
   const result = await Promise.all(
     gridFiles
       .filter((file) => file.name !== ".emptyFolderPlaceholder")

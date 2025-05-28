@@ -1,5 +1,5 @@
-import follow from "@/app/actions/follow";
-import unfollow from "@/app/actions/unfollow";
+import follow from "@/app/actions/social/follow";
+import unfollow from "@/app/actions/social/unfollow";
 import { createClient } from "@/utils/supabase/client";
 import { Add, Favorite } from "@mui/icons-material";
 import { Avatar } from "@mui/material";

@@ -55,7 +55,6 @@ export default async function getCollectionAnimals(
     return data;
   }
 
-  // Helper: Attach image URLs
   async function withSignedUrls(animalData: any[]) {
     return await Promise.all(
       animalData.map(async (animal) => {

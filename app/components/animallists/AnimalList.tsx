@@ -4,7 +4,7 @@ import React, { useEffect, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import { CircleLoader } from "react-spinners";
 import AnimalListItem from "./AnimalListItem";
-import getAnimalListItems from "../../actions/getAnimalListItems";
+import getAnimalListItems from "../../actions/animallists/getAnimalListItems";
 import {
   Close,
   Delete,
@@ -15,16 +15,16 @@ import {
 } from "@mui/icons-material";
 import Search from "../general/Search";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import getAnimalListSearchItems from "@/app/actions/getAnimalListSearchItems";
+import getAnimalListSearchItems from "@/app/actions/animallists/getAnimalListSearchItems";
 import AnimalListSearchItem from "./AnimalListSearchItem";
-import editAnimalList from "@/app/actions/editAnimalList";
-import deleteAnimalList from "@/app/actions/deleteAnimalList";
+import editAnimalList from "@/app/actions/animallists/editAnimalList";
+import deleteAnimalList from "@/app/actions/animallists/deleteAnimalList";
 import Modal from "../general/Modal";
 import { User } from "@supabase/supabase-js";
 import Switch from "../general/Switch";
-import handleListUpvotes from "@/app/actions/handleListUpvote";
-import getUpvotes from "@/app/actions/getUpvotes";
-import getCount from "@/app/actions/getCount";
+import handleListUpvotes from "@/app/actions/animallists/handleListUpvote";
+import getUpvotes from "@/app/actions/animallists/getUpvotes";
+import getCount from "@/app/actions/animallists/getCount";
 
 type AnimalListItemType = {
   id: number;

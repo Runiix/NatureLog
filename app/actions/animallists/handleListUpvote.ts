@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { getUser } from "../utils/data";
+import { getUser } from "../../utils/data";
 
 export default async function handleListUpvotes(
   listId: string,

@@ -3,7 +3,7 @@
 import { useSearchParams } from "next/navigation";
 import ProfileListElement from "./SocialListElement";
 import { useEffect, useState } from "react";
-import getUsers from "@/app/actions/getUsers";
+import getUsers from "@/app/actions/social/getUsers";
 import { User } from "@supabase/supabase-js";
 
 type UserType = {

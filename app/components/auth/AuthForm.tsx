@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { CircleLoader } from "react-spinners";
-import { login, signup } from "../../actions/handleLogin";
+import { login, signup } from "../../actions/auth/handleLogin";
 
 export default function AuthForm() {
   const [isNewUser, setIsNewUser] = useState(false);

@@ -3,7 +3,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { ArrowForward, Cancel, CheckCircle } from "@mui/icons-material";
-import getQuizAnimals from "@/app/actions/getQuizAnimals";
+import getQuizAnimals from "@/app/actions/home/getQuizAnimals";
 import { CircleLoader } from "react-spinners";
 import Animal from "@/app/utils/AnimalType";
 

@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { getUser } from "../utils/data";
+import { getUser } from "../../utils/data";
 
 export default async function deleteUser() {
   const supabase = await createClient();
@@ -151,7 +151,7 @@ const accessToken = session?.access_token;
       'Content-Type': 'application/json',
       Authorization: `Bearer ${accessToken}`,
     },
-    body: JSON.stringify({ user_id: user.id }), // Or just let the function get the user from JWT
+    body: JSON.stringify({ user_id: user.id }), 
   })
 
   if (!res.ok) {

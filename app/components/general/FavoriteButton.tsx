@@ -1,6 +1,6 @@
 "use client";
 
-import { addOrRemoveAnimals } from "../../actions/addOrRemoveAnimal";
+import { addOrRemoveAnimals } from "../../actions/collection/addOrRemoveAnimal";
 import { usePathname } from "next/navigation";
 import { Add, Favorite } from "@mui/icons-material";
 import { User } from "@supabase/supabase-js";

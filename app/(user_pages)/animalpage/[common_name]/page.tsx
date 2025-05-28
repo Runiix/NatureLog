@@ -85,7 +85,7 @@ const getRecentImageUsers = async (
       const { data: signedUrlData, error: signedUrlError } =
         await supabase.storage
           .from("profiles")
-          .createSignedUrl(filePath, 60 * 60); // 1 hour expiry
+          .createSignedUrl(filePath, 60 * 60);
 
       if (signedUrlError) {
         console.error("Error getting signed URL for", filePath, signedUrlError);

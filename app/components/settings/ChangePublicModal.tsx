@@ -3,7 +3,7 @@
 import { useState } from "react";
 import { User } from "@supabase/supabase-js";
 import Modal from "../general/Modal";
-import changePublicProfile from "@/app/actions/changePublicProfile";
+import changePublicProfile from "@/app/actions/profile/changePublicProfile";
 import { useRouter } from "next/navigation";
 
 export default function ChangePublicModal({

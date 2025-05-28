@@ -1,11 +1,11 @@
 "use client";
 
-import addAnimalToAnimalList from "@/app/actions/addAnimalToAnimalList";
+import addAnimalToAnimalList from "@/app/actions/animallists/addAnimalToAnimalList";
 import { Add, CheckCircle } from "@mui/icons-material";
 import Image from "next/image";
 import React, { useState } from "react";
 import FavoriteFunctionality from "../general/FavoriteFunctionality";
-import removeAnimalFromAnimalList from "@/app/actions/removeAnimalFromAnimalList";
+import removeAnimalFromAnimalList from "@/app/actions/animallists/removeAnimalFromAnimalList";
 import { User } from "@supabase/supabase-js";
 
 export default function AnimalListSearchItem({

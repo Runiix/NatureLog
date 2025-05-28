@@ -2,7 +2,7 @@
 import LexiconCard from "./LexiconCard";
 import { useState, useEffect } from "react";
 import { useInView } from "react-intersection-observer";
-import getAnimals from "../../actions/getAnimals";
+import getAnimals from "../../actions/lexicon/getAnimals";
 import { CircleLoader } from "react-spinners";
 import { useSearchParams } from "next/navigation";
 import { User } from "@supabase/supabase-js";

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import FollowFeedItem from "./FollowFeedItem";
 import { useInView } from "react-intersection-observer";
 import { CircleLoader } from "react-spinners";
-import getFeed from "@/app/actions/getFeed";
+import getFeed from "@/app/actions/social/getFeed";
 
 type Props = {
   id: number;
