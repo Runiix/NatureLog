@@ -97,7 +97,7 @@ export default function LexiconGrid({
       <LexiconFilterList />
       <div className="flex-col md:flex-row flex gap-2 lg:gap-28 2xl:gap-64 justify-between items-center">
         <div className="flex items-center gap-[1px]">
-          <LexiconFilter />
+          <LexiconFilter user={user} />
         </div>
 
         <div className="flex items-center gap-2 border-">

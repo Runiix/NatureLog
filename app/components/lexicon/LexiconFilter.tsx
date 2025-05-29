@@ -8,6 +8,7 @@ import {
   VisibilityOff,
 } from "@mui/icons-material";
 import Switch from "../general/Switch";
+import { User } from "@supabase/supabase-js";
 
 type ClassToOrder = {
   class: string;
@@ -65,7 +66,7 @@ const OrderValues = [
   { class: "Arachnoid", orders: [""] },
 ];
 
-export default function LexiconFilter() {
+export default function LexiconFilter({ user }: { user: User | null }) {
   const searchParams = useSearchParams();
   const pathName = usePathname();
   const [isPending, startTransition] = useTransition();
@@ -186,14 +187,16 @@ export default function LexiconFilter() {
         }`}
       >
         <div className="flex flex-col gap-4 border-b border-slate-400 pb-4">
-          <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 h-11 justify-center gap-2 rounded-lg p-2 group">
-            <h2>Nur nicht gesehen Arten</h2>
-            <HeartBroken className="text-red-600" />
-            <Switch
-              value={onlyUnseen}
-              onChange={() => handleOnylUnseenChange()}
-            />
-          </div>
+          {user && (
+            <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 h-11 justify-center gap-2 rounded-lg p-2 group">
+              <h2>Nur nicht gesehen Arten</h2>
+              <HeartBroken className="text-red-600" />
+              <Switch
+                value={onlyUnseen}
+                onChange={() => handleOnylUnseenChange()}
+              />
+            </div>
+          )}
           <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 h-11 justify-center gap-2 rounded-lg p-2 group">
             <h2>Ausnahmeerscheinungen ausschleißen</h2>
 
