@@ -1,12 +1,11 @@
 "use client";
 
 import removeAnimalFromAnimalList from "@/app/actions/animallists/removeAnimalFromAnimalList";
-import { Delete, Visibility, VisibilityOff } from "@mui/icons-material";
+import { Delete } from "@mui/icons-material";
 import { User } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
 import FavoriteFunctionality from "../general/FavoriteFunctionality";
-import { useState } from "react";
 
 export default function AnimalListItem({
   listId,
@@ -30,12 +29,7 @@ export default function AnimalListItem({
   entryCount: number;
 }) {
   const handleAnimalDelete = async () => {
-    const res = await removeAnimalFromAnimalList(
-      listId,
-      animalId,
-      user.id,
-      entryCount
-    );
+    const res = await removeAnimalFromAnimalList(listId, animalId, user.id);
     if (res) {
       deleteRefresh(!deleteRefresh);
     }

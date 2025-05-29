@@ -10,9 +10,7 @@ import Search from "../general/Search";
 import LexiconFilter from "./LexiconFilter";
 import LexiconFilterList from "./LexiconFilterList";
 import LexiconSort from "./LexiconSort";
-import { CheckCircle, VisibilityOff } from "@mui/icons-material";
 import Animal from "@/app/utils/AnimalType";
-import Switch from "../general/Switch";
 
 export default function LexiconGrid({
   user,
@@ -28,7 +26,6 @@ export default function LexiconGrid({
   const [loading, setLoading] = useState(true);
   const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "");
   const [sortOrder, setSortOrder] = useState("ascending");
-  const [onlyUnseen, setOnlyUnseen] = useState(false);
   const [animals, setAnimals] = useState<Animal[]>([]);
   const { ref: preloadRef, inView: preloadInView } = useInView();
   const regex = /[äöüß\s]/g;
@@ -51,7 +48,8 @@ export default function LexiconGrid({
         const data = await getAnimals(
           Object.fromEntries(searchParams.entries()),
           offset,
-          pageSize
+          pageSize,
+          spottedList
         );
         setLoading(false);
 
@@ -77,7 +75,8 @@ export default function LexiconGrid({
         const data = await getAnimals(
           Object.fromEntries(searchParams.entries()),
           offset,
-          pageSize
+          pageSize,
+          spottedList
         );
         if (data.length < pageSize) {
           setLoadingMoreAnimals(false);
@@ -99,15 +98,6 @@ export default function LexiconGrid({
       <div className="flex-col md:flex-row flex gap-2 lg:gap-28 2xl:gap-64 justify-between items-center">
         <div className="flex items-center gap-[1px]">
           <LexiconFilter />
-          {user && (
-            <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 h-11 justify-center gap-2 rounded-lg p-2">
-              <VisibilityOff />
-              <Switch
-                value={onlyUnseen}
-                onChange={() => setOnlyUnseen((prev) => !prev)}
-              />
-            </div>
-          )}
         </div>
 
         <div className="flex items-center gap-2 border-">
@@ -121,7 +111,10 @@ export default function LexiconGrid({
           animals.map((animal: Animal, index: number) => {
             const isPreloadTrigger = index === animals.length - 10;
             return (
-              <div ref={isPreloadTrigger ? preloadRef : undefined} key={index}>
+              <div
+                ref={isPreloadTrigger ? preloadRef : undefined}
+                key={animal.id}
+              >
                 <LexiconCard
                   id={animal.id}
                   common_name={animal.common_name}
@@ -135,7 +128,6 @@ export default function LexiconGrid({
                   very_rare={animal.very_rare}
                   user={user}
                   spottedList={spottedList}
-                  onlyUnseen={onlyUnseen}
                 />
               </div>
             );

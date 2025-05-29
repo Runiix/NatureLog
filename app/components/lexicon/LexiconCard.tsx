@@ -21,7 +21,6 @@ export default function LexiconCard({
   imageUrl,
   user,
   spottedList,
-  onlyUnseen,
 }: {
   id: number;
   common_name: string;
@@ -35,7 +34,6 @@ export default function LexiconCard({
   imageUrl: string;
   user: User | null;
   spottedList: number[];
-  onlyUnseen: boolean;
 }) {
   const link = `/animalpage/${common_name}`;
   const imageRef = useRef<HTMLImageElement | null>(null);
@@ -60,65 +58,62 @@ export default function LexiconCard({
   };
 
   return (
-    <div className={onlyUnseen && isSpotted === "true" ? "hidden" : ""}>
-      <div
-        onClick={handleNavigation}
-        className="flex flex-col w-40 sm:w-80  shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 rounded-lg cursor-pointer"
-      >
-        {/* {animalImageExists ? ( */}
-        <div>
-          <Image
-            ref={imageRef}
-            src={imageUrl}
-            alt="Placeholder"
-            width={300}
-            height={200}
-            className="object-cover w-full h-24 sm:h-48 rounded-t-lg hover:opacity-90  transition-opacity duration-[1s] opacity-0"
-            onLoad={handleImageLoad}
-          />
-        </div>
+    <div
+      onClick={handleNavigation}
+      className="flex flex-col w-40 sm:w-80  shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 rounded-lg cursor-pointer"
+    >
+      <div>
+        <Image
+          ref={imageRef}
+          src={imageUrl}
+          alt="Placeholder"
+          width={300}
+          height={200}
+          className="object-cover w-full h-24 sm:h-48 rounded-t-lg hover:opacity-90  transition-opacity duration-[1s] opacity-0"
+          onLoad={handleImageLoad}
+        />
+      </div>
 
-        <div className=" p-4 w-full flex justify-between items-center">
-          <div>
-            <div className="flex gap-1 items-center">
-              <h2 className="text-xs sm:text-2xl truncate max-w-56 hover:max-w-full">
-                {common_name}
-              </h2>
-              {very_rare && (
-                <div className="group relative">
-                  {" "}
-                  <Star className="text-red-600 scale-75" />{" "}
-                  <div className="opacity-0 transition-all absolute duration-200 group-hover:opacity-100 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 border border-gray-200 rounded-lg p-2">
-                    <p className="text-xs text-center">
-                      Ausnahemeerscheinung oder Irrgast in Deutschland
-                    </p>
-                  </div>
+      <div className=" p-4 w-full flex justify-between items-center">
+        <div>
+          <div className="flex gap-1 items-center">
+            <h2 className="text-xs sm:text-2xl truncate max-w-20 md:max-w-56 hover:max-w-full">
+              {common_name}
+            </h2>
+            {very_rare && (
+              <div className="group relative text-[0.5rem]">
+                {" "}
+                <Star className="text-red-600 scale-50 md:scale-75 " />{" "}
+                <div className="opacity-0 transition-all absolute duration-200 group-hover:opacity-100 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 border border-gray-200 rounded-lg p-2 pointer-events-none">
+                  <span className="text-xs text-center ">
+                    Ausnahemeerscheinung oder Irrgast in Deutschland
+                  </span>
                 </div>
-              )}
-            </div>
-            <h3 className="text-[0.5rem] sm:text-sm">
-              {sortBy === "population_estimate"
-                ? population_estimate
-                : sortBy === "size_to"
-                ? `${size_from} - ${size_to} cm`
-                : sortBy === "endangerment_status"
-                ? endangerment_status
-                : sortBy === ""
-                ? scientific_name
-                : scientific_name}
-            </h3>
-          </div>
-          <div>
-            {user && (
-              <FavoriteFunctionality
-                user={user}
-                id={id}
-                spottedList={spottedList}
-                buttonStyles=""
-                modalStyles=""
-              />
+              </div>
             )}
           </div>
+          <h3 className="text-[0.5rem] sm:text-sm">
+            {sortBy === "population_estimate"
+              ? population_estimate
+              : sortBy === "size_to"
+              ? `${size_from} - ${size_to} cm`
+              : sortBy === "endangerment_status"
+              ? endangerment_status
+              : sortBy === ""
+              ? scientific_name
+              : scientific_name}
+          </h3>
+        </div>
+        <div>
+          {user && (
+            <FavoriteFunctionality
+              user={user}
+              id={id}
+              spottedList={spottedList}
+              buttonStyles=""
+              modalStyles=""
+            />
+          )}
         </div>
       </div>
     </div>

@@ -6,7 +6,8 @@ import { createClient } from "@/utils/supabase/server";
 export default async function getAnimals(
   searchParams: Record<string, string>,
   offset: number,
-  pageSize: number
+  pageSize: number,
+  spottedList: number[]
 ) {
   const params = new URLSearchParams(searchParams as Record<string, string>);
   const supabase = await createClient();
@@ -19,6 +20,8 @@ export default async function getAnimals(
   const sortBy = params.get("sortBy") || null;
   const endangerment = params.get("endangerment")?.split(",") || [];
   const sortOrder = params.get("sortOrder") || null;
+  const onlyUnseen = params.get("onlyUnseen") || false
+  const excludeRares= params.get("excludeRares") ||false
   let bool = false;
   if (sortOrder === "ascending" || sortOrder === null) {
     bool = true;
@@ -43,6 +46,12 @@ export default async function getAnimals(
       .join(",");
 
     query = query.or(colorConditions);
+  }
+  if(onlyUnseen){
+    query= query.not("id", "in", "(" +spottedList +")")
+  }
+  if(excludeRares){
+    query= query.neq("very_rare", true)
   }
   if (sizeFrom) {
     query = query.gt("size_from", sizeFrom);

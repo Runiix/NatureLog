@@ -1,7 +1,13 @@
-import { useState, useTransition } from "react";
+import { useEffect, useState, useTransition } from "react";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { colorsList, SizeSlider } from "../../constants/constants";
-import { ExpandMore } from "@mui/icons-material";
+import {
+  ExpandMore,
+  HeartBroken,
+  Star,
+  VisibilityOff,
+} from "@mui/icons-material";
+import Switch from "../general/Switch";
 
 type ClassToOrder = {
   class: string;
@@ -70,11 +76,23 @@ export default function LexiconFilter() {
     const sizeTo = Number(searchParams.get("sizeTo")) || 0;
     return sizeFrom === 0 && sizeTo === 0 ? [0, 500] : [sizeFrom, sizeTo];
   });
+  const [onlyUnseen, setOnlyUnseen] = useState(
+    Boolean(searchParams.get("onlyUnseen")) || false
+  );
+  const [excludeRares, setExcludeRares] = useState(
+    Boolean(searchParams.get("excludeRares")) || false
+  );
   const [orderValues, setOrderValues] = useState<ClassToOrder[]>(
     OrderValues.filter((entry) =>
       (searchParams.get("genus")?.split(",") || []).includes(entry.class)
     )
   );
+  useEffect(() => {
+    const unseen = searchParams.get("onlyUnseen") || false;
+    const noRare = searchParams.get("excludeRares") || false;
+    if (unseen === false) setOnlyUnseen(false);
+    if (noRare == false) setExcludeRares(false);
+  }, [searchParams]);
 
   const handleFilterChange = (param: string, value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -121,6 +139,34 @@ export default function LexiconFilter() {
       router.replace(`${pathName}?${params.toString()}`);
     });
   };
+  const handleOnylUnseenChange = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    let value = params.get("onlyUnseen") || false;
+    if (value === false) {
+      params.set("onlyUnseen", "true");
+      setOnlyUnseen(true);
+    } else {
+      params.delete("onlyUnseen");
+      setOnlyUnseen(false);
+    }
+    startTransition(() => {
+      router.replace(`${pathName}?${params.toString()}`);
+    });
+  };
+  const handleExcludeRaresChange = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    let value = params.get("excludeRares") || false;
+    if (value === false) {
+      params.set("excludeRares", "true");
+      setExcludeRares(true);
+    } else {
+      params.delete("excludeRares");
+      setExcludeRares(false);
+    }
+    startTransition(() => {
+      router.replace(`${pathName}?${params.toString()}`);
+    });
+  };
   return (
     <div>
       <div
@@ -139,6 +185,31 @@ export default function LexiconFilter() {
           expandFilter ? "scale-100 opacity-100" : "scale-0 opacity-0"
         }`}
       >
+        <div className="flex flex-col gap-4 border-b border-slate-400 pb-4">
+          <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 h-11 justify-center gap-2 rounded-lg p-2 group">
+            <h2>Nur nicht gesehen Arten</h2>
+            <HeartBroken className="text-red-600" />
+            <Switch
+              value={onlyUnseen}
+              onChange={() => handleOnylUnseenChange()}
+            />
+          </div>
+          <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 h-11 justify-center gap-2 rounded-lg p-2 group">
+            <h2>Ausnahmeerscheinungen ausschleißen</h2>
+
+            <Star className="text-red-600" />
+            <Switch
+              value={excludeRares}
+              onChange={() => handleExcludeRaresChange()}
+            />
+
+            <div className="opacity-0 transition-all absolute duration-200 group-hover:opacity-100 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 border border-gray-200 rounded-lg p-2 mt-20 ml-28">
+              <p className="text-xs text-center">
+                Irrgäste und Ausnahmeerscheinungen ausblenden
+              </p>
+            </div>
+          </div>
+        </div>
         <div className="flex text-sm sm:text-base gap-1 sm:gap-2 flex-wrap border-b border-slate-400 pb-4">
           {[
             "Säugetier",

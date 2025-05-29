@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { usePathname } from "next/navigation";
+import { usePathname, useSearchParams } from "next/navigation";
 import FavoriteButton from "./FavoriteButton";
 import FavoriteModal from "./FavoriteModal";
 import { User } from "@supabase/supabase-js";
@@ -22,6 +22,7 @@ export default function FavoriteFunctionality({
   const [isSpotted, setIsSpotted] = useState("false");
   const pathname = usePathname();
   const [favoriteModal, setFavoriteModal] = useState(false);
+  const searchParams = useSearchParams();
 
   useEffect(() => {
     const checkIfSpotted = () => {
@@ -31,7 +32,7 @@ export default function FavoriteFunctionality({
       }
     };
     checkIfSpotted();
-  }, [id, spottedList]);
+  }, [id, spottedList, searchParams]);
 
   return (
     <div>

@@ -31,24 +31,14 @@ export default function AnimalListSearchItem({
 }) {
   const [isInList, setIsInList] = useState(inList);
   const handleAnimalAdd = async () => {
-    const res = await addAnimalToAnimalList(
-      listId,
-      animalId,
-      user.id,
-      entryCount
-    );
+    const res = await addAnimalToAnimalList(listId, animalId, user.id);
     if (res) {
       refresh(!refresh);
       setIsInList(true);
     }
   };
   const handleAnimalDelete = async () => {
-    const res = await removeAnimalFromAnimalList(
-      listId,
-      animalId,
-      user.id,
-      entryCount
-    );
+    const res = await removeAnimalFromAnimalList(listId, animalId, user.id);
     if (res) {
       refresh(!refresh);
       setIsInList(false);
