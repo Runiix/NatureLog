@@ -4,6 +4,8 @@ import { useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { CircleLoader } from "react-spinners";
 import { login, signup } from "../../actions/auth/handleLogin";
+import Link from "next/link";
+import { AuthError } from "@supabase/supabase-js";
 
 export default function AuthForm() {
   const [isNewUser, setIsNewUser] = useState(false);
@@ -11,10 +13,12 @@ export default function AuthForm() {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
   const [emailData, setEmailData] = useState("");
-  const [loginError, setLoginError] = useState(false);
+  const [loginError, setLoginError] = useState<false | AuthError>(false);
   const [validationError, setValidationError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [regsisterSuccess, setRegisterSuccess] = useState(false);
+  const [acceptedTOS, setAcceptedTOS] = useState(false);
+  const [tosError, setTosError] = useState(false);
   const supabase = createClient();
 
   const sendResetPassword = async () => {
@@ -45,15 +49,9 @@ export default function AuthForm() {
     signInMessage = "Registrieren";
   }
 
-  const signUpMessage = (
-    <p className="text-green-600">
-      E-Mail versendet! Überprüfen Sie Ihr Postfach, um Ihr Passwort zu ändern.
-    </p>
-  );
-
   const handleLogin = async (formData: FormData) => {
     const { error } = await login(formData);
-    if (error) setLoginError(true);
+    if (error) setLoginError(error);
     setIsSigningIn(false);
   };
 
@@ -86,8 +84,8 @@ export default function AuthForm() {
               {isNewUser ? "Registrierung" : "Anmeldung"}
             </h1>
             {loginError && (
-              <h2 className="text-red-500">
-                Ihre E-Mail oder Passwort sind nicht korrekt!
+              <h2 className="text-red-500 bg-gray-900/70 rounded-lg p-2">
+                {loginError.message}
               </h2>
             )}
             {validationError && (
@@ -154,6 +152,34 @@ export default function AuthForm() {
               placeholder="Passwort"
               className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 bg-opacity-80 border border-slate-300 text-lg hover:border-slate-100 "
             />
+            {isNewUser && (
+              <label className="text-slate-100 flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  required
+                  checked={acceptedTOS}
+                  onChange={(e) => {
+                    setAcceptedTOS(e.target.checked);
+                    if (e.target.checked) setTosError(false);
+                  }}
+                  className="w-5 h-5 rounded"
+                  aria-describedby="tosError"
+                />
+                Ich akzeptiere die{" "}
+                <Link
+                  href="/termsofservice"
+                  target="_blank"
+                  className="underline text-green-600"
+                >
+                  Nutzungsbedingungen
+                </Link>
+              </label>
+            )}
+            {tosError && (
+              <p id="tosError" className="text-red-500 text-sm">
+                Sie müssen die Nutzungsbedingungen akzeptieren.
+              </p>
+            )}
             <button
               formAction={isNewUser ? handleSignUp : handleLogin}
               className="bg-green-600 hover:text-gray-900 py-3 flex gap-4 justify-around items-center px-20 rounded-lg hover:bg-green-700 transition-all duration-200"
@@ -202,7 +228,12 @@ export default function AuthForm() {
                 </div>
               )}
             </div>
-            {isSigningUp && signUpMessage}
+            {isSigningUp && (
+              <p className="text-green-600">
+                E-Mail versendet! Überprüfen Sie Ihr Postfach, um Ihr Passwort
+                zu ändern.
+              </p>
+            )}
           </form>
         </div>
       )}

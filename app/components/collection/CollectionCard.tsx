@@ -1,6 +1,6 @@
 "use client";
 
-import { Add, Edit, Visibility } from "@mui/icons-material";
+import { Add, Edit, MoreVert, Visibility } from "@mui/icons-material";
 import Image, { StaticImageData } from "next/image";
 import { useState, useRef, useEffect } from "react";
 import { CircleLoader } from "react-spinners";
@@ -10,6 +10,8 @@ import { useRouter } from "next/navigation";
 import FavoriteFunctionality from "../general/FavoriteFunctionality";
 import EditFunctionality from "./EditFunctionality";
 import { User } from "@supabase/supabase-js";
+import Modal from "../general/Modal";
+import addReport from "@/app/actions/general/addReport";
 
 export default function CollectionCard({
   id,
@@ -40,6 +42,8 @@ export default function CollectionCard({
   const [imageExists, setImageExists] = useState(animalImageExists);
   const [spottedAt, setSpottedAt] = useState<string>(first_spotted_at);
   const [editModal, setEditModal] = useState(false);
+  const [reportModal, setReportModal] = useState(false);
+  const [reportText, setReportText] = useState("");
   const imageRef = useRef<HTMLImageElement | null>(null);
   const router = useRouter();
 
@@ -66,6 +70,20 @@ export default function CollectionCard({
       setSpottedAt(`${day}. ${month} ${year}`);
     }
   }, []);
+  const handleReportText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setReportText(e.target.value);
+  };
+  const handleAddingReport = async (imageLink: string) => {
+    const res = await addReport(user.id, imageLink, reportText);
+    if (res.success) {
+      alert("Das Bild wurde erfolgreich gemeldet");
+    } else {
+      alert(
+        "Beim Melden des Bildes ist etwas schief gelaufen. Versuche es erneut oder melde dich an den Support!"
+      );
+    }
+    setReportModal(false);
+  };
 
   return (
     <div>
@@ -84,7 +102,7 @@ export default function CollectionCard({
               onClick={() => setImageModal((prev) => !prev)}
               unoptimized
             />
-            {currUser !== "false" && (
+            {currUser !== "false" ? (
               <div>
                 <div className="absolute right-1 bottom-1  sm:mr-4 sm:mb-4">
                   {loading ? (
@@ -112,6 +130,41 @@ export default function CollectionCard({
                     spottedAt={spottedAt}
                     setSpottedAt={() => setSpottedAt(spottedAt)}
                   />
+                )}
+              </div>
+            ) : (
+              <div className="absolute top-2 right-2 p-2 hover:bg-gray-700 hover:bg-opacity-40 rounded-full group">
+                <button
+                  onClick={() => setReportModal(true)}
+                  className="relative"
+                >
+                  {" "}
+                  <MoreVert className="   group-hover:scale-125" />
+                </button>
+                {reportModal && (
+                  <Modal closeModal={() => setReportModal(false)}>
+                    <div className="flex flex-col items-center p-4 gap-4 mt-4">
+                      <h2>Möchtest du dieses Foto melden?</h2>
+                      <textarea
+                        placeholder="Bitte gib einen Meldegrund an"
+                        value={reportText}
+                        rows={4}
+                        cols={30}
+                        onChange={handleReportText}
+                        className="rounded-lg p-2 bg-gray-900 border border-gray-200"
+                      />
+                      <button
+                        className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700  text-nowrap flex items-center gap-2"
+                        onClick={() =>
+                          handleAddingReport(
+                            typeof src === "string" ? src : src.src
+                          )
+                        }
+                      >
+                        Bild melden
+                      </button>
+                    </div>
+                  </Modal>
                 )}
               </div>
             )}

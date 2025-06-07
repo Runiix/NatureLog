@@ -1,5 +1,5 @@
 "use client";
-import { Delete, Edit } from "@mui/icons-material";
+import { Close, Delete, Edit, MoreVert } from "@mui/icons-material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import getProfileGrid from "../../actions/profile/getProfileGrid";
@@ -9,6 +9,7 @@ import removeProfileGridImage from "../../actions/profile/removeProfileGridImage
 import changeProfileGridImage from "../../actions/profile/changeProfileGridImage";
 import imageCompression from "browser-image-compression";
 import { User } from "@supabase/supabase-js";
+import addReport from "@/app/actions/general/addReport";
 
 type ProfileGridImage = {
   name: string;
@@ -29,6 +30,8 @@ export default function PictureGrid({
   const [refresh, setRefresh] = useState(false);
   const [imageModal, setImageModal] = useState("");
   const [loading, setLoading] = useState(false);
+  const [reportModal, setReportModal] = useState<false | number>(false);
+  const [reportText, setReportText] = useState("");
 
   useEffect(() => {
     const loadProfileGrid = async () => {
@@ -137,12 +140,26 @@ export default function PictureGrid({
       setRefresh((prev) => !prev);
     }
   };
+  const handleReportText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setReportText(e.target.value);
+  };
+  const handleAddingReport = async (imageLink: string) => {
+    const res = await addReport(user.id, imageLink, reportText);
+    if (res.success) {
+      alert("Das Bild wurde erfolgreich gemeldet");
+    } else {
+      alert(
+        "Beim Melden des Bildes ist etwas schief gelaufen. Versuche es erneut oder melde dich an den Support!"
+      );
+    }
+    setReportModal(false);
+  };
 
   return (
     <div className="min-h-[678px]">
       <h2 className="text-xl">Lieblingsfotos</h2>
       <div className="items-center justify-center grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-1 sm:gap-4 border-t-2 border-gray-200 pt-4">
-        {profileGrid && profileGrid.length > 0 ? (
+        {profileGrid ? (
           profileGrid.map((image: ProfileGridImage, index: number) => (
             <div key={index} className="relative">
               <Image
@@ -156,7 +173,7 @@ export default function PictureGrid({
                   setImageModal(image.modalUrl || "/images/black.webp")
                 }
               />
-              {currUser && (
+              {currUser ? (
                 <div className="flex items-center">
                   <label
                     className="group cursor-pointer"
@@ -182,6 +199,47 @@ export default function PictureGrid({
                   >
                     <Delete className="absolute bottom-4 left-4 hover:bg-gray-700 hover:bg-opacity-40 rounded-full hover:scale-125" />
                   </button>
+                </div>
+              ) : (
+                <div className="absolute top-2 right-2 p-2 hover:bg-gray-700 hover:bg-opacity-40 rounded-full group">
+                  <button
+                    onClick={() => setReportModal(index)}
+                    className="relative"
+                  >
+                    {" "}
+                    <MoreVert className="   group-hover:scale-125" />
+                  </button>
+                  {reportModal === index && (
+                    <div className="absolute flex flex-col right-0 p-4 bg-gray-900 border border-gray-200 rounded-lg shadow-xl shadow-black z-50">
+                      <button
+                        className="hover:text-red-600 absolute top-2 right-2"
+                        onClick={() => setReportModal(false)}
+                      >
+                        {" "}
+                        <Close />
+                      </button>
+                      <div className="flex flex-col items-center p-4 gap-4 mt-4">
+                        <h2>Möchtest du dieses Foto melden?</h2>
+
+                        <textarea
+                          placeholder="Bitte gib einen Meldegrund an"
+                          value={reportText}
+                          rows={4}
+                          cols={30}
+                          onChange={handleReportText}
+                          className="rounded-lg p-2 bg-gray-900 border border-gray-200"
+                        />
+                        <button
+                          className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700  text-nowrap flex items-center gap-2"
+                          onClick={() =>
+                            handleAddingReport(image.gridUrl || "")
+                          }
+                        >
+                          Bild melden
+                        </button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
