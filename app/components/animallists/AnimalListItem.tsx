@@ -35,18 +35,19 @@ export default function AnimalListItem({
     }
   };
   return (
-    <div className="flex gap-4 items-center border-x border-gray-200 rounded-lg shadow-black shadow-md bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 hover:border-green-600 ">
-      <Image
-        src={image}
-        alt={name}
-        width="100"
-        height="100"
-        className="object-cover aspect-[3/2] w-auto h-auto rounded-l-lg"
-      />
-      <div className="flex flex-col sm:flex-row w-full h-full">
+    <div className="flex gap-4 items-center border-x border-gray-200 rounded-lg shadow-black shadow-md bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 hover:border-green-600">
+      <div className="relative w-[120px] md:w-[200px] aspect-[3/2] rounded-l-lg overflow-hidden">
+        <Image
+          src={image}
+          alt={name}
+          fill
+          className="object-cover rounded-l-lg"
+        />
+      </div>
+      <div className=" flex flex-col sm:flex-row w-full h-full">
         <Link
           href={`/animalpage/${name}`}
-          className="hover:text-green-600 text-wrap md:w-auto truncate"
+          className="hover:text-green-600 text-wrap md:w-auto truncate  relative top-1"
         >
           <h2>{name}</h2>
         </Link>

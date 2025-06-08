@@ -226,7 +226,7 @@ export default function AnimalList({
         <p className="text-gray-300"> {currDescription}</p>
       </div>
 
-      <div className="flex flex-col overflow-y-auto max-h-[240px] sm:max-h-[550px] gap-2 py-2 pr-2  h-full">
+      <div className="flex flex-col overflow-y-auto max-h-[320px] sm:max-h-[550px] gap-2 py-2 pr-2  h-full">
         {animalItems.map(
           (animal: {
             id: number;
