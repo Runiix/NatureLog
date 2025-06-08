@@ -13,7 +13,9 @@ export default function AuthForm() {
   const [isSigningUp, setIsSigningUp] = useState(false);
   const [resetPassword, setResetPassword] = useState(false);
   const [emailData, setEmailData] = useState("");
-  const [loginError, setLoginError] = useState<false | AuthError>(false);
+  const [loginError, setLoginError] = useState<
+    false | { code: string; message: string }
+  >(false);
   const [validationError, setValidationError] = useState(false);
   const [usernameError, setUsernameError] = useState(false);
   const [regsisterSuccess, setRegisterSuccess] = useState(false);
