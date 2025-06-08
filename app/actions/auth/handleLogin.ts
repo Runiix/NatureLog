@@ -20,8 +20,13 @@ export async function login(formData: FormData) {
   };
   const { error } = await supabase.auth.signInWithPassword(data);
 
-  if (error) {
-    return { error: error };
+   if (error) {
+    return {
+      error: {
+        code: error.name,
+        message: error.message,
+      },
+    };
   }
   revalidatePath("/", "layout");
   redirect("/homepage");
