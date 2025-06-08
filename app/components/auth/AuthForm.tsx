@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createClient } from "@/utils/supabase/client";
 import { CircleLoader } from "react-spinners";
 import { login, signup } from "../../actions/auth/handleLogin";
@@ -55,6 +55,9 @@ export default function AuthForm() {
     setIsSigningIn(false);
   };
 
+  useEffect(() => {
+    loginError && console.log("Login Error:", loginError.message);
+  }, [loginError]);
   const handleSignUp = async (formData: FormData) => {
     const { validationError, usernameError, success } = await signup(formData);
     if (validationError) setValidationError(true);
@@ -85,7 +88,11 @@ export default function AuthForm() {
             </h1>
             {loginError && (
               <h2 className="text-red-500 bg-gray-900/70 rounded-lg p-2">
-                {loginError.message}
+                {loginError.message === "Invalid login credentials"
+                  ? "E-Mail oder Passwort sind nicht korrekt"
+                  : loginError.message === "User is banned"
+                  ? "Dieser Account ist gebannt"
+                  : "Fehler bei der Anmeldung"}
               </h2>
             )}
             {validationError && (
