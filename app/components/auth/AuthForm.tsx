@@ -92,7 +92,7 @@ export default function AuthForm() {
                   ? "E-Mail oder Passwort sind nicht korrekt"
                   : loginError.message === "User is banned"
                   ? "Dieser Account ist gebannt"
-                  : "Fehler bei der Anmeldung"}
+                  : "Fehler bei der Anmeldung. Bitte versuche es erneut oder kontakitiere den Support"}
               </h2>
             )}
             {validationError && (
