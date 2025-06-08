@@ -56,7 +56,7 @@ export default function AuthForm() {
   };
 
   useEffect(() => {
-    loginError && console.log("Login Error:", loginError.message);
+    loginError && console.log(loginError);
   }, [loginError]);
   const handleSignUp = async (formData: FormData) => {
     const { validationError, usernameError, success } = await signup(formData);
