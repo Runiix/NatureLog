@@ -21,16 +21,16 @@ export default function page() {
       <form className="mt-6 flex flex-col gap-4">
         <input
           type="text"
-          placeholder="Ihr Name"
+          placeholder="Dein Name"
           className="p-3 border border-gray-200 bg-gray-900 shadow-lg shadow-black rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-600 hover:text-green-600"
         />
         <input
           type="email"
-          placeholder="Ihre E-Mail"
+          placeholder="Deine E-Mail"
           className="p-3 border border-gray-200 bg-gray-900 shadow-lg shadow-black rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-600 hover:text-green-600"
         />
         <textarea
-          placeholder="Ihre Nachricht"
+          placeholder="Deine Nachricht"
           rows={5}
           className="p-3 border border-gray-200 bg-gray-900 shadow-lg shadow-black rounded-lg w-full focus:outline-none focus:ring-2 focus:ring-green-600 hover:text-green-600"
         ></textarea>

@@ -162,7 +162,7 @@ export default function AuthForm() {
               className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 bg-opacity-80 border border-slate-300 text-lg hover:border-slate-100 "
             />
             {isNewUser && (
-              <label className="text-slate-100 flex items-center gap-2">
+              <label className="text-slate-100 flex md:items-center items-start gap-2 text-xs sm:text-sm md:text-base">
                 <input
                   type="checkbox"
                   required
@@ -171,17 +171,31 @@ export default function AuthForm() {
                     setAcceptedTOS(e.target.checked);
                     if (e.target.checked) setTosError(false);
                   }}
-                  className="w-5 h-5 rounded"
+                  className="w-5 h-5 rounded cursor-pointer"
                   aria-describedby="tosError"
                 />
-                Ich akzeptiere die{" "}
-                <Link
-                  href="/termsofservice"
-                  target="_blank"
-                  className="underline text-green-600"
-                >
-                  Nutzungsbedingungen
-                </Link>
+                <div className="gap-1 flex flex-col md:flex-row">
+                  <div>
+                    Ich akzeptiere die{" "}
+                    <Link
+                      href="/termsofservice"
+                      target="_blank"
+                      className="underline text-green-600"
+                    >
+                      Nutzungsbedingungen
+                    </Link>
+                  </div>
+                  <div>
+                    und die
+                    <Link
+                      href="/impressum"
+                      target="_blank"
+                      className="underline text-green-600"
+                    >
+                      Datenschutzrichtlinien
+                    </Link>
+                  </div>
+                </div>
               </label>
             )}
             {tosError && (
