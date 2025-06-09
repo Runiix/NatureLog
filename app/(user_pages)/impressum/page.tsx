@@ -97,7 +97,7 @@ export default function Impressum() {
           <li>
             <strong>OpenStreetMap:</strong> Auf dieser Website wird zur
             Darstellung von Karten der Dienst OpenStreetMap verwendet. Anbieter
-            ist die OpenStreetMap Foundation, St John's Innovation Centre,
+            ist die OpenStreetMap Foundation, St John&apos;s Innovation Centre,
             Cowley Road, Cambridge, CB4 0WS, Großbritannien. Beim Aufruf der
             Karten werden Inhalte direkt von Servern der OpenStreetMap
             Foundation geladen. Dabei kann Ihre IP-Adresse verarbeitet werden.
@@ -134,7 +134,7 @@ export default function Impressum() {
           einer freiwilligen Zahlung werden die zur Abwicklung notwendigen Daten
           (wie Name, E-Mail-Adresse und Zahlungsinformationen) von PayPal
           verarbeitet. Anbieter ist PayPal (Europe) S.à r.l. et Cie, S.C.A.,
-          22–24 Boulevard Royal, L-2449 Luxemburg. Die Datenverarbeitung erfolgt
+          22-24 Boulevard Royal, L-2449 Luxemburg. Die Datenverarbeitung erfolgt
           auf Grundlage von Art. 6 Abs. 1 lit. b DSGVO (Vertrag bzw.
           vorvertragliche Maßnahme) und Art. 6 Abs. 1 lit. f DSGVO (berechtigtes
           Interesse an einer einfachen und sicheren Abwicklung). Weitere
