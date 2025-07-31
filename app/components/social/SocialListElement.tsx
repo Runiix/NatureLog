@@ -6,7 +6,7 @@ import { Avatar } from "@mui/material";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import Image from "next/image";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
+import React, { use, useEffect, useState } from "react";
 
 type ProfileElement = {
   username: string;
@@ -16,6 +16,7 @@ type ProfileElement = {
   following: boolean;
   user: User;
 };
+
 const checkForProfilePic = async (supabase: SupabaseClient, userId: string) => {
   const { data: listData, error: listError } = await supabase.storage
     .from("profiles")
@@ -36,7 +37,18 @@ const checkForProfilePic = async (supabase: SupabaseClient, userId: string) => {
   }
   return true;
 };
-
+const getProfilePictureUrl = async (
+  supabase: SupabaseClient,
+  userId: string
+) => {
+  const { data, error } = await supabase.storage
+    .from("profiles")
+    .createSignedUrl(`${userId}/ProfilePicture/ProfilePic.jpg`, 60 * 60);
+  if (error) {
+    return "";
+  }
+  return data.signedUrl;
+};
 export default function SocialListElement({
   user,
   username,
@@ -47,9 +59,13 @@ export default function SocialListElement({
   const supabase = createClient();
   const [isFollowing, setIsFollowing] = useState(following);
   const [profilePicExists, setProfilePicExists] = useState(false);
+  const [profilePictureUrl, setProfilePictureUrl] = useState("");
+
   useEffect(() => {
     const checkProfilePic = async () => {
       const exists = await checkForProfilePic(supabase, userId);
+      const profilePictureUrl = await getProfilePictureUrl(supabase, userId);
+      setProfilePictureUrl(profilePictureUrl);
       setProfilePicExists(exists);
     };
     checkProfilePic();
@@ -66,9 +82,9 @@ export default function SocialListElement({
       className="shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 p-2 pr-2  rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 w-80 sm:w-96  h-20  flex items-center justify-between"
     >
       <div className="flex items-center gap-4">
-        {profilePicExists === true ? (
+        {profilePicExists ? (
           <Image
-            src={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${userId}/ProfilePicture/ProfilePic.jpg?t=${new Date().getTime()}`}
+            src={profilePictureUrl}
             alt="Profilbild"
             width="200"
             height="200"

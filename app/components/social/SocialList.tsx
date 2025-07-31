@@ -5,6 +5,7 @@ import ProfileListElement from "./SocialListElement";
 import { useEffect, useState } from "react";
 import getUsers from "@/app/actions/social/getUsers";
 import { User } from "@supabase/supabase-js";
+import { CircleLoader } from "react-spinners";
 
 type UserType = {
   id: string;
@@ -41,10 +42,18 @@ export default function SocialList({
     loadUsers();
   }, [searchParams]);
 
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center w-full h-full">
+        <CircleLoader color="#36d7b7" size={50} />
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-center gap-4  overflow-y-auto ">
       {users &&
-        users.map((profile: UserType, index: number) => (
+        users.map((profile: UserType) => (
           <ProfileListElement
             key={profile.id}
             user={user}
