@@ -5,7 +5,6 @@ import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
 import ProfileAnimalLists from "@/app/components/profile/ProfileAnimalLists";
-import { supabase } from "@/__mocks__/supabase";
 
 const getParamUserId = async (supabase: SupabaseClient, username: string) => {
   const { data, error } = await supabase
@@ -316,7 +315,6 @@ export default async function profilepage(params: any) {
     } else {
       return (
         <div className="bg-gray-900 w-full lg:w-3/4 m-auto  rounded-lg shadow-xl shadow-slate-900 flex flex-col justify-center items-center pb-10 mt-20">
-          {" "}
           DAS PROFIL IST PRIVAT
         </div>
       );

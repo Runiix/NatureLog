@@ -6,7 +6,7 @@ import DailyChallenge from "../../components/home/DailyChallenge";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
 // import UseFullLinks from "@/app/components/home/UseFullLinks";
-// import RecentUploads from "@/app/components/home/RecentUploads";
+import RecentUploads from "@/app/components/home/RecentUploads";
 import HomeGridItem from "@/app/components/home/HomeGridItem";
 import AnimalQuiz from "@/app/components/home/AnimalQuiz";
 import ImageSearch from "@/app/components/home/ImageSearch";
@@ -95,18 +95,18 @@ const getFollowing = async (supabase: SupabaseClient, userId: string) => {
   const following = data.map((f) => f.following_id);
   return following;
 };
-// async function getLast10Images(supabase: SupabaseClient) {
-//   const { data, error } = await supabase.from("lastimages").select("*");
-//   if (error) return [];
-//   return data;
-// }
+async function getLast10Images(supabase: SupabaseClient) {
+  const { data, error } = await supabase.from("lastimages").select("*");
+  if (error) return [];
+  return data;
+}
 
 export default async function homepage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
   const animalOfTheMonth = await getAnimalOfTheMonth(supabase);
   const animalOfTheDay = await getAnimalOfTheDay(supabase);
-  // const lastImages = await getLast10Images(supabase);
+  const lastImages = await getLast10Images(supabase);
   let following = [];
   if (user) {
     following = await getFollowing(supabase, user.id);
@@ -118,7 +118,6 @@ export default async function homepage() {
                 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4
                  "
       >
-        {" "}
         <div className="row-span-2">
           <FollowFeed following={following} />{" "}
         </div>
@@ -143,16 +142,13 @@ export default async function homepage() {
         {/* <HomeGridItem>
         <UseFullLinks />
       </HomeGridItem> */}
-        {/* <HomeGridItem>
-          {" "}
-          <RecentUploads data={lastImages} />
-        </HomeGridItem> */}
         <HomeGridItem>
-          {" "}
+          <RecentUploads data={lastImages} />
+        </HomeGridItem>
+        <HomeGridItem>
           <AnimalQuiz />
         </HomeGridItem>
         <HomeGridItem>
-          {" "}
           <ImageSearch user={user} />
         </HomeGridItem>
         {/* <AnimalRecognizer /> */}

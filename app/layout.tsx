@@ -27,7 +27,9 @@ export default function RootLayout({
         <link
           rel="preconnect"
           href="https://umvtbsrjbvivfkcmvtxk.supabase.co"
+          crossOrigin=""
         />
+        <link rel="dns-prefetch" href="//umvtbsrjbvivfkcmvtxk.supabase.co" />
       </Head>
       <body
         className={`${open_sans.className} bg-gray-200 font-bold text-slate-100 min-h-screen flex flex-col`}

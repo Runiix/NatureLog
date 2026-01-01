@@ -11,6 +11,7 @@ import LexiconFilter from "./LexiconFilter";
 import LexiconFilterList from "./LexiconFilterList";
 import LexiconSort from "./LexiconSort";
 import Animal from "@/app/utils/AnimalType";
+import { createClient } from "@/utils/supabase/client";
 
 export default function LexiconGrid({
   user,
@@ -27,6 +28,9 @@ export default function LexiconGrid({
   const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "");
   const [sortOrder, setSortOrder] = useState("ascending");
   const [animals, setAnimals] = useState<Animal[]>([]);
+  const [clientSpottedList, setClientSpottedList] = useState<number[]>(
+    spottedList ?? []
+  );
   const { ref: preloadRef, inView: preloadInView } = useInView();
   const regex = /[äöüß\s]/g;
 
@@ -49,7 +53,7 @@ export default function LexiconGrid({
           Object.fromEntries(searchParams.entries()),
           offset,
           pageSize,
-          spottedList
+          clientSpottedList
         );
         setLoading(false);
 
@@ -65,7 +69,7 @@ export default function LexiconGrid({
       }
     };
     loadAnimals(0);
-  }, [searchParams]);
+  }, [searchParams, clientSpottedList]);
 
   useEffect(() => {
     const loadMoreAnimals = async () => {
@@ -76,7 +80,7 @@ export default function LexiconGrid({
           Object.fromEntries(searchParams.entries()),
           offset,
           pageSize,
-          spottedList
+          clientSpottedList
         );
         if (data.length < pageSize) {
           setLoadingMoreAnimals(false);
@@ -90,7 +94,33 @@ export default function LexiconGrid({
     if (preloadInView) {
       loadMoreAnimals();
     }
-  }, [preloadInView, searchParams, spottedList]);
+  }, [preloadInView, searchParams, clientSpottedList]);
+
+  // Load spotted list on the client after initial render to avoid blocking TTFB
+  useEffect(() => {
+    const fetchSpotted = async () => {
+      if (!user) return;
+      try {
+        const supabase = createClient();
+        const { data, error } = await supabase
+          .from("spotted")
+          .select("animal_id")
+          .eq("user_id", user.id);
+        if (error) {
+          console.error("Error getting spotted list (client)", error);
+          return;
+        }
+        const ids = (data ?? []).map(
+          (row: { animal_id: number }) => row.animal_id
+        );
+        setClientSpottedList(ids);
+      } catch (e) {
+        console.error("Unexpected error loading spotted list:", e);
+      }
+    };
+    fetchSpotted();
+    // Only run when user changes
+  }, [user]);
 
   return (
     <div className="flex flex-col items-center overflow-wrap">
@@ -127,7 +157,7 @@ export default function LexiconGrid({
                   imageUrl={animal.lexicon_link}
                   very_rare={animal.very_rare}
                   user={user}
-                  spottedList={spottedList}
+                  spottedList={clientSpottedList}
                 />
               </div>
             );
