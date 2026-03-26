@@ -6,10 +6,7 @@ import getAnimals from "../../actions/lexicon/getAnimals";
 import { CircleLoader } from "react-spinners";
 import { useSearchParams } from "next/navigation";
 import { User } from "@supabase/supabase-js";
-import Search from "../general/Search";
-import LexiconFilter from "./LexiconFilter";
 import LexiconFilterList from "./LexiconFilterList";
-import LexiconSort from "./LexiconSort";
 import Animal from "@/app/utils/AnimalType";
 import { createClient } from "@/utils/supabase/client";
 
@@ -29,7 +26,7 @@ export default function LexiconGrid({
   const [sortOrder, setSortOrder] = useState("ascending");
   const [animals, setAnimals] = useState<Animal[]>([]);
   const [clientSpottedList, setClientSpottedList] = useState<number[]>(
-    spottedList ?? []
+    spottedList ?? [],
   );
   const { ref: preloadRef, inView: preloadInView } = useInView();
   const regex = /[äöüß\s]/g;
@@ -53,7 +50,7 @@ export default function LexiconGrid({
           Object.fromEntries(searchParams.entries()),
           offset,
           pageSize,
-          clientSpottedList
+          clientSpottedList,
         );
         setLoading(false);
 
@@ -80,7 +77,7 @@ export default function LexiconGrid({
           Object.fromEntries(searchParams.entries()),
           offset,
           pageSize,
-          clientSpottedList
+          clientSpottedList,
         );
         if (data.length < pageSize) {
           setLoadingMoreAnimals(false);
@@ -111,8 +108,9 @@ export default function LexiconGrid({
           return;
         }
         const ids = (data ?? []).map(
-          (row: { animal_id: number }) => row.animal_id
+          (row: { animal_id: number }) => row.animal_id,
         );
+        console.log(ids);
         setClientSpottedList(ids);
       } catch (e) {
         console.error("Unexpected error loading spotted list:", e);
@@ -125,18 +123,7 @@ export default function LexiconGrid({
   return (
     <div className="flex flex-col items-center overflow-wrap">
       <LexiconFilterList />
-      <div className="flex-col md:flex-row flex gap-2 lg:gap-28 2xl:gap-64 justify-between items-center">
-        <div className="flex items-center gap-[1px]">
-          <LexiconFilter user={user} />
-        </div>
-
-        <div className="flex items-center gap-2 border-">
-          <Search placeholder="Tier suchen" />
-        </div>
-        <LexiconSort />
-      </div>
-
-      <div className="items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2 sm:gap-4 mt-2 sm:mt-10 max-w-[1400px]">
+      <div className="items-center justify-center grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-2 sm:gap-4 mt-2 max-w-[1400px]">
         {animals &&
           animals.map((animal: Animal, index: number) => {
             const isPreloadTrigger = index === animals.length - 10;

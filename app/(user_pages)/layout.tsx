@@ -35,7 +35,9 @@ export default async function Layout({ children }: { children: ReactNode }) {
   return (
     <>
       <Nav user={user} following={following} />
-      <main className="min-h-screen mt-12 md:mt-16">{children}</main>
+      <main className="min-h-[calc(100vh-2.5rem)] sm:min-h-[calc(100vh-4rem)] mt-12 md:mt-16">
+        {children}
+      </main>
     </>
   );
 }

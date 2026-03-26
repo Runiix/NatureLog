@@ -38,9 +38,9 @@ export default function RootLayout({
           <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
         </main>
         {/* <CookieConsentBanner /> */}
-        <footer>
+         {/* <footer>
           <Footer />
-        </footer>
+        </footer> */}
       </body>
     </html>
   );

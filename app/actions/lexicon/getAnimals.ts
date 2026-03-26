@@ -21,6 +21,7 @@ export default async function getAnimals(
   const endangerment = params.get("endangerment")?.split(",") || [];
   const sortOrder = params.get("sortOrder") || null;
   const onlyUnseen = params.get("onlyUnseen") || false
+  const onlySeen = params.get("onlySeen") || false
   const excludeRares= params.get("excludeRares") ||false
   let bool = false;
   if (sortOrder === "ascending" || sortOrder === null) {
@@ -49,6 +50,9 @@ export default async function getAnimals(
   }
   if(onlyUnseen){
     query= query.not("id", "in", "(" +spottedList +")")
+  }
+  if(onlySeen){
+    query= query.in("id", spottedList)
   }
   if(excludeRares){
     query= query.neq("very_rare", true)

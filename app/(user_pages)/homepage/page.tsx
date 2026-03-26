@@ -118,9 +118,6 @@ export default async function homepage() {
                 grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4
                  "
       >
-        <div className="row-span-2">
-          <FollowFeed following={following} />{" "}
-        </div>
         <HomeGridItem>
           <AnimalOfTheDay
             data={animalOfTheDay}
@@ -139,18 +136,22 @@ export default async function homepage() {
           {" "}
           <DailyChallenge />
         </HomeGridItem>
+        {/* <div className="2xl:row-span-2">
+          <FollowFeed following={following} />{" "}
+        </div> */}
         {/* <HomeGridItem>
         <UseFullLinks />
       </HomeGridItem> */}
-        <HomeGridItem>
+        {/* <HomeGridItem>
           <RecentUploads data={lastImages} />
-        </HomeGridItem>
+        </HomeGridItem> */}
         <HomeGridItem>
           <AnimalQuiz />
         </HomeGridItem>
         <HomeGridItem>
           <ImageSearch user={user} />
         </HomeGridItem>
+
         {/* <AnimalRecognizer /> */}
       </div>
     </div>

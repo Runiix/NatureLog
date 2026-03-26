@@ -55,10 +55,10 @@ export default function LexiconSort() {
             {sortBy === "common_name"
               ? "Alpabetisch"
               : sortBy === "size_to"
-              ? "Größe"
-              : sortBy === "population_estimate"
-              ? "Population"
-              : "Gefährdung"}
+                ? "Größe"
+                : sortBy === "population_estimate"
+                  ? "Population"
+                  : "Gefährdung"}
           </p>
           <ExpandMore
             className={`transition-all duration-200 ${
@@ -78,7 +78,9 @@ export default function LexiconSort() {
       </div>
       <div
         className={`flex flex-col absolute  bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 hover:border-green-600  mt-12 transition-all duration-500 rounded-b-md border border-slate-400 shadow-lg shadow-black z-50 ${
-          expandSort ? "scale-100 opacity-100" : "scale-0 opacity-0"
+          expandSort
+            ? "transform translate-y-0 translate-x-0 opacity-100 scale-100"
+            : "transform -translate-y-20 -translate-x-20 opacity-0 scale-0"
         }`}
       >
         {[
