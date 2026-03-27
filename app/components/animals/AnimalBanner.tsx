@@ -25,7 +25,7 @@ export default function AnimalBanner({
   };
   return (
     <div className="relative w-full flex flex-col">
-      <div className="relative w-full aspect-square md:aspect-[5/4] lg:aspect-video h-1/2 sm:min-h-2/3 lg:min-h-full lg:max-h-[800px]">
+      <div className="relative w-full  md:aspect-[5/4] lg:aspect-video h-1/2 sm:min-h-2/3 lg:min-h-full lg:max-h-[800px]">
         <Image
           ref={imageRef}
           src={image}
@@ -37,7 +37,7 @@ export default function AnimalBanner({
           priority
         />
         {credit_link && (
-          <p className="text-xs text-gray-600 absolute bottom-0 right-10 z-40 ">
+          <p className="text-xs text-gray-900 opacity-0 absolute top-0 right-10 z-40 ">
             Foto:{" "}
             <a
               className="hover:underline"

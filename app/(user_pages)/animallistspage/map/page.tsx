@@ -1,9 +1,6 @@
 import ClientWrapper from "@/app/components/listsmap/ClientWrapper";
-import { getUser } from "@/app/utils/data";
 import { createClient } from "@/utils/supabase/server";
 import { SupabaseClient } from "@supabase/supabase-js";
-import Link from "next/link";
-import React from "react";
 
 const getAnimalLists = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase
@@ -54,7 +51,6 @@ const getCounts = async (supabase: SupabaseClient, listIds: string[]) => {
 
 export default async function listmappage() {
   const supabase = await createClient();
-  const user = await getUser(supabase);
   const animalLists = await getAnimalLists(supabase);
   const userIdList = animalLists.map((animal) => animal.user_id);
   const animalListIdList = animalLists.map((list) => list.id);
@@ -85,16 +81,6 @@ export default async function listmappage() {
   }));
   return (
     <div className=" mt-16 flex flex-col w-full h-full">
-      <div className="flex gap-4 items-center mx-auto my-4 text-xl">
-        <p className="text-green-600 underline cursor-default">Karte</p>
-        <Link
-          href={`/animallistspage/${user && user.user_metadata.displayName}`}
-        >
-          <p className="hover:text-green-600 hover:underline text-gray-900 cursor-pointer ">
-            Meine Listen
-          </p>
-        </Link>
-      </div>
       <ClientWrapper lists={animalListsWithUsernames} setMarker={false} />
     </div>
   );

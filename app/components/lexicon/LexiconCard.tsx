@@ -7,6 +7,7 @@ import black from "@/app/assets/images/black.webp";
 import { useRouter } from "next/navigation";
 import FavoriteFunctionality from "../general/FavoriteFunctionality";
 import { Star } from "@mui/icons-material";
+import ListFunctionality from "../general/ListFunctionality";
 
 export default function LexiconCard({
   id,
@@ -76,10 +77,22 @@ export default function LexiconCard({
 
       <div className=" p-4 w-full flex justify-between items-center">
         <div>
+          <h2 className="text-xs sm:text-xl truncate max-w-20 md:max-w-56 hover:max-w-full">
+            {common_name}
+          </h2>
+
           <div className="flex gap-1 items-center">
-            <h2 className="text-xs sm:text-2xl truncate max-w-20 md:max-w-56 hover:max-w-full">
-              {common_name}
-            </h2>
+            <h3 className="text-[0.5rem] sm:text-xs">
+              {sortBy === "population_estimate"
+                ? population_estimate
+                : sortBy === "size_to"
+                  ? `${size_from} - ${size_to} cm`
+                  : sortBy === "endangerment_status"
+                    ? endangerment_status
+                    : sortBy === ""
+                      ? scientific_name
+                      : scientific_name}
+            </h3>
             {very_rare && (
               <div className="group relative text-[0.5rem]">
                 {" "}
@@ -90,21 +103,10 @@ export default function LexiconCard({
                   </span>
                 </div>
               </div>
-            )}
+            )}{" "}
           </div>
-          <h3 className="text-[0.5rem] sm:text-sm">
-            {sortBy === "population_estimate"
-              ? population_estimate
-              : sortBy === "size_to"
-              ? `${size_from} - ${size_to} cm`
-              : sortBy === "endangerment_status"
-              ? endangerment_status
-              : sortBy === ""
-              ? scientific_name
-              : scientific_name}
-          </h3>
         </div>
-        <div>
+        <div className="flex items-center gap-2">
           {user && (
             <FavoriteFunctionality
               user={user}
@@ -114,6 +116,7 @@ export default function LexiconCard({
               modalStyles=""
             />
           )}
+          {user && <ListFunctionality user={user} id={id} pathName={link} />}
         </div>
       </div>
     </div>

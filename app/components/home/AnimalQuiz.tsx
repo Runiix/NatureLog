@@ -47,13 +47,14 @@ export default function AnimalQuiz() {
 
   return (
     <div className="pb-2">
+      <h2 className="text-2xl py-2">Quiz: Tier erkennen</h2>
       {quizAnimals.length > 0 ? (
         <Image
           src={quizAnimals[randomIndex].lexicon_link}
           alt={quizAnimals[randomIndex].scientific_name}
-          width="300"
+          width="200"
           height="100"
-          className="w-full aspect-video mb-2 rounded-t-lg max-h-64"
+          className="w-full aspect-video mb-2 rounded-lg max-h-44 object-cover object-center"
           unoptimized
         />
       ) : (

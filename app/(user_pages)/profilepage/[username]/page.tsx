@@ -61,7 +61,7 @@ const checkForProfilePic = async (supabase: SupabaseClient, userId: string) => {
 
 const getProfilePictureUrl = async (
   supabase: SupabaseClient,
-  userId: string
+  userId: string,
 ) => {
   const { data, error } = await supabase.storage
     .from("profiles")
@@ -132,7 +132,7 @@ const getCounts = async (supabase: SupabaseClient, listIds: string[]) => {
 const isViewable = async (
   supabase: SupabaseClient,
   paramId: string,
-  userId: string
+  userId: string,
 ) => {
   const { data, error } = await supabase
     .from("profiles")

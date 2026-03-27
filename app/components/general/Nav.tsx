@@ -7,6 +7,7 @@ import {
   Close,
   Collections,
   Home,
+  Map,
   Menu,
   Person,
   PowerSettingsNew,
@@ -65,7 +66,14 @@ export default function Nav({
                   className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
                 >
                   <Summarize />
-                  Listen
+                  Meine Listen
+                </Link>
+                <Link
+                  href={"/animallistspage/map"}
+                  className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
+                >
+                  <Map />
+                  Karte
                 </Link>
               </div>
             </div>
@@ -180,7 +188,15 @@ export default function Nav({
               onClick={() => setToggleMenu(false)}
             >
               <Summarize />
-              Listen
+              Meine Listen
+            </Link>
+            <Link
+              href={"/animallistspage/map"}
+              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1 "
+              onClick={() => setToggleMenu(false)}
+            >
+              <Map />
+              Karte
             </Link>
             <Link
               href={"/settingspage"}

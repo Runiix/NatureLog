@@ -123,7 +123,7 @@ export default function LexiconGrid({
   return (
     <div className="flex flex-col items-center overflow-wrap">
       <LexiconFilterList />
-      <div className="items-center justify-center grid grid-cols-1 lg:grid-cols-2 2xl:grid-cols-3 gap-2 sm:gap-4 mt-2 max-w-[1400px]">
+      <div className="items-center justify-center grid grid-cols-2 2xl:grid-cols-3 gap-2 sm:gap-4 mt-2">
         {animals &&
           animals.map((animal: Animal, index: number) => {
             const isPreloadTrigger = index === animals.length - 10;

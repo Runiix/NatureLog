@@ -9,7 +9,7 @@ import Link from "next/link";
 const getAnimalLists = async (
   supabase: SupabaseClient,
   userId: string,
-  onlyPublic: boolean
+  onlyPublic: boolean,
 ) => {
   if (onlyPublic === true) {
     const { data, error } = await supabase
@@ -61,20 +61,11 @@ export default async function AnimalListsPage(params: any) {
     const animalLists = await getAnimalLists(supabase, user.id, false);
     const spottedList = await getSpottedList(supabase, user.id);
     const spottedIds: number[] = spottedList.map(
-      (animal: SpottedAnimal) => animal.animal_id
+      (animal: SpottedAnimal) => animal.animal_id,
     );
 
     return (
       <div className="w-full mt-10 sm:mt-20 flex flex-col">
-        <div className="flex gap-4 items-center mx-auto my-4 md:my-6 text-xl">
-          <Link href="/animallistspage/map">
-            <p className=" hover:text-green-600 hover:underline text-gray-900 cursor-pointer">
-              Karte
-            </p>
-          </Link>
-
-          <p className="text-green-600 underline">Meine Listen</p>
-        </div>
         <AnimalLists
           data={animalLists}
           user={user}
@@ -87,7 +78,7 @@ export default async function AnimalListsPage(params: any) {
     const animalLists = await getAnimalLists(supabase, paramUser.id, true);
     const spottedList = await getSpottedList(supabase, paramUser.id);
     const spottedIds: number[] = spottedList.map(
-      (animal: SpottedAnimal) => animal.animal_id
+      (animal: SpottedAnimal) => animal.animal_id,
     );
     return (
       <div className="w-full">

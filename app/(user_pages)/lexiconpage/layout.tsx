@@ -12,15 +12,13 @@ export default async function Layout({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex w-full">
-      <section className="h-[calc(100vh-2.5rem)] sm:h-[calc(100vh-4rem)] overflow-y-auto overflow-x-hidden w-96">
-        <LexiconFilterNav>
-          <section className="pt-8 pb-4 mb-4 border-b border-gray-950 ">
-            <h2 className="text-black">Sortierung</h2>
-            <LexiconSort />
-          </section>
-          <LexiconFilter user={user} />
-        </LexiconFilterNav>
-      </section>
+      <LexiconFilterNav>
+        <section className="pt-8 pb-4 mb-4 border-b border-gray-950 ">
+          <h2 className="text-black">Sortierung</h2>
+          <LexiconSort />
+        </section>
+        <LexiconFilter user={user} />
+      </LexiconFilterNav>
       <section className="mx-auto w-full">{children}</section>
     </div>
   );
