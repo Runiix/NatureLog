@@ -11,6 +11,7 @@ import HomeGridItem from "@/app/components/home/HomeGridItem";
 import AnimalQuiz from "@/app/components/home/AnimalQuiz";
 import ImageSearch from "@/app/components/home/ImageSearch";
 import FollowFeed from "@/app/components/social/FollowFeed";
+import UseFullLinks from "@/app/components/home/UseFullLinks";
 
 const getRandomDayId = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase.from("animals").select("id");
@@ -112,43 +113,43 @@ export default async function homepage() {
     following = await getFollowing(supabase, user.id);
   }
   return (
-    <div className="px-6 pb-6 h-[calc(100vh-2.5rem)] sm:h-[calc(100vh-4rem)]  grid gap-6 mx-auto grid-cols-12 grid-rows-2">
-      <HomeGridItem className="col-span-3 row-span-1">
+    <div className=" px-2 sm:px-6 sm:pb-6 sm:h-[calc(100vh-4rem)] flex flex-col sm:grid gap-6 mx-auto grid-cols-12 grid-rows-12">
+      <HomeGridItem className="col-span-4 row-span-5 md:col-span-3 md:row-span-6">
         <AnimalOfTheDay
           data={animalOfTheMonth}
           titel="Monats"
           imageUrl={animalOfTheMonth.lexicon_link}
         />
       </HomeGridItem>
-      <HomeGridItem className="col-span-6 flex">
-        <div className="w-1/2">
+      <HomeGridItem className="col-span-8 row-span-5 md:col-span-6 md:row-span-6 flex flex-col sm:flex-row">
+        <div className="sm:w-1/2">
           <AnimalOfTheDay
             data={animalOfTheDay}
             titel="Tages"
             imageUrl={animalOfTheDay.lexicon_link}
           />
         </div>
-        <div className="w-1/2">
+        <div className="sm:w-1/2">
           <DailyChallenge />
         </div>
       </HomeGridItem>
-      <HomeGridItem className="col-span-3">
-        <AnimalQuiz />
-      </HomeGridItem>
-      {/* <div className="2xl:row-span-2">
-          <FollowFeed following={following} />{" "}
-        </div> */}
-      {/* <HomeGridItem>
-        <UseFullLinks />
-      </HomeGridItem> */}
-      {/* <HomeGridItem>
-          <RecentUploads data={lastImages} />
-        </HomeGridItem> */}
 
-      <HomeGridItem>
+      <div className="col-span-4 row-span-7 md:col-span-3 md:row-span-12">
+        <FollowFeed following={following} />{" "}
+      </div>
+
+      {/* <HomeGridItem>
+        <RecentUploads data={lastImages} />
+      </HomeGridItem> */}
+      <HomeGridItem className="col-span-4 md:col-span-3 row-span-7 md:row-span-6">
+        <UseFullLinks />
+      </HomeGridItem>
+      <HomeGridItem className="col-span-4 md:col-span-3 row-span-7 md:row-span-6">
         <ImageSearch user={user} />
       </HomeGridItem>
-
+      <HomeGridItem className="col-span-3 row-span-6">
+        <AnimalQuiz />
+      </HomeGridItem>
       {/* <AnimalRecognizer /> */}
     </div>
   );

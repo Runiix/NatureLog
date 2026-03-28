@@ -1,6 +1,8 @@
-import { CheckCircle, HideImage } from "@mui/icons-material";
+"use client";
+
+import { HideImage } from "@mui/icons-material";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import React, { useTransition, useState } from "react";
+import { useTransition, useState } from "react";
 import Switch from "../general/Switch";
 
 export default function ImageExistsFilter() {
@@ -9,7 +11,7 @@ export default function ImageExistsFilter() {
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
   const [noImages, setNoImages] = useState(
-    (searchParams.get("noImages") && true) || false
+    (searchParams.get("noImages") && true) || false,
   );
 
   const handleFilterChange = (value: boolean) => {

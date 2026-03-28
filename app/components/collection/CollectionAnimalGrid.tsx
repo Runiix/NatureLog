@@ -63,7 +63,7 @@ export default function CollectionAnimalGrid({
           offset,
           pageSize,
           query,
-          Object.fromEntries(searchParams.entries())
+          Object.fromEntries(searchParams.entries()),
         );
         if (data.length < pageSize) {
           setLoadingMoreAnimals(false);
@@ -90,7 +90,7 @@ export default function CollectionAnimalGrid({
           offset,
           pageSize,
           query,
-          Object.fromEntries(searchParams.entries())
+          Object.fromEntries(searchParams.entries()),
         );
         if (data.length < pageSize) {
           setLoadingMoreAnimals(false);
@@ -107,20 +107,14 @@ export default function CollectionAnimalGrid({
   }, [preloadInView]);
   const searchFirstSpotted = (animalId: number) => {
     const animal = animalItems.find(
-      (animal: { id: number }) => animal.id === animalId
+      (animal: { id: number }) => animal.id === animalId,
     );
     return animal ? animal.first_spotted_at : null;
   };
   return (
-    <div className="mt-4 sm:mt-10 flex items-center flex-col">
-      <div className="flex flex-col items-center justify-center gap-2 ">
-        <GenusFilter counts={counts} categoryCounts={categoryCounts} />
-        <div className="flex gap-4 items-center">
-          <Search placeholder="Tier Suchen" />
-          <ImageExistsFilter />
-        </div>
-      </div>
-      <div className="mx-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2  sm:gap-4 mt-4 sm:mt-10">
+    <div className="mt-4 sm:mt-4 flex items-center flex-col">
+      <GenusFilter counts={counts} categoryCounts={categoryCounts} />
+      <div className="mx-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2  sm:gap-4 mt-4 sm:mt-4">
         {animalItems &&
           animalItems.map((animal: Animal, index: number) => {
             const isPreloadTrigger = index === animalItems.length - 10;

@@ -48,7 +48,7 @@ export default function GenusFilter({
       <div
         className={` sm:block ${
           expandGenus ? "block " : "hidden sm:block"
-        } flex left-0 top-40 absolute sm:static bg-gray-900 sm:bg-transparent p-5 transition-all duration-500 rounded-lg border sm:border-none border-slate-400 shadow-lg sm:shadow-none shadow-black z-50 sm:z-0 mt-1`}
+        } flex left-0 top-40 absolute sm:static bg-gray-900 sm:bg-transparent  transition-all duration-500 rounded-lg border sm:border-none border-slate-400 shadow-lg sm:shadow-none shadow-black z-50 sm:z-0 mt-1`}
       >
         <div className=" flex sm:flex-col md:flex-row flex-wrap gap-3 justify-center">
           <div className="flex flex-col items-center justify-center sm:pr-4 sm:mr-4 md:border-r border-gray-900">

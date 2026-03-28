@@ -1,10 +1,11 @@
 import { createClient } from "@/utils/supabase/server";
-import React from "react";
 import CollectionAnimalGrid from "@/app/components/collection/CollectionAnimalGrid";
 import Link from "next/link";
 import { SupabaseClient } from "@supabase/supabase-js";
 import { getUser } from "@/app/utils/data";
 import { ArrowBack } from "@mui/icons-material";
+import Search from "@/app/components/general/Search";
+import ImageExistsFilter from "@/app/components/collection/ImageExistsFilter";
 
 type SpottedAnimal = {
   animal_id: number;
@@ -26,7 +27,7 @@ const getSpottedList = async (supabase: SupabaseClient, userId: string) => {
 
 const getCategoryCounts = async (
   supabase: SupabaseClient,
-  spottedList: number[]
+  spottedList: number[],
 ) => {
   const { data, error } = await supabase
     .from("animals")
@@ -63,7 +64,7 @@ const getParamUserId = async (supabase: SupabaseClient, username: string) => {
 const isViewable = async (
   supabase: SupabaseClient,
   paramId: string,
-  userId: string
+  userId: string,
 ) => {
   const { data, error } = await supabase
     .from("profiles")
@@ -131,14 +132,21 @@ export default async function collectionpage(params: any) {
   if (user && paramUser && paramUser.id === user.id) {
     const spottedList = await getSpottedList(supabase, user.id);
     const spottedIds: number[] = spottedList.map(
-      (animal: SpottedAnimal) => animal.animal_id
+      (animal: SpottedAnimal) => animal.animal_id,
     );
     const categoryCounts = await getCategoryCounts(supabase, spottedIds);
     return (
       <div>
-        <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-20">
-          Sammlung{" "}
-        </h2>
+        <div className="flex flex-col sm:flex-row items-center justify-between max-w-[1200px] mx-auto mt-8 shadow-lg shadow-gray-400 p-4 rounded-lg">
+          <h2 className="text-green-600 text-center text-2xl xl:text-5xl">
+            Sammlung{" "}
+          </h2>{" "}
+          <div className="flex gap-4 items-center">
+            <Search placeholder="Tier Suchen" />
+            <ImageExistsFilter />
+          </div>
+        </div>
+
         <div className="w-full flex items-center justify-center">
           <CollectionAnimalGrid
             categoryCounts={categoryCounts || []}
@@ -152,7 +160,7 @@ export default async function collectionpage(params: any) {
     if (paramUser && user) {
       const spottedList = await getSpottedList(supabase, paramUser.id);
       const spottedIds: number[] = spottedList.map(
-        (animal: SpottedAnimal) => animal.animal_id
+        (animal: SpottedAnimal) => animal.animal_id,
       );
       const categoryCounts = await getCategoryCounts(supabase, spottedIds);
       const viewable = await isViewable(supabase, paramUser.id, user.id);
@@ -165,9 +173,15 @@ export default async function collectionpage(params: any) {
             <ArrowBack />
             ZUM PROFIL
           </Link>
-          <h2 className="text-green-600 text-center text-2xl sm:text-6xl mt-16">
-            Sammlung{" "}
-          </h2>
+          <div className="flex items-center justify-between max-w-[1200px] mx-auto mt-8 shadow-lg shadow-gray-400 p-4 rounded-lg">
+            <h2 className="text-green-600 text-center text-2xl xl:text-5xl">
+              Sammlung{" "}
+            </h2>{" "}
+            <div className="flex gap-4 items-center">
+              <Search placeholder="Tier Suchen" />
+              <ImageExistsFilter />
+            </div>
+          </div>
           <div className="w-full flex items-center justify-center">
             {viewable ? (
               <CollectionAnimalGrid

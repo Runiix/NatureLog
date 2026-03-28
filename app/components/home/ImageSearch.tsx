@@ -44,7 +44,7 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
       console.error(listError);
     }
     const filteredData = listData?.filter(
-      (item: { name: string }) => item.name !== ".emptyFolderPlaceholder"
+      (item: { name: string }) => item.name !== ".emptyFolderPlaceholder",
     );
     if (filteredData?.length === 0) {
       imageExists = false;
@@ -89,18 +89,16 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
       return;
     }
     const searchUrl = `https://lens.google.com/uploadbyurl?url=${encodeURIComponent(
-      imageUrl
+      imageUrl,
     )}`;
     window.open(searchUrl, "_blank");
   };
 
   return (
     <div className="flex flex-col items-center gap-4 p-6">
-      <h1 className="sm:text-xl font-bold text-center">
-        Tier mit Google Lens bestimmen
-      </h1>
+      <h1 className="sm:text-2xl font-bold text-center">Tier bestimmen</h1>
       <label className="text-center group">
-        <div className="bg-green-600   rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-10 px-4 cursor-pointer flex items-center justify-center">
+        <div className="bg-green-600 w-64 px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12 flex items-center justify-center cursor-pointer">
           1. Datei auswählen
         </div>
         {selectedFile && (
@@ -118,7 +116,7 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
       <button
         onClick={uploadImage}
         disabled={loading}
-        className="bg-green-600 px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12 "
+        className="bg-green-600 w-64 px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12 "
         aria-label="Bild hochladen"
       >
         {loading ? <CircleLoader size={20} /> : " 2. Bild hochladen"}
@@ -132,7 +130,7 @@ export default function ReverseImageSearch({ user }: { user: User | null }) {
       )}
       <button
         onClick={handleSearch}
-        className="bg-green-600  px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12"
+        className="bg-green-600 w-64 px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12"
         aria-label="Bild mit Google Lens suchen"
       >
         3. Bild auf Google Suchen
