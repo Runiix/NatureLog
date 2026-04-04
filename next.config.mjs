@@ -1,13 +1,6 @@
-import nextPWA from "next-pwa";
-
 /** @type {import('next').NextConfig} */
-const nextConfig = nextPWA({
-  dest: "public",
-  register: true,
-  skipWaiting: true,
-  disable: process.env.NODE_ENV === "development", // Disable PWA in dev mode
-  // Add more PWA options if needed
-});
+import createNextIntlPlugin from "next-intl/plugin";
+
 const cspHeader = `
   default-src 'self';
   script-src 'self' 'unsafe-eval' 'unsafe-inline'  cdn.jsdelivr.net;
@@ -24,8 +17,8 @@ img-src 'self' blob: data: https://umvtbsrjbvivfkcmvtxk.supabase.co https://a.ti
 
 `.replace(/\n/g, "");
 
-export default {
-  ...nextConfig, // Spread the PWA config
+const withNextIntl = createNextIntlPlugin();
+const nextConfig = {
   images: {
     remotePatterns: [
       {
@@ -68,3 +61,5 @@ export default {
     ];
   },
 };
+
+export default withNextIntl(nextConfig);

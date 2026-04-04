@@ -1,7 +1,7 @@
 jest.mock("@supabase/supabase-js", () => require("../__mocks__/supabase")); // Mock Supabase
 
 import { render, screen } from "@testing-library/react";
-import LexiconCard from "@/app/components/lexicon/LexiconCard"; // Adjust path if necessary
+import LexiconCard from "@/app/[locale]/components/lexicon/LexiconCard"; // Adjust path if necessary
 import { User } from "@supabase/supabase-js";
 
 describe("LexiconCard Component", () => {

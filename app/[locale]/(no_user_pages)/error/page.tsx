@@ -1,0 +1,18 @@
+import { useTranslations } from "next-intl";
+import Link from "next/link";
+
+export default function ErrorPage() {
+  const t = useTranslations("ErrorPage");
+  return (
+    <div className="w-full m-auto mt-44 flex flex-col gap-10 justify-center items-center">
+      <p className="text-black text-3xl">{t("somethingWentWrong")}</p>
+      <Link
+        href="/loginpage"
+        className="bg-green-600 text-center py-5 px-10 text-2xl sm:text-3xl rounded-lg hover:cursor-pointer hover:bg-green-700 hover:text-gray-900 transition-all
+           duration-200 shadow-md m-auto "
+      >
+        {t("backToLogin")}
+      </Link>
+    </div>
+  );
+}

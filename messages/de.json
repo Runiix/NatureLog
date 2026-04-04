@@ -1,0 +1,52 @@
+{
+  "General": {
+    "searchPlaceholder": "Suchen...",
+    "searchAnimal": "Tier suchen..."
+  },
+  "ErrorPage": {
+    "somethingWentWrong": "Es ist leider etwas schief gelaufen :/",
+    "backToLogin": "Zurück zur Anmeldung"
+  },
+  "Auth": {
+    "email": "E-Mail",
+    "password": "Passwort",
+    "confirmPassword": "Passwort bestätigen",
+    "login": "Anmelden",
+    "backToLogin": "Zurück zur Anmeldung?",
+    "resetPassword": "Passwort zurücksetzen"
+  },
+  "Lexicon": {
+    "true": "Ja",
+    "onlyUnseen": "Nur nicht gesehene",
+    "onlySeen": "Nur gesehene",
+    "excludeRares": "Seltene Tiere ausschließen",
+    "genus": "Gattung",
+    "order": "Ordnung",
+    "Säugetier": "Säugetiere",
+    "Vogel": "Vögel",
+    "Reptil": "Reptilien",
+    "Amphibie": "Amphibien",
+    "Insekt": "Insekten",
+    "Arachnoid": "Arachnoiden",
+    "color": "Farbe",
+    "black": "schwarz",
+    "white": "weiß",
+    "brown": "braun",
+    "yellow": "gelb",
+    "red": "rot",
+    "green": "grün",
+    "blue": "blau",
+    "purple": "lila",
+    "orange": "orange",
+    "endangerment": "Gefährdung",
+    "Nicht gefährdet": "Nicht gefährdet",
+    "Extrem selten": "Extrem selten",
+    "Gefährdet": "Gefährdet",
+    "Stark gefährdet": "Stark gefährdet",
+    "Vom Aussterben bedroht": "Vom Aussterben bedroht",
+    "Vorwarnliste": "Vorwarnliste",
+    "Ausgestorben": "Ausgestorben",
+    "sizeFrom": "Größe von",
+    "sizeTo": "Größe bis"
+  }
+}
