@@ -10,8 +10,10 @@ export async function POST(req: any) {
   if (session) {
     await supabase.auth.signOut();
   }
-
-  return NextResponse.redirect(new URL("/", req.url), {
+  // Extract the locale from the current path
+  const url = new URL(req.url);
+  const locale = url.pathname.split("/")[1] || "de"; // fallback to 'de' if not found
+  return NextResponse.redirect(new URL(`/${locale}`, req.url), {
     status: 302,
   });
 }

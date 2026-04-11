@@ -11,6 +11,7 @@ type UserType = {
   id: string;
   display_name: string;
   joyn_date: string;
+  spotted_count: number;
 };
 export default function SocialList({
   user,
@@ -32,6 +33,7 @@ export default function SocialList({
           Object.fromEntries(searchParams.entries()),
           user.id,
         );
+        console.log("Loaded users:", data);
         setLoading(false);
 
         setUsers(data);
@@ -51,7 +53,7 @@ export default function SocialList({
   }
 
   return (
-    <div className="flex flex-col items-center gap-4  overflow-y-auto ">
+    <div className="flex flex-col items-center gap-2 overflow-y-auto px-5 py-2">
       {users &&
         users.map((profile: UserType) => (
           <ProfileListElement
@@ -60,6 +62,7 @@ export default function SocialList({
             userId={profile.id}
             username={profile.display_name}
             profilepicture={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${profile.id}/ProfilePicture/ProfilePic.jpg`}
+            spottedCount={profile.spotted_count}
             profilelink={`/profilepage/${profile.display_name}`}
             following={following.includes(profile.id)}
           />

@@ -29,7 +29,7 @@ export async function login(formData: FormData) {
     };
   }
   revalidatePath("/", "layout");
-  redirect("/homepage");
+  redirect("/de/homepage");
 }
 
 export async function signup(formData: FormData) {

@@ -12,6 +12,8 @@ import AnimalQuiz from "@/app/[locale]/components/home/AnimalQuiz";
 import ImageSearch from "@/app/[locale]/components/home/ImageSearch";
 import FollowFeed from "@/app/[locale]/components/social/FollowFeed";
 import UseFullLinks from "@/app/[locale]/components/home/UseFullLinks";
+import getLastSpottedAnimals from "../../actions/home/getLastSpottedAnimals";
+import { Home } from "@mui/icons-material";
 
 const getRandomDayId = async (supabase: SupabaseClient) => {
   const { data, error } = await supabase.from("animals").select("id");
@@ -96,33 +98,34 @@ const getFollowing = async (supabase: SupabaseClient, userId: string) => {
   const following = data.map((f) => f.following_id);
   return following;
 };
-async function getLast10Images(supabase: SupabaseClient) {
-  const { data, error } = await supabase.from("lastimages").select("*");
-  if (error) return [];
-  return data;
-}
+// async function getLast10Images(supabase: SupabaseClient) {
+//   const { data, error } = await supabase.from("lastimages").select("*");
+//   if (error) return [];
+//   return data;
+// }
 
 export default async function homepage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
   const animalOfTheMonth = await getAnimalOfTheMonth(supabase);
   const animalOfTheDay = await getAnimalOfTheDay(supabase);
-  const lastImages = await getLast10Images(supabase);
+  // const lastImages = await getLast10Images(supabase);
+  const lastImages = user ? await getLastSpottedAnimals(user) : [];
   let following = [];
   if (user) {
     following = await getFollowing(supabase, user.id);
   }
   return (
     <div className="mx-auto  px-2 sm:px-6 flex flex-col 2xl:flex-row gap-4 sm:max-w-[75vw] md:max-w-none">
-      <div className="flex flex-col md:grid gap-4 grid-cols-12 grid-rows-12 w-full 2xl:w-3/4 md:h-[130vh] xl:h-[calc(100vh-4rem)]">
-        <HomeGridItem className="col-span-4 xl:col-span-3 row-span-4  xl:row-span-5">
+      <div className="flex flex-col md:grid gap-4 grid-cols-12 w-full 2xl:w-3/4 md:h-[140vh] xl:h-[calc(100vh-4rem)] grid-rows-[repeat(12,minmax(0,1fr))]">
+        <HomeGridItem className="col-span-4 xl:col-span-3 row-span-3 xl:row-span-5">
           <AnimalOfTheDay
             data={animalOfTheMonth}
             titel="Monats"
             imageUrl={animalOfTheMonth.lexicon_link}
           />
         </HomeGridItem>
-        <HomeGridItem className="col-span-8 xl:col-span-6 row-span-4 xl:row-span-5 flex flex-col sm:flex-row">
+        <HomeGridItem className="col-span-8 xl:col-span-6 row-span-3 xl:row-span-5 flex flex-col sm:flex-row">
           <div className="sm:w-1/2">
             <AnimalOfTheDay
               data={animalOfTheDay}
@@ -135,17 +138,17 @@ export default async function homepage() {
           </div>
         </HomeGridItem>
 
-        <HomeGridItem className="col-span-3 md:col-span-5 xl:col-span-3 row-span-7 md:row-span-4  xl:row-span-6">
+        <HomeGridItem className="col-span-3 md:col-span-5 xl:col-span-3 row-span-5  xl:row-span-6">
           <ImageSearch user={user} />
         </HomeGridItem>
 
-        <HomeGridItem className="col-span-4 md:col-span-7 xl:col-span-4 row-span-6 md:row-span-4 xl:row-span-6">
+        <HomeGridItem className="col-span-4 md:col-span-7 xl:col-span-4 row-span-5 xl:row-span-6">
           <AnimalQuiz />
         </HomeGridItem>
-        <HomeGridItem className="col-span-5 md:col-span-7 xl:col-span-5 row-span-6 md:row-span-4 xl:row-span-6">
-          <RecentUploads data={lastImages} />
+        <HomeGridItem className="col-span-5 md:col-span-7 xl:col-span-5 row-span-4 xl:row-span-6">
+          {user && <RecentUploads data={lastImages} user={user} />}
         </HomeGridItem>
-        <HomeGridItem className="col-span-3 md:col-span-5 xl:col-span-3 row-span-7 md:row-span-4 xl:row-span-6">
+        <HomeGridItem className="col-span-3 md:col-span-5 xl:col-span-3 row-span-4 xl:row-span-5">
           <UseFullLinks />
         </HomeGridItem>
       </div>

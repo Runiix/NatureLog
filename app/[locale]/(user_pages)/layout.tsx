@@ -3,15 +3,7 @@ import Nav from "../components/general/Nav";
 import { SupabaseClient } from "@supabase/supabase-js";
 import "leaflet/dist/leaflet.css";
 import { ReactNode } from "react";
-
-const getUser = async (supabase: SupabaseClient) => {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error) return null;
-  return user;
-};
+import { getUser } from "../utils/data";
 
 const getFollowing = async (supabase: SupabaseClient, userId: string) => {
   const { data, error } = await supabase

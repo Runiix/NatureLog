@@ -24,7 +24,7 @@ export default function LanguageSwitcher() {
       className="flex items-center gap-1 text-gray-900 hover:text-gray-700 transition-all duration-300"
       aria-label="Switch Language"
     >
-      <Language /> {otherLocale === "en" ? "Deutsch" : "English"}
+      {otherLocale === "en" ? "Deutsch" : "English"}
     </button>
   );
 }

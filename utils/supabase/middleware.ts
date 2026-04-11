@@ -51,6 +51,8 @@ export async function updateSession(request: NextRequest) {
   }
   if (
     (user && request.nextUrl.pathname.startsWith("/loginpage")) ||
+    (user && request.nextUrl.pathname === "/de") ||
+    (user && request.nextUrl.pathname === "/en") ||
     (user && request.nextUrl.pathname === "/") ||
     (user && request.nextUrl.pathname.startsWith("/passwordreset"))
   ) {

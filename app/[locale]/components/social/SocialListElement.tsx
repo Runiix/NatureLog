@@ -1,7 +1,7 @@
 import follow from "@/app/[locale]/actions/social/follow";
 import unfollow from "@/app/[locale]/actions/social/unfollow";
 import { createClient } from "@/utils/supabase/client";
-import { Add, Favorite } from "@mui/icons-material";
+import { Add, Favorite, Visibility } from "@mui/icons-material";
 import { Avatar } from "@mui/material";
 import { SupabaseClient, User } from "@supabase/supabase-js";
 import Image from "next/image";
@@ -15,6 +15,7 @@ type ProfileElement = {
   profilelink: string;
   following: boolean;
   user: User;
+  spottedCount: number;
 };
 
 const checkForProfilePic = async (supabase: SupabaseClient, userId: string) => {
@@ -55,12 +56,12 @@ export default function SocialListElement({
   userId,
   profilelink,
   following,
+  spottedCount,
 }: ProfileElement) {
   const supabase = createClient();
   const [isFollowing, setIsFollowing] = useState(following);
   const [profilePicExists, setProfilePicExists] = useState(false);
   const [profilePictureUrl, setProfilePictureUrl] = useState("");
-
   useEffect(() => {
     const checkProfilePic = async () => {
       const exists = await checkForProfilePic(supabase, userId);
@@ -96,21 +97,25 @@ export default function SocialListElement({
         )}
         <h2>{username}</h2>
       </div>
-      <button
-        onClick={handleFollowing}
-        className={`${
-          isFollowing
-            ? "  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-red-600 p-2  rounded-lg  hover:cursor-pointer hover:from-red-600 hover:to-gray-950"
-            : "rounded-lg p-2 hover:bg-green-600 hover:text-slate-200"
-        }`}
-        aria-label="NatureLogger folgen oder entfolgen"
-      >
-        {isFollowing ? (
-          <Favorite className="text-green-600 hover:text-red-600 target:text-red-600" />
-        ) : (
-          <Add />
-        )}
-      </button>
+      <div className="flex items-center gap-2 ">
+        <p>{spottedCount}</p>
+        <Visibility />
+        <button
+          onClick={handleFollowing}
+          className={`${
+            isFollowing
+              ? "  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-red-600 p-2  rounded-lg  hover:cursor-pointer hover:from-red-600 hover:to-gray-950"
+              : "rounded-lg p-2 hover:bg-green-600 hover:text-slate-200"
+          }`}
+          aria-label="NatureLogger folgen oder entfolgen"
+        >
+          {isFollowing ? (
+            <Favorite className="text-green-600 hover:text-red-600 target:text-red-600" />
+          ) : (
+            <Add />
+          )}
+        </button>
+      </div>
     </Link>
   );
 }

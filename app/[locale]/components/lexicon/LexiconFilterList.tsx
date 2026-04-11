@@ -1,3 +1,4 @@
+"use client";
 import { Close } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
 import { useSearchParams, usePathname, useRouter } from "next/navigation";

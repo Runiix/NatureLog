@@ -1,7 +1,8 @@
 {
   "General": {
     "searchPlaceholder": "Suchen...",
-    "searchAnimal": "Tier suchen..."
+    "searchAnimal": "Tier suchen...",
+    "searchNatureLoggers": "NatureLogger suchen..."
   },
   "ErrorPage": {
     "somethingWentWrong": "Es ist leider etwas schief gelaufen :/",
@@ -14,6 +15,18 @@
     "login": "Anmelden",
     "backToLogin": "Zurück zur Anmeldung?",
     "resetPassword": "Passwort zurücksetzen"
+  },
+  "Navigation": {
+    "home": "Home",
+    "lexicon": "Lexikon",
+    "profile": "Profil",
+    "collection": "Sammlung",
+    "settings": "Einstellungen",
+    "social": "Community",
+    "lists": "Listen",
+    "logout": "Abmelden",
+    "map": "Karte",
+    "login": "Anmelden"
   },
   "Lexicon": {
     "true": "Ja",
@@ -48,5 +61,14 @@
     "Ausgestorben": "Ausgestorben",
     "sizeFrom": "Größe von",
     "sizeTo": "Größe bis"
+  },
+  "Social": {
+    "followers": "Follower",
+    "following": "Gefolgt",
+    "social": "Community",
+    "topUsers": "Top Nutzer",
+    "noFollowers": "Dieser Nutzer hat noch keine Follower.",
+    "noFollowing": "Dieser Nutzer folgt noch niemandem.",
+    "searchNatureLoggers": "NatureLogger suchen..."
   }
 }

@@ -5,16 +5,25 @@ import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { User } from "@supabase/supabase-js";
 type RecentUploadsType = {
   id: number;
-  user_id: string;
-  image_url: string;
-  created_at: string;
-  username: string;
+  common_name: string;
+  image: boolean;
+  first_spotted_at: string;
+  signedUrls: {
+    collection: string;
+    collectionModal: string;
+  };
 };
-export default function ImageSlider({ data }: { data: RecentUploadsType[] }) {
+export default function ImageSlider({
+  data,
+  user,
+}: {
+  data: RecentUploadsType[];
+  user: User;
+}) {
   const [slideIndex, setSlideIndex] = useState(0);
-
   function showPrevImage() {
     setSlideIndex((index) => {
       if (index === 0) return data.length - 1;
@@ -37,12 +46,12 @@ export default function ImageSlider({ data }: { data: RecentUploadsType[] }) {
 
   return (
     <div className="relative overflow-hidden h-[85%] flex flex-col gap-3">
-      <div className=" overflow-hidden flex relative ">
+      <div className=" overflow-hidden flex relative  rounded-lg">
         {data.map((slide: RecentUploadsType) => (
           <Image
             key={slide.id}
-            className=" object-cover translate-all duration-500 ease-in-out min-w-full w-full"
-            src={slide.image_url}
+            className=" object-contain translate-all duration-500 ease-in-out min-w-full w-full rounded-lg"
+            src={slide.signedUrls.collectionModal}
             alt="Slide Image"
             width="300"
             height="100"
@@ -80,10 +89,11 @@ export default function ImageSlider({ data }: { data: RecentUploadsType[] }) {
         </div>
       </div>
       <Link
-        href={`profilepage/${data[slideIndex].username}`}
+        href={`/collectionpage/${user.user_metadata.displayName}`}
         className="hover:text-green-600 ml-4 decoration-solid underline transition-all duration-200 ease-in-out"
       >
-        Von: {data[slideIndex].username}
+        {data[slideIndex]?.common_name} -{" "}
+        {new Date(data[slideIndex]?.first_spotted_at).toLocaleDateString()}
       </Link>
     </div>
   );

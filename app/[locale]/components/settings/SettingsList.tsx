@@ -2,9 +2,12 @@
 
 import changePublicProfile from "@/app/[locale]/actions/profile/changePublicProfile";
 import Switch from "@/app/[locale]/components/general/Switch";
-import { Public } from "@mui/icons-material";
+import { Language, Public } from "@mui/icons-material";
 import { useRouter } from "next/navigation";
 import DeleteUserModal from "../general/DeleteUserModal";
+import LanguageSwitcher from "../general/LanguageSwitcher";
+import { use } from "react";
+import { useTranslations } from "next-intl";
 
 export default function SettingsList({
   user,
@@ -13,6 +16,7 @@ export default function SettingsList({
   user: any;
   isPublic: boolean;
 }) {
+  const t = useTranslations("Settings");
   const router = useRouter();
   const handleChange = () => {
     changePublicProfile(user.id, isPublic);
@@ -23,9 +27,16 @@ export default function SettingsList({
       <div className="flex gap-1 items-center justify-between">
         <div className="flex">
           <Public className="text-gray-900" />
-          <p className="text-gray-900">Öffentliche Sammlung und Profil</p>
+          <p className="text-gray-900">{t("publicProfile")}</p>
         </div>
         <Switch value={isPublic} onChange={handleChange} />
+      </div>
+      <div className="flex gap-1 items-center justify-between">
+        <div className="flex">
+          <Language className="text-gray-900" />
+          <p className="text-gray-900">{t("language")}</p>
+        </div>
+        <LanguageSwitcher />
       </div>
       <DeleteUserModal user={user} />
     </div>

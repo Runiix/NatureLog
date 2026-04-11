@@ -6,6 +6,7 @@ import {
   AutoStories,
   Close,
   Collections,
+  Group,
   Home,
   Map,
   Menu,
@@ -15,8 +16,8 @@ import {
   Summarize,
 } from "@mui/icons-material";
 import { User } from "@supabase/supabase-js";
-import FollowerModal from "../social/FollowerModal";
 import LanguageSwitcher from "./LanguageSwitcher";
+import { useTranslations } from "next-intl";
 
 export default function Nav({
   user,
@@ -27,7 +28,7 @@ export default function Nav({
 }) {
   const [toggleMenu, setToggleMenu] = useState(false);
   const [showSignOut, setShowSignOut] = useState(false);
-
+  const t = useTranslations("Navigation");
   return (
     <div>
       {user ? (
@@ -45,7 +46,7 @@ export default function Nav({
                   className="text-slate-600 hover:text-slate-800 transition-all duration-200 flex items-center gap-1"
                 >
                   <Home />
-                  Home
+                  {t("home")}
                 </Link>
 
                 <Link
@@ -53,34 +54,32 @@ export default function Nav({
                   className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
                 >
                   <Collections />
-                  Sammlung
+                  {t("collection")}
                 </Link>
                 <Link
                   href="/lexiconpage"
                   className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
                 >
                   <AutoStories />
-                  Lexikon
+                  {t("lexicon")}
                 </Link>
                 <Link
                   href={"/animallistspage/" + user.user_metadata.displayName}
                   className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
                 >
                   <Summarize />
-                  Meine Listen
+                  {t("lists")}
                 </Link>
                 <Link
                   href={"/animallistspage/map"}
                   className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
                 >
                   <Map />
-                  Karte
+                  {t("map")}
                 </Link>
               </div>
             </div>
             <div className="hidden lg:flex items-center gap-6 relative">
-              <LanguageSwitcher />
-
               <div
                 className="text-slate-900 cursor-pointer hover:text-green-600 mr-8 flex"
                 onClick={() => setShowSignOut((prev) => !prev)}
@@ -102,18 +101,22 @@ export default function Nav({
                     className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
                   >
                     <Person />
-                    Profil
+                    {t("profile")}
+                  </Link>
+                  <Link
+                    href={"/socialpage/" + user.user_metadata.displayName}
+                    className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
+                  >
+                    <Group />
+                    {t("social")}
                   </Link>
                   <Link
                     href="/settingspage"
                     className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
                   >
                     <Settings />
-                    Einstellungen
+                    {t("settings")}
                   </Link>
-                  {following && (
-                    <FollowerModal user={user} following={following} />
-                  )}
                 </div>
 
                 <form
@@ -127,7 +130,7 @@ export default function Nav({
                     aria-label="Konto abmelden"
                   >
                     <PowerSettingsNew />
-                    Abmelden
+                    {t("logout")}
                   </button>
                 </form>
               </div>
@@ -158,7 +161,7 @@ export default function Nav({
               onClick={() => setToggleMenu(false)}
             >
               <Home />
-              Home
+              {t("home")}
             </Link>
             <Link
               href={"/profilepage/" + user.user_metadata.displayName}
@@ -166,16 +169,22 @@ export default function Nav({
               onClick={() => setToggleMenu(false)}
             >
               <Person />
-              Profil
+              {t("profile")}
             </Link>
-
+            <Link
+              href={"/socialpage/" + user.user_metadata.displayName}
+              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
+            >
+              <Group />
+              {t("social")}
+            </Link>
             <Link
               href={"/collectionpage/" + user.user_metadata.displayName}
               className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
               onClick={() => setToggleMenu(false)}
             >
               <Collections />
-              Sammlung
+              {t("collection")}
             </Link>
             <Link
               href="/lexiconpage"
@@ -183,7 +192,7 @@ export default function Nav({
               onClick={() => setToggleMenu(false)}
             >
               <AutoStories />
-              Lexikon
+              {t("lexicon")}
             </Link>
             <Link
               href={"/animallistspage/" + user.user_metadata.displayName}
@@ -191,7 +200,7 @@ export default function Nav({
               onClick={() => setToggleMenu(false)}
             >
               <Summarize />
-              Meine Listen
+              {t("lists")}
             </Link>
             <Link
               href={"/animallistspage/map"}
@@ -199,7 +208,7 @@ export default function Nav({
               onClick={() => setToggleMenu(false)}
             >
               <Map />
-              Karte
+              {t("map")}
             </Link>
             <Link
               href={"/settingspage"}
@@ -207,9 +216,8 @@ export default function Nav({
               onClick={() => setToggleMenu(false)}
             >
               <Settings />
-              Einstellungen
+              {t("settings")}
             </Link>
-            {following && <FollowerModal user={user} following={following} />}
             <form
               action="/auth/signout"
               method="post"
@@ -221,7 +229,7 @@ export default function Nav({
                 aria-label="Konto abmelden"
               >
                 <PowerSettingsNew />
-                Abmelden
+                {t("logout")}
               </button>
             </form>
           </div>
@@ -241,7 +249,7 @@ export default function Nav({
                 href="/lexiconpage"
                 className="text-slate-600 hover:text-slate-900 transition-all duration-200"
               >
-                Lexikon
+                {t("lexicon")}
               </Link>
             </div>
           </div>
@@ -250,7 +258,7 @@ export default function Nav({
               href="/loginpage"
               className="text-slate-100 hover:text-slate-900 bg-green-600 transition-all duration-200 p-2 px-4 rounded-lg mr-10"
             >
-              Anmelden
+              {t("login")}
             </Link>
           </div>
           <div
@@ -269,14 +277,14 @@ export default function Nav({
               className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
             >
               <AutoStories />
-              Lexikon
+              {t("lexicon")}
             </Link>
 
             <Link
               href="/loginpage"
               className="text-slate-200 hover:text-slate-900 bg-green-600 transition-all duration-200 p-2 px-4 rounded-lg"
             >
-              Anmelden
+              {t("login")}
             </Link>
           </div>
         </nav>

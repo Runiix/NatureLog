@@ -99,7 +99,7 @@ export default function AnimalLists({
     <div className=" flex flex-col items-center gap-4">
       <div className="flex items-center justify-between w-full max-w-[1200px] mx-auto md:mt-8 shadow-lg shadow-gray-400 p-4 rounded-lg">
         <h2 className="text-green-600 text-center text-2xl xl:text-5xl">
-          Meine Listen
+          Listen
         </h2>{" "}
         <div className="flex items-center gap-2">
           {currUser && (

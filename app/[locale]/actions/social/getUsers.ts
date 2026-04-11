@@ -12,9 +12,9 @@ export default async function getUsers(
 
   const search = params.get("query") || "";
   const following = params.get("following") || "";
-  if (following === "all" && search !== "") {
+  if (following === "" && search !== "") {
     const { data, error } = await supabase
-      .from("users")
+      .from("users_with_profiles")
       .select("*")
       .neq("id", userId)
       .ilike("display_name", `%${search}%`);
@@ -26,13 +26,23 @@ export default async function getUsers(
     return data;
   }
   if (following === "") {
+    let query = supabase.from("users_with_profiles").select("*").neq("id", userId).order("spotted_count", { ascending: false });
+    const { data: users, error: error2 } = await query;
+    if (error2) throw error2;
+    revalidatePath;
+    if (users.length === 0) {
+      return [];
+    }
+    return users;
+  }
+  if (following === "following") {
     const { data, error } = await supabase
       .from("follows")
       .select("following_id")
       .eq("follower_id", userId);
     if (error) throw error;
     const following = data.map((f) => f.following_id);
-    let query = supabase.from("users").select("*").in("id", following);
+    let query = supabase.from("users_with_profiles").select("*").in("id", following);
     if (search !== "") {
       query = query.ilike("display_name", `%${search}%`);
     }
@@ -51,7 +61,7 @@ export default async function getUsers(
       .eq("following_id", userId);
     if (error) throw error;
     const followers = data.map((f) => f.follower_id);
-    let query = supabase.from("users").select("*").in("id", followers);
+    let query = supabase.from("users_with_profiles").select("*").in("id", followers);
     if (search !== "") {
       query = query.ilike("display_name", `%${search}%`);
     }
