@@ -1,26 +1,39 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import { revalidatePath } from "next/cache";
+import requireAuth from "@/utils/supabase/requireAuth";
+import { isTeam, teamImageUrl } from "@/app/[locale]/utils/profileFields";
+import { fail, ok } from "@/app/[locale]/utils/result";
 
-export default async function changeTeam(team: string, user_id: string) {
-  const supabase = await createClient();
-  const team_link = `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/${team}-portrait.jpg`;
+/**
+ * Sets the caller's team. The name is checked against the fixed list: it is
+ * interpolated into the stored image URL, which used to accept any string.
+ */
+export default async function changeTeam(team: string) {
+  const { supabase, user } = await requireAuth();
+  if (!isTeam(team)) return fail<string>("Unknown team");
 
-  const { data, error: reqError } = await supabase
+  const team_link = teamImageUrl(team);
+  // Update-or-insert by hand: upsert would need a unique constraint on
+  // profiles.user_id, which the schema does not guarantee.
+  const { data: existing, error: readError } = await supabase
     .from("profiles")
-    .select("*")
-    .eq("user_id", user_id);
-  if (reqError) throw reqError;
-  if (data.length > 0) {
-    const { error: updateError } = await supabase
-      .from("profiles")
-      .update({ team_link: team_link })
-      .eq("user_id", user_id);
-    if (updateError) throw updateError;
-  } else {
-    const { error: insertError } = await supabase
-      .from("profiles")
-      .insert({ user_id: user_id, team_link: team_link });
-    if (insertError) throw insertError;
+    .select("user_id")
+    .eq("user_id", user.id)
+    .limit(1);
+  if (readError) {
+    console.error("Error reading profile", readError);
+    return fail<string>(readError.message);
   }
+  const { error } =
+    existing.length > 0
+      ? await supabase.from("profiles").update({ team_link }).eq("user_id", user.id)
+      : await supabase.from("profiles").insert({ user_id: user.id, team_link });
+  if (error) {
+    console.error("Error changing team", error);
+    return fail<string>(error.message);
+  }
+
+  revalidatePath("/[locale]/profilepage/[username]", "page");
+  return ok(team_link);
 }

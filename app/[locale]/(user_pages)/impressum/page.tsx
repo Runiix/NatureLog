@@ -1,10 +1,9 @@
-import Link from "next/link";
-import React from "react";
+import LegalPage from "@/app/[locale]/components/general/LegalPage";
 
 export default function Impressum() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10 mt-20 text-gray-900">
-      <h1 className="text-4xl font-bold mb-6">Impressum</h1>
+    <LegalPage>
+      <h1 >Impressum</h1>
 
       <div className="space-y-4 text-base">
         <p>
@@ -24,8 +23,8 @@ export default function Impressum() {
           <br />
           E-Mail:{" "}
           <a
-            href="rubenliebert@gmail.com"
-            className="text-green-600 hover:underline"
+            href="mailto:rubenliebert@gmail.com"
+           
           >
             rubenliebert@gmail.com
           </a>
@@ -42,9 +41,9 @@ export default function Impressum() {
         </p>
       </div>
 
-      <hr className="my-10 border-gray-300" />
+      <hr className="my-6 border-border-muted" />
 
-      <h2 className="text-3xl font-semibold mb-4">Datenschutzerklärung</h2>
+      <h2 className="!mt-0 !text-2xl">Datenschutzerklärung</h2>
 
       <div className="space-y-4 text-base">
         <p>
@@ -53,7 +52,7 @@ export default function Impressum() {
           gesetzlichen Bestimmungen (DSGVO, TMG).
         </p>
 
-        <h3 className="text-2xl font-semibold mt-6">1. Verantwortlicher</h3>
+        <h3 className="mt-4 text-lg font-semibold text-fg">1. Verantwortlicher</h3>
         <p>
           Verantwortlich für die Datenverarbeitung auf dieser Website ist:
           <br />
@@ -61,14 +60,14 @@ export default function Impressum() {
           <br />
           E-Mail:{" "}
           <a
-            href="rubenliebert@gmail.com"
-            className="text-green-600 hover:underline"
+            href="mailto:rubenliebert@gmail.com"
+           
           >
             rubenliebert@gmail.com
           </a>
         </p>
 
-        <h3 className="text-2xl font-semibold mt-6">2. Erhobene Daten</h3>
+        <h3 className="mt-4 text-lg font-semibold text-fg">2. Erhobene Daten</h3>
         <p>Folgende personenbezogene Daten werden verarbeitet:</p>
         <ul className="list-disc pl-5">
           <li>E-Mail-Adresse bei Registrierung</li>
@@ -76,7 +75,7 @@ export default function Impressum() {
           <li>IP-Adresse (durch Hosting- und Analysedienste)</li>
         </ul>
 
-        <h3 className="text-2xl font-semibold mt-6">
+        <h3 className="mt-4 text-lg font-semibold text-fg">
           3. Zwecke der Datenverarbeitung
         </h3>
         <p>
@@ -86,7 +85,7 @@ export default function Impressum() {
           Drittanbieter).
         </p>
 
-        <h3 className="text-2xl font-semibold mt-6">
+        <h3 className="mt-4 text-lg font-semibold text-fg">
           4. Drittanbieter und Dienste
         </h3>
         <p>Die Website nutzt folgende externe Dienste:</p>
@@ -105,13 +104,9 @@ export default function Impressum() {
             DSGVO im berechtigten Interesse an einer ansprechenden Darstellung
             unseres Online-Angebots. Weitere Informationen zum Datenschutz bei
             OpenStreetMap finden Sie unter:{" "}
-            <Link
-              className="underline text-green-600"
-              href="https://wiki.osmfoundation.org/wiki/Privacy_Policy"
-              target="_blank"
-            >
+            <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank" rel="noopener noreferrer">
               https://wiki.osmfoundation.org/wiki/Privacy_Policy
-            </Link>
+            </a>
           </li>
         </ul>
         <p>
@@ -119,14 +114,14 @@ export default function Impressum() {
           verarbeiten. Es gelten deren Datenschutzbestimmungen.
         </p>
 
-        <h3 className="text-2xl font-semibold mt-6">5. Ihre Rechte</h3>
+        <h3 className="mt-4 text-lg font-semibold text-fg">5. Ihre Rechte</h3>
         <p>
           Sie haben das Recht auf Auskunft, Berichtigung, Löschung,
           Einschränkung der Verarbeitung, Datenübertragbarkeit und Widerspruch.
           Bitte wenden Sie sich dazu an die oben angegebene E-Mail-Adresse.
         </p>
 
-        <h3 className="text-2xl font-semibold mt-6">6. Freiwillige Spenden</h3>
+        <h3 className="mt-4 text-lg font-semibold text-fg">6. Freiwillige Spenden</h3>
         <p>
           <strong>Freiwillige Unterstützung via PayPal:</strong>
           <br /> Auf unserer Website bieten wir die Möglichkeit, das Projekt
@@ -139,21 +134,17 @@ export default function Impressum() {
           vorvertragliche Maßnahme) und Art. 6 Abs. 1 lit. f DSGVO (berechtigtes
           Interesse an einer einfachen und sicheren Abwicklung). Weitere
           Informationen zur Datenverarbeitung durch PayPal finden Sie unter:{" "}
-          <Link
-            className="underline text-green-600"
-            href="https://www.paypal.com/de/webapps/mpp/ua/privacy-full"
-            target="_blank"
-          >
+          <a href="https://www.paypal.com/de/webapps/mpp/ua/privacy-full" target="_blank" rel="noopener noreferrer">
             https://www.paypal.com/de/webapps/mpp/ua/privacy-full
-          </Link>
+          </a>
         </p>
 
-        <h3 className="text-2xl font-semibold mt-6">7. Änderungen</h3>
+        <h3 className="mt-4 text-lg font-semibold text-fg">7. Änderungen</h3>
         <p>
           Ich behalte mir vor, diese Datenschutzerklärung anzupassen, um sie an
           aktuelle rechtliche Anforderungen anzupassen.
         </p>
       </div>
-    </div>
+    </LegalPage>
   );
 }

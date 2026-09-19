@@ -1,65 +1,66 @@
-import Animal from "@/app/[locale]/utils/AnimalType";
-import Image, { StaticImageData } from "next/image";
-import Link from "next/link";
+import { getTranslations } from "next-intl/server";
+import Image from "next/image";
+import black from "@/app/[locale]/assets/images/black.webp";
+import { Link } from "@/i18n/navigation";
+import { cn } from "@/app/[locale]/utils/cn";
+import type { Tables } from "@/utils/supabase/types";
 
-export default function AnimalOfTheDay({
+/** Conservation status → text colour, readable on both themes. */
+const STATUS_TONE: Record<string, string> = {
+  "Nicht gefährdet": "text-accent-text",
+  Vorwarnliste: "text-amber-600 dark:text-amber-400",
+  Gefährdet: "text-orange-600 dark:text-orange-400",
+  "Stark gefährdet": "text-orange-700 dark:text-orange-300",
+  "Vom Aussterben bedroht": "text-danger",
+  Ausgestorben: "text-fg-subtle",
+  "Extrem selten": "text-fg-muted",
+};
+
+/** A featured species: large photo with the name overlaid, linking to its page. */
+export default async function AnimalOfTheDay({
   data,
-  titel,
-  imageUrl,
+  title,
+  size = "md",
 }: {
-  data: Animal;
-  titel: string;
-  imageUrl: string | StaticImageData;
+  data: Tables<"animals">;
+  title: string;
+  size?: "md" | "lg";
 }) {
-  const link = `/animalpage/${data.common_name}`;
+  const tLex = await getTranslations("Lexicon");
+  const status = data.endangerment_status;
 
   return (
-    <Link href={link} className="h-full w-full flex flex-col gap-4 ">
-      <div>
-        <h2 className="2xl:text-2xl px-4 py-2 ">Tier des {titel}</h2>
-        <div className="mx-2">
-          <Image
-            src={imageUrl}
-            alt="Placeholder"
-            width={300}
-            height={200}
-            priority
-            className="object-cover aspect-video rounded-lg  group-hover:opacity-90 w-full"
-          />
-        </div>
-      </div>
-      <div className="flex flex-col mx-4 mb-2">
-        <div className=" gap-2 sm:text-xl items-center">
-          <h3 className="text-2xl">{data.common_name}</h3>
-          <h3 className="text-slate-400 truncate text-lg">
-            {" "}
-            {data.scientific_name}
-          </h3>
-        </div>
-        <div>
-          <div className=" flex gap-2">
-            <h3
-              className={
-                data.endangerment_status === "Nicht gefährdet"
-                  ? "text-green-600"
-                  : data.endangerment_status === "Extrem selten"
-                    ? "text-gray-400"
-                    : data.endangerment_status === "Vorwarnliste"
-                      ? "text-yellow-500"
-                      : data.endangerment_status === "Gefährdet"
-                        ? "text-orange-500"
-                        : data.endangerment_status === "Stark gefährdet"
-                          ? "text-orange-700"
-                          : data.endangerment_status ===
-                              "Vom Aussterben bedroht"
-                            ? "text-red-600"
-                            : "text-white"
-              }
-            >
-              {data.endangerment_status}{" "}
-            </h3>
-          </div>
-        </div>
+    <Link
+      href={`/animalpage/${data.common_name}`}
+      className="group relative block h-full min-h-56 overflow-hidden rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas"
+    >
+      <Image
+        src={data.lexicon_link ?? black}
+        alt=""
+        fill
+        priority={size === "lg"}
+        sizes={size === "lg" ? "(min-width: 1024px) 50vw, 100vw" : "(min-width: 1024px) 25vw, 100vw"}
+        className="object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+      />
+      <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
+      <div className="absolute inset-x-0 bottom-0 flex flex-col gap-1 p-4 text-white sm:p-5">
+        <span className="self-start rounded-full bg-white/15 px-2.5 py-0.5 text-xs font-medium backdrop-blur">
+          {title}
+        </span>
+        <h2 className={cn("font-semibold leading-tight", size === "lg" ? "text-2xl sm:text-3xl" : "text-xl")}>
+          {data.common_name}
+        </h2>
+        <p className="truncate text-sm italic text-white/80">{data.scientific_name}</p>
+        {status && (
+          <span
+            className={cn(
+              "mt-1 self-start rounded-full bg-white/90 px-2 py-0.5 text-xs font-medium",
+              STATUS_TONE[status] ?? "text-fg",
+            )}
+          >
+            {tLex.has(status) ? tLex(status) : status}
+          </span>
+        )}
       </div>
     </Link>
   );

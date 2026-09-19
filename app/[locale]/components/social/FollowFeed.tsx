@@ -1,95 +1,88 @@
 "use client";
-import React, { useEffect, useState } from "react";
-import FollowFeedItem from "./FollowFeedItem";
+
+import { DynamicFeed } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
+import { useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
-import { CircleLoader } from "react-spinners";
-import getFeed from "@/app/[locale]/actions/social/getFeed";
+import getFeed, { type FeedEntry } from "@/app/[locale]/actions/social/getFeed";
+import { ButtonLink } from "../ui/Button";
+import { EmptyState } from "../ui/EmptyState";
+import { Skeleton } from "../ui/Skeleton";
+import { Spinner } from "../ui/Spinner";
+import FollowFeedItem from "./FollowFeedItem";
 
-type Props = {
-  id: number;
-  user_id: string;
-  username: string;
-  animal_id: string;
-  first_spotted_at: string;
-  image: boolean;
-  image_updated_at: string;
-  common_name: string;
-};
-export default function FollowFeed({ following }: { following: number[] }) {
+const PAGE_SIZE = 10;
+
+/** Sightings from people the user follows, newest first, loading on scroll. */
+export default function FollowFeed({ socialHref }: { socialHref: string }) {
+  const t = useTranslations("Social");
+  const [feed, setFeed] = useState<FeedEntry[] | null>(null);
   const [offset, setOffset] = useState(0);
-  const [loadingMoreFeed, setLoadingMoreFeed] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [feed, setFeed] = useState<Props[]>([]);
-
-  const { ref, inView } = useInView();
+  const [hasMore, setHasMore] = useState(false);
+  const loadingMore = useRef(false);
+  const { ref: sentinel, inView } = useInView({ rootMargin: "300px" });
 
   useEffect(() => {
-    const loadFeed = async (offset: number) => {
-      try {
-        let pageSize = 0;
-        if (window.innerWidth > 1500) {
-          pageSize = 12;
-        } else {
-          pageSize = 8;
-        }
-        const data = await getFeed(following, offset, pageSize);
-        setLoading(false);
-
-        if (data.length < pageSize) {
-          setLoadingMoreFeed(false);
-        } else {
-          setLoadingMoreFeed(true);
-        }
+    getFeed(0, PAGE_SIZE)
+      .then((data) => {
         setFeed(data);
         setOffset(1);
-      } catch (error) {
-        console.error("Error loading Animals:", error);
-      }
-    };
-    loadFeed(0);
-  }, [following]);
+        setHasMore(data.length === PAGE_SIZE);
+      })
+      .catch((error) => console.error("Error loading feed:", error));
+  }, []);
 
   useEffect(() => {
-    const loadMoreFeed = async () => {
-      try {
-        let pageSize = 0;
-        if (window.innerWidth > 1500) {
-          pageSize = 12;
-        } else {
-          pageSize = 8;
-        }
-        const data = await getFeed(following, offset, pageSize);
-        if (data.length < pageSize) {
-          setLoadingMoreFeed(false);
-        }
-        setFeed((prevFeed: Props[]) => [...prevFeed, ...data]);
+    if (!inView || !hasMore || offset === 0 || loadingMore.current) return;
+    loadingMore.current = true;
+    getFeed(offset, PAGE_SIZE)
+      .then((data) => {
+        setFeed((prev) => [...(prev ?? []), ...data]);
         setOffset((prev) => prev + 1);
-      } catch (error) {
-        console.error("Error loading more animals:", error);
-      }
-    };
-    if (inView) {
-      loadMoreFeed();
-    }
-  }, [inView]);
-  return (
-    <div className="flex flex-col gap-4 rounded-lg shadow-black shadow-lg h-full bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 border hover:border-green-600 border-slate-200 group">
-      <h2 className="text-2xl px-4 pb-1 pt-4">Follower Feed</h2>
-      <div className=" px-4 space-y-4 overflow-auto border-t rounded-t-lg border-gray-200 pt-2 group-hover:border-green-600 min-h-20">
-        {feed && feed.length > 0 ? (
-          feed.map((post: Props, index: number) => (
-            <FollowFeedItem post={post} key={index} />
-          ))
-        ) : (
-          <p>Noch keine Posts</p>
-        )}
+        setHasMore(data.length === PAGE_SIZE);
+      })
+      .catch((error) => console.error("Error loading more feed:", error))
+      .finally(() => {
+        loadingMore.current = false;
+      });
+  }, [inView, hasMore, offset]);
 
-        {loadingMoreFeed && (
-          <div className="mb-4" ref={ref}>
-            <CircleLoader color="#16A34A" />{" "}
-          </div>
-        )}
+  if (feed === null) {
+    return (
+      <div className="flex flex-col gap-2" aria-hidden>
+        {Array.from({ length: 4 }, (_, i) => (
+          <Skeleton key={i} className="h-24" />
+        ))}
       </div>
+    );
+  }
+
+  if (feed.length === 0) {
+    return (
+      <EmptyState
+        icon={<DynamicFeed />}
+        title={t("feedEmpty")}
+        description={t("feedEmptyText")}
+        action={
+          <ButtonLink href={socialHref} variant="secondary" size="sm">
+            {t("feedFindPeople")}
+          </ButtonLink>
+        }
+        className="border-none px-2"
+      />
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-2">
+      {feed.map((post) => (
+        <FollowFeedItem key={post.id} post={post} />
+      ))}
+      {hasMore && (
+        <div ref={sentinel} className="flex justify-center py-4 text-accent" aria-live="polite">
+          <Spinner size="sm" label={t("feedLoadingMore")} />
+        </div>
+      )}
     </div>
   );
 }

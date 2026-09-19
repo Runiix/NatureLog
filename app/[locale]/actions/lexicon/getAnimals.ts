@@ -1,91 +1,102 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
 import { createClient } from "@/utils/supabase/server";
+import { getUser } from "@/app/[locale]/utils/data";
+import { escapeLike } from "@/app/[locale]/utils/escapeLike";
+import {
+  ALL_ORDERS,
+  COLOR_VALUES,
+  ENDANGERMENT,
+  GENERA,
+  SIZE_MAX,
+  SIZE_MIN,
+  SORT_COLUMNS,
+  pickAllowed,
+  type SortColumn,
+} from "@/app/[locale]/utils/lexiconFilters";
 
+const MAX_PAGE_SIZE = 50;
+
+const toSize = (raw: string | null) => {
+  if (raw === null || raw === "") return null;
+  const value = Number(raw);
+  return Number.isFinite(value) && value >= SIZE_MIN && value <= SIZE_MAX ? value : null;
+};
+
+/**
+ * One page of the lexicon for the given URL filters.
+ *
+ * Every filter value is checked against lexiconFilters before it reaches the
+ * query. The seen/unseen filters use the caller's spotted ids read here on the
+ * server — they used to come from the client, and an empty list produced a
+ * malformed `not in ()` filter.
+ */
 export default async function getAnimals(
   searchParams: Record<string, string>,
   offset: number,
   pageSize: number,
-  spottedList: number[]
 ) {
-  const params = new URLSearchParams(searchParams as Record<string, string>);
+  const params = new URLSearchParams(searchParams);
   const supabase = await createClient();
-  const color = params.get("color")?.split(",") || [];
-  const sizeFrom = params.get("sizeFrom") || null;
-  const sizeTo = params.get("sizeTo") || null;
-  const genus = params.get("genus")?.split(",") || [];
-  const order = params.get("order")?.split(",") || [];
-  const search = params.get("query") || "";
-  const sortBy = params.get("sortBy") || null;
-  const endangerment = params.get("endangerment")?.split(",") || [];
-  const sortOrder = params.get("sortOrder") || null;
-  const onlyUnseen = params.get("onlyUnseen") || false
-  const onlySeen = params.get("onlySeen") || false
-  const excludeRares= params.get("excludeRares") ||false
-  let bool = false;
-  if (sortOrder === "ascending" || sortOrder === null) {
-    bool = true;
-  }
-  const from = offset * pageSize;
-  const to = (offset + 1) * pageSize - 1;
+
+  const genus = pickAllowed(params.get("genus"), GENERA);
+  const order = pickAllowed(params.get("order"), ALL_ORDERS);
+  const endangerment = pickAllowed(params.get("endangerment"), ENDANGERMENT);
+  const colors = pickAllowed(params.get("color"), COLOR_VALUES);
+  const sizeFrom = toSize(params.get("sizeFrom"));
+  const sizeTo = toSize(params.get("sizeTo"));
+  const search = (params.get("query") ?? "").trim().slice(0, 100);
+  const sortParam = params.get("sortBy");
+  const sortBy: SortColumn = (SORT_COLUMNS as readonly string[]).includes(sortParam ?? "")
+    ? (sortParam as SortColumn)
+    : "common_name";
+  const ascending = params.get("sortOrder") !== "descending";
+  const onlySeen = params.get("onlySeen") === "true";
+  const onlyUnseen = params.get("onlyUnseen") === "true";
+  const excludeRares = params.get("excludeRares") === "true";
+
+  const size = Math.min(Math.max(1, Math.trunc(pageSize)), MAX_PAGE_SIZE);
+  const from = Math.max(0, Math.trunc(offset)) * size;
+  const to = from + size - 1;
 
   let query = supabase.from("animals").select("*");
 
-  if (genus.length > 0) {
-    query = query.in("category", genus);
+  if (genus.length > 0) query = query.in("category", genus);
+  if (order.length > 0) query = query.in("taxonomic_order", order);
+  if (endangerment.length > 0) query = query.in("endangerment_status", endangerment);
+  if (colors.length > 0) {
+    // Safe to interpolate: every value is from the fixed COLORS list.
+    query = query.or(colors.map((color) => `colors.ilike.%${color}%`).join(","));
   }
-  if (order.length > 0) {
-    query = query.in("taxonomic_order", order);
-  }
-  if (endangerment.length > 0) {
-    query = query.in("endangerment_status", endangerment);
-  }
-  if (color.length > 0) {
-    const colorConditions = color
-      .map((color) => `colors.ilike.%${color}%`)
-      .join(",");
+  if (excludeRares) query = query.neq("very_rare", true);
+  if (sizeFrom !== null) query = query.gt("size_from", sizeFrom);
+  if (sizeTo !== null) query = query.lt("size_to", sizeTo);
+  if (search) query = query.ilike("common_name", `%${escapeLike(search)}%`);
 
-    query = query.or(colorConditions);
-  }
-  if(onlyUnseen){
-    query= query.not("id", "in", "(" +spottedList +")")
-  }
-  if(onlySeen){
-    query= query.in("id", spottedList)
-  }
-  if(excludeRares){
-    query= query.neq("very_rare", true)
-  }
-  if (sizeFrom) {
-    query = query.gt("size_from", sizeFrom);
-  }
-  if (sizeTo) {
-    query = query.lt("size_to", sizeTo);
-  }
-  if (sortBy) {
-    if (sortBy === "endangerment_status") {
-      query = query
-        .order("endangerment_order", { ascending: bool })
-        .order("id", { ascending: bool });
-    } else {
-      query = query
-        .order(sortBy, { ascending: bool })
-        .order("id", { ascending: bool });
+  if (onlySeen || onlyUnseen) {
+    const user = await getUser(supabase);
+    if (user) {
+      const { data } = await supabase.from("spotted").select("animal_id").eq("user_id", user.id);
+      const ids = (data ?? [])
+        .map((row) => row.animal_id)
+        .filter((id): id is number => id !== null);
+      if (onlySeen) {
+        if (ids.length === 0) return [];
+        query = query.in("id", ids);
+      } else if (ids.length > 0) {
+        query = query.not("id", "in", `(${ids.join(",")})`);
+      }
     }
-  } else {
-    query = query.order("common_name", { ascending: bool });
   }
-  if (search !== "") {
-    query = query.ilike("common_name", `%${search}%`);
-  }
-  query = query.range(from, to);
 
-  const { data, error } = await query;
+  const sortColumn = sortBy === "endangerment_status" ? "endangerment_order" : sortBy;
+  query = query.order(sortColumn, { ascending });
+  if (sortColumn !== "common_name") query = query.order("id", { ascending });
+
+  const { data, error } = await query.range(from, to);
   if (error) {
-    console.error("Failed to fetch data", error);
+    console.error("Failed to fetch animals", error);
     return [];
   }
-  revalidatePath;
   return data;
 }

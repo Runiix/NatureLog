@@ -9,7 +9,9 @@
     "login": "Login",
     "home": "Home",
     "profile": "Profile",
-    "collection": "Collection"
+    "collection": "Collection",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
   },
   "Lexicon": {
     "true": "Yes",
@@ -43,6 +45,596 @@
     "Vorwarnliste": "Near threatened",
     "Ausgestorben": "Extinct",
     "sizeFrom": "Size from",
-    "sizeTo": "Size to"
+    "sizeTo": "Size to",
+    "title": "Lexicon",
+    "subtitle": "Native wildlife – filter, sort, discover.",
+    "filters": "Filters",
+    "openFilters": "Open filters",
+    "activeFilters": "{count, plural, =0 {No filters} one {# filter active} other {# filters active}}",
+    "resetFilters": "Reset all filters",
+    "removeFilter": "Remove filter “{label}”",
+    "showResults": "Show results",
+    "sections": {
+      "mine": "My sightings",
+      "genus": "Animal groups",
+      "order": "Orders",
+      "color": "Colours",
+      "endangerment": "Conservation status",
+      "size": "Size"
+    },
+    "rareLabel": "Hide rare species",
+    "rareHint": "Vagrants and exceptional sightings",
+    "onlyUnseenLabel": "Only unseen",
+    "onlySeenLabel": "Only seen",
+    "sizeValue": "{from} – {to} cm",
+    "sort": {
+      "label": "Sort by",
+      "common_name": "Name",
+      "size_to": "Size",
+      "endangerment_status": "Conservation status",
+      "ascending": "Ascending",
+      "descending": "Descending",
+      "toggleOrder": "Reverse order"
+    },
+    "rare": "Rare",
+    "rareTooltip": "Exceptional sighting or vagrant in Germany",
+    "cardSize": "{from} – {to} cm",
+    "emptyTitle": "No animals found",
+    "emptyText": "Adjust your search or filters.",
+    "loadingMore": "Loading more animals",
+    "imageAlt": "{name}"
+  },
+  "Settings": {
+    "title": "Settings",
+    "publicProfile": "Public profile",
+    "publicProfileHint": "When off, only people you follow who also follow you can see your profile.",
+    "language": "Language",
+    "theme": "Appearance",
+    "themeHint": "Light, dark, or match your device.",
+    "themes": {
+      "light": "Light",
+      "dark": "Dark",
+      "system": "System"
+    },
+    "account": "Account",
+    "subtitle": "Visibility, appearance and account",
+    "privacy": "Privacy",
+    "display": "Display",
+    "languageHint": "Language of the interface.",
+    "languages": {
+      "de": "Deutsch",
+      "en": "English"
+    },
+    "deleteAccount": "Delete account",
+    "deleteAccountHint": "Permanently deletes your account, photos and lists.",
+    "deleteTitle": "Delete your account permanently?",
+    "deleteText": "All photos, sightings and lists will be deleted. This cannot be undone.",
+    "deleteConfirmLabel": "Type your username “{name}” to confirm",
+    "deleteSubmit": "Delete account",
+    "cancel": "Cancel",
+    "deleted": "Your account has been deleted.",
+    "deleteError": "The account could not be deleted. Please try again or contact support.",
+    "saved": "Saved",
+    "error": "That didn't work. Please try again."
+  },
+  "Landing": {
+    "eyebrow": "Your nature journal",
+    "title": "Welcome to <brand>NatureLog</brand>",
+    "tagline": "Record your nature sightings, collect your best photos and share what you have spotted with others.",
+    "ctaPrimary": "Sign in",
+    "ctaSecondary": "Explore the lexicon",
+    "scrollHint": "Learn more",
+    "heroAlt": "Sunlit forest",
+    "featuresTitle": "Everything for your wildlife sightings",
+    "featuresSubtitle": "From your first sighting to your own species lists – in one place.",
+    "features": {
+      "lexicon": {
+        "title": "The lexicon",
+        "text": "Discover native wildlife – filters and search make it easy.",
+        "alt": "Lexicon view with animal cards and a filter bar"
+      },
+      "collection": {
+        "title": "Your collection",
+        "text": "Track your sightings and upload your favourite photo for every species.",
+        "alt": "Collection view with the user's own animal photos"
+      },
+      "profile": {
+        "title": "Your profile",
+        "text": "Upload a profile picture, pick a team and show off your favourite photos.",
+        "alt": "Profile page with avatar, statistics and photo grid"
+      },
+      "community": {
+        "title": "The community",
+        "text": "See which species others have spotted and explore their profiles.",
+        "alt": "Community view with a list of users"
+      },
+      "lists": {
+        "title": "Your own lists",
+        "text": "Build species lists, pin them to the interactive map, or keep private lists for the species you are after.",
+        "alt": "Map view with markers for species lists"
+      },
+      "app": {
+        "title": "Works as an app",
+        "text": "Use NatureLog on your phone or install it straight from the browser.",
+        "alt": "NatureLog on a smartphone"
+      }
+    },
+    "closingTitle": "Ready for your next sighting?",
+    "closingText": "Sign up for free and get started."
+  },
+  "NotFound": {
+    "title": "Page not found",
+    "text": "This page doesn't exist (any more). One of these links might help.",
+    "home": "Go home",
+    "lexicon": "Open the lexicon"
+  },
+  "ErrorBoundary": {
+    "title": "Something went wrong",
+    "text": "An error occurred while loading this page. Please try again.",
+    "retry": "Try again",
+    "home": "Go home"
+  },
+  "Lists": {
+    "myLists": "My lists",
+    "usersLists": "{name}'s lists",
+    "subtitleOwner": "Keep target species and sightings in your own lists.",
+    "subtitleVisitor": "Public species lists",
+    "backToProfile": "Back to profile",
+    "backToLists": "All lists",
+    "create": "New list",
+    "createTitle": "Create a new list",
+    "editTitle": "Edit list",
+    "fields": {
+      "title": "Title",
+      "titlePlaceholder": "e.g. Garden birds 2026",
+      "description": "Description",
+      "descriptionPlaceholder": "What is this list about?",
+      "public": "Public list",
+      "publicHint": "Public lists appear on your profile and – with a location – on the map.",
+      "location": "Add a location",
+      "locationHint": "Click the map to set the location."
+    },
+    "save": "Save",
+    "createSubmit": "Create list",
+    "cancel": "Cancel",
+    "public": "Public",
+    "private": "Private",
+    "entries": "{count, plural, =0 {No entries} one {# entry} other {# entries}}",
+    "upvote": "Upvote list",
+    "removeUpvote": "Remove upvote",
+    "edit": "Edit list",
+    "delete": "Delete list",
+    "deleteTitle": "Delete this list?",
+    "deleteText": "“{title}” and all of its entries will be deleted permanently.",
+    "deleteConfirm": "Delete permanently",
+    "addAnimal": "Add animals",
+    "addAnimalTitle": "Add animals",
+    "searchPlaceholder": "Search animals…",
+    "searchLabel": "Search animals",
+    "noResults": "No animals found.",
+    "addToList": "Add {name} to the list",
+    "removeFromList": "Remove {name} from the list",
+    "untitled": "Untitled list",
+    "emptyOwnerTitle": "You don't have any lists yet",
+    "emptyOwnerText": "Create a list to keep target species or sightings in one place.",
+    "emptyVisitorTitle": "No public lists yet",
+    "emptyVisitorText": "{name} hasn't published any lists yet.",
+    "emptyListTitle": "This list is still empty",
+    "emptyListOwnerText": "Add the first animals.",
+    "emptyListVisitorText": "No animals have been added here yet.",
+    "loadingMore": "Loading more animals",
+    "toast": {
+      "created": "List created",
+      "saved": "Changes saved",
+      "deleted": "List deleted",
+      "error": "That didn't work. Please try again."
+    }
+  },
+  "Profile": {
+    "stats": {
+      "species": "Species",
+      "lists": "Lists",
+      "team": "Team",
+      "favorite": "Favourite animal"
+    },
+    "noFavorite": "None yet",
+    "noTeam": "No team",
+    "chooseTeam": "Choose team",
+    "chooseTeamTitle": "Pick your team",
+    "teams": {
+      "wolf": "Wolf",
+      "kingfisher": "Kingfisher",
+      "adder": "Adder",
+      "frog": "Frog",
+      "dragonfly": "Dragonfly"
+    },
+    "editFavorite": "Change favourite animal",
+    "favoriteLabel": "Favourite animal",
+    "favoritePlaceholder": "e.g. Kingfisher",
+    "editInstagram": "Edit Instagram link",
+    "addInstagram": "Add Instagram",
+    "instagramLabel": "Instagram profile",
+    "instagramHint": "Your username or an instagram.com link. Leave empty to remove it.",
+    "instagramOf": "{name} on Instagram",
+    "save": "Save",
+    "cancel": "Cancel",
+    "avatarAlt": "{name}'s profile picture",
+    "changeAvatar": "Change profile picture",
+    "photos": "Favourite photos",
+    "photosCount": "{count} of {max}",
+    "addPhoto": "Add photo",
+    "replacePhoto": "Replace photo",
+    "deletePhoto": "Delete photo",
+    "openPhoto": "Enlarge photo {number}",
+    "photoAlt": "{name}'s favourite photo {number}",
+    "noPhotosOwnerTitle": "Show off your best shots",
+    "noPhotosOwnerText": "Upload up to {max} favourite photos.",
+    "noPhotosVisitorTitle": "No favourite photos yet",
+    "publicLists": "Public lists",
+    "allLists": "All lists",
+    "noListsOwnerTitle": "No public lists yet",
+    "noListsOwnerText": "Public lists show up here on your profile.",
+    "noListsVisitorTitle": "No public lists yet",
+    "createList": "Create a list",
+    "upvotes": "{count, plural, one {# upvote} other {# upvotes}}",
+    "report": "Report",
+    "reportPhotoTitle": "Report photo",
+    "reportReason": "Reason",
+    "reportPlaceholder": "What's wrong with this photo?",
+    "reportSubmit": "Report photo",
+    "privateTitle": "This profile is private",
+    "privateText": "{name} only shares their profile with people they also follow.",
+    "privateAction": "Explore the community",
+    "photoLightbox": "Photo",
+    "toast": {
+      "saved": "Saved",
+      "uploaded": "Photo uploaded",
+      "replaced": "Photo replaced",
+      "deleted": "Photo deleted",
+      "gridFull": "You already have {max} favourite photos.",
+      "reported": "Thanks – the photo has been reported.",
+      "error": "That didn't work. Please try again.",
+      "invalidInstagram": "Please enter an Instagram username or an instagram.com link."
+    },
+    "achievements": {
+      "title": "Achievements",
+      "earnedCount": "{earned} of {total} tiers earned",
+      "earned": "earned",
+      "locked": "Locked",
+      "tierProgress": "{earned} of {total} tiers",
+      "nextTier": "{tier}: {count} of {target}",
+      "tiers": {
+        "bronze": "Bronze",
+        "silver": "Silver",
+        "gold": "Gold",
+        "platinum": "Platinum",
+        "diamond": "Diamond"
+      },
+      "sightings": {
+        "name": "Explorer",
+        "text": "Spot {count, plural, one {# species} other {# species}}.",
+        "maxed": "{count} species spotted – top tier reached."
+      },
+      "photos": {
+        "name": "Photographer",
+        "text": "Add photos to {count, plural, one {# sighting} other {# sightings}}.",
+        "maxed": "{count} sightings with photos – top tier reached."
+      },
+      "rare": {
+        "name": "Rare finds",
+        "text": "Spot {count, plural, one {a very rare species} other {# very rare species}}.",
+        "maxed": "{count} very rare species – top tier reached."
+      },
+      "endangered": {
+        "name": "Guardian",
+        "text": "Spot {count, plural, one {a highly or critically endangered species} other {# highly or critically endangered species}}.",
+        "maxed": "{count} endangered species – top tier reached."
+      },
+      "allGroups": {
+        "name": "All-rounder",
+        "text": "Spot a mammal, bird, reptile, amphibian, insect and arachnid."
+      },
+      "listMaker": {
+        "name": "Curator",
+        "text": "Publish a public list."
+      }
+    },
+    "activity": {
+      "title": "Recent activity",
+      "sighting": "Spotted <animal>{name}</animal>",
+      "photo": "Added a photo of <animal>{name}</animal>",
+      "emptyOwner": "Your sightings will show up here.",
+      "emptyVisitor": "{name} has no dated sightings yet."
+    }
+  },
+  "General": {
+    "searchPlaceholder": "Search…",
+    "searchAnimal": "Search animals…",
+    "searchNatureLoggers": "Search NatureLoggers…",
+    "searchLabel": "Search",
+    "back": "Back",
+    "clearSearch": "Clear search",
+    "close": "Close",
+    "skipToContent": "Skip to content"
+  },
+  "ErrorPage": {
+    "somethingWentWrong": "Sorry, something went wrong :/",
+    "backToLogin": "Back to sign in",
+    "title": "Something went wrong"
+  },
+  "Auth": {
+    "email": "Email",
+    "password": "Password",
+    "confirmPassword": "Confirm password",
+    "login": "Sign in",
+    "backToLogin": "Back to sign in?",
+    "resetPassword": "Reset password",
+    "loginTitle": "Welcome back",
+    "loginSubtitle": "Sign in to keep track of your sightings.",
+    "signupTitle": "Create an account",
+    "signupSubtitle": "Free – takes less than a minute.",
+    "resetTitle": "Forgot your password?",
+    "resetSubtitle": "We'll send you a link to set a new password.",
+    "newPasswordTitle": "Set a new password",
+    "username": "Username",
+    "usernameHint": "3–30 characters: letters, numbers, dot, underscore or hyphen.",
+    "passwordHint": "At least 10 characters with upper and lower case, a number and a symbol.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "acceptTerms": "I accept the <terms>terms of use</terms> and the <privacy>privacy notice</privacy>.",
+    "submitLogin": "Sign in",
+    "submitSignup": "Sign up",
+    "submitReset": "Send link",
+    "submitNewPassword": "Save password",
+    "noAccount": "No account yet?",
+    "toSignup": "Sign up",
+    "haveAccount": "Already have an account?",
+    "toLogin": "Sign in",
+    "forgotPassword": "Forgot password?",
+    "errors": {
+      "invalidCredentials": "Email or password is incorrect.",
+      "banned": "This account is suspended.",
+      "emailNotConfirmed": "Please confirm your email address first.",
+      "generic": "That didn't work. Please try again.",
+      "usernameTaken": "This username is already taken.",
+      "usernameInvalid": "The username doesn't meet the requirements.",
+      "passwordWeak": "The password doesn't meet the requirements.",
+      "passwordMismatch": "The passwords don't match.",
+      "termsRequired": "Please accept the terms of use.",
+      "resetLinkInvalid": "The link has expired or is invalid. Request a new one."
+    },
+    "signupSuccess": "Almost there! We've sent you an email to confirm your account.",
+    "resetSent": "If an account exists for this address, the email is on its way.",
+    "passwordChanged": "Password changed. You can sign in now."
+  },
+  "Social": {
+    "followers": "Followers",
+    "following": "Following",
+    "social": "Community",
+    "topUsers": "Top users",
+    "noFollowers": "This user doesn't have any followers yet.",
+    "noFollowing": "This user isn't following anyone yet.",
+    "searchNatureLoggers": "Search NatureLoggers…",
+    "subtitle": "Discover other NatureLoggers and follow their sightings.",
+    "tabsLabel": "Show users",
+    "follow": "Follow {name}",
+    "unfollow": "Unfollow {name}",
+    "followShort": "Follow",
+    "followingShort": "Following",
+    "species": "{count, plural, one {# species} other {# species}}",
+    "avatarAlt": "{name}'s profile picture",
+    "emptySearch": "No one found",
+    "emptySearchText": "No NatureLogger matches your search.",
+    "emptyTop": "No other NatureLoggers yet",
+    "error": "That didn't work. Please try again.",
+    "feedTitle": "What's new",
+    "feedEmpty": "Nothing new yet",
+    "feedEmptyText": "Follow other NatureLoggers to see their sightings here.",
+    "feedFindPeople": "Find people",
+    "feedNewPhoto": "added a photo",
+    "feedNewSpecies": "spotted a new species",
+    "feedPhotoAlt": "{animal}, photographed by {name}",
+    "feedLoadingMore": "Loading more posts"
+  },
+  "Favorite": {
+    "add": "Add {name} to your collection",
+    "addGeneric": "Add to collection",
+    "remove": "Remove {name} from your collection",
+    "removeGeneric": "Remove from collection",
+    "removeTitle": "Remove from your collection?",
+    "removeText": "The sighting, its date and your photo of this species will be removed from your collection.",
+    "removeConfirm": "Remove",
+    "cancel": "Cancel",
+    "added": "Added to your collection",
+    "removed": "Removed from your collection",
+    "error": "That didn't work. Please try again."
+  },
+  "ListPicker": {
+    "open": "Add to a list",
+    "title": "Add to lists",
+    "empty": "You don't have any lists yet.",
+    "createList": "Create a list",
+    "inList": "In “{title}” – remove",
+    "notInList": "Add to “{title}”",
+    "error": "That didn't work. Please try again."
+  },
+  "Collection": {
+    "title": "Collection",
+    "titleOf": "{name}'s collection",
+    "subtitleOwner": "Every species you have spotted so far.",
+    "subtitleVisitor": "Species {name} has spotted.",
+    "backToProfile": "Back to profile",
+    "private": "This collection is private",
+    "privateText": "{name} only shares their collection with people they also follow.",
+    "all": "All",
+    "progress": "{spotted} of {total}",
+    "withoutPhoto": "Without photo",
+    "withoutPhotoHint": "Only show species without a photo",
+    "searchPlaceholder": "Search species…",
+    "filterLabel": "Filter by group",
+    "spottedOn": "Spotted on {date}",
+    "addSighting": "Add a photo or date",
+    "editSighting": "Edit sighting",
+    "openPhoto": "Enlarge photo of {name}",
+    "photoAlt": "Photo of {name}",
+    "noPhoto": "No photo yet",
+    "emptyOwnerTitle": "Your collection is still empty",
+    "emptyOwnerText": "In the lexicon, mark animals you have seen with the plus button.",
+    "emptyVisitorTitle": "No sightings yet",
+    "emptyFilteredTitle": "Nothing found",
+    "emptyFilteredText": "No species matches your search and filters.",
+    "toLexicon": "Open the lexicon",
+    "loadingMore": "Loading more species",
+    "edit": {
+      "title": "Edit {name}",
+      "currentPhoto": "Current photo",
+      "newPhoto": "New photo",
+      "choosePhoto": "Choose a photo",
+      "changePhoto": "Choose a different photo",
+      "photoHint": "JPEG, PNG or WebP. Resized before uploading.",
+      "date": "First spotted on",
+      "save": "Save",
+      "cancel": "Cancel",
+      "saved": "Sighting saved",
+      "nothingToSave": "Choose a photo or a date.",
+      "error": "That didn't work. Please try again."
+    }
+  },
+  "Home": {
+    "greeting": "Hello {name}",
+    "subtitle": "{count, plural, =0 {Your collection is waiting for its first sighting.} one {You have spotted # species so far.} other {You have spotted # species so far.}}",
+    "animalOfTheDay": "Animal of the day",
+    "animalOfTheMonth": "Animal of the month",
+    "challenge": {
+      "title": "Today's challenge",
+      "text": "Photograph {target} today.",
+      "targets": {
+        "songbird": "a songbird",
+        "raptor": "a bird of prey",
+        "waterbird": "a waterbird",
+        "mammal": "a mammal",
+        "reptile": "a reptile",
+        "amphibian": "an amphibian",
+        "insect": "an insect",
+        "spider": "a spider"
+      }
+    },
+    "recent": {
+      "title": "Recently spotted",
+      "empty": "No dated sightings yet.",
+      "toCollection": "Open collection",
+      "previous": "Previous photo",
+      "next": "Next photo",
+      "goTo": "Show photo {number}",
+      "photoAlt": "Your photo: {name}",
+      "spottedOn": "{name} · {date}",
+      "stats": {
+        "thisMonth": "New this month",
+        "thisYear": "New this year",
+        "total": "Total species",
+        "withPhoto": "With photo"
+      }
+    },
+    "quiz": {
+      "title": "Quiz: which animal is this?",
+      "easy": "Easy",
+      "hard": "Hard",
+      "modeLabel": "Difficulty",
+      "choicesLabel": "Answers",
+      "answerLabel": "Your answer",
+      "answerPlaceholder": "Animal name",
+      "correct": "Correct! It's the {name}.",
+      "wrong": "Not quite – it's the {name}.",
+      "check": "Check",
+      "reveal": "Reveal",
+      "next": "Next animal",
+      "imageAlt": "Animal to identify"
+    },
+    "imageSearch": {
+      "title": "Identify an animal",
+      "text": "Upload a photo and search it with Google Lens.",
+      "choose": "Choose a photo",
+      "change": "Choose another",
+      "upload": "Upload",
+      "search": "Search with Google Lens",
+      "uploaded": "Uploaded – now search.",
+      "invalid": "Please choose a JPEG, PNG or WebP photo.",
+      "error": "The upload didn't work."
+    },
+    "links": {
+      "title": "Useful sites"
+    },
+    "feed": "What's new"
+  },
+  "Footer": {
+    "imprint": "Imprint & privacy",
+    "contact": "Contact",
+    "terms": "Terms of use",
+    "support": "NatureLog is a free project. If you like, you can support it:",
+    "donate": "donate via PayPal"
+  },
+  "Animal": {
+    "back": "Back",
+    "rare": "Rare",
+    "rareTooltip": "Exceptional sighting or vagrant in Germany",
+    "spottedBy": "{count, plural, =0 {Nobody has spotted this species yet.} one {# member has spotted this species.} other {# members have spotted this species.}}",
+    "status": "Conservation status",
+    "statusScale": "Scale from “least concern” to “critically endangered”",
+    "facts": "Profile",
+    "size": "Size",
+    "population": "Population",
+    "presence": "Seen in Germany",
+    "habitat": "Habitat",
+    "dimorphism": "Sexual dimorphism",
+    "similar": "Similar species",
+    "about": "Description",
+    "communityPhotos": "Community photos",
+    "noPhotos": "No public photos of this species yet.",
+    "photoBy": "Photo by {name}",
+    "photoAlt": "{animal}, photographed by {name}",
+    "credit": "Photo: {author}",
+    "license": "Licence: {license}"
+  },
+  "Map": {
+    "title": "Map",
+    "subtitle": "Public species lists with a location.",
+    "entries": "{count, plural, one {# entry} other {# entries}}",
+    "by": "by {name}",
+    "open": "Open list",
+    "untitled": "Untitled list",
+    "iconCredit": "Pin icons: Freepik – Flaticon"
+  },
+  "Contact": {
+    "title": "Contact",
+    "subtitle": "Questions, bugs, missing species or a great photo for the lexicon? Get in touch.",
+    "topics": "For example: a missing feature, a bug, incorrect information, a missing animal, or a photo for a species.",
+    "name": "Your name",
+    "email": "Your email",
+    "message": "Your message",
+    "send": "Open email",
+    "sendHint": "Opens your email app with the message filled in.",
+    "direct": "Or email directly:",
+    "subject": "NatureLog – message from {name}",
+    "required": "Please fill in every field."
+  },
+  "Legal": {
+    "germanOnly": "This text is legally binding in German only."
+  },
+  "Meta": {
+    "description": "NatureLog is your nature journal: record sightings, collect your favourite photos and share them with others."
+  },
+  "GlobalSearch": {
+    "open": "Search",
+    "title": "Search NatureLog",
+    "placeholder": "Species, people or lists…",
+    "placeholderAnimals": "Search species…",
+    "hint": "Type at least {min} characters.",
+    "noResults": "Nothing found for “{term}”.",
+    "loading": "Searching…",
+    "groups": {
+      "animals": "Species",
+      "users": "People",
+      "lists": "Lists"
+    }
   }
 }

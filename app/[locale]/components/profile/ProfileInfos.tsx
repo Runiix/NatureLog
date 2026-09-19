@@ -1,17 +1,34 @@
 "use client";
 
-import { Add, Close, Edit, Instagram } from "@mui/icons-material";
+import { Edit, Instagram } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
 import { useState } from "react";
-import changeTeam from "../../actions/profile/changeTeam";
 import changeFavoriteAnimal from "@/app/[locale]/actions/profile/changeFavoriteAnimal";
 import changeInstaLink from "@/app/[locale]/actions/profile/changeInstaLink";
-import { User } from "@supabase/supabase-js";
+import changeTeam from "@/app/[locale]/actions/profile/changeTeam";
+import { cn } from "@/app/[locale]/utils/cn";
+import {
+  MAX_FAVORITE_ANIMAL,
+  TEAMS,
+  teamFromUrl,
+  teamImageUrl,
+  type Team,
+} from "@/app/[locale]/utils/profileFields";
+import type { ActionResult } from "@/app/[locale]/utils/result";
 import Modal from "../general/Modal";
+import { Button } from "../ui/Button";
+import { Field, Input } from "../ui/Field";
+import { useToast } from "../ui/Toast";
+import { StatTile } from "./StatTile";
 
+/**
+ * Name, Instagram link and the stat row. The owner edits favourite animal,
+ * Instagram and team through themed dialogs (two of these were hand-rolled
+ * overlays before, and the UI updated even when the save failed).
+ */
 export default function ProfileInfos({
-  user,
+  displayName,
   animalCount,
   listsCount,
   teamIcon,
@@ -19,259 +36,251 @@ export default function ProfileInfos({
   currUser,
   instaLink,
 }: {
-  user: User | any;
+  displayName: string;
   animalCount: number;
   listsCount: number;
   teamIcon: string | null;
-  favoriteAnimal: string;
+  favoriteAnimal: string | null;
   currUser: boolean;
   instaLink: string | null;
 }) {
-  const collectionLink = currUser
-    ? `/collectionpage/${user.user_metadata.displayName}`
-    : `/collectionpage/${user.display_name}`;
-  const listsLink = currUser
-    ? `/animallistspage/${user.user_metadata.displayName}`
-    : `/animallistspage/${user.display_name}`;
-  const [team, setTeam] = useState<string | null>(teamIcon);
-  const [teamSelect, setTeamSelect] = useState(false);
-  const [showEditFavoriteAnimal, setShowEditFavoriteAnimal] = useState(false);
-  const [showEditInstaLink, setShowEditInstaLink] = useState(false);
+  const t = useTranslations("Profile");
+  const toast = useToast();
+  const [team, setTeam] = useState<Team | null>(teamFromUrl(teamIcon));
   const [favorite, setFavorite] = useState(favoriteAnimal);
   const [insta, setInsta] = useState(instaLink);
-  const teamList = [
-    {
-      name: "wolf",
-      src: "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/wolf-portrait.jpg",
-      alt: "Wolf Icon",
-    },
-    {
-      name: "kingfisher",
-      src: "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/kingfisher-portrait.jpg",
-      alt: "Eisvogel Icon",
-    },
-    {
-      name: "adder",
-      src: "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/adder-portrait.jpg",
-      alt: "Kreuzotter Icon",
-    },
-    {
-      name: "frog",
-      src: "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/frog-portrait.jpg",
-      alt: "Frosch Icon",
-    },
-    {
-      name: "dragonfly",
-      src: "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profile_icons/teams/dragonfly-portrait.jpg",
-      alt: "Libelle Icon",
-    },
-  ];
-  const handelFavoriteChange = async (formData: FormData) => {
-    const { success } = await changeFavoriteAnimal(formData);
-    if (success === false) {
-      alert("Lieblingstier konnte nicht geändert werden");
+  const [dialog, setDialog] = useState<"favorite" | "insta" | "team" | null>(null);
+  const [teamSaving, setTeamSaving] = useState<Team | null>(null);
+
+  async function pickTeam(next: Team) {
+    setTeamSaving(next);
+    const res = await changeTeam(next);
+    setTeamSaving(null);
+    if (res.success) {
+      setTeam(next);
+      setDialog(null);
+      toast(t("toast.saved"));
+    } else {
+      toast(t("toast.error"), "error");
     }
-    const favoriteAnimal = formData.get("favorite_animal") as string;
-    setFavorite(favoriteAnimal);
-    setShowEditFavoriteAnimal(false);
-  };
-  const handelInstaChange = async (formData: FormData) => {
-    const { success } = await changeInstaLink(formData);
-    if (success === false) {
-      alert("Link konnte nicht geändert werden");
-    }
-    const instaLink = formData.get("link") as string;
-    setInsta(instaLink);
-    setShowEditInstaLink(false);
-  };
+  }
 
   return (
-    <div className="space-y-4 ">
-      <div className="flex gap-4 md:gap-10 items-center justify-center md:text-xl border-b-2 border-gray-950 pb-2">
-        <div>
-          {currUser ? user.user_metadata.displayName : user.display_name}
-        </div>
-        <div className="flex gap-2 items-center">
-          {insta && (
-            <a
-              href={insta}
-              rel="noopener noreferrer"
-              target="_blank"
-              aria-label="Instagram Link des Benutzers"
-              className="hover:text-green-600 transition duration-300"
-            >
-              <Instagram />
-            </a>
-          )}
+    <div className="flex min-w-0 flex-1 flex-col gap-5">
+      <div className="flex flex-wrap items-center gap-x-3 gap-y-1">
+        <h1 className="truncate text-2xl font-semibold tracking-tight sm:text-3xl">{displayName}</h1>
+        {insta && (
+          <a
+            href={insta}
+            rel="noopener noreferrer nofollow"
+            target="_blank"
+            aria-label={t("instagramOf", { name: displayName })}
+            className="rounded-full p-1 text-fg-muted transition-colors hover:text-accent-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            <Instagram />
+          </a>
+        )}
+        {currUser && (
+          <Button
+            variant="ghost"
+            size="sm"
+            icon={insta ? <Edit fontSize="small" /> : <Instagram fontSize="small" />}
+            onClick={() => setDialog("insta")}
+            aria-label={insta ? t("editInstagram") : undefined}
+            className="-ml-1"
+          >
+            {insta ? null : t("addInstagram")}
+          </Button>
+        )}
+      </div>
 
-          {currUser && (
-            <Edit
-              onClick={() => setShowEditInstaLink((prev) => !prev)}
-              className="cursor-pointer hover:text-green-600 transition duration-300"
-            />
-          )}
-        </div>
+      <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatTile
+          label={t("stats.species")}
+          value={animalCount}
+          href={`/collectionpage/${displayName}`}
+        />
+        <StatTile
+          label={t("stats.lists")}
+          value={listsCount}
+          href={`/animallistspage/${displayName}`}
+        />
+        <StatTile
+          label={t("stats.team")}
+          value={
+            team ? (
+              <span className="flex items-center gap-2">
+                <Image
+                  src={teamImageUrl(team)}
+                  alt=""
+                  width={24}
+                  height={24}
+                  className="rounded-full"
+                />
+                {t(`teams.${team}`)}
+              </span>
+            ) : currUser ? (
+              t("chooseTeam")
+            ) : (
+              t("noTeam")
+            )
+          }
+          onClick={currUser ? () => setDialog("team") : undefined}
+          actionLabel={t("chooseTeamTitle")}
+        />
+        <StatTile
+          label={t("stats.favorite")}
+          value={favorite || t("noFavorite")}
+          onClick={currUser ? () => setDialog("favorite") : undefined}
+          actionLabel={t("editFavorite")}
+        />
       </div>
-      <div className="flex justify-around gap-5 sm:gap-10">
-        <div className="flex flex-col items-center  gap-2 relative">
-          <div>Team</div>
-          {currUser ? (
-            <button
-              aria-label="button for selecting a team"
-              className="border-2 rounded-lg p-2 text-xl hover:scale-110 transition duration-300 flex justify-center items-center"
-              onClick={() => setTeamSelect(!teamSelect)}
-            >
-              {team === null ? (
-                <Add />
-              ) : (
-                <Image
-                  src={team}
-                  width={60}
-                  height={60}
-                  alt="Tiergruppierung"
-                />
-              )}
-            </button>
-          ) : (
-            <div
-              className={`border-2 rounded-lg p-2 text-xl  transition duration-300 flex justify-center items-center ${
-                currUser && "hover:scale-110 "
-              }`}
-            >
-              {team !== null && (
-                <Image
-                  src={team}
-                  width={60}
-                  height={60}
-                  alt="Tiergruppierung"
-                />
-              )}
-            </div>
-          )}
-          {teamSelect && (
-            <Modal closeModal={() => setTeamSelect(!teamSelect)}>
-              <div className="flex gap-2">
-                {teamList.map((team) => (
+
+      {currUser && dialog === "team" && (
+        <Modal title={t("chooseTeamTitle")} closeModal={() => setDialog(null)}>
+          <div role="radiogroup" aria-label={t("chooseTeamTitle")} className="grid grid-cols-3 gap-3 sm:grid-cols-5">
+            {TEAMS.map((option) => {
+              const selected = option === team;
+              return (
+                <button
+                  key={option}
+                  type="button"
+                  role="radio"
+                  aria-checked={selected}
+                  disabled={teamSaving !== null}
+                  onClick={() => void pickTeam(option)}
+                  className={cn(
+                    "flex flex-col items-center gap-2 rounded-xl border p-2 text-sm font-medium transition-colors",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-60",
+                    selected
+                      ? "border-accent bg-accent/10 text-accent-text"
+                      : "border-border-muted hover:border-accent",
+                  )}
+                >
                   <Image
-                    key={team.name}
-                    src={team.src}
-                    width={80}
-                    height={80}
-                    alt={team.alt}
-                    className="rounded-lg cursor-pointer hover:opacity-90 bg-gray-900 p-2 border border-gray-200 hover:border-green-600"
-                    onClick={() =>
-                      changeTeam(team.name, user.id).then(() =>
-                        setTeam(team.src),
-                      )
-                    }
+                    src={teamImageUrl(option)}
+                    alt=""
+                    width={64}
+                    height={64}
+                    className={cn("rounded-lg", teamSaving === option && "animate-pulse")}
                   />
-                ))}
-              </div>
-            </Modal>
-          )}
-        </div>
-        <Link
-          href={collectionLink}
-          className=" flex flex-col gap-2 items-center text-center"
-        >
-          <p>Arten</p>
-          <div className="  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border p-2 border-gray-200 md:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 h-10 items-center justify-center flex">
-            {animalCount}
-          </div>
-        </Link>
-        <Link
-          href={listsLink}
-          className=" flex flex-col gap-2 items-center text-center"
-        >
-          <p>Listen</p>
-          <div className=" shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border p-2 size-10 border-gray-200 md:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 items-center justify-center flex">
-            {listsCount}
-          </div>
-        </Link>
-        <div className="flex flex-col gap-2 items-center">
-          <p>Lieblingstier</p>
-          {currUser ? (
-            <div
-              className={` ${
-                currUser &&
-                " shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border p-2 border-gray-200 md:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 h-10 items-center justify-center flex"
-              }`}
-              onClick={() => setShowEditFavoriteAnimal((prev) => !prev)}
-            >
-              {favorite}
-            </div>
-          ) : (
-            <div className="shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 border p-2 border-gray-200 md:text-xl rounded-lg ">
-              {favorite}
-            </div>
-          )}
-          {showEditFavoriteAnimal && currUser && (
-            <div className="fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center">
-              <form className="bg-gray-900 rounded-lg w-10/12 py-10 flex flex-col items-center justify-center gap-4 relative max-w-[50%] shadow-lg shadow-black">
-                {" "}
-                <h3 className="xl:text-xl text-center">
-                  Geben sie ein neues Tier ein, dass Sie als Favorit speichern
-                  möchten.
-                </h3>
-                <button
-                  aria-label="button for opening the edit favorite animal form"
-                  onClick={() => setShowEditFavoriteAnimal(false)}
-                  className="hover:text-red-600 absolute top-1 right-2"
-                >
-                  <Close />
+                  {t(`teams.${option}`)}
                 </button>
-                <div className="flex flex-col gap-4">
-                  <input
-                    type="text"
-                    name="favorite_animal"
-                    placeholder="Favorit eingeben"
-                    className="w-44 sm:w-64 border border-slate-200 rounded-lg bg-gray-900 p-4"
-                  />
-                  <button
-                    aria-label="button for changing the favorite animal"
-                    formAction={handelFavoriteChange}
-                    className="bg-green-600 rounded-lg p-4 hover:bg-green-700 hover:text-gray-900"
-                  >
-                    Ändern
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-          {showEditInstaLink && currUser && (
-            <div className="fixed w-screen h-screen top-0 left-0 bg-black/70 z-50 flex items-center justify-center">
-              <form className="bg-gray-900 rounded-lg w-10/12 py-10 flex flex-col items-center justify-center gap-4 relative max-w-[50%] shadow-lg shadow-black">
-                {" "}
-                <h3 className="xl:text-xl text-center">
-                  Geben Sie Ihren Instagram Link ein.
-                </h3>
-                <button
-                  aria-label="button for opening the edit instagram link form"
-                  onClick={() => setShowEditInstaLink(false)}
-                  className="text-red-600 absolute top-1 right-2"
-                >
-                  <Close />
-                </button>
-                <div className="flex flex-col gap-4">
-                  <input
-                    type="text"
-                    name="link"
-                    placeholder="Link eingeben"
-                    className="w-44 sm:w-64 border border-slate-200 rounded-lg bg-gray-900 p-4"
-                  />
-                  <button
-                    aria-label="button for changing the instagram link"
-                    formAction={handelInstaChange}
-                    className="bg-green-600 rounded-lg p-4 hover:bg-green-700 hover:text-gray-900"
-                  >
-                    Ändern
-                  </button>
-                </div>
-              </form>
-            </div>
-          )}
-        </div>
-      </div>
+              );
+            })}
+          </div>
+        </Modal>
+      )}
+
+      {currUser && dialog === "favorite" && (
+        <EditFieldDialog
+          title={t("editFavorite")}
+          label={t("favoriteLabel")}
+          name="favorite_animal"
+          defaultValue={favorite ?? ""}
+          placeholder={t("favoritePlaceholder")}
+          maxLength={MAX_FAVORITE_ANIMAL}
+          required
+          action={changeFavoriteAnimal}
+          errorMessage={t("toast.error")}
+          onSaved={(value) => {
+            setFavorite(value);
+            setDialog(null);
+            toast(t("toast.saved"));
+          }}
+          onClose={() => setDialog(null)}
+        />
+      )}
+
+      {currUser && dialog === "insta" && (
+        <EditFieldDialog
+          title={t("editInstagram")}
+          label={t("instagramLabel")}
+          hint={t("instagramHint")}
+          name="link"
+          defaultValue={insta ?? ""}
+          placeholder="@naturelog"
+          maxLength={200}
+          action={changeInstaLink}
+          errorMessage={t("toast.invalidInstagram")}
+          onSaved={(value) => {
+            setInsta(value);
+            setDialog(null);
+            toast(t("toast.saved"));
+          }}
+          onClose={() => setDialog(null)}
+        />
+      )}
     </div>
+  );
+}
+
+/** One-field edit dialog; the UI only updates once the server accepted it. */
+function EditFieldDialog<T>({
+  title,
+  label,
+  hint,
+  name,
+  defaultValue,
+  placeholder,
+  maxLength,
+  required,
+  action,
+  errorMessage,
+  onSaved,
+  onClose,
+}: {
+  title: string;
+  label: string;
+  hint?: string;
+  name: string;
+  defaultValue: string;
+  placeholder?: string;
+  maxLength: number;
+  required?: boolean;
+  action: (formData: FormData) => Promise<ActionResult<T>>;
+  errorMessage: string;
+  onSaved: (value: T) => void;
+  onClose: () => void;
+}) {
+  const t = useTranslations("Profile");
+  const [value, setValue] = useState(defaultValue);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  async function submit(event: React.FormEvent) {
+    event.preventDefault();
+    setSaving(true);
+    setError(null);
+    const formData = new FormData();
+    formData.append(name, value);
+    const res = await action(formData);
+    setSaving(false);
+    if (res.success) onSaved(res.data);
+    else setError(errorMessage);
+  }
+
+  return (
+    <Modal title={title} closeModal={onClose}>
+      <form onSubmit={submit} className="flex flex-col gap-4" noValidate>
+        <Field label={label} hint={hint} error={error ?? undefined} required={required}>
+          <Input
+            value={value}
+            onChange={(e) => setValue(e.target.value)}
+            placeholder={placeholder}
+            maxLength={maxLength}
+            autoFocus
+          />
+        </Field>
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button variant="ghost" onClick={onClose} disabled={saving}>
+            {t("cancel")}
+          </Button>
+          <Button type="submit" loading={saving} disabled={required && value.trim() === ""}>
+            {t("save")}
+          </Button>
+        </div>
+      </form>
+    </Modal>
   );
 }

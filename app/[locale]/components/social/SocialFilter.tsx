@@ -1,70 +1,65 @@
 "use client";
 
-import { useState, useTransition } from "react";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
 import { useTranslations } from "next-intl";
+import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useTransition } from "react";
+import { cn } from "@/app/[locale]/utils/cn";
 import Search from "../general/Search";
 
+const TABS = [
+  { value: "top", param: null, label: "topUsers" },
+  { value: "following", param: "following", label: "following" },
+  { value: "followers", param: "followers", label: "followers" },
+] as const;
+
+/** Top / following / followers tabs plus name search, all in the URL. */
 export default function SocialFilter() {
-  const [followType, setFollowType] = useState("");
+  const t = useTranslations("Social");
   const searchParams = useSearchParams();
   const pathName = usePathname();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const t = useTranslations("Social");
-  const handleFollowerChange = (type: string) => {
+  const current = searchParams.get("following") ?? "top";
+
+  const select = (param: string | null) => {
     const params = new URLSearchParams(searchParams.toString());
-    setFollowType(type);
-    if (type === "") {
-      params.delete("following");
-    } else {
-      params.set("following", type);
-    }
+    if (param) params.set("following", param);
+    else params.delete("following");
+    const query = params.toString();
     startTransition(() => {
-      router.replace(`${pathName}?${params.toString()}`);
+      router.replace(query ? `${pathName}?${query}` : pathName, { scroll: false });
     });
   };
+
   return (
-    <div className="flex flex-col md:flex-row gap-4 items-center justify-between w-full max-w-[1200px] mx-auto mt-4 shadow-lg shadow-gray-400 p-4 rounded-lg">
-      <h2 className="text-green-600 text-center text-2xl xl:text-5xl">
-        {t("social")}
-      </h2>{" "}
-      <div className="flex items-center gap-10">
-        <button
-          onClick={() => handleFollowerChange("")}
-          className={`${
-            followType === ""
-              ? "text-green-600 border-b border-green-600"
-              : "text-gray-900"
-          } hover:text-green-600 hover:border-b hover:border-green-600 text-xs md:text-base`}
-          aria-label={t("topUsers")}
-        >
-          {t("topUsers")}
-        </button>
-        <button
-          onClick={() => handleFollowerChange("following")}
-          className={`${
-            followType === "following"
-              ? "text-green-600 border-b border-green-600"
-              : "text-gray-900"
-          } hover:text-green-600 hover:border-b hover:border-green-600 text-xs md:text-base`}
-          aria-label={t("following")}
-        >
-          {t("following")}
-        </button>
-        <button
-          onClick={() => handleFollowerChange("followers")}
-          className={`${
-            followType === "followers"
-              ? "text-green-600 border-b border-green-600"
-              : "text-gray-900"
-          } hover:text-green-600 hover:border-b hover:border-green-600 text-xs md:text-base`}
-          aria-label={t("followers")}
-        >
-          {t("followers")}
-        </button>
+    <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+      <div
+        role="radiogroup"
+        aria-label={t("tabsLabel")}
+        aria-busy={isPending}
+        className="inline-flex self-start rounded-lg border border-border bg-surface-sunken p-1"
+      >
+        {TABS.map((tab) => {
+          const selected = current === tab.value || (tab.value === "top" && current === "top");
+          return (
+            <button
+              key={tab.value}
+              type="button"
+              role="radio"
+              aria-checked={selected}
+              onClick={() => select(tab.param)}
+              className={cn(
+                "rounded-md px-3 py-1.5 text-sm font-medium transition-colors",
+                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                selected ? "bg-surface text-fg shadow-sm" : "text-fg-muted hover:text-fg",
+              )}
+            >
+              {t(tab.label)}
+            </button>
+          );
+        })}
       </div>
-      <Search placeholder="searchNatureLoggers" />
+      <Search placeholder="searchNatureLoggers" className="sm:w-72" />
     </div>
   );
 }

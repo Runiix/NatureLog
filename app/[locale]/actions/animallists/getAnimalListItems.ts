@@ -1,37 +1,43 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import requireAuth from "@/utils/supabase/requireAuth";
+import { canReadList } from "@/app/[locale]/utils/listAccess";
 
-export default async function getAnimalListItem(
+/** One page of a list's animals, alphabetical. */
+export default async function getAnimalListItems(
   listId: string,
   offset: number,
-  pageSize: number
+  pageSize: number,
 ) {
-  const supabase = await createClient();
- const from = offset * pageSize;
-const to = from + pageSize - 1;
-  
-  const { data: animalIds, error: animalIdsError } = await supabase
+  const { supabase, user } = await requireAuth();
+  if (!(await canReadList(supabase, user.id, listId))) return [];
+
+  const from = offset * pageSize;
+  const to = from + pageSize - 1;
+
+  const { data: items, error: itemsError } = await supabase
     .from("animallistitems")
     .select("animal_id")
-    .eq("list_id", listId)
-  if (animalIdsError) {
-    console.error("Error fetching animal ids", animalIdsError);
+    .eq("list_id", listId);
+  if (itemsError) {
+    console.error("Error fetching animal ids", itemsError);
     return [];
   }
-  const animalIdArray = animalIds.map(
-    (item: { animal_id: number }) => item.animal_id
-  );
-  const { data: animalData, error: animalDataError } = await supabase
+
+  const animalIds = items
+    .map((item) => item.animal_id)
+    .filter((id): id is number => id !== null);
+  if (animalIds.length === 0) return [];
+
+  const { data, error } = await supabase
     .from("animals")
     .select("id, common_name, lexicon_link")
-    .in("id", animalIdArray)
+    .in("id", animalIds)
     .order("common_name", { ascending: true })
     .range(from, to);
-
-  if (animalDataError) {
-    console.error("Error fetching animal data", animalDataError);
+  if (error) {
+    console.error("Error fetching animal data", error);
     return [];
   }
-  return animalData;
+  return data;
 }

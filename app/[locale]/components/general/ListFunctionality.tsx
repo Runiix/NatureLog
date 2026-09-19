@@ -1,14 +1,19 @@
 "use client";
 
-import { Add, CheckCircle, PlaylistAdd } from "@mui/icons-material";
-import { User } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
-import Modal from "./Modal";
-import getAnimalLists from "@/app/[locale]/actions/animallists/getAnimalLists";
+import { Add, Check, PlaylistAdd } from "@mui/icons-material";
+import type { User } from "@supabase/supabase-js";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
 import addAnimalToAnimalList from "@/app/[locale]/actions/animallists/addAnimalToAnimalList";
-import { createClient } from "@/utils/supabase/client";
+import getAnimalLists, { type ListMembership } from "@/app/[locale]/actions/animallists/getAnimalLists";
 import removeAnimalFromAnimalList from "@/app/[locale]/actions/animallists/removeAnimalFromAnimalList";
+import { cn } from "@/app/[locale]/utils/cn";
+import Modal from "./Modal";
+import { Button, ButtonLink } from "../ui/Button";
+import { Skeleton } from "../ui/Skeleton";
+import { useToast } from "../ui/Toast";
 
+/** "Add this animal to one of my lists" button and picker. */
 export default function ListFunctionality({
   user,
   id,
@@ -18,93 +23,96 @@ export default function ListFunctionality({
   id: number;
   buttonStyles?: string;
 }) {
-  const [lists, setLists] = useState<any[] | undefined>(undefined);
-  const [showListModal, setShowListModal] = useState(false);
-  const [animalListItems, setAnimalListItems] = useState<any[] | undefined>(
-    undefined,
-  );
-  async function listItems() {
-    const supabase = createClient();
-    const { data: animalListItems, error: itemsError } = await supabase
-      .from("animallistitems")
-      .select("animal_id, list_id")
-      .eq("animal_id", id)
-      .eq("user_id", user.id);
-    return { animalListItems, itemsError };
+  const t = useTranslations("ListPicker");
+  const toast = useToast();
+  const [open, setOpen] = useState(false);
+  const [lists, setLists] = useState<ListMembership[] | null>(null);
+  const [pending, setPending] = useState<string | null>(null);
+
+  async function openPicker(event: React.MouseEvent) {
+    event.stopPropagation();
+    setOpen(true);
+    setLists(null);
+    setLists(await getAnimalLists(id));
   }
 
-  useEffect(() => {
-    const fetchLists = async () => {
-      const { lists, error } = await getAnimalLists(user.id);
-      const { animalListItems, itemsError } = await listItems();
-      if (error || itemsError) {
-        console.error("Error fetching lists:", error || itemsError);
-      } else {
-        setLists(lists ?? []);
-        setAnimalListItems(animalListItems ?? []);
-      }
-    };
-    if (user && showListModal) {
-      fetchLists();
+  async function toggle(list: ListMembership) {
+    setPending(list.id);
+    const res = list.containsAnimal
+      ? await removeAnimalFromAnimalList(list.id, id)
+      : await addAnimalToAnimalList(list.id, id);
+    setPending(null);
+    if (!res.success) {
+      toast(t("error"), "error");
+      return;
     }
-  }, [user, showListModal]);
-  const handleListClick = async (
-    e: React.MouseEvent<HTMLDivElement>,
-    isInList: boolean,
-    listId: string,
-  ) => {
-    e.stopPropagation();
-    if (isInList) {
-      await removeAnimalFromAnimalList(listId, id, user.id);
-    } else {
-      await addAnimalToAnimalList(listId, id, user.id);
-    }
-    const { animalListItems: updatedItems, itemsError } = await listItems();
-    if (!itemsError) {
-      setAnimalListItems(updatedItems ?? []);
-    } else {
-      console.error("Error refetching animalListItems:", itemsError);
-    }
-  };
+    setLists((current) =>
+      current?.map((item) =>
+        item.id === list.id ? { ...item, containsAnimal: !item.containsAnimal } : item,
+      ) ?? null,
+    );
+  }
+
   return (
     <>
-      <div className={buttonStyles}>
-        <button
-          className="hover:scale-110 transition-all duration-300"
-          onClick={(e) => {
-            e.stopPropagation();
-            setShowListModal(true);
-          }}
-        >
-          <PlaylistAdd />
-        </button>
-      </div>
-      {showListModal && (
-        <Modal
-          styles={"justify-center"}
-          closeModal={() => setShowListModal(false)}
-        >
-          <h2>Listen</h2>
-          {lists &&
-            lists.map((list) => {
-              const isInList =
-                animalListItems?.some((item) => item.list_id === list.id) ||
-                false;
-              return (
-                <div
-                  key={list.id}
-                  className={`p-2 border ${isInList ? "border-green-600" : "border-gray-300"} rounded-lg w-8/12 flex items-center gap-2 cursor-pointer hover:border-green-600 transition-all duration-200 justify-between`}
-                  onClick={(e) => handleListClick(e, isInList, list.id)}
-                >
-                  <h3 className="text-lg font-semibold">{list.title}</h3>
-                  {isInList ? (
-                    <CheckCircle className="text-green-600" />
-                  ) : (
-                    <Add />
-                  )}
-                </div>
-              );
-            })}
+      <Button
+        variant="ghost"
+        size="icon"
+        onClick={(event) => void openPicker(event)}
+        aria-label={t("open")}
+        className={cn("h-9 w-9 rounded-full", buttonStyles)}
+      >
+        <PlaylistAdd />
+      </Button>
+      {open && (
+        <Modal title={t("title")} closeModal={() => setOpen(false)}>
+          {lists === null ? (
+            <div className="flex flex-col gap-2">
+              {Array.from({ length: 3 }, (_, i) => (
+                <Skeleton key={i} className="h-12" />
+              ))}
+            </div>
+          ) : lists.length === 0 ? (
+            <div className="flex flex-col items-center gap-3 py-4 text-center">
+              <p className="text-fg-muted">{t("empty")}</p>
+              <ButtonLink
+                href={`/animallistspage/${user.user_metadata.displayName}`}
+                variant="secondary"
+              >
+                {t("createList")}
+              </ButtonLink>
+            </div>
+          ) : (
+            <ul className="flex flex-col gap-2">
+              {lists.map((list) => (
+                <li key={list.id}>
+                  <button
+                    type="button"
+                    onClick={() => void toggle(list)}
+                    disabled={pending !== null}
+                    aria-pressed={list.containsAnimal}
+                    aria-label={
+                      list.containsAnimal
+                        ? t("inList", { title: list.title ?? "" })
+                        : t("notInList", { title: list.title ?? "" })
+                    }
+                    className={cn(
+                      "flex w-full items-center justify-between gap-3 rounded-lg border px-4 py-3 text-left font-medium transition-colors",
+                      "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-60",
+                      list.containsAnimal
+                        ? "border-accent bg-accent/10 text-accent-text"
+                        : "border-border-muted hover:border-accent",
+                    )}
+                  >
+                    <span className="truncate">{list.title}</span>
+                    <span aria-hidden className="flex shrink-0">
+                      {list.containsAnimal ? <Check /> : <Add />}
+                    </span>
+                  </button>
+                </li>
+              ))}
+            </ul>
+          )}
         </Modal>
       )}
     </>

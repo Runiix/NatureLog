@@ -1,16 +1,16 @@
-import React from "react";
+import LegalPage from "@/app/[locale]/components/general/LegalPage";
 
 export default function Termsofservicepage() {
   return (
-    <div className="max-w-3xl mx-auto px-4 py-10 mt-20 text-gray-900">
-      <h1 className="text-4xl font-bold mb-6">Nutzungsbedingungen</h1>
+    <LegalPage>
+      <h1 >Nutzungsbedingungen</h1>
 
       <div className="space-y-4 text-base">
         <p>
           Gültig für die Nutzung der Website <strong>naturelog.de</strong>.
         </p>
 
-        <h2 className="font-bold text-xl border-b border-gray-900">
+        <h2 className=" border-b border-border-muted pb-1">
           1. Geltungsbereich
         </h2>
         <p>
@@ -19,7 +19,7 @@ export default function Termsofservicepage() {
           von Texten durch Nutzer.
         </p>
 
-        <h2 className="font-bold text-xl border-b border-gray-900">
+        <h2 className=" border-b border-border-muted pb-1">
           2. Nutzerinhalte
         </h2>
         <p>
@@ -28,7 +28,7 @@ export default function Termsofservicepage() {
           Rechte Dritter verletzt werden.
         </p>
 
-        <h2 className="font-bold text-xl border-b border-gray-900">
+        <h2 className=" border-b border-border-muted pb-1">
           3. Rechteübertragung
         </h2>
         <p>
@@ -38,7 +38,7 @@ export default function Termsofservicepage() {
           Der Nutzer bleibt weiterhin Inhaber der Rechte.
         </p>
 
-        <h2 className="font-bold text-xl border-b border-gray-900">
+        <h2 className=" border-b border-border-muted pb-1">
           4. Verbotene Inhalte
         </h2>
         <p>Untersagt sind insbesondere Inhalte, die:</p>
@@ -61,7 +61,7 @@ export default function Termsofservicepage() {
           </strong>
         </p>
 
-        <h2 className="font-bold text-xl border-b border-gray-900">
+        <h2 className=" border-b border-border-muted pb-1">
           5. Haftung des Nutzers
         </h2>
         <p>
@@ -69,7 +69,7 @@ export default function Termsofservicepage() {
           aufgrund der vom Nutzer bereitgestellten Inhalte entstehen.
         </p>
 
-        <h2 className="font-bold text-xl border-b border-gray-900">
+        <h2 className=" border-b border-border-muted pb-1">
           6. Haftung des Betreibers
         </h2>
         <p>
@@ -78,7 +78,7 @@ export default function Termsofservicepage() {
           Rechtsverstößen behalten wir uns eine Löschung vor.
         </p>
 
-        <h2 className="font-bold text-xl border-b border-gray-900">
+        <h2 className=" border-b border-border-muted pb-1">
           7. Änderung der Nutzungsbedingungen
         </h2>
         <p>
@@ -86,7 +86,7 @@ export default function Termsofservicepage() {
           über Änderungen informiert.
         </p>
 
-        <h2 className="font-bold text-xl border-b border-gray-900">
+        <h2 className=" border-b border-border-muted pb-1">
           8. Anwendbares Recht
         </h2>
         <p>
@@ -98,6 +98,6 @@ export default function Termsofservicepage() {
           <em>Stand: Juni 2025</em>
         </p>
       </div>
-    </div>
+    </LegalPage>
   );
 }

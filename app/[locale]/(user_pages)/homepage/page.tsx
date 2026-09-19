@@ -1,161 +1,148 @@
 export const dynamic = "force-dynamic";
 
-import { createClient } from "@/utils/supabase/server";
-import AnimalOfTheDay from "../../components/home/AnimalOfTheDay";
-import DailyChallenge from "../../components/home/DailyChallenge";
-import { SupabaseClient } from "@supabase/supabase-js";
-import { getUser } from "@/app/[locale]/utils/data";
-// import UseFullLinks from "@/app/[locale]/components/home/UseFullLinks";
-import RecentUploads from "@/app/[locale]/components/home/RecentUploads";
-import HomeGridItem from "@/app/[locale]/components/home/HomeGridItem";
+import { ImageSearch as ImageSearchIcon, Link as LinkIcon, Quiz } from "@mui/icons-material";
+import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
+import getLastSpottedAnimals from "@/app/[locale]/actions/home/getLastSpottedAnimals";
+import AnimalOfTheDay from "@/app/[locale]/components/home/AnimalOfTheDay";
 import AnimalQuiz from "@/app/[locale]/components/home/AnimalQuiz";
+import DailyChallenge from "@/app/[locale]/components/home/DailyChallenge";
 import ImageSearch from "@/app/[locale]/components/home/ImageSearch";
-import FollowFeed from "@/app/[locale]/components/social/FollowFeed";
+import RecentUploads from "@/app/[locale]/components/home/RecentUploads";
+import SightingStats, { type SpottingStats } from "@/app/[locale]/components/home/SightingStats";
 import UseFullLinks from "@/app/[locale]/components/home/UseFullLinks";
-import getLastSpottedAnimals from "../../actions/home/getLastSpottedAnimals";
-import { Home } from "@mui/icons-material";
+import FollowFeed from "@/app/[locale]/components/social/FollowFeed";
+import { Card, CardTitle } from "@/app/[locale]/components/ui/Card";
+import { PageShell } from "@/app/[locale]/components/ui/PageShell";
+import { getUser } from "@/app/[locale]/utils/data";
+import { seededIndex } from "@/app/[locale]/utils/seededIndex";
+import { createClient } from "@/utils/supabase/server";
+import type { Tables, TypedSupabaseClient } from "@/utils/supabase/types";
 
-const getRandomDayId = async (supabase: SupabaseClient) => {
-  const { data, error } = await supabase.from("animals").select("id");
-  if (error) console.error("Fehler bei Abfrage der Tier ID", error);
-  const IdData = data && data.map((animal: { id: number }) => animal.id);
-  const today = new Date().toISOString().split("T")[0];
-  let seed = 0;
-  for (let i = 0; i < today.length; i++) {
-    seed += today.charCodeAt(i);
+/**
+ * Animal of the day and of the month, from a single id query. The day seed
+ * used to be `toISOString().split("-")[2]` — "18T10:22:33.000Z" — which
+ * includes the time, so the "animal of the day" changed on every request.
+ */
+async function getFeaturedAnimals(supabase: TypedSupabaseClient) {
+  const { data: ids, error } = await supabase
+    .from("animals")
+    .select("id")
+    .not("lexicon_link", "is", null)
+    .order("id");
+  if (error || !ids || ids.length === 0) {
+    console.error("Error loading animal ids", error);
+    return { day: null, month: null };
   }
-  if (IdData) {
-    const index = seed % IdData.length;
-    return IdData[index];
-  }
-  return 1;
-};
 
-const getRandomMonthId = async (supabase: SupabaseClient) => {
-  const { data, error } = await supabase.from("animals").select("id");
-  if (error) console.error("Fehler bei Abfrage der Tier ID", error);
-  const IdData = data && data.map((animal: { id: number }) => animal.id);
-  const month = new Date().toISOString().split("-")[1];
-  let seed = 0;
-  for (let i = 0; i < month.length; i++) {
-    seed += month.charCodeAt(i);
-  }
-  if (IdData) {
-    const index = seed % IdData.length;
-    return IdData[index];
-  }
-  return 1;
-};
+  const today = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
+  const dayId = ids[seededIndex(today, ids.length)].id;
+  const monthId = ids[seededIndex(`month:${today.slice(0, 7)}`, ids.length)].id;
 
-const getAnimalOfTheDay = async (supabase: SupabaseClient) => {
-  const rand = await getRandomDayId(supabase);
-  try {
-    if (rand !== null && rand !== undefined) {
-      const { data, error } = await supabase
-        .from("animals")
-        .select("*")
-        .eq("id", rand);
-      if (error) console.error("Error getting Animal", error);
-      if (data) return data[0];
-    } else {
-      console.error("Rand is undefined or null");
-    }
-    return [];
-  } catch (error) {
-    console.error("Error getting data from DB:", error);
-  }
-};
-const getAnimalOfTheMonth = async (supabase: SupabaseClient) => {
-  const rand = await getRandomMonthId(supabase);
-  try {
-    if (rand !== null && rand !== undefined) {
-      const { data, error } = await supabase
-        .from("animals")
-        .select("*")
-        .eq("id", rand);
-      if (error) console.error("Error getting Animal", error);
-      if (data) {
-        return data[0];
-      }
-    } else {
-      console.error("Rand is undefined or null");
-    }
-    return [];
-  } catch (error) {
-    console.error("Error getting data from DB:", error);
-  }
-};
+  const { data } = await supabase.from("animals").select("*").in("id", [dayId, monthId]);
+  const byId = new Map((data ?? []).map((animal) => [animal.id, animal]));
+  return {
+    day: byId.get(dayId) ?? null,
+    month: byId.get(monthId) ?? null,
+  } satisfies Record<string, Tables<"animals"> | null>;
+}
 
-const getFollowing = async (supabase: SupabaseClient, userId: string) => {
+/** Sighting totals for the stats row, computed from one query over the user's rows. */
+async function getSpottingStats(supabase: TypedSupabaseClient, userId: string) {
   const { data, error } = await supabase
-    .from("follows")
-    .select("following_id")
-    .eq("follower_id", userId);
-  if (error) {
-    console.error(error);
-    return [];
-  }
-  const following = data.map((f) => f.following_id);
-  return following;
-};
-// async function getLast10Images(supabase: SupabaseClient) {
-//   const { data, error } = await supabase.from("lastimages").select("*");
-//   if (error) return [];
-//   return data;
-// }
+    .from("spotted")
+    .select("first_spotted_at, image")
+    .eq("user_id", userId);
+  if (error) console.error("Error loading spotting stats", error);
 
-export default async function homepage() {
+  const rows = data ?? [];
+  const now = new Date().toISOString();
+  const month = now.slice(0, 7); // yyyy-mm
+  const year = now.slice(0, 4);
+  return {
+    total: rows.length,
+    thisMonth: rows.filter((row) => row.first_spotted_at?.startsWith(month)).length,
+    thisYear: rows.filter((row) => row.first_spotted_at?.startsWith(year)).length,
+    withPhoto: rows.filter((row) => row.image === true).length,
+  } satisfies SpottingStats;
+}
+
+export default async function HomePage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
-  const animalOfTheMonth = await getAnimalOfTheMonth(supabase);
-  const animalOfTheDay = await getAnimalOfTheDay(supabase);
-  // const lastImages = await getLast10Images(supabase);
-  const lastImages = user ? await getLastSpottedAnimals(user) : [];
-  let following = [];
-  if (user) {
-    following = await getFollowing(supabase, user.id);
-  }
+  if (!user) redirect("/loginpage");
+  const name = user.user_metadata.displayName as string;
+
+  const [t, featured, recent, stats] = await Promise.all([
+    getTranslations("Home"),
+    getFeaturedAnimals(supabase),
+    getLastSpottedAnimals(),
+    getSpottingStats(supabase, user.id),
+  ]);
+
   return (
-    <div className="mx-auto  px-2 sm:px-6 flex flex-col 2xl:flex-row gap-4 sm:max-w-[75vw] md:max-w-none">
-      <div className="flex flex-col md:grid gap-4 grid-cols-12 w-full 2xl:w-3/4 md:h-[140vh] xl:h-[calc(100vh-4rem)] grid-rows-[repeat(12,minmax(0,1fr))]">
-        <HomeGridItem className="col-span-4 xl:col-span-3 row-span-3 xl:row-span-5">
-          <AnimalOfTheDay
-            data={animalOfTheMonth}
-            titel="Monats"
-            imageUrl={animalOfTheMonth.lexicon_link}
-          />
-        </HomeGridItem>
-        <HomeGridItem className="col-span-8 xl:col-span-6 row-span-3 xl:row-span-5 flex flex-col sm:flex-row">
-          <div className="sm:w-1/2">
-            <AnimalOfTheDay
-              data={animalOfTheDay}
-              titel="Tages"
-              imageUrl={animalOfTheDay.lexicon_link}
-            />
-          </div>
-          <div className="sm:w-1/2">
+    <PageShell className="max-w-7xl">
+      <header className="flex flex-col gap-1">
+        <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+          {t("greeting", { name })}
+        </h1>
+        <p className="text-fg-muted">{t("subtitle", { count: stats.total })}</p>
+      </header>
+
+      <div className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_22rem]">
+        <div className="grid auto-rows-min gap-4 md:grid-cols-6">
+          {featured.day && (
+            <div className="md:col-span-4 md:row-span-2">
+              <AnimalOfTheDay data={featured.day} title={t("animalOfTheDay")} size="lg" />
+            </div>
+          )}
+          {featured.month && (
+            <div className="md:col-span-2">
+              <AnimalOfTheDay data={featured.month} title={t("animalOfTheMonth")} />
+            </div>
+          )}
+          <Card className="md:col-span-2">
             <DailyChallenge />
-          </div>
-        </HomeGridItem>
+          </Card>
 
-        <HomeGridItem className="col-span-3 md:col-span-5 xl:col-span-3 row-span-5  xl:row-span-6">
-          <ImageSearch user={user} />
-        </HomeGridItem>
+          <Card className="flex flex-col gap-3 md:col-span-3">
+            <CardTitle as="h2">{t("recent.title")}</CardTitle>
+            <RecentUploads data={recent} collectionHref={`/collectionpage/${name}`} />
+            <SightingStats stats={stats} />
+          </Card>
+          <Card className="flex flex-col gap-3 md:col-span-3">
+            <CardTitle as="h2" className="flex items-center gap-2">
+              <Quiz fontSize="small" aria-hidden className="text-accent-text" />
+              {t("quiz.title")}
+            </CardTitle>
+            <AnimalQuiz />
+          </Card>
 
-        <HomeGridItem className="col-span-4 md:col-span-7 xl:col-span-4 row-span-5 xl:row-span-6">
-          <AnimalQuiz />
-        </HomeGridItem>
-        <HomeGridItem className="col-span-5 md:col-span-7 xl:col-span-5 row-span-4 xl:row-span-6">
-          {user && <RecentUploads data={lastImages} user={user} />}
-        </HomeGridItem>
-        <HomeGridItem className="col-span-3 md:col-span-5 xl:col-span-3 row-span-4 xl:row-span-5">
-          <UseFullLinks />
-        </HomeGridItem>
+          <Card className="flex flex-col gap-3 md:col-span-3">
+            <CardTitle as="h2" className="flex items-center gap-2">
+              <ImageSearchIcon fontSize="small" aria-hidden className="text-accent-text" />
+              {t("imageSearch.title")}
+            </CardTitle>
+            <ImageSearch />
+          </Card>
+          <Card className="flex flex-col gap-3 md:col-span-3">
+            <CardTitle as="h2" className="flex items-center gap-2">
+              <LinkIcon fontSize="small" aria-hidden className="text-accent-text" />
+              {t("links.title")}
+            </CardTitle>
+            <UseFullLinks />
+          </Card>
+        </div>
+
+        <aside aria-labelledby="home-feed">
+          <Card className="flex flex-col gap-3 xl:sticky xl:top-24 xl:max-h-[calc(100svh-7rem)] xl:overflow-y-auto">
+            <CardTitle as="h2" id="home-feed">
+              {t("feed")}
+            </CardTitle>
+            <FollowFeed socialHref={`/socialpage/${name}`} />
+          </Card>
+        </aside>
       </div>
-      <div className="w-full 2xl:w-1/4">
-        <FollowFeed following={following} />{" "}
-      </div>
-      {/* <AnimalRecognizer /> */}
-    </div>
+    </PageShell>
   );
 }

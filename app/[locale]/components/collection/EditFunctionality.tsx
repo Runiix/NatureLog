@@ -1,184 +1,157 @@
 "use client";
 
-import Image, { StaticImageData } from "next/image";
-import addCollectionImage from "../../actions/collection/addCollectionImage";
+import { AddAPhoto } from "@mui/icons-material";
 import imageCompression from "browser-image-compression";
-import { use, useEffect, useRef, useState } from "react";
-import { Close } from "@mui/icons-material";
-import { CircleLoader } from "react-spinners";
+import { useTranslations } from "next-intl";
+import Image, { type StaticImageData } from "next/image";
+import { useEffect, useRef, useState } from "react";
+import addCollectionImage from "../../actions/collection/addCollectionImage";
 import addSpottedDate from "@/app/[locale]/actions/collection/addSpottedDate";
 import Modal from "../general/Modal";
+import { Button } from "../ui/Button";
+import { Field, Input } from "../ui/Field";
+import { useToast } from "../ui/Toast";
 
-type Props = {
-  id: number;
-  src: string | StaticImageData;
-  setSrc: React.Dispatch<React.SetStateAction<string | StaticImageData>>;
-  common_name: string;
-  animalImageExists: boolean;
-  setEditModal: React.Dispatch<React.SetStateAction<boolean>>;
-  imageExists: boolean;
-  setImageExists: React.Dispatch<React.SetStateAction<boolean>>;
-  spottedAt: string;
-  setSpottedAt: React.Dispatch<React.SetStateAction<string>>;
+export type SightingUpdate = {
+  /** True when a new photo was stored. */
+  photoChanged: boolean;
+  /** The new first-spotted date (yyyy-mm-dd), when one was saved. */
+  date: string | null;
 };
 
-export default function EditFunctionality({
-  id,
-  src,
-  setSrc,
-  common_name,
-  animalImageExists,
-  setEditModal,
-  imageExists,
-  setImageExists,
-  spottedAt,
-  setSpottedAt,
-}: Props) {
-  const [selectedFile, setSelectedFile] = useState<null | File>(null);
-  const [loading, setLoading] = useState(false);
-  const imageRef = useRef<HTMLImageElement | null>(null);
-  const [firstSeen, setFirstSeen] = useState("");
+const THUMB = { maxSizeMB: 0.02, maxWidthOrHeight: 500, useWebWorker: true };
+const FULL = { maxSizeMB: 0.2, maxWidthOrHeight: 1920, useWebWorker: true };
 
-  function handleClose(e: React.MouseEvent<HTMLButtonElement>) {
-    e.stopPropagation();
-    setEditModal(false);
+/**
+ * Add or change the photo and first-spotted date of a collected species.
+ * Reports what was saved to the caller, which used to be handed no-op setters
+ * and so never showed the new date.
+ */
+export default function EditSightingDialog({
+  animalId,
+  name,
+  currentPhoto,
+  currentDate,
+  onSaved,
+  onClose,
+}: {
+  animalId: number;
+  name: string;
+  currentPhoto: string | StaticImageData | null;
+  /** yyyy-mm-dd or null. */
+  currentDate: string | null;
+  onSaved: (update: SightingUpdate) => void;
+  onClose: () => void;
+}) {
+  const t = useTranslations("Collection.edit");
+  const toast = useToast();
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [date, setDate] = useState(currentDate ?? "");
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  // Object URLs hold the file in memory until revoked.
+  useEffect(() => {
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
+
+  const dateChanged = date !== "" && date !== (currentDate ?? "");
+  const today = new Date().toISOString().slice(0, 10);
+
+  async function save(event: React.FormEvent) {
+    event.preventDefault();
+    if (!file && !dateChanged) {
+      setError(t("nothingToSave"));
+      return;
+    }
+    setSaving(true);
+    setError(null);
+    try {
+      if (file) {
+        const [thumb, full] = await Promise.all([
+          imageCompression(file, THUMB),
+          imageCompression(file, FULL),
+        ]);
+        const formData = new FormData();
+        formData.append("file", thumb);
+        formData.append("modalFile", full);
+        formData.append("id", String(animalId));
+        if (dateChanged) formData.append("date", date);
+        const res = await addCollectionImage(formData);
+        if (!res.success) throw new Error(res.error ?? "upload failed");
+      } else {
+        const formData = new FormData();
+        formData.append("id", String(animalId));
+        formData.append("date", date);
+        const res = await addSpottedDate(formData);
+        if (!res.success) throw new Error(res.error);
+      }
+      toast(t("saved"));
+      onSaved({ photoChanged: file !== null, date: dateChanged ? date : null });
+    } catch (err) {
+      console.error("Saving sighting failed:", err);
+      setError(t("error"));
+      setSaving(false);
+    }
   }
 
-  const handleImageLoad = () => {
-    if (imageRef.current) {
-      imageRef.current.classList.remove("opacity-0");
-    }
-  };
+  const shown = preview ?? currentPhoto;
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const file = e.target.files[0];
-    setSelectedFile(file);
-  };
-  const handleFileUpload = async (id: number) => {
-    setLoading(true);
-    const file = selectedFile;
-    if (file) {
-      const options1 = {
-        maxSizeMB: 0.02,
-        maxWidthOrHeight: 500,
-        useWebWorker: true,
-      };
-      const options2 = {
-        maxSizeMB: 0.2,
-        maxWidthOrHeight: 1920,
-        useWebWorker: true,
-      };
-
-      try {
-        const compressedFile = await imageCompression(file, options1);
-        const modalFile = await imageCompression(file, options2);
-
-        const formData = new FormData();
-        formData.append("file", compressedFile);
-        formData.append("modalFile", modalFile);
-        formData.append("common_name", common_name);
-        formData.append("id", String(id));
-        formData.append("date", firstSeen);
-
-        const response = await addCollectionImage(formData);
-        if (response) {
-          if (imageExists === false) {
-            setImageExists(true);
-          }
-          setSrc(src + `?t=${new Date().getTime()}`);
-          setEditModal(false);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error("Compression failed:", error);
-      }
-    } else {
-      const formData = new FormData();
-      formData.append("date", firstSeen);
-      formData.append("id", String(id));
-
-      const response = await addSpottedDate(formData);
-
-      if (response) {
-        setSpottedAt(firstSeen);
-        setEditModal(false);
-        setLoading(false);
-      }
-    }
-  };
   return (
-    <Modal styles={"justify-center"} closeModal={() => setEditModal(false)}>
-      <form
-        className="flex flex-col gap-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          e.stopPropagation();
-          handleFileUpload(id);
-        }}
-      >
-        {" "}
-        {animalImageExists && (
-          <div>
-            <h3>Aktuelles Bild</h3>
-            <Image
-              src={src}
-              ref={imageRef}
-              alt="Placeholder"
-              width={300}
-              height={200}
-              priority
-              className="object-cover w-full h-32 sm:h-48 rounded-t-lg hover:opacity-80   transition-opacity duration-[1s] opacity-0"
-              onLoad={handleImageLoad}
-              unoptimized
-            />
-          </div>
-        )}
-        <label className="text-center group">
-          <div className="bg-green-600   rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-10 px-4 cursor-pointer flex items-center justify-center">
-            {animalImageExists || selectedFile
-              ? "Bild ändern"
-              : "Bild hinzufügen"}
-          </div>
-          {selectedFile && (
-            <div>
-              <h3>Neues Bild</h3>
-              <Image
-                src={URL.createObjectURL(selectedFile)}
-                ref={imageRef}
-                alt="Placeholder"
-                width={300}
-                height={200}
-                priority
-                className="object-cover w-full h-32 sm:h-48 rounded-lg hover:opacity-80   transition-opacity duration-[1s] opacity-0"
-                onLoad={handleImageLoad}
-                unoptimized
-              />
-            </div>
-          )}
+    <Modal title={t("title", { name })} closeModal={() => !saving && onClose()}>
+      <form onSubmit={save} className="flex flex-col gap-5" noValidate>
+        <div className="flex flex-col gap-2">
+          <span className="text-sm font-medium text-fg">
+            {preview ? t("newPhoto") : t("currentPhoto")}
+          </span>
+          <button
+            type="button"
+            onClick={() => fileInput.current?.click()}
+            className="group relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-lg border border-dashed border-border bg-surface-sunken text-fg-muted transition-colors hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            {shown ? (
+              <Image src={shown} alt="" fill unoptimized className="object-cover" />
+            ) : (
+              <span className="flex flex-col items-center gap-2 text-sm">
+                <AddAPhoto />
+                {t("choosePhoto")}
+              </span>
+            )}
+            {shown && (
+              <span className="absolute inset-x-2 bottom-2 rounded-md bg-black/60 px-2 py-1 text-center text-xs text-white opacity-0 transition-opacity group-hover:opacity-100 group-focus-visible:opacity-100">
+                {t("changePhoto")}
+              </span>
+            )}
+          </button>
+          <p className="text-xs text-fg-subtle">{t("photoHint")}</p>
           <input
+            ref={fileInput}
             type="file"
-            accept="image/*"
-            onChange={handleFileChange}
-            className="hidden"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={(e) => setFile(e.target.files?.[0] ?? null)}
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden
           />
-        </label>
-        {spottedAt !== null && spottedAt !== "NaN. Invalid Date NaN" && (
-          <label>Aktuelles Datum: {spottedAt}</label>
-        )}
-        <input
-          className="bg-gray-800 p-4 rounded-lg text-slate-200"
-          type="date"
-          onChange={(e) => setFirstSeen(e.target.value)}
-        />
-        <button
-          type="submit"
-          disabled={loading}
-          className="bg-green-600 p-4 flex justify-center items-center text-xl rounded-lg hover:bg-green-700 hover:text-gray-900 transition-all duration-200 shadow-md shadow-black"
-          aria-label="Änderungen für Art speichern"
-        >
-          {loading ? <CircleLoader size={20} /> : "Änderungen speichern"}
-        </button>
+        </div>
+
+        <Field label={t("date")} error={error ?? undefined}>
+          <Input type="date" value={date} max={today} onChange={(e) => setDate(e.target.value)} />
+        </Field>
+
+        <div className="flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+          <Button variant="ghost" onClick={onClose} disabled={saving}>
+            {t("cancel")}
+          </Button>
+          <Button type="submit" loading={saving}>
+            {t("save")}
+          </Button>
+        </div>
       </form>
     </Modal>
   );

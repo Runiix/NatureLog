@@ -1,16 +1,26 @@
 "use client";
-import LexiconCard from "./LexiconCard";
-import { useState, useEffect } from "react";
+
+import { SearchOff } from "@mui/icons-material";
+import type { User } from "@supabase/supabase-js";
+import { useTranslations } from "next-intl";
+import { useSearchParams } from "next/navigation";
+import { useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import getAnimals from "../../actions/lexicon/getAnimals";
-import { CircleLoader } from "react-spinners";
-import { useSearchParams } from "next/navigation";
-import { User } from "@supabase/supabase-js";
-import LexiconFilterList from "./LexiconFilterList";
-import Animal from "@/app/[locale]/utils/AnimalType";
-import { createClient } from "@/utils/supabase/client";
-import { useTranslations } from "next-intl";
+import type { Tables } from "@/utils/supabase/types";
+import { EmptyState } from "../ui/EmptyState";
+import { SkeletonCard } from "../ui/Skeleton";
+import { Spinner } from "../ui/Spinner";
+import LexiconCard from "./LexiconCard";
 
+type Animal = Tables<"animals">;
+const PAGE_SIZE = 24;
+
+/**
+ * Infinite lexicon grid for the current URL filters. `spottedList` comes from
+ * the server with the page — it used to be fetched in the browser after
+ * render, and the filters were then re-run once it arrived.
+ */
 export default function LexiconGrid({
   user,
   spottedList,
@@ -18,145 +28,89 @@ export default function LexiconGrid({
   user: User | null;
   spottedList: number[];
 }) {
-  const searchParams = useSearchParams();
   const t = useTranslations("Lexicon");
+  const searchParams = useSearchParams();
+  const filterKey = searchParams.toString();
+  const sortBy = searchParams.get("sortBy");
+
+  const [animals, setAnimals] = useState<Animal[] | null>(null);
   const [offset, setOffset] = useState(0);
-  const [loadingMoreAnimals, setLoadingMoreAnimals] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "");
-  const [sortOrder, setSortOrder] = useState("ascending");
-  const [animals, setAnimals] = useState<Animal[]>([]);
-  const [clientSpottedList, setClientSpottedList] = useState<number[]>(
-    spottedList ?? [],
-  );
-  const { ref: preloadRef, inView: preloadInView } = useInView();
-  const regex = /[äöüß\s]/g;
+  const [hasMore, setHasMore] = useState(false);
+  const generation = useRef(0);
+  const loadingMore = useRef(false);
+  const { ref: sentinel, inView } = useInView({ rootMargin: "600px" });
 
   useEffect(() => {
-    const sortBy = searchParams.get("sortBy") || null;
-    const sortOrder = searchParams.get("sortOrder") || null;
-    if (sortBy) {
-      setSortBy(sortBy);
-    } else {
-      setSortBy("");
-    }
-    if (sortOrder) {
-      setSortOrder(sortOrder);
-    }
-    const loadAnimals = async (offset: number) => {
-      try {
-        const pageSize = 20;
-
-        const data = await getAnimals(
-          Object.fromEntries(searchParams.entries()),
-          offset,
-          pageSize,
-          clientSpottedList,
-        );
-        setLoading(false);
-
-        if (data.length < pageSize) {
-          setLoadingMoreAnimals(false);
-        } else {
-          setLoadingMoreAnimals(true);
-        }
+    const current = ++generation.current;
+    const params = Object.fromEntries(new URLSearchParams(filterKey).entries());
+    getAnimals(params, 0, PAGE_SIZE)
+      .then((data) => {
+        if (current !== generation.current) return;
         setAnimals(data);
         setOffset(1);
-      } catch (error) {
-        console.error("Error loading Animals:", error);
-      }
-    };
-    loadAnimals(0);
-  }, [searchParams, clientSpottedList]);
+        setHasMore(data.length === PAGE_SIZE);
+      })
+      .catch((error) => console.error("Error loading animals:", error));
+  }, [filterKey]);
 
   useEffect(() => {
-    const loadMoreAnimals = async () => {
-      try {
-        const pageSize = 20;
-
-        const data = await getAnimals(
-          Object.fromEntries(searchParams.entries()),
-          offset,
-          pageSize,
-          clientSpottedList,
-        );
-        if (data.length < pageSize) {
-          setLoadingMoreAnimals(false);
-        }
-        setAnimals((prevAnimals: Animal[]) => [...prevAnimals, ...data]);
+    if (!inView || !hasMore || offset === 0 || loadingMore.current) return;
+    const current = generation.current;
+    loadingMore.current = true;
+    const params = Object.fromEntries(new URLSearchParams(filterKey).entries());
+    getAnimals(params, offset, PAGE_SIZE)
+      .then((data) => {
+        if (current !== generation.current) return;
+        setAnimals((prev) => [...(prev ?? []), ...data]);
         setOffset((prev) => prev + 1);
-      } catch (error) {
-        console.error("Error loading more animals:", error);
-      }
-    };
-    if (preloadInView) {
-      loadMoreAnimals();
-    }
-  }, [preloadInView, searchParams, clientSpottedList]);
+        setHasMore(data.length === PAGE_SIZE);
+      })
+      .catch((error) => console.error("Error loading more animals:", error))
+      .finally(() => {
+        loadingMore.current = false;
+      });
+  }, [inView, hasMore, offset, filterKey]);
 
-  // Load spotted list on the client after initial render to avoid blocking TTFB
-  useEffect(() => {
-    const fetchSpotted = async () => {
-      if (!user) return;
-      try {
-        const supabase = createClient();
-        const { data, error } = await supabase
-          .from("spotted")
-          .select("animal_id")
-          .eq("user_id", user.id);
-        if (error) {
-          console.error("Error getting spotted list (client)", error);
-          return;
-        }
-        const ids = (data ?? []).map(
-          (row: { animal_id: number }) => row.animal_id,
-        );
-        console.log(ids);
-        setClientSpottedList(ids);
-      } catch (e) {
-        console.error("Unexpected error loading spotted list:", e);
-      }
-    };
-    fetchSpotted();
-    // Only run when user changes
-  }, [user]);
+  if (animals === null) {
+    return (
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3 2xl:grid-cols-4" aria-hidden>
+        {Array.from({ length: 9 }, (_, i) => (
+          <SkeletonCard key={i} className="aspect-[4/3.5]" />
+        ))}
+      </div>
+    );
+  }
+
+  if (animals.length === 0) {
+    return <EmptyState icon={<SearchOff />} title={t("emptyTitle")} description={t("emptyText")} />;
+  }
 
   return (
-    <div className="flex flex-col items-center overflow-wrap">
-      <LexiconFilterList />
-      <div className="items-center justify-center grid grid-cols-2 2xl:grid-cols-3 gap-2 sm:gap-4 mt-2 ">
-        {animals &&
-          animals.map((animal: Animal, index: number) => {
-            const isPreloadTrigger = index === animals.length - 10;
-            return (
-              <div
-                ref={isPreloadTrigger ? preloadRef : undefined}
-                key={animal.id}
-              >
-                <LexiconCard
-                  id={animal.id}
-                  common_name={animal.common_name}
-                  scientific_name={animal.scientific_name}
-                  population_estimate={animal.population_estimate}
-                  endangerment_status={animal.endangerment_status}
-                  size_from={animal.size_from}
-                  size_to={animal.size_to}
-                  sortBy={sortBy}
-                  imageUrl={animal.lexicon_link}
-                  very_rare={animal.very_rare}
-                  user={user}
-                  spottedList={clientSpottedList}
-                />
-              </div>
-            );
-          })}
-      </div>
-
-      {loadingMoreAnimals && (
-        <div className="mb-4">
-          <CircleLoader color="#16A34A" />{" "}
+    <>
+      <ul className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3 2xl:grid-cols-4">
+        {animals.map((animal) => (
+          <li key={animal.id}>
+            <LexiconCard
+              id={animal.id}
+              common_name={animal.common_name}
+              scientific_name={animal.scientific_name}
+              endangerment_status={animal.endangerment_status}
+              size_from={animal.size_from}
+              size_to={animal.size_to}
+              sortBy={sortBy}
+              very_rare={animal.very_rare}
+              imageUrl={animal.lexicon_link}
+              user={user}
+              spottedList={spottedList}
+            />
+          </li>
+        ))}
+      </ul>
+      {hasMore && (
+        <div ref={sentinel} className="flex justify-center py-8 text-accent" aria-live="polite">
+          <Spinner label={t("loadingMore")} />
         </div>
       )}
-    </div>
+    </>
   );
 }

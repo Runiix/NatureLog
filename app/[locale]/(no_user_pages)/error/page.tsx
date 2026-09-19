@@ -1,19 +1,25 @@
-"use client";
-import { useTranslations } from "next-intl";
-import Link from "next/link";
+import { ErrorOutline, Login } from "@mui/icons-material";
+import { getTranslations } from "next-intl/server";
+import { ButtonLink } from "../../components/ui/Button";
 
-export default function ErrorPage() {
-  const t = useTranslations("ErrorPage");
+/** Generic "something went wrong" page for auth redirects. */
+export default async function ErrorPage() {
+  const t = await getTranslations("ErrorPage");
   return (
-    <div className="w-full m-auto mt-44 flex flex-col gap-10 justify-center items-center">
-      <p className="text-black text-3xl">{t("somethingWentWrong")}</p>
-      <Link
-        href="/loginpage"
-        className="bg-green-600 text-center py-5 px-10 text-2xl sm:text-3xl rounded-lg hover:cursor-pointer hover:bg-green-700 hover:text-gray-900 transition-all
-           duration-200 shadow-md m-auto "
-      >
-        {t("backToLogin")}
-      </Link>
+    <div className="flex min-h-screen items-center justify-center bg-canvas px-4 font-normal text-fg">
+      <div className="flex max-w-md flex-col items-center gap-4 text-center">
+        <span
+          aria-hidden
+          className="flex h-16 w-16 items-center justify-center rounded-full bg-danger/10 text-danger [&_svg]:h-8 [&_svg]:w-8"
+        >
+          <ErrorOutline />
+        </span>
+        <h1 className="text-3xl font-semibold tracking-tight">{t("title")}</h1>
+        <p className="text-fg-muted">{t("somethingWentWrong")}</p>
+        <ButtonLink href="/loginpage" icon={<Login />}>
+          {t("backToLogin")}
+        </ButtonLink>
+      </div>
     </div>
   );
 }

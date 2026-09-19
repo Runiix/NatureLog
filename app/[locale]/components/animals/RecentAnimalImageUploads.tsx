@@ -1,104 +1,66 @@
 "use client";
 
-import { useState, useEffect } from "react";
-
+import { PhotoLibrary } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
-import { NavigateBefore, NavigateNext } from "@mui/icons-material";
+import { useState } from "react";
+import { Link } from "@/i18n/navigation";
+import { EmptyState } from "../ui/EmptyState";
+import { PhotoLightbox } from "../ui/PhotoLightbox";
+
+export type CommunityPhoto = { id: string; display_name: string; imageUrl: string };
+
+/** Recent community photos of one species as a grid with a lightbox. */
 export default function RecentAnimalImageUploads({
   data,
-  animalName,
+  animal,
 }: {
-  data: { id: string; display_name: string; imageUrl: string }[];
-  animalName: string;
+  data: CommunityPhoto[];
+  animal: string;
 }) {
-  const [slideIndex, setSlideIndex] = useState(0);
-  const regex = /[äöüß ]/g;
+  const t = useTranslations("Animal");
+  const [open, setOpen] = useState<CommunityPhoto | null>(null);
 
-  function showPrevImage() {
-    setSlideIndex((index) => {
-      if (index === 0) return data.length - 1;
-      return index - 1;
-    });
+  if (data.length === 0) {
+    return <EmptyState icon={<PhotoLibrary />} title={t("noPhotos")} />;
   }
-  function showNextImage() {
-    setSlideIndex((index) => {
-      if (index === data.length - 1) return 0;
-      return index + 1;
-    });
-  }
-
-  useEffect(() => {
-    const intervalId = setInterval(() => {
-      setSlideIndex((prev) => (prev + 1) % data.length);
-    }, 10000);
-    return () => clearInterval(intervalId);
-  }, [slideIndex]);
 
   return (
-    <div className="relative overflow-hidden w-full h-auto flex flex-col items-center gap-3  border-t border-gray-400 md:px-20 py-10">
-      <h2 className="text-xl">Zuletzt hochgeladene Fotos zu diesem Tier:</h2>
-      {data.length > 0 ? (
-        <div>
-          {" "}
-          <div className=" overflow-hidden flex relativ max-w-[600px] mx-auto">
-            {data.map(
-              (slide: {
-                id: string;
-                display_name: string;
-                imageUrl: string;
-              }) => (
-                <Image
-                  key={slide.id}
-                  className=" object-cover translate-all duration-500 ease-in-out min-w-full w-full aspect-video"
-                  src={slide.imageUrl}
-                  alt="Slide Image"
-                  width="800"
-                  height="600"
-                  style={{ translate: `${-100 * slideIndex}%` }}
-                  unoptimized
-                />
-              )
-            )}
+    <>
+      <ul className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+        {data.map((photo) => (
+          <li key={photo.id} className="flex flex-col gap-1.5">
             <button
-              className="block absolute top-0 bottom-0 left-0 cursor-pointer p-4"
-              aria-label="vorheriges Bild zeigen"
-              onClick={showPrevImage}
+              type="button"
+              onClick={() => setOpen(photo)}
+              className="group relative aspect-[4/3] overflow-hidden rounded-lg bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
-              <NavigateBefore />
+              <Image
+                src={photo.imageUrl}
+                alt={t("photoAlt", { animal, name: photo.display_name })}
+                fill
+                unoptimized
+                sizes="(min-width: 640px) 33vw, 50vw"
+                className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+              />
             </button>
-            <button
-              className="block absolute top-0 bottom-0 right-0 cursor-pointer p-4"
-              aria-label="nächstes Bild zeigen"
-              onClick={showNextImage}
+            <Link
+              href={`/profilepage/${photo.display_name}`}
+              className="truncate text-sm text-fg-muted hover:text-accent-text hover:underline"
             >
-              <NavigateNext />
-            </button>
-            <div className="flex gap-2 absolute bottom-20 z-40 left-1/2 transform -translate-x-1/2">
-              {[...Array(data.length).keys()].map((index) => (
-                <button
-                  key={index}
-                  aria-label="Knopf für die Image Slider Navigation"
-                  className={`p-2 rounded-full transition-all duration-500 ease-out  ${
-                    slideIndex === index
-                      ? "bg-gray-200 w-8"
-                      : "bg-gray-900 bg-opacity-50"
-                  }`}
-                  onClick={() => setSlideIndex(index)}
-                />
-              ))}
-            </div>
-          </div>
-          <Link
-            href={`/profilepage/${data[slideIndex].display_name}`}
-            className="hover:text-green-600 decoration-solid underline transition-all duration-200 ease-in-out"
-          >
-            Von: {data[slideIndex].display_name}
-          </Link>
-        </div>
-      ) : (
-        <h2>Noch keine Fotos hochgeladen</h2>
+              {t("photoBy", { name: photo.display_name })}
+            </Link>
+          </li>
+        ))}
+      </ul>
+      {open && (
+        <PhotoLightbox
+          src={open.imageUrl}
+          alt={t("photoAlt", { animal, name: open.display_name })}
+          label={t("photoBy", { name: open.display_name })}
+          onClose={() => setOpen(null)}
+        />
       )}
-    </div>
+    </>
   );
 }

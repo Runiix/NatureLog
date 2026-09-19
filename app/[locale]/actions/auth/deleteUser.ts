@@ -137,7 +137,7 @@ const accessToken = session?.access_token;
     const filePaths = searchFiles.map((file) => `${user.id}/${file.name}`);
 
     const { error: searchFilesError } = await supabase.storage
-      .from("profiles")
+      .from("imagesearch")
       .remove(filePaths);
 
     if (searchFilesError) {
@@ -158,5 +158,8 @@ const accessToken = session?.access_token;
     const error = await res.text()
     throw new Error(`Failed to delete user: ${error}`)
   }
-  return { succes: true };
+  // The account is gone; end the session too, or the browser keeps auth
+  // cookies for a user that no longer exists. Failure here is harmless.
+  await supabase.auth.signOut().catch(() => undefined);
+  return { success: true };
 }

@@ -1,104 +1,48 @@
 "use client";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
 
-import { ArrowDownward, ExpandMore } from "@mui/icons-material";
-import { useState, useTransition } from "react";
+import { ArrowDownward } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
+import { cn } from "@/app/[locale]/utils/cn";
+import { SORT_COLUMNS } from "@/app/[locale]/utils/lexiconFilters";
+import { useUrlFilters } from "./useUrlFilters";
 
+/** Sort column (native select — keyboard and screen-reader friendly) + direction. */
 export default function LexiconSort() {
-  const searchParams = useSearchParams();
-  const pathName = usePathname();
-  const { replace } = useRouter();
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
-  const [sortBy, setSortBy] = useState("common_name");
-
-  const [expandSort, setExpandSort] = useState(false);
-  const [sortOrder, setSortOrder] = useState("ascending");
-
-  const handleSortChange = (value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (value === "common_name") {
-      params.delete("sortBy");
-    } else {
-      params.set("sortBy", value);
-    }
-    setSortBy(value);
-    startTransition(() => {
-      router.replace(`${pathName}?${params.toString()}`);
-    });
-    setExpandSort(false);
-  };
-
-  const handleSortOrder = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    const value = params.get("sortOrder") || null;
-    if (value === "ascending" || value === null) {
-      params.set("sortOrder", "descending");
-      setSortOrder("descending");
-    } else {
-      params.set("sortOrder", "ascending");
-      setSortOrder("ascending");
-    }
-    startTransition(() => {
-      router.replace(`${pathName}?${params.toString()}`);
-    });
-  };
+  const t = useTranslations("Lexicon.sort");
+  const filters = useUrlFilters();
+  const sortBy = filters.searchParams.get("sortBy") ?? "common_name";
+  const descending = filters.searchParams.get("sortOrder") === "descending";
 
   return (
-    <div className="flex flex-col">
-      <div className="flex items-center gap-4">
-        <div
-          className="flex items-center gap-6 shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 py-2 pl-6 pr-2 sm:text-xl rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950"
-          onClick={() => setExpandSort(!expandSort)}
-        >
-          <p>
-            {sortBy === "common_name"
-              ? "Alpabetisch"
-              : sortBy === "size_to"
-                ? "Größe"
-                : sortBy === "population_estimate"
-                  ? "Population"
-                  : "Gefährdung"}
-          </p>
-          <ExpandMore
-            className={`transition-all duration-200 ${
-              expandSort && "rotate-180"
-            }`}
-          />
-        </div>
-
-        <div
-          onClick={handleSortOrder}
-          className={` "bg-gray-900  p-2 sm:text-xl rounded-lg shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200  hover:cursor-pointer hover:from-green-600 hover:to-gray-950  ${
-            sortOrder === "ascending" ? "rotate-0" : "rotate-180"
-          }`}
-        >
-          <ArrowDownward />
-        </div>
-      </div>
-      <div
-        className={`flex flex-col absolute  bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 hover:border-green-600  mt-12 transition-all duration-500 rounded-b-md border border-slate-400 shadow-lg shadow-black z-50 ${
-          expandSort
-            ? "transform translate-y-0 translate-x-0 opacity-100 scale-100"
-            : "transform -translate-y-20 -translate-x-20 opacity-0 scale-0"
-        }`}
+    <div className="flex items-center gap-2">
+      <label className="sr-only" htmlFor="lexicon-sort">
+        {t("label")}
+      </label>
+      <select
+        id="lexicon-sort"
+        value={sortBy}
+        onChange={(e) =>
+          filters.set({ sortBy: e.target.value === "common_name" ? null : e.target.value })
+        }
+        className="h-10 rounded-lg border border-border bg-surface px-3 text-sm text-fg transition-colors hover:border-fg-subtle focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30"
       >
-        {[
-          { value: "common_name", name: "Alphabetisch" },
-          { value: "size_to", name: "Größe" },
-          // { value: "population_estimate", name: "Population" },
-          { value: "endangerment_status", name: "Gefährdung" },
-        ].map((sort) => (
-          <div
-            key={sort.value}
-            className=" p-3 px-6 shadow-md bg-gradient-to-br from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:from-green-600 hover:to-gray-950 hover:cursor-pointer text-xl "
-            onClick={() => handleSortChange(sort.value)}
-          >
-            {" "}
-            {sort.name}
-          </div>
+        {SORT_COLUMNS.map((column) => (
+          <option key={column} value={column}>
+            {t(column)}
+          </option>
         ))}
-      </div>
+      </select>
+      <button
+        type="button"
+        onClick={() => filters.set({ sortOrder: descending ? null : "descending" })}
+        aria-label={`${t("toggleOrder")}: ${descending ? t("descending") : t("ascending")}`}
+        className="flex h-10 w-10 items-center justify-center rounded-lg border border-border bg-surface text-fg-muted transition-colors hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      >
+        <ArrowDownward
+          fontSize="small"
+          className={cn("transition-transform", !descending && "rotate-180")}
+        />
+      </button>
     </div>
   );
 }

@@ -1,72 +1,66 @@
 "use client";
 
+import { Groups, SearchOff } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import ProfileListElement from "./SocialListElement";
-import { useEffect, useState } from "react";
-import getUsers from "@/app/[locale]/actions/social/getUsers";
-import { User } from "@supabase/supabase-js";
-import { CircleLoader } from "react-spinners";
+import { useEffect, useRef, useState } from "react";
+import getUsers, { type SocialTab, type SocialUser } from "@/app/[locale]/actions/social/getUsers";
+import { EmptyState } from "../ui/EmptyState";
+import { Skeleton } from "../ui/Skeleton";
+import SocialListElement from "./SocialListElement";
 
-type UserType = {
-  id: string;
-  display_name: string;
-  joyn_date: string;
-  spotted_count: number;
-};
-export default function SocialList({
-  user,
-  following,
-}: {
-  user: User;
-  following: string[];
-}) {
+const toTab = (value: string | null): SocialTab =>
+  value === "following" || value === "followers" ? value : "top";
+
+export default function SocialList() {
+  const t = useTranslations("Social");
   const searchParams = useSearchParams();
-  const [loading, setLoading] = useState(false);
-  const [users, setUsers] = useState<UserType[]>([]);
+  const tab = toTab(searchParams.get("following"));
+  const query = searchParams.get("query") ?? "";
+  const [people, setPeople] = useState<SocialUser[] | null>(null);
+  const generation = useRef(0);
 
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString());
-    const loadUsers = async () => {
-      try {
-        setLoading(true);
-        const data = await getUsers(
-          Object.fromEntries(searchParams.entries()),
-          user.id,
-        );
-        console.log("Loaded users:", data);
-        setLoading(false);
+    const current = ++generation.current;
+    getUsers(tab, query)
+      .then((data) => {
+        if (current === generation.current) setPeople(data);
+      })
+      .catch((error) => console.error("Error loading users:", error));
+  }, [tab, query]);
 
-        setUsers(data);
-      } catch (error) {
-        console.error("Error loading Animals:", error);
-      }
-    };
-    loadUsers();
-  }, [searchParams]);
-
-  if (loading) {
+  if (people === null) {
     return (
-      <div className="flex items-center justify-center w-full h-full">
-        <CircleLoader color="#36d7b7" size={50} />
-      </div>
+      <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" aria-hidden>
+        {Array.from({ length: 6 }, (_, i) => (
+          <li key={i}>
+            <Skeleton className="h-[4.5rem]" />
+          </li>
+        ))}
+      </ul>
+    );
+  }
+
+  if (people.length === 0) {
+    return query ? (
+      <EmptyState icon={<SearchOff />} title={t("emptySearch")} description={t("emptySearchText")} />
+    ) : (
+      <EmptyState
+        icon={<Groups />}
+        title={
+          tab === "following" ? t("noFollowing") : tab === "followers" ? t("noFollowers") : t("emptyTop")
+        }
+      />
     );
   }
 
   return (
-    <div className="flex flex-col items-center gap-2 overflow-y-auto px-5 py-2">
-      {users &&
-        users.map((profile: UserType) => (
-          <ProfileListElement
-            key={profile.id}
-            user={user}
-            userId={profile.id}
-            username={profile.display_name}
-            profilepicture={`https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${profile.id}/ProfilePicture/ProfilePic.jpg`}
-            spottedCount={profile.spotted_count}
-            profilelink={`/profilepage/${profile.display_name}`}
-            following={following.includes(profile.id)}
-          />
-        ))}
-    </div>
+    <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+      {people.map((person) => (
+        <li key={person.id}>
+          <SocialListElement person={person} />
+        </li>
+      ))}
+    </ul>
   );
 }

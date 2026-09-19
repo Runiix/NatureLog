@@ -1,67 +1,30 @@
-import { Launch, OpenInBrowser } from "@mui/icons-material";
-import React from "react";
+import { OpenInNew } from "@mui/icons-material";
 
+const LINKS = [
+  { name: "Ornitho", href: "https://www.ornitho.de" },
+  { name: "Naturgucker", href: "https://www.naturgucker.de" },
+  { name: "Vogelmeldung", href: "https://www.vogelmeldung.de" },
+  { name: "Waarneming", href: "https://www.waarneming.nl" },
+  { name: "eBird", href: "https://ebird.org" },
+];
+
+/** External observation portals. */
 export default function UseFullLinks() {
   return (
-    <div className="my-4 sm:py-0 flex flex-col gap-4 text-xl">
-      <h2 className="text-2xl">Nützliche Webseiten</h2>
-      <ul className="space-y-2">
-        <li className="hover:text-green-600 transition-all duration-200 border border-slate-200 rounded-lg p-2 hover:border-green-600">
+    <ul className="flex flex-col gap-1">
+      {LINKS.map((link) => (
+        <li key={link.href}>
           <a
-            href="https://www.ornitho.de"
+            href={link.href}
             rel="noopener noreferrer"
             target="_blank"
-            className="flex items-center gap-2 justify-between"
+            className="flex items-center justify-between gap-2 rounded-lg px-3 py-2 text-fg-muted transition-colors hover:bg-surface-sunken hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
-            <p>Ornitho</p>
-            <Launch />
-          </a>{" "}
+            {link.name}
+            <OpenInNew fontSize="small" aria-hidden />
+          </a>
         </li>
-        <li className="hover:text-green-600 transition-all duration-200 border border-slate-200 rounded-lg p-2 hover:border-green-600">
-          <a
-            href="https://www.naturgucker.de"
-            rel="noopener noreferrer"
-            target="_blank"
-            className="flex items-center gap-2 justify-between"
-          >
-            <p>Naturgucker</p>
-            <Launch />
-          </a>{" "}
-        </li>
-        <li className="hover:text-green-600 transition-all duration-200 border border-slate-200 rounded-lg p-2 hover:border-green-600">
-          <a
-            href="https://www.vogelmeldung.de"
-            rel="noopener noreferrer"
-            target="_blank"
-            className="flex items-center gap-2 justify-between"
-          >
-            <p>Vogelmeldung</p>
-            <Launch />
-          </a>{" "}
-        </li>
-        <li className="hover:text-green-600 transition-all duration-200 border border-slate-200 rounded-lg p-2 hover:border-green-600">
-          <a
-            href="https://www.waarneming.nl"
-            rel="noopener noreferrer"
-            target="_blank"
-            className="flex items-center gap-2 justify-between"
-          >
-            <p>Waarneming</p>
-            <Launch />
-          </a>{" "}
-        </li>
-        <li className="hover:text-green-600 transition-all duration-200 border border-slate-200 rounded-lg p-2 hover:border-green-600">
-          <a
-            href="https://www.ebird.org"
-            rel="noopener noreferrer"
-            target="_blank"
-            className="flex items-center gap-2 justify-between"
-          >
-            <p>eBird</p>
-            <Launch />
-          </a>{" "}
-        </li>
-      </ul>
-    </div>
+      ))}
+    </ul>
   );
 }

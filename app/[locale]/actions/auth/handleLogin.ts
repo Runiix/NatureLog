@@ -1,66 +1,83 @@
 "use server";
 
+import { getLocale } from "next-intl/server";
 import { revalidatePath } from "next/cache";
-import { redirect } from "next/navigation";
-
+import { redirect } from "@/i18n/navigation";
 import { createClient } from "@/utils/supabase/server";
+import { isStrongPassword, isValidUsername } from "@/app/[locale]/utils/credentials";
+import { escapeLike } from "@/app/[locale]/utils/escapeLike";
 
-function validatePassword(password: string) {
-  const passwordRegex =
-    /^(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]).{10,}$/;
-  return passwordRegex.test(password);
+export type AuthErrorCode =
+  | "invalidCredentials"
+  | "banned"
+  | "emailNotConfirmed"
+  | "usernameTaken"
+  | "usernameInvalid"
+  | "passwordWeak"
+  | "generic";
+
+/** Maps Supabase auth errors to message keys, without echoing raw text. */
+function toErrorCode(error: { code?: string; message: string }): AuthErrorCode {
+  const code = error.code ?? "";
+  if (code === "invalid_credentials" || error.message === "Invalid login credentials") {
+    return "invalidCredentials";
+  }
+  if (code === "user_banned" || error.message === "User is banned") return "banned";
+  if (code === "email_not_confirmed") return "emailNotConfirmed";
+  if (code === "weak_password") return "passwordWeak";
+  return "generic";
 }
 
-export async function login(formData: FormData) {
-  const supabase = await createClient();
-
-  const data = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-  };
-  const { error } = await supabase.auth.signInWithPassword(data);
-
-   if (error) {
-    return {
-      error: {
-        code: error.name,
-        message: error.message,
-      },
-    };
+export async function login(formData: FormData): Promise<{ error: AuthErrorCode } | void> {
+  const email = formData.get("email");
+  const password = formData.get("password");
+  if (typeof email !== "string" || typeof password !== "string" || !email || !password) {
+    return { error: "invalidCredentials" };
   }
+
+  const supabase = await createClient();
+  const { error } = await supabase.auth.signInWithPassword({ email, password });
+  if (error) return { error: toErrorCode(error) };
+
   revalidatePath("/", "layout");
-  redirect("/de/homepage");
+  // Locale-aware: this used to always land on /de/homepage.
+  redirect({ href: "/homepage", locale: await getLocale() });
 }
 
-export async function signup(formData: FormData) {
-  const supabase = await createClient();
-  const { data: userNameData, error: userNameError } = await supabase
-    .from("users")
-    .select("display_name")
-    .eq("display_name", formData.get("username") as string);
-  if (userNameError) {
-    console.error("Error getting username data", userNameError);
-  }
-  if (userNameData && userNameData.length > 0) {
-    return { usernameError: true };
-  }
-  const data = {
-    email: formData.get("email") as string,
-    password: formData.get("password") as string,
-    options: {
-      data: {
-        displayName: formData.get("username"),
-      },
-    },
-  };
-  if (!validatePassword(data.password)) {
-    return { validationError: true };
-  }
-  const { error } = await supabase.auth.signUp(data);
+export async function signup(
+  formData: FormData,
+): Promise<{ error: AuthErrorCode } | { success: true }> {
+  const username = formData.get("username");
+  const email = formData.get("email");
+  const password = formData.get("password");
 
+  // The username becomes part of every profile URL; it used to be accepted
+  // as typed, spaces and slashes included.
+  if (!isValidUsername(username)) return { error: "usernameInvalid" };
+  if (!isStrongPassword(password)) return { error: "passwordWeak" };
+  if (typeof email !== "string" || !email.includes("@")) return { error: "generic" };
+
+  const supabase = await createClient();
+  const { data: taken, error: lookupError } = await supabase
+    .from("users")
+    .select("id")
+    // Case-insensitive, so "Anna" cannot impersonate "anna"; "_" is a
+    // LIKE wildcard and allowed in names, hence the escaping.
+    .ilike("display_name", escapeLike(username))
+    .limit(1);
+  if (lookupError) console.error("Error checking username", lookupError);
+  if (taken && taken.length > 0) return { error: "usernameTaken" };
+
+  const { error } = await supabase.auth.signUp({
+    email,
+    password,
+    options: { data: { displayName: username } },
+  });
   if (error) {
-    redirect("/error");
+    console.error("Sign-up failed", error.code);
+    return { error: toErrorCode(error) };
   }
+
   revalidatePath("/", "layout");
   return { success: true };
 }

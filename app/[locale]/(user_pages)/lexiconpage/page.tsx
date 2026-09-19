@@ -1,24 +1,35 @@
-import LexiconGrid from "@/app/[locale]/components/lexicon/LexiconGrid";
-import { createClient } from "@/utils/supabase/server";
-import { getUser } from "@/app/[locale]/utils/data";
+import { getTranslations } from "next-intl/server";
 import Search from "@/app/[locale]/components/general/Search";
+import LexiconFilterList from "@/app/[locale]/components/lexicon/LexiconFilterList";
+import LexiconGrid from "@/app/[locale]/components/lexicon/LexiconGrid";
+import LexiconSort from "@/app/[locale]/components/lexicon/LexiconSort";
+import { PageHeader } from "@/app/[locale]/components/ui/PageHeader";
+import { getUser } from "@/app/[locale]/utils/data";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function LexiconPage() {
   const supabase = await createClient();
-  const user = await getUser(supabase);
+  const [user, t] = await Promise.all([getUser(supabase), getTranslations("Lexicon")]);
+
+  // The favourite buttons need the viewer's spotted ids; one small query here
+  // instead of a browser round-trip after the grid has rendered.
+  let spottedIds: number[] = [];
+  if (user) {
+    const { data } = await supabase.from("spotted").select("animal_id").eq("user_id", user.id);
+    spottedIds = (data ?? [])
+      .map((row) => row.animal_id)
+      .filter((id): id is number => id !== null);
+  }
 
   return (
-    <section className=" h-[calc(100vh-2.5rem)] sm:h-[calc(100vh-4rem)] flex flex-col items-center w-full">
-      <div className="flex items-center justify-between w-full max-w-[1200px] mx-auto mt-4 shadow-lg shadow-gray-400 p-4 rounded-lg">
-        <h2 className="text-green-600 text-center text-2xl xl:text-5xl">
-          Lexikon
-        </h2>{" "}
-        <Search placeholder="searchAnimal" />
+    <>
+      <PageHeader title={t("title")} subtitle={t("subtitle")} />
+      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+        <Search placeholder="searchAnimal" className="sm:w-72" />
+        <LexiconSort />
       </div>
-      {/* Pass an empty spotted list; client will populate for logged-in users */}
-      <div className="overflow-y-auto  overflow-x-hidden w-full pb-10">
-        <LexiconGrid user={user} spottedList={[]} />
-      </div>
-    </section>
+      <LexiconFilterList />
+      <LexiconGrid user={user} spottedList={spottedIds} />
+    </>
   );
 }

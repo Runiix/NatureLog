@@ -1,19 +1,24 @@
 "use client";
 
-import Image, { StaticImageData } from "next/image";
-import { useEffect, useRef, useState } from "react";
-import { User } from "@supabase/supabase-js";
-import black from "@/app/[locale]/assets/images/black.webp";
-import { useRouter } from "next/navigation";
-import FavoriteFunctionality from "../general/FavoriteFunctionality";
 import { Star } from "@mui/icons-material";
+import type { User } from "@supabase/supabase-js";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+import black from "@/app/[locale]/assets/images/black.webp";
+import { Link } from "@/i18n/navigation";
+import FavoriteFunctionality from "../general/FavoriteFunctionality";
 import ListFunctionality from "../general/ListFunctionality";
+import { Card } from "../ui/Card";
 
+/**
+ * One species in the lexicon grid. The whole title is a real link (the card
+ * used to navigate via onClick on a div), and the secondary line follows the
+ * active sort: size, conservation status, or the scientific name.
+ */
 export default function LexiconCard({
   id,
   common_name,
   scientific_name,
-  population_estimate,
   endangerment_status,
   size_from,
   size_to,
@@ -26,99 +31,70 @@ export default function LexiconCard({
   id: number;
   common_name: string;
   scientific_name: string;
-  population_estimate: string;
-  endangerment_status: string;
-  size_from: number;
-  size_to: number;
+  population_estimate?: string | null;
+  endangerment_status: string | null;
+  size_from: number | null;
+  size_to: number | null;
   sortBy: string | null;
   very_rare: boolean;
-  imageUrl: string;
+  imageUrl: string | null;
   user: User | null;
   spottedList: number[];
 }) {
-  const link = `/animalpage/${common_name}`;
-  const imageRef = useRef<HTMLImageElement | null>(null);
-  const router = useRouter();
-  const [isSpotted, setIsSpotted] = useState("false");
-  useEffect(() => {
-    const checkIfSpotted = () => {
-      if (spottedList !== undefined) {
-        const isSpotted = spottedList.some((item) => item === id);
-        if (isSpotted) setIsSpotted("true");
-      }
-    };
-    checkIfSpotted();
-  }, [id, spottedList]);
-  const handleImageLoad = () => {
-    if (imageRef.current) {
-      imageRef.current.classList.remove("opacity-0");
-    }
-  };
-  const handleNavigation = () => {
-    router.push(link);
-  };
+  const t = useTranslations("Lexicon");
+
+  const detail =
+    sortBy === "size_to" && size_from !== null && size_to !== null
+      ? t("cardSize", { from: size_from, to: size_to })
+      : sortBy === "endangerment_status" && endangerment_status
+        ? t(endangerment_status)
+        : scientific_name;
 
   return (
-    <div
-      onClick={handleNavigation}
-      className="flex flex-col w-40 sm:w-80  shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 rounded-lg cursor-pointer"
-    >
-      <div>
+    <Card padding="none" className="group/card flex h-full flex-col overflow-hidden">
+      <Link
+        href={`/animalpage/${common_name}`}
+        tabIndex={-1}
+        aria-hidden
+        className="relative block aspect-[4/3] w-full overflow-hidden bg-surface-sunken"
+      >
         <Image
-          ref={imageRef}
-          src={imageUrl}
-          alt="Placeholder"
-          width={300}
-          height={200}
-          className="object-cover w-full h-24 sm:h-48 rounded-t-lg hover:opacity-90  transition-opacity duration-[1s] opacity-0"
-          onLoad={handleImageLoad}
+          src={imageUrl ?? black}
+          alt=""
+          fill
+          sizes="(min-width: 1536px) 22vw, (min-width: 1024px) 30vw, 50vw"
+          className="object-cover transition-transform duration-300 group-hover/card:scale-[1.03]"
         />
-      </div>
-
-      <div className=" p-4 w-full flex justify-between items-center">
-        <div>
-          <h2 className="text-xs sm:text-xl truncate max-w-20 md:max-w-56 hover:max-w-full">
+        {very_rare && (
+          <span
+            title={t("rareTooltip")}
+            className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-xs font-medium text-amber-300 backdrop-blur"
+          >
+            <Star sx={{ fontSize: 14 }} aria-hidden />
+            {t("rare")}
+          </span>
+        )}
+      </Link>
+      <div className="flex flex-1 items-start justify-between gap-2 p-3 sm:p-4">
+        <div className="min-w-0">
+          <Link
+            href={`/animalpage/${common_name}`}
+            className="block truncate rounded font-semibold text-fg hover:text-accent-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:text-lg"
+          >
             {common_name}
-          </h2>
-
-          <div className="flex gap-1 items-center">
-            <h3 className="text-[0.5rem] sm:text-xs">
-              {sortBy === "population_estimate"
-                ? population_estimate
-                : sortBy === "size_to"
-                  ? `${size_from} - ${size_to} cm`
-                  : sortBy === "endangerment_status"
-                    ? endangerment_status
-                    : sortBy === ""
-                      ? scientific_name
-                      : scientific_name}
-            </h3>
-            {very_rare && (
-              <div className="group relative text-[0.5rem]">
-                {" "}
-                <Star className="text-red-600 scale-50 md:scale-75 " />{" "}
-                <div className="opacity-0 transition-all absolute duration-200 group-hover:opacity-100 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 border border-gray-200 rounded-lg p-2 pointer-events-none">
-                  <span className="text-xs text-center ">
-                    Ausnahemeerscheinung oder Irrgast in Deutschland
-                  </span>
-                </div>
-              </div>
-            )}{" "}
+          </Link>
+          <p className="truncate text-xs italic text-fg-muted sm:text-sm">
+            {detail}
+            {very_rare && <span className="sr-only">, {t("rareTooltip")}</span>}
+          </p>
+        </div>
+        {user && (
+          <div className="-mr-1 -mt-1 flex shrink-0 items-center">
+            <FavoriteFunctionality user={user} id={id} name={common_name} spottedList={spottedList} />
+            <ListFunctionality user={user} id={id} />
           </div>
-        </div>
-        <div className="flex items-center gap-2">
-          {user && (
-            <FavoriteFunctionality
-              user={user}
-              id={id}
-              spottedList={spottedList}
-              buttonStyles=""
-              modalStyles=""
-            />
-          )}
-          {user && <ListFunctionality user={user} id={id} />}
-        </div>
+        )}
       </div>
-    </div>
+    </Card>
   );
 }

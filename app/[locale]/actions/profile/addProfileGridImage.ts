@@ -1,59 +1,66 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import requireAuth from "@/utils/supabase/requireAuth";
+import { validateImage } from "@/utils/supabase/imageUpload";
+
+const MAX_GRID_IMAGES = 12;
 
 export default async function addProfileGridImage(formData: FormData) {
-  const supabase = await createClient();
-  const file = formData.get("file") as File;
-  const modalFile = formData.get("modalFile") as File;
-  const fileName = formData.get("fileName") as string;
-  try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  const { supabase, user } = await requireAuth();
 
-    if (!user) {
-      throw new Error("User not authenticated for Photo upload!");
-    }
-    const filePath = `/${user.id}/ProfileGrid/${fileName}`;
-    const modalPath = `/${user.id}/ProfileGridModals/${fileName}`;
-
-    const { data: listData, error: listError } = await supabase.storage
-      .from("profiles")
-      .list(user?.id + "/ProfileGrid/", {
-        limit: 13,
-        offset: 0,
-        sortBy: { column: "name", order: "asc" },
-      });
-    if (listError) {
-      console.error(listError);
-    }
-
-    if (listData === null || listData.length < 13) {
-      const { error: insertError1 } = await supabase.storage
-        .from("profiles")
-        .upload(filePath, file, {
-          cacheControl: "3600",
-          upsert: true,
-        });
-      if (insertError1) {
-        console.error(insertError1);
-      }
-      const { error: insertError2 } = await supabase.storage
-        .from("profiles")
-        .upload(modalPath, modalFile, {
-          cacheControl: "3600",
-          upsert: true,
-        });
-      if (insertError2) {
-        console.error(insertError2);
-      }
-    } else {
-      return { success: false, profileGridFull: true };
-    }
-    return { success: true, profileGridFull: false };
-  } catch (error) {
-    console.error("Error uploading file: ", error);
-    return { success: false, profileGridFull: false };
+  const [file, modalFile] = await Promise.all([
+    validateImage(formData.get("file")),
+    validateImage(formData.get("modalFile")),
+  ]);
+  if (!file || !modalFile) {
+    return { success: false, profileGridFull: false, error: "Invalid image" };
   }
+
+  const { data: existing, error: listError } = await supabase.storage
+    .from("profiles")
+    .list(`${user.id}/ProfileGrid`, { limit: MAX_GRID_IMAGES + 1 });
+  if (listError) {
+    console.error("Error listing profile grid", listError);
+    return { success: false, profileGridFull: false, error: listError.message };
+  }
+  const imageCount = existing.filter(
+    (object) => object.name !== ".emptyFolderPlaceholder",
+  ).length;
+  if (imageCount >= MAX_GRID_IMAGES) {
+    return { success: false, profileGridFull: true, error: "Grid is full" };
+  }
+
+  // The object name is generated here, never taken from the client: the old
+  // client-supplied filename was joined straight into the storage key.
+  const name = `${crypto.randomUUID()}.${file.extension}`;
+
+  const { error: gridError } = await supabase.storage
+    .from("profiles")
+    .upload(`${user.id}/ProfileGrid/${name}`, file.file, {
+      cacheControl: "3600",
+      contentType: file.contentType,
+    });
+  if (gridError) {
+    console.error("Error uploading grid image", gridError);
+    return { success: false, profileGridFull: false, error: gridError.message };
+  }
+
+  const { error: modalError } = await supabase.storage
+    .from("profiles")
+    .upload(`${user.id}/ProfileGridModals/${name}`, modalFile.file, {
+      cacheControl: "3600",
+      contentType: modalFile.contentType,
+    });
+  if (modalError) {
+    console.error("Error uploading grid modal image", modalError);
+    // Don't leave a thumbnail behind that has no full-size counterpart.
+    await supabase.storage.from("profiles").remove([`${user.id}/ProfileGrid/${name}`]);
+    return { success: false, profileGridFull: false, error: modalError.message };
+  }
+
+  return {
+    success: true,
+    profileGridFull: imageCount + 1 >= MAX_GRID_IMAGES,
+    error: null,
+  };
 }

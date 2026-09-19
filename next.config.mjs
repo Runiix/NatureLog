@@ -13,7 +13,11 @@ img-src 'self' blob: data: https://umvtbsrjbvivfkcmvtxk.supabase.co https://a.ti
   base-uri 'self';
   form-action 'self';
   frame-ancestors 'none';
-  upgrade-insecure-requests;
+  ${
+    // Upgrading on http://localhost turns every redirect into https://localhost
+    // (ERR_SSL_PROTOCOL_ERROR), so only production gets it.
+    process.env.NODE_ENV === "production" ? "upgrade-insecure-requests;" : ""
+  }
 
 `.replace(/\n/g, "");
 
@@ -30,7 +34,7 @@ const nextConfig = {
   },
   experimental: {
     serverActions: {
-      bodySizeLimit: "50mb",
+      bodySizeLimit: "5mb",
     },
   },
   reactStrictMode: false,

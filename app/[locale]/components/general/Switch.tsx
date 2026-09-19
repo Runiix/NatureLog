@@ -1,26 +1,41 @@
 "use client";
 
+import { cn } from "@/app/[locale]/utils/cn";
+
+/** On/off toggle: a real <button role="switch">, keyboard-operable and announced. */
 export default function Switch({
   value,
   onChange,
+  label,
+  id,
 }: {
   value: boolean;
-  onChange: React.Dispatch<React.SetStateAction<boolean>>;
+  onChange: (value: boolean) => void;
+  /** Accessible name, when no visible <label htmlFor> points at `id`. */
+  label?: string;
+  id?: string;
 }) {
   return (
-    <div
-      className={`w-14 min-w-14 h-8 flex items-center rounded-full p-1 cursor-pointer border shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 hover:border-green-600 ${
-        value
-          ? "border-green-600 from-green-600 to-gray-950"
-          : "border-gray-200 from-gray-950 to-gray-900"
-      }`}
+    <button
+      type="button"
+      id={id}
+      role="switch"
+      aria-checked={value}
+      aria-label={label}
       onClick={() => onChange(!value)}
+      className={cn(
+        "relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border-2 border-transparent transition-colors",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+        value ? "bg-accent-solid" : "bg-border",
+      )}
     >
-      <div
-        className={`bg-gray-200 w-6 h-6 rounded-full shadow-md transform transition-transform ${
-          value ? "translate-x-6" : "translate-x-0"
-        }`}
+      <span
+        aria-hidden
+        className={cn(
+          "inline-block h-5 w-5 rounded-full bg-white shadow transition-transform",
+          value ? "translate-x-5" : "translate-x-0",
+        )}
       />
-    </div>
+    </button>
   );
 }

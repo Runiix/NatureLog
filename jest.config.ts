@@ -152,7 +152,12 @@ const config: Config = {
   // snapshotSerializers: [],
 
   // The test environment that will be used for testing
-  testEnvironment: "jsdom",
+  testEnvironment: "<rootDir>/jest.environment.ts",
+  // SWC rewrites the @/ alias in import statements but not in jest.mock()
+  // paths; this makes both resolve the same way as tsconfig's paths.
+  moduleNameMapper: {
+    "^@/(.*)$": "<rootDir>/$1",
+  },
 
   // Options that will be passed to the testEnvironment
   // testEnvironmentOptions: {},
@@ -202,4 +207,36 @@ const config: Config = {
   // watchman: true,
 };
 
-export default createJestConfig(config);
+// next-intl and use-intl ship ESM only. next/jest sets transformIgnorePatterns
+// itself, so the override has to be applied to the config it produces.
+// A file is skipped if *any* pattern matches, so next/jest's own node_modules
+// pattern is replaced by one that also carves out these packages (keeping the
+// Next.js internals it already transforms).
+const TRANSFORMED_PACKAGES = [
+  "next-intl",
+  "use-intl",
+  "@formatjs",
+  "intl-messageformat",
+  "icu-minify",
+  "geist",
+  "next/dist/client",
+  "next/dist/shared/lib",
+  "next/src/client",
+  "next/src/shared/lib",
+];
+
+export default async function jestConfig() {
+  const resolved = await createJestConfig(config)();
+  // Paths may use either separator (Windows), hence [/\\] throughout.
+  const SEP = String.raw`[/\\]`;
+  const packages = TRANSFORMED_PACKAGES.map((name) => name.split("/").join(SEP)).join("|");
+  return {
+    ...resolved,
+    transformIgnorePatterns: [
+      `${SEP}node_modules${SEP}(?!(${packages})${SEP})`,
+      ...(resolved.transformIgnorePatterns ?? []).filter(
+        (pattern) => !pattern.includes("node_modules"),
+      ),
+    ],
+  };
+}

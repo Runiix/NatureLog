@@ -1,303 +1,225 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useLocale, useTranslations } from "next-intl";
+import { useState } from "react";
+import { login, signup, type AuthErrorCode } from "@/app/[locale]/actions/auth/handleLogin";
+import { isStrongPassword, isValidUsername, USERNAME_PATTERN } from "@/app/[locale]/utils/credentials";
 import { createClient } from "@/utils/supabase/client";
-import { CircleLoader } from "react-spinners";
-import { login, signup } from "../../actions/auth/handleLogin";
-import Link from "next/link";
-import { AuthError } from "@supabase/supabase-js";
+import { Link } from "@/i18n/navigation";
+import { Button } from "../ui/Button";
+import { Field, Input } from "../ui/Field";
+import { PasswordInput } from "./PasswordInput";
 
+type Mode = "login" | "signup" | "reset";
+type Notice = { tone: "error" | "success"; text: string } | null;
+
+/**
+ * Sign in, sign up and "forgot password" in one card. Errors are mapped from
+ * codes to localised messages (the old form logged raw auth errors to the
+ * console and showed German strings only), and every control is labelled.
+ */
 export default function AuthForm() {
-  const [isNewUser, setIsNewUser] = useState(false);
-  const [isSigningIn, setIsSigningIn] = useState(false);
-  const [isSigningUp, setIsSigningUp] = useState(false);
-  const [resetPassword, setResetPassword] = useState(false);
-  const [emailData, setEmailData] = useState("");
-  const [loginError, setLoginError] = useState<
-    false | { code: string; message: string }
-  >(false);
-  const [validationError, setValidationError] = useState(false);
-  const [usernameError, setUsernameError] = useState(false);
-  const [regsisterSuccess, setRegisterSuccess] = useState(false);
-  const [acceptedTOS, setAcceptedTOS] = useState(false);
-  const [tosError, setTosError] = useState(false);
-  const supabase = createClient();
+  const t = useTranslations("Auth");
+  const locale = useLocale();
+  const [mode, setMode] = useState<Mode>("login");
+  const [pending, setPending] = useState(false);
+  const [notice, setNotice] = useState<Notice>(null);
+  const [fieldErrors, setFieldErrors] = useState<Partial<Record<"username" | "password" | "terms", string>>>({});
 
-  const sendResetPassword = async () => {
-    try {
-      const { data, error } = await supabase.auth.resetPasswordForEmail(
-        emailData,
-        {
-          redirectTo: "https://naturelog.de/passwordreset",
-        }
-      );
-    } catch (error) {
-      console.error(error);
+  const switchTo = (next: Mode) => {
+    setMode(next);
+    setNotice(null);
+    setFieldErrors({});
+  };
+
+  const errorText = (code: AuthErrorCode) => t(`errors.${code}`);
+
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    // currentTarget is null once an await has run; keep the element.
+    const form = event.currentTarget;
+    const formData = new FormData(form);
+    setNotice(null);
+    setFieldErrors({});
+
+    if (mode === "signup") {
+      const errors: typeof fieldErrors = {};
+      if (!isValidUsername(formData.get("username"))) errors.username = t("errors.usernameInvalid");
+      if (!isStrongPassword(formData.get("password"))) errors.password = t("errors.passwordWeak");
+      if (formData.get("terms") !== "on") errors.terms = t("errors.termsRequired");
+      if (Object.keys(errors).length > 0) {
+        setFieldErrors(errors);
+        return;
+      }
     }
-    alert("E-Mail erfolgreich versendet!");
-  };
 
-  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setEmailData(e.target.value);
-  };
-
-  let signInMessage = "Anmelden";
-
-  if (isSigningIn && isNewUser) {
-    signInMessage = "Die Registirerung läuft";
-  } else if (isSigningIn) {
-    signInMessage = "Sie werden angemeldet";
-  } else if (isNewUser) {
-    signInMessage = "Registrieren";
+    setPending(true);
+    try {
+      if (mode === "login") {
+        const result = await login(formData);
+        // On success the action redirects and this never resolves with data.
+        if (result?.error) setNotice({ tone: "error", text: errorText(result.error) });
+      } else if (mode === "signup") {
+        const result = await signup(formData);
+        if ("error" in result) setNotice({ tone: "error", text: errorText(result.error) });
+        else {
+          setNotice({ tone: "success", text: t("signupSuccess") });
+          form.reset();
+        }
+      } else {
+        const email = String(formData.get("email") ?? "");
+        const { error } = await createClient().auth.resetPasswordForEmail(email, {
+          redirectTo: `${window.location.origin}/${locale}/passwordreset`,
+        });
+        // Same message either way, so the form does not reveal which
+        // addresses have accounts.
+        if (error) console.error("Password reset request failed", error.code);
+        setNotice({ tone: "success", text: t("resetSent") });
+      }
+    } catch (error) {
+      // Next's redirect() surfaces as a thrown control-flow error; let it through.
+      if (error && typeof error === "object" && "digest" in error) throw error;
+      setNotice({ tone: "error", text: t("errors.generic") });
+    } finally {
+      setPending(false);
+    }
   }
 
-  const handleLogin = async (formData: FormData) => {
-    const { error } = await login(formData);
-    if (error) setLoginError(error);
-    setIsSigningIn(false);
-  };
-
-  useEffect(() => {
-    loginError && console.log(loginError);
-  }, [loginError]);
-  const handleSignUp = async (formData: FormData) => {
-    const { validationError, usernameError, success } = await signup(formData);
-    if (validationError) setValidationError(true);
-    if (usernameError) setUsernameError(true);
-    if (success) setRegisterSuccess(true);
-    setIsSigningIn(false);
-    setIsNewUser(false);
-  };
-  const handleFormChangeToLogin = () => {
-    setIsNewUser(false);
-    if (validationError) setValidationError(false);
-  };
-  const handleFormChangeToSignUp = () => {
-    setIsNewUser(true);
-    if (loginError) setLoginError(false);
-  };
+  const title = mode === "login" ? t("loginTitle") : mode === "signup" ? t("signupTitle") : t("resetTitle");
+  const subtitle =
+    mode === "login" ? t("loginSubtitle") : mode === "signup" ? t("signupSubtitle") : t("resetSubtitle");
 
   return (
-    <div className=" z-10">
-      {!resetPassword && (
-        <div>
-          <div className="flex flex-col  text-center mb-6 sm:mb-10  font-bold ">
-            <h1 className="mb-4 text-green-600 text-5xl sm:text-6xl">
-              NatureLog{" "}
-            </h1>
-            <h1 className="mb-4 text-slate-100 text-3xl sm:text-4xl">
-              {isNewUser ? "Registrierung" : "Anmeldung"}
-            </h1>
-            {loginError && (
-              <h2 className="text-red-500 bg-gray-900/70 rounded-lg p-2">
-                {loginError.message === "Invalid login credentials"
-                  ? "E-Mail oder Passwort sind nicht korrekt"
-                  : loginError.message === "User is banned"
-                  ? "Dieser Account ist gebannt"
-                  : "Fehler bei der Anmeldung. Bitte versuche es erneut oder kontakitiere den Support"}
-              </h2>
-            )}
-            {validationError && (
-              <div className=" mx-5 text-start bg-gray-900 border bg-opacity-80 border-slate-300 rounded-lg p-2 text-xs">
-                <h2 className="font-bold ">
-                  Ihr Passwort muss folgende Anforderungen erfüllen:
-                </h2>
-                <ul className="text-start text-red-500">
-                  <li>mindestens 10 Zeichen</li>
-                  <li>mindestens 1 kleinen Buchstaben</li>
-                  <li>mindestens 1 großen Buchstaben</li>
-                  <li>mindestens 1 Zahl</li>
-                  <li>mindestens 1 Sonderzeichen</li>
-                </ul>
-              </div>
-            )}
-            {usernameError && (
-              <h2 className="text-red-500">
-                Der Benutzername ist bereits vergeben!
-              </h2>
-            )}
-            {regsisterSuccess && (
-              <h2 className="text-green-600 bg-gray-900 bg-opacity-70 p-1 rounded-lg">
-                Eine E-Mail zur Bestätigung Ihres Accounts wurde an die von
-                Ihnen angegeben E-Mail Adresse gesendet!
-              </h2>
-            )}
-          </div>
-          <form className="flex flex-col items-center gap-5">
-            {isNewUser && (
-              <input
-                pattern="\S*"
-                id="username"
-                onInvalid={(e) => {
-                  (e.target as HTMLInputElement).setCustomValidity(
-                    "Benutzername darf keine Leerzeichen enthalten"
-                  );
-                  setIsSigningIn(false);
-                }}
-                onInput={(e) => {
-                  (e.target as HTMLInputElement).setCustomValidity("");
-                }}
-                name="username"
-                type="text"
-                placeholder="Benutzername"
-                required
-                className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
-              />
-            )}
-            <input
-              id="email"
-              name="email"
-              type="email"
-              onInvalid={() => setIsSigningIn(false)}
-              required
-              placeholder="E-Mail"
-              className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
+    <div className="flex flex-col gap-6">
+      <header className="flex flex-col gap-1 text-center">
+        <Link
+          href="/"
+          className="mx-auto rounded-md text-2xl font-bold tracking-tight text-accent-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          NatureLog
+        </Link>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight">{title}</h1>
+        <p className="text-sm text-fg-muted">{subtitle}</p>
+      </header>
+
+      {notice && (
+        <p
+          role={notice.tone === "error" ? "alert" : "status"}
+          className={
+            notice.tone === "error"
+              ? "rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger"
+              : "rounded-lg bg-accent/10 px-3 py-2 text-sm text-accent-text"
+          }
+        >
+          {notice.text}
+        </p>
+      )}
+
+      <form key={mode} onSubmit={onSubmit} className="flex flex-col gap-4" noValidate={mode === "signup"}>
+        {mode === "signup" && (
+          <Field label={t("username")} hint={t("usernameHint")} error={fieldErrors.username} required>
+            <Input
+              name="username"
+              autoComplete="username"
+              pattern={USERNAME_PATTERN.source}
+              maxLength={30}
+              autoFocus
             />
-            <input
-              id="password"
+          </Field>
+        )}
+        <Field label={t("email")} required>
+          <Input
+            name="email"
+            type="email"
+            autoComplete="email"
+            required
+            autoFocus={mode !== "signup"}
+          />
+        </Field>
+        {mode !== "reset" && (
+          <Field
+            label={t("password")}
+            hint={mode === "signup" ? t("passwordHint") : undefined}
+            error={fieldErrors.password}
+            required
+          >
+            <PasswordInput
               name="password"
-              type="password"
+              autoComplete={mode === "signup" ? "new-password" : "current-password"}
               required
-              placeholder="Passwort"
-              className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 bg-opacity-80 border border-slate-300 text-lg hover:border-slate-100 "
             />
-            {isNewUser && (
-              <label className="text-slate-100 flex md:items-center items-start gap-2 text-xs sm:text-sm md:text-base">
-                <input
-                  type="checkbox"
-                  required
-                  checked={acceptedTOS}
-                  onChange={(e) => {
-                    setAcceptedTOS(e.target.checked);
-                    if (e.target.checked) setTosError(false);
-                  }}
-                  className="w-5 h-5 rounded cursor-pointer"
-                  aria-describedby="tosError"
-                />
-                <div className="gap-1 flex flex-col md:flex-row">
-                  <div>
-                    Ich akzeptiere die{" "}
-                    <Link
-                      href="/termsofservice"
-                      target="_blank"
-                      className="underline text-green-600"
-                    >
-                      Nutzungsbedingungen
-                    </Link>
-                  </div>
-                  <div>
-                    und die
-                    <Link
-                      href="/impressum"
-                      target="_blank"
-                      className="underline text-green-600"
-                    >
-                      Datenschutzrichtlinien
-                    </Link>
-                  </div>
-                </div>
-              </label>
-            )}
-            {tosError && (
-              <p id="tosError" className="text-red-500 text-sm">
-                Sie müssen die Nutzungsbedingungen akzeptieren.
-              </p>
-            )}
-            <button
-              formAction={isNewUser ? handleSignUp : handleLogin}
-              className="bg-green-600 hover:text-gray-900 py-3 flex gap-4 justify-around items-center px-20 rounded-lg hover:bg-green-700 transition-all duration-200"
-              onClick={() => setIsSigningIn(true)}
-              aria-label="Anmelden oder Registrieren"
-            >
-              <p className="text-2xl">{signInMessage} </p>
-              {isSigningIn && (
-                <div className="">
-                  <CircleLoader color="#000000" size={12} />{" "}
-                </div>
-              )}
-            </button>
-            <div>
-              {isNewUser ? (
-                <>
-                  Haben Sie schon einen Account?{" "}
-                  <button
-                    type="button"
-                    onClick={handleFormChangeToLogin}
-                    className="underline hover:text-green-600 transition-all duration-200"
-                    aria-label="Form zu Anmeldungsform ändern"
-                  >
-                    Anmelden
-                  </button>
-                </>
-              ) : (
-                <div className="flex flex-col items-center text-center justify-center">
-                  <div>
-                    Haben Sie noch keinen Account?{" "}
-                    <button
-                      type="button"
-                      onClick={handleFormChangeToSignUp}
-                      className="underline hover:text-green-600 transition-all duration-200"
-                      aria-label="Form zu Registrierungsform ändern"
-                    >
-                      Zur Registrierung
-                    </button>
-                  </div>
-                  <p
-                    className="underline hover:text-green-600 hover:cursor-pointer"
-                    onClick={() => setResetPassword(!resetPassword)}
-                  >
-                    Passwort vergessen?
-                  </p>
-                </div>
-              )}
-            </div>
-            {isSigningUp && (
-              <p className="text-green-600">
-                E-Mail versendet! Überprüfen Sie Ihr Postfach, um Ihr Passwort
-                zu ändern.
-              </p>
-            )}
-          </form>
-        </div>
-      )}
-      {resetPassword && (
-        <div>
-          <div className="min-h-screen flex flex-col gap-3 items-center justify-center text-center">
-            <h1 className="text-5xl font-bold  text-slate-100">
-              Passwort vergessen?
-            </h1>
-            <div className="flex flex-col items-center gap-4">
-              <label className="mb-4 sm:mb-10">
-                Geben Sie ihre Konto E-Mail ein. <br /> Sie erhalten einen Link
-                zur Änderung Ihres Passworts
-              </label>
+          </Field>
+        )}
+        {mode === "login" && (
+          <button
+            type="button"
+            onClick={() => switchTo("reset")}
+            className="-mt-2 self-end rounded text-sm text-fg-muted hover:text-accent-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+          >
+            {t("forgotPassword")}
+          </button>
+        )}
+        {mode === "signup" && (
+          <div className="flex flex-col gap-1">
+            <label className="flex items-start gap-2 text-sm text-fg-muted">
               <input
-                type="email"
-                placeholder="E-Mail"
-                value={emailData}
-                onInvalid={() => setIsSigningIn(false)}
-                required
-                onChange={handleEmailChange}
-                className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 border bg-opacity-80 border-slate-300 text-lg hover:border-slate-100 "
+                type="checkbox"
+                name="terms"
+                className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-[rgb(var(--color-accent))]"
+                aria-invalid={fieldErrors.terms ? true : undefined}
               />
-              <button
-                type="submit"
-                className="bg-green-600 text-gray-900 py-4 shadow-md px-10 text-2xl rounded-lg hover:text-slate-100 hover:bg-green-700"
-                onClick={sendResetPassword}
-                aria-label="Passwort Änderungsvorgang starten"
-              >
-                E-Mail versenden
-              </button>
-              <p
-                onClick={() => setResetPassword(!resetPassword)}
-                className="underline hover:text-green-600 hover:cursor-pointer"
-              >
-                Zurück zur Anmeldung?
+              <span>
+                {t.rich("acceptTerms", {
+                  terms: (chunks) => (
+                    <Link href="/termsofservice" target="_blank" className="text-accent-text underline">
+                      {chunks}
+                    </Link>
+                  ),
+                  privacy: (chunks) => (
+                    <Link href="/impressum" target="_blank" className="text-accent-text underline">
+                      {chunks}
+                    </Link>
+                  ),
+                })}
+              </span>
+            </label>
+            {fieldErrors.terms && (
+              <p role="alert" className="text-xs text-danger">
+                {fieldErrors.terms}
               </p>
-            </div>
+            )}
           </div>
-        </div>
-      )}
+        )}
+        <Button type="submit" size="lg" fullWidth loading={pending}>
+          {mode === "login" ? t("submitLogin") : mode === "signup" ? t("submitSignup") : t("submitReset")}
+        </Button>
+      </form>
+
+      <p className="text-center text-sm text-fg-muted">
+        {mode === "login" ? (
+          <>
+            {t("noAccount")}{" "}
+            <button
+              type="button"
+              onClick={() => switchTo("signup")}
+              className="rounded font-medium text-accent-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              {t("toSignup")}
+            </button>
+          </>
+        ) : (
+          <>
+            {mode === "signup" && `${t("haveAccount")} `}
+            <button
+              type="button"
+              onClick={() => switchTo("login")}
+              className="rounded font-medium text-accent-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+            >
+              {t("toLogin")}
+            </button>
+          </>
+        )}
+      </p>
     </div>
   );
 }

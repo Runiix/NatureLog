@@ -1,6 +1,6 @@
-import { SupabaseClient } from "@supabase/supabase-js";
+import type { TypedSupabaseClient } from "@/utils/supabase/types";
 
-export const getUser = async (supabase: SupabaseClient) => {
+export const getUser = async (supabase: TypedSupabaseClient) => {
   const {
     data: { user },
     error,

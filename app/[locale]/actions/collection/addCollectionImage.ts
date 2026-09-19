@@ -1,86 +1,91 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import requireAuth from "@/utils/supabase/requireAuth";
+import { validateImage } from "@/utils/supabase/imageUpload";
+import { collectionImageName } from "@/app/[locale]/utils/storagePaths";
+
+const ISO_DATE = /^\d{4}-\d{2}-\d{2}$/;
 
 export default async function addCollectionImage(formData: FormData) {
-  const supabase = await createClient();
-  const regex = /[äöüß ]/g;
-  const common_name = formData.get("common_name") as string;
-  const file = formData.get("file") as File | null;
-  const modalFile = formData.get("modalFile") as File | null;
-  const id = formData.get("id");
-  const date = formData.get("date") as string;
-  if (!file || !modalFile) {
-    return { success: false, message: "No file uploaded" };
+  const { supabase, user } = await requireAuth();
+
+  const animalId = Number(formData.get("id"));
+  if (!Number.isInteger(animalId) || animalId <= 0) {
+    return { success: false, error: "Invalid animal" };
   }
-  try {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
 
-    if (!user) {
-      throw new Error("User not authenticated for Photo upload!");
-    }
-    const filePath1 = `/${user.id}/Collection/${
-      common_name.replace(regex, "_") + ".jpg"
-    }`;
-    const filePath2 = `/${user.id}/CollectionModals/${
-      common_name.replace(regex, "_") + ".jpg"
-    }`;
-    const updatedAt = new Date();
-
-    const { error: updateError } = await supabase
-      .from("spotted")
-      .update({ image: true })
-      .match({ user_id: user.id, animal_id: Number(id) });
-    if (updateError) console.error("Error updating image bool", updateError);
-
-    const { error: dateError } = await supabase
-      .from("spotted")
-      .update({ image_updated_at: updatedAt })
-      .match({ user_id: user.id, animal_id: Number(id) });
-    if (dateError) console.error("Error updating image_updated_at", dateError);
-
-    const { error: insertError1 } = await supabase.storage
-      .from("profiles")
-      .upload(filePath1, file, {
-        cacheControl: "3600",
-        upsert: true,
-      });
-    if (insertError1) {
-      console.error(insertError1);
-    }
-    const { error: insertError2 } = await supabase.storage
-      .from("profiles")
-      .upload(filePath2, modalFile, {
-        cacheControl: "3600",
-        upsert: true,
-      });
-    if (insertError1) {
-      console.error(insertError2);
-    }
-    const { error: lastImagesError } = await supabase
-      .from("lastimages")
-      .insert([
-        {
-          user_id: user.id,
-          image_url:
-            "https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles" +
-            filePath1,
-          username: user.user_metadata.displayName,
-        },
-      ]);
-    if (lastImagesError)
-      console.error("ERROR INSERTING INTO LASTIMAGES", lastImagesError);
-    if (date) {
-      const { error: dateError } = await supabase
-        .from("spotted")
-        .update({ first_spotted_at: date })
-        .match({ user_id: user.id, animal_id: Number(id) });
-      if (dateError) console.error("Error updating date", dateError);
-    }
-    return { success: true };
-  } catch (error) {
-    console.error("Error uploading file: ", error);
+  const date = formData.get("date");
+  if (date !== null && date !== "" && (typeof date !== "string" || !ISO_DATE.test(date))) {
+    return { success: false, error: "Invalid date" };
   }
+
+  const [file, modalFile] = await Promise.all([
+    validateImage(formData.get("file")),
+    validateImage(formData.get("modalFile")),
+  ]);
+  if (!file || !modalFile) return { success: false, error: "Invalid image" };
+
+  // The object name comes from the animals table, not from the form: the old
+  // client-supplied common_name only had umlauts and spaces stripped, so "/"
+  // and ".." went straight into the storage key. Requiring the spotted row
+  // also stops uploads for species the user never recorded.
+  const [{ data: animal }, { data: spotted }] = await Promise.all([
+    supabase.from("animals").select("common_name").eq("id", animalId).maybeSingle(),
+    supabase
+      .from("spotted")
+      .select("id")
+      .match({ user_id: user.id, animal_id: animalId })
+      .maybeSingle(),
+  ]);
+  if (!animal || !spotted) {
+    return { success: false, error: "Animal is not in your collection" };
+  }
+
+  const objectName = collectionImageName(animal.common_name);
+  const collectionPath = `${user.id}/Collection/${objectName}`;
+  const modalPath = `${user.id}/CollectionModals/${objectName}`;
+
+  const [{ error: uploadError }, { error: modalUploadError }] = await Promise.all([
+    supabase.storage.from("profiles").upload(collectionPath, file.file, {
+      cacheControl: "3600",
+      contentType: file.contentType,
+      upsert: true,
+    }),
+    supabase.storage.from("profiles").upload(modalPath, modalFile.file, {
+      cacheControl: "3600",
+      contentType: modalFile.contentType,
+      upsert: true,
+    }),
+  ]);
+  if (uploadError || modalUploadError) {
+    console.error("Error uploading collection image", uploadError ?? modalUploadError);
+    return {
+      success: false,
+      error: (uploadError ?? modalUploadError)?.message ?? "Upload failed",
+    };
+  }
+
+  const { error: spottedError } = await supabase
+    .from("spotted")
+    .update({
+      image: true,
+      image_updated_at: new Date().toISOString(),
+      ...(date ? { first_spotted_at: date } : {}),
+    })
+    .match({ user_id: user.id, animal_id: animalId });
+  if (spottedError) console.error("Error updating spotted row", spottedError);
+
+  const { data: publicUrl } = supabase.storage
+    .from("profiles")
+    .getPublicUrl(collectionPath);
+  const { error: lastImagesError } = await supabase.from("lastimages").insert({
+    user_id: user.id,
+    image_url: publicUrl.publicUrl,
+    username: user.user_metadata.displayName,
+  });
+  if (lastImagesError) {
+    console.error("Error inserting into lastimages", lastImagesError);
+  }
+
+  return { success: true, error: null };
 }

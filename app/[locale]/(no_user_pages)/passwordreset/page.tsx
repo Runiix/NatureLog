@@ -1,116 +1,100 @@
 "use client";
-import { useState } from "react";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useRouter } from "next/navigation";
-import HomeHero from "../../assets/images/HomeHero.webp";
-import Link from "next/link";
-import Image from "next/image";
-import { createClient } from "@/utils/supabase/client";
+
 import { useTranslations } from "next-intl";
+import { useState } from "react";
+import AuthShell from "../../components/auth/AuthShell";
+import { PasswordInput } from "../../components/auth/PasswordInput";
+import { Button } from "../../components/ui/Button";
+import { Field } from "../../components/ui/Field";
+import { useToast } from "../../components/ui/Toast";
+import { isStrongPassword } from "@/app/[locale]/utils/credentials";
+import { Link, useRouter } from "@/i18n/navigation";
+import { createClient } from "@/utils/supabase/client";
 
-export default function Passwordreset() {
+/**
+ * Landing page of the reset email. Enforces the same password rules as sign-up
+ * (it used to accept anything) and only reports success when Supabase did —
+ * it used to navigate to the login page and say "changed" even on failure.
+ */
+export default function PasswordReset() {
   const t = useTranslations("Auth");
-  const supabase = createClient();
-  const [data, setData] = useState({ password: "", confirmPassword: "" });
-  const [showPassword, setShowPassword] = useState(false);
+  const toast = useToast();
   const router = useRouter();
+  const [error, setError] = useState<{ field: "password" | "confirm" | "form"; text: string } | null>(null);
+  const [pending, setPending] = useState(false);
 
-  const confirmPasswords = async () => {
-    const { password, confirmPassword } = data;
-    if (password !== confirmPassword) {
-      return alert("Passwords are different!");
+  async function onSubmit(event: React.FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    const form = new FormData(event.currentTarget);
+    const password = String(form.get("password") ?? "");
+    const confirm = String(form.get("confirm") ?? "");
+    setError(null);
+
+    if (!isStrongPassword(password)) {
+      setError({ field: "password", text: t("errors.passwordWeak") });
+      return;
     }
-    const { error } = await supabase.auth.updateUser({
-      password: data.password,
-    });
-    if (error) console.error(error);
-    router.replace("/loginpage");
-    alert("Password changed successfully");
-  };
+    if (password !== confirm) {
+      setError({ field: "confirm", text: t("errors.passwordMismatch") });
+      return;
+    }
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setData((prev) => ({
-      ...prev,
-      password: e.target.value,
-    }));
-  };
-  const handleConfirmPasswordChange = (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setData((prev) => ({
-      ...prev,
-      confirmPassword: e.target.value,
-    }));
-  };
+    setPending(true);
+    const { error: updateError } = await createClient().auth.updateUser({ password });
+    setPending(false);
+    if (updateError) {
+      setError({
+        field: "form",
+        text:
+          updateError.code === "session_not_found" || updateError.status === 401
+            ? t("errors.resetLinkInvalid")
+            : updateError.code === "weak_password"
+              ? t("errors.passwordWeak")
+              : t("errors.generic"),
+      });
+      return;
+    }
+    toast(t("passwordChanged"));
+    router.replace("/loginpage");
+  }
 
   return (
-    <main className="flex bg-gray-900 bg-opacity-50">
-      <Image
-        src={HomeHero}
-        alt="hero banner"
-        className="absolute top-0 left-0 object-cover w-screen h-screen opacity-80 -z-10"
-      />
-
-      <div className="z-50 w-screen flex  h-screen flex-col gap-2 items-center justify-center">
-        <h1 className="text-5xl font-bold mb-4 text-white text-center">
-          {t("resetPassword")}
-        </h1>
-
-        <div className="flex flex-col gap-2 mb-4">
-          <label>{t("password")}</label>
-          <div className="flex items-center border border-slate-300 text-lg hover:border-slate-100 rounded-lg">
-            <input
-              type={showPassword ? "text" : "password"}
-              value={data?.password}
-              placeholder={t("password")}
-              onChange={handlePasswordChange}
-              className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 bg-opacity-80 border-r-none rounded-r-none active:border-r-none border-slate-300 text-lg hover:border-slate-100 "
-            />
-            <div
-              onClick={() => setShowPassword(!showPassword)}
-              className="pr-4 hover:cursor-pointer hover:text-green-600 text-slate-400 bg-gray-900 bg-opacity-80 py-5 rounded-r-lg"
-            >
-              {showPassword ? <Visibility /> : <VisibilityOff />}
-            </div>
-          </div>
-        </div>
-
-        <div className="flex flex-col gap-2 mb-4">
-          <label>{t("confirmPassword")}</label>
-          <div className="flex items-center border border-slate-300 text-lg hover:border-slate-100 rounded-lg">
-            <input
-              type={showPassword ? "text" : "password"}
-              value={data?.confirmPassword}
-              placeholder={t("confirmPassword")}
-              onChange={handleConfirmPasswordChange}
-              className="text-slate-100 w-80 py-5 pl-3 rounded-lg bg-gray-900 bg-opacity-80 border-r-none rounded-r-none active:border-r-none border-slate-300 text-lg hover:border-slate-100 "
-            />
-            <div
-              onClick={() => setShowPassword(!showPassword)}
-              className="pr-4 hover:cursor-pointer hover:text-green-600 text-slate-400 bg-gray-900 bg-opacity-80 py-5 rounded-r-lg"
-            >
-              {showPassword ? <Visibility /> : <VisibilityOff />}
-            </div>
-          </div>
-        </div>
-
-        <button
-          type="submit"
-          onClick={confirmPasswords}
-          className="bg-green-600 text-center p-4 text-xl rounded-lg hover:cursor-pointer hover:bg-green-700 hover:text-gray-900 transition-all
-          duration-200 shadow-md"
-          aria-label={t("resetPassword")}
+    <AuthShell>
+      <form onSubmit={onSubmit} className="flex flex-col gap-5" noValidate>
+        <header className="flex flex-col gap-1 text-center">
+          <p className="text-2xl font-bold tracking-tight text-accent-text">NatureLog</p>
+          <h1 className="mt-2 text-2xl font-semibold tracking-tight">{t("newPasswordTitle")}</h1>
+        </header>
+        {error?.field === "form" && (
+          <p role="alert" className="rounded-lg bg-danger/10 px-3 py-2 text-sm text-danger">
+            {error.text}
+          </p>
+        )}
+        <Field
+          label={t("password")}
+          hint={t("passwordHint")}
+          error={error?.field === "password" ? error.text : undefined}
+          required
         >
-          {t("resetPassword")}
-        </button>
-
+          <PasswordInput name="password" autoComplete="new-password" required autoFocus />
+        </Field>
+        <Field
+          label={t("confirmPassword")}
+          error={error?.field === "confirm" ? error.text : undefined}
+          required
+        >
+          <PasswordInput name="confirm" autoComplete="new-password" required />
+        </Field>
+        <Button type="submit" size="lg" fullWidth loading={pending}>
+          {t("submitNewPassword")}
+        </Button>
         <Link
           href="/loginpage"
-          className="underline hover:text-green-600 hover:cursor-pointer"
+          className="self-center rounded text-sm text-fg-muted hover:text-accent-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
         >
-          {t("backToLogin")}
+          {t("toLogin")}
         </Link>
-      </div>
-    </main>
+      </form>
+    </AuthShell>
   );
 }

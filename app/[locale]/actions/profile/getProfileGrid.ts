@@ -1,9 +1,15 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import requireAuth from "@/utils/supabase/requireAuth";
+import { canViewProfile } from "@/app/[locale]/utils/visibility";
+import type { TypedSupabaseClient } from "@/utils/supabase/types";
 
-async function getSignedUrl(bucket: string, path: string) {
-  const supabase = await createClient();
+
+async function getSignedUrl(
+  supabase: TypedSupabaseClient,
+  bucket: string,
+  path: string,
+) {
   const { data, error } = await supabase.storage
     .from(bucket)
     .createSignedUrl(path, 60 * 60);
@@ -17,31 +23,28 @@ async function getSignedUrl(bucket: string, path: string) {
 }
 
 export default async function getProfileGrid(userId: string) {
-  const supabase = await createClient();
+  const { supabase, user } = await requireAuth();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
-
-  if (!user) {
-    return { success: false, error: "User is not authenticated!" };
+  // Signing a URL hands out the bytes, so the visibility check has to happen
+  // before any signing — being logged in is not enough to read someone else's
+  // grid.
+  if (!(await canViewProfile(supabase, user.id, userId))) {
+    return [];
   }
 
-  const { data: gridFiles, error: gridError } = await supabase.storage
-    .from("profiles")
-    .list(`${userId}/ProfileGrid/`, {
-      limit: 13,
-      offset: 0,
-      sortBy: { column: "name", order: "asc" },
-    });
-
-  const { data: modalFiles, error: modalError } = await supabase.storage
-    .from("profiles")
-    .list(`${userId}/ProfileGridModals/`, {
-      limit: 13,
-      offset: 0,
-      sortBy: { column: "name", order: "asc" },
-    });
+  const [{ data: gridFiles, error: gridError }, { data: modalFiles, error: modalError }] =
+    await Promise.all([
+      supabase.storage.from("profiles").list(`${userId}/ProfileGrid/`, {
+        limit: 13,
+        offset: 0,
+        sortBy: { column: "name", order: "asc" },
+      }),
+      supabase.storage.from("profiles").list(`${userId}/ProfileGridModals/`, {
+        limit: 13,
+        offset: 0,
+        sortBy: { column: "name", order: "asc" },
+      }),
+    ]);
 
   if (gridError || !gridFiles) {
     console.error("Error fetching grid files:", gridError);
@@ -53,29 +56,28 @@ export default async function getProfileGrid(userId: string) {
     return [];
   }
 
-  const modalFileEntries = await Promise.all(
-    modalFiles.map(async (file) => {
-      const signedUrl = await getSignedUrl("profiles", `${userId}/ProfileGridModals/${file.name}`);
-      return [file.name, signedUrl] as [string, string | null];
-    })
-  );
+  const modalNames = new Set(modalFiles.map((file) => file.name));
 
-  const modalUrlMap = new Map(modalFileEntries);
-
-  const result = await Promise.all(
+  return Promise.all(
     gridFiles
       .filter((file) => file.name !== ".emptyFolderPlaceholder")
       .map(async (file) => {
-        const gridUrl = await getSignedUrl("profiles", `${userId}/ProfileGrid/${file.name}`);
-        const modalUrl = await getSignedUrl("profiles", `${userId}/ProfileGridModals/${file.name}`);
+        const [gridUrl, modalUrl] = await Promise.all([
+          getSignedUrl(supabase, "profiles", `${userId}/ProfileGrid/${file.name}`),
+          modalNames.has(file.name)
+            ? getSignedUrl(
+                supabase,
+                "profiles",
+                `${userId}/ProfileGridModals/${file.name}`,
+              )
+            : Promise.resolve(null),
+        ]);
 
         return {
           name: file.name,
           gridUrl,
           modalUrl,
         };
-      })
+      }),
   );
-
-  return result;
 }

@@ -1,38 +1,56 @@
 "use client";
 
-import { ChevronRight, MenuOpen } from "@mui/icons-material";
+import { Tune } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { countActiveFilters } from "@/app/[locale]/utils/lexiconFilters";
+import Modal from "../general/Modal";
+import { Button } from "../ui/Button";
+import { useUrlFilters } from "./useUrlFilters";
 
-export default function LexiconFilterNav({
-  children,
-}: {
-  children: React.ReactNode;
-}) {
-  const [expandFilter, setExpandFilter] = useState(true);
+/**
+ * Filter panel container: a sticky sidebar on large screens, a dialog opened
+ * from a floating button below that. Replaces a fixed off-canvas panel whose
+ * toggle floated half-way down the screen.
+ */
+export default function LexiconFilterNav({ children }: { children: React.ReactNode }) {
+  const t = useTranslations("Lexicon");
+  const [open, setOpen] = useState(false);
+  const filters = useUrlFilters();
+  const activeCount = countActiveFilters(filters.searchParams);
 
   return (
     <>
-      <div
-        className={` shadow-black shadow-md bg-gradient-to-br from-gray-200 to-70%  to-gray-300  border transition-all duration-500 z-40 px-6 max-w-80 overflow-y-auto h-[calc(100vh-2.5rem)] sm:h-[calc(100vh-4rem)]  sm:w-96 ${
-          expandFilter
-            ? "transform translate-x-0 fixed lg:relative"
-            : "transform translate-x-[-100%] fixed "
-        }`}
-      >
-        <button
-          onClick={() => setExpandFilter(!expandFilter)}
-          className=" top-1 right-1 text-white-400 hover:text-white focus:outline-none absolute hover:bg-gray-300 p-1 rounded-full"
+      <aside className="hidden w-72 shrink-0 lg:block">
+        <div className="sticky top-24 max-h-[calc(100svh-7rem)] overflow-y-auto rounded-xl border border-border-muted bg-surface p-5">
+          <h2 className="mb-4 text-lg font-semibold">{t("filters")}</h2>
+          {children}
+        </div>
+      </aside>
+
+      <div className="fixed bottom-4 left-1/2 z-40 -translate-x-1/2 lg:hidden">
+        <Button
+          onClick={() => setOpen(true)}
+          icon={<Tune />}
+          className="rounded-full shadow-raised"
+          aria-label={t("openFilters")}
         >
-          <MenuOpen sx={{ color: "black", fontSize: "2rem" }} />
-        </button>
-        {children}
-      </div>{" "}
-      <button
-        onClick={() => setExpandFilter(!expandFilter)}
-        className={` ${expandFilter ? "transform translate-x-[20rem] opacity-0 " : "transform translate-x-0"} absolute top-1/2 left-0 text-white-400 hover:text-white focus:outline-none bg-green-600 py-10 rounded-r-lg transition-all duration-500 z-50`}
-      >
-        <ChevronRight sx={{ color: "white", fontSize: "2rem" }} />
-      </button>
+          {t("filters")}
+          {activeCount > 0 && (
+            <span className="ml-1 rounded-full bg-accent-fg px-1.5 text-xs font-semibold text-accent-solid">
+              {activeCount}
+            </span>
+          )}
+        </Button>
+      </div>
+      {open && (
+        <Modal title={t("filters")} closeModal={() => setOpen(false)}>
+          {children}
+          <Button fullWidth onClick={() => setOpen(false)} className="sticky bottom-0">
+            {t("showResults")}
+          </Button>
+        </Modal>
+      )}
     </>
   );
 }

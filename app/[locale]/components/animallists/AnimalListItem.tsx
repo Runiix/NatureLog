@@ -1,11 +1,16 @@
 "use client";
 
-import removeAnimalFromAnimalList from "@/app/[locale]/actions/animallists/removeAnimalFromAnimalList";
 import { Delete } from "@mui/icons-material";
-import { User } from "@supabase/supabase-js";
+import type { User } from "@supabase/supabase-js";
+import { useTranslations } from "next-intl";
 import Image from "next/image";
-import Link from "next/link";
+import { useState } from "react";
+import removeAnimalFromAnimalList from "@/app/[locale]/actions/animallists/removeAnimalFromAnimalList";
+import black from "@/app/[locale]/assets/images/black.webp";
+import { Link } from "@/i18n/navigation";
 import FavoriteFunctionality from "../general/FavoriteFunctionality";
+import { Button } from "../ui/Button";
+import { useToast } from "../ui/Toast";
 
 export default function AnimalListItem({
   listId,
@@ -14,62 +19,57 @@ export default function AnimalListItem({
   image,
   user,
   spottedList,
-  deleteRefresh,
+  onRemoved,
   currUser,
-  entryCount,
 }: {
   listId: string;
   animalId: number;
   name: string;
-  image: string;
+  image: string | null;
   user: User;
   spottedList: number[];
-  deleteRefresh: React.Dispatch<React.SetStateAction<boolean>>;
+  onRemoved: () => void;
   currUser: boolean;
-  entryCount: number;
 }) {
-  const handleAnimalDelete = async () => {
-    const res = await removeAnimalFromAnimalList(listId, animalId, user.id);
-    if (res) {
-      deleteRefresh(!deleteRefresh);
-    }
+  const t = useTranslations("Lists");
+  const toast = useToast();
+  const [removing, setRemoving] = useState(false);
+
+  const remove = async () => {
+    setRemoving(true);
+    const res = await removeAnimalFromAnimalList(listId, animalId);
+    setRemoving(false);
+    // `res` is always an object, so the old `if (res)` refreshed on failure too.
+    if (res.success) onRemoved();
+    else toast(t("toast.error"), "error");
   };
+
   return (
-    <div className="flex gap-4 items-center border-x border-gray-200 rounded-lg shadow-black shadow-md bg-gradient-to-br  from-gray-900 to-70% transition-all duration-200 to-gray-950 hover:border-green-600">
-      <div className="relative w-[120px] md:w-[200px] aspect-[3/2] rounded-l-lg overflow-hidden">
-        <Image
-          src={image}
-          alt={name}
-          fill
-          className="object-cover rounded-l-lg"
-        />
+    <li className="flex items-center gap-3 rounded-lg border border-border-muted bg-surface-raised p-2 pr-3 transition-colors hover:border-border">
+      <div className="relative aspect-[3/2] w-20 shrink-0 overflow-hidden rounded-md sm:w-28">
+        <Image src={image ?? black} alt="" fill sizes="112px" className="object-cover" />
       </div>
-      <div className=" flex flex-col sm:flex-row w-full h-full">
-        <Link
-          href={`/animalpage/${name}`}
-          className="hover:text-green-600 text-wrap md:w-auto truncate  relative top-1"
-        >
-          <h2>{name}</h2>
-        </Link>
-        <div className="ml-auto flex gap-2 md:gap-4">
-          <div>
-            <FavoriteFunctionality
-              user={user}
-              id={animalId}
-              spottedList={spottedList}
-            />
-          </div>
-          {currUser && (
-            <button
-              className="hover:text-red-600 mr-4"
-              onClick={() => handleAnimalDelete()}
-              aria-label="Tier von Liste löschen"
-            >
-              <Delete />
-            </button>
-          )}
-        </div>
+      <Link
+        href={`/animalpage/${name}`}
+        className="min-w-0 flex-1 truncate font-medium text-fg hover:text-accent-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded"
+      >
+        {name}
+      </Link>
+      <div className="flex shrink-0 items-center gap-1">
+        <FavoriteFunctionality user={user} id={animalId} spottedList={spottedList} name={name} />
+        {currUser && (
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => void remove()}
+            loading={removing}
+            aria-label={t("removeFromList", { name })}
+            className="hover:text-danger"
+          >
+            {!removing && <Delete />}
+          </Button>
+        )}
       </div>
-    </div>
+    </li>
   );
 }

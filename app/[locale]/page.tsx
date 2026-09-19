@@ -1,5 +1,6 @@
 import Image from "next/image";
-import Link from "next/link";
+import { ArrowDownward, Login, MenuBook } from "@mui/icons-material";
+import { getTranslations } from "next-intl/server";
 import Nav from "./components/general/Nav";
 import HomeHero from "./assets/images/HomeHero.webp";
 import { createClient } from "@/utils/supabase/server";
@@ -11,107 +12,114 @@ import Community from "./assets/images/community.png";
 import Lists from "./assets/images/Listen.png";
 import Mobile from "./assets/images/Mobile.png";
 import { getUser } from "@/app/[locale]/utils/data";
+import { ButtonLink } from "./components/ui/Button";
 
-export default async function page() {
+// Copy lives in messages/*.json under Landing.features.<id>; only the images
+// are code.
+const FEATURES = [
+  { id: "lexicon", src: Lexikon },
+  { id: "collection", src: Sammlung },
+  { id: "profile", src: Profil },
+  { id: "community", src: Community },
+  { id: "lists", src: Lists },
+  { id: "app", src: Mobile },
+] as const;
+
+export default async function LandingPage() {
   const supabase = await createClient();
+  const [user, t] = await Promise.all([getUser(supabase), getTranslations("Landing")]);
 
-  const LandingInfoData = [
-    {
-      src: Lexikon,
-      position: "left" as "right" | "left",
-      titel: "Das Lexikon",
-      text: "Entdecke unsere heimische Tierwelt - durch Filter und die Suchfunktion ganz einfach.",
-    },
-    {
-      src: Sammlung,
-      position: "right" as "right" | "left",
-      titel: "Die Sammlung",
-      text: "Tracke deine Sichtungen und lade dein Lieblingsfoto für jede Art hoch.",
-    },
-    {
-      src: Profil,
-      position: "left" as "right" | "left",
-      titel: "Das Profil",
-      text: "Lade ein Profilblid hoch, wähle ein Team aus und lade deine Lieblingsfotos hoch.",
-    },
-    {
-      src: Community,
-      position: "right" as "right" | "left",
-      titel: "Interagiere mit der Community",
-      text: "Sieh dir an, welche Arten andere bereits gesichtet haben, und entdecke ihre Profile.",
-    },
-    {
-      src: Lists,
-      position: "left" as "right" | "left",
-      titel: "Erstelle Listen",
-      text: "Sieh dir eine interaktive Karte mit Artenlisten an. Erstelle eigene Listen und füge Sie der Karte hinzu oder Benutze private Listen um deine Zielarten und Sichtungen zu tracken.",
-    },
-    {
-      src: Mobile,
-      position: "right" as "right" | "left",
-      titel: "Verfügbar als App",
-      text: "Verwende die Web-App auf deinem Handy oder lade sie dir über den Browser als App herunter.",
-    },
-  ];
-
-  const user = await getUser(supabase);
   return (
-    <main className="bg-gray-900 bg-opacity-50 w-full">
+    <div className="w-full bg-canvas font-normal text-fg">
       <Nav user={user} />
-      <section className="h-screen w-full flex flex-col items-center justify-center gap-10 shadow-md shadow-gray-700 ">
+
+      <section className="relative isolate flex min-h-[100svh] items-center justify-center overflow-hidden px-4 pt-16">
         <Image
           src={HomeHero}
-          alt=" Forrest Home Hero"
-          height={800}
-          width={1200}
-          className="absolute w-screen h-screen object-cover -z-10 "
+          alt={t("heroAlt")}
+          fill
           priority
+          sizes="100vw"
+          className="-z-20 object-cover"
         />
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col lg:flex-row gap-4 justify-center items-center">
-            <h1 className="text-4xl sm:text-6xl text-center">
-              Wilkommen bei <span className="text-green-600">NatureLog</span>
-            </h1>
+        {/* The photo is arbitrary; the scrim guarantees the text contrast. */}
+        <div
+          aria-hidden
+          className="absolute inset-0 -z-10 bg-gradient-to-b from-black/60 via-black/35 to-black/75"
+        />
+
+        <div className="mx-auto flex max-w-3xl flex-col items-center gap-6 text-center text-white">
+          <p className="rounded-full border border-white/30 bg-white/10 px-4 py-1 text-sm font-medium backdrop-blur">
+            {t("eyebrow")}
+          </p>
+          <h1 className="text-balance text-4xl font-bold tracking-tight sm:text-6xl">
+            {t.rich("title", {
+              brand: (chunks) => <span className="text-green-400">{chunks}</span>,
+            })}
+          </h1>
+          <p className="max-w-xl text-balance text-base text-white/85 sm:text-lg">
+            {t("tagline")}
+          </p>
+          <div className="mt-2 flex w-full flex-col gap-3 sm:w-auto sm:flex-row">
+            <ButtonLink href="/loginpage" size="lg" icon={<Login />}>
+              {t("ctaPrimary")}
+            </ButtonLink>
+            <ButtonLink
+              href="/lexiconpage"
+              size="lg"
+              variant="secondary"
+              icon={<MenuBook />}
+              className="border-white/40 bg-white/10 text-white backdrop-blur hover:border-white hover:bg-white/20 hover:text-white"
+            >
+              {t("ctaSecondary")}
+            </ButtonLink>
           </div>
         </div>
-        <div className="flex flex-col items-center gap-4">
-          <p className="text-center mx-10 sm:mx-20 text-xs sm:text-base">
-            Melde dich an, um deine Naturbeobachtungen zu organisieren und mit
-            Anderen zu teilen
-          </p>
-          <Link
-            href="/loginpage"
-            className="bg-green-600 text-center py-5 px-10 text-2xl sm:text-3xl rounded-lg hover:cursor-pointer hover:bg-green-700 hover:text-gray-900 transition-all
-           duration-200 shadow-md"
-          >
-            Zur Anmeldung
-          </Link>
-        </div>
 
-        <div className="flex flex-col items-center gap-4">
-          <p className="text-center px-10 sm:mx-20 text-xs sm:text-base">
-            Oder entdecke unsere heimische Tierwelt als extensives Lexikon
-          </p>
-          <Link
-            href="/lexiconpage"
-            className="bg-green-600 text-center py-5 px-10  text-2xl sm:text-3xl rounded-lg hover:cursor-pointer hover:bg-green-700 hover:text-gray-900 transition-all
-           duration-200 shadow-md"
-          >
-            Zum Lexikon
-          </Link>
+        <a
+          href="#features"
+          className="absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 rounded-lg px-3 py-1 text-sm text-white/80 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
+        >
+          {t("scrollHint")}
+          <ArrowDownward fontSize="small" className="motion-safe:animate-bounce" />
+        </a>
+      </section>
+
+      <section id="features" className="scroll-mt-16 px-4 py-16 sm:py-24">
+        <div className="mx-auto max-w-6xl">
+          <header className="mx-auto max-w-2xl text-center">
+            <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
+              {t("featuresTitle")}
+            </h2>
+            <p className="mt-3 text-balance text-fg-muted sm:text-lg">{t("featuresSubtitle")}</p>
+          </header>
+          <ul className="mt-8 divide-y divide-border-muted">
+            {FEATURES.map((feature, index) => (
+              <LandingInfo
+                key={feature.id}
+                index={index}
+                src={feature.src}
+                position={index % 2 === 0 ? "left" : "right"}
+                title={t(`features.${feature.id}.title`)}
+                text={t(`features.${feature.id}.text`)}
+                alt={t(`features.${feature.id}.alt`)}
+              />
+            ))}
+          </ul>
         </div>
       </section>
-      <section className="bg-gray-200 w-full max-w-screen overflow-hidden px-0 mx-0">
-        {LandingInfoData.map((info) => (
-          <LandingInfo
-            key={info.titel}
-            src={info.src}
-            position={info.position}
-            title={info.titel}
-            text={info.text}
-          />
-        ))}
+
+      <section className="px-4 pb-20">
+        <div className="mx-auto flex max-w-4xl flex-col items-center gap-4 rounded-3xl bg-surface-gradient px-6 py-12 text-center shadow-card sm:py-16">
+          <h2 className="text-balance text-2xl font-semibold tracking-tight sm:text-3xl">
+            {t("closingTitle")}
+          </h2>
+          <p className="text-fg-muted">{t("closingText")}</p>
+          <ButtonLink href="/loginpage" size="lg" icon={<Login />}>
+            {t("ctaPrimary")}
+          </ButtonLink>
+        </div>
       </section>
-    </main>
+    </div>
   );
 }

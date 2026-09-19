@@ -1,13 +1,13 @@
 "use client";
 
-import Link from "next/link";
-import { useState } from "react";
+import { Link, usePathname } from "@/i18n/navigation";
+import { useEffect, useRef, useState } from "react";
 import {
   AutoStories,
   Close,
   Collections,
-  Group,
   Home,
+  Login,
   Map,
   Menu,
   Person,
@@ -16,279 +16,241 @@ import {
   Summarize,
 } from "@mui/icons-material";
 import { User } from "@supabase/supabase-js";
-import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslations } from "next-intl";
+import { cn } from "@/app/[locale]/utils/cn";
+import GlobalSearch from "./GlobalSearch";
 
-export default function Nav({
-  user,
-  following,
+type NavItem = { href: string; label: string; icon: React.ReactNode };
+
+/** Closes a popover on Escape or on a click outside `ref`. */
+function useDismiss(
+  open: boolean,
+  close: () => void,
+  ref: React.RefObject<HTMLElement | null>,
+) {
+  useEffect(() => {
+    if (!open) return;
+    const onKey = (event: KeyboardEvent) => event.key === "Escape" && close();
+    const onPointer = (event: PointerEvent) => {
+      if (ref.current && !ref.current.contains(event.target as Node)) close();
+    };
+    document.addEventListener("keydown", onKey);
+    document.addEventListener("pointerdown", onPointer);
+    return () => {
+      document.removeEventListener("keydown", onKey);
+      document.removeEventListener("pointerdown", onPointer);
+    };
+  }, [open, close, ref]);
+}
+
+const linkBase =
+  "flex items-center gap-1.5 rounded-md px-2 py-1 text-fg-muted transition-colors hover:text-fg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
+
+function NavLink({
+  item,
+  active,
+  onNavigate,
+  className,
 }: {
-  user: User | null;
-  following?: any;
+  item: NavItem;
+  active: boolean;
+  onNavigate?: () => void;
+  className?: string;
 }) {
-  const [toggleMenu, setToggleMenu] = useState(false);
-  const [showSignOut, setShowSignOut] = useState(false);
+  return (
+    <Link
+      href={item.href}
+      onClick={onNavigate}
+      aria-current={active ? "page" : undefined}
+      className={cn(
+        linkBase,
+        active && "font-semibold text-accent-text hover:text-accent-text",
+        className,
+      )}
+    >
+      <span aria-hidden className="flex [&_svg]:h-5 [&_svg]:w-5">
+        {item.icon}
+      </span>
+      {item.label}
+    </Link>
+  );
+}
+
+function SignOutButton() {
   const t = useTranslations("Navigation");
   return (
-    <div>
-      {user ? (
-        <nav className="fixed w-full h-10 sm:h-16 flex items-center bg-gray-200 z-50 shadow-sm shadow-slate-400 sm:shadow-none">
-          <div className="flex items-center justify-between w-full">
-            <div className="flex items-center ">
-              <Link href="/homepage">
-                <h2 className="text-green-600 text-2xl sm:text-4xl mx-10 hover:text-green-700 transition-all duration-200">
-                  NatureLog
-                </h2>
-              </Link>
-              <div className="hidden lg:flex gap-10">
-                <Link
-                  href="/homepage"
-                  className="text-slate-600 hover:text-slate-800 transition-all duration-200 flex items-center gap-1"
-                >
-                  <Home />
-                  {t("home")}
-                </Link>
+    <form action="/auth/signout" method="post">
+      <button
+        type="submit"
+        className="flex w-full items-center justify-center gap-2 rounded-lg bg-danger-solid px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-danger-solid/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+      >
+        <PowerSettingsNew fontSize="small" aria-hidden />
+        {t("logout")}
+      </button>
+    </form>
+  );
+}
 
-                <Link
-                  href={"/collectionpage/" + user.user_metadata.displayName}
-                  className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-                >
-                  <Collections />
-                  {t("collection")}
-                </Link>
-                <Link
-                  href="/lexiconpage"
-                  className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-                >
-                  <AutoStories />
-                  {t("lexicon")}
-                </Link>
-                <Link
-                  href={"/animallistspage/" + user.user_metadata.displayName}
-                  className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-                >
-                  <Summarize />
-                  {t("lists")}
-                </Link>
-                <Link
-                  href={"/animallistspage/map"}
-                  className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-                >
-                  <Map />
-                  {t("map")}
-                </Link>
-              </div>
-            </div>
-            <div className="hidden lg:flex items-center gap-6 relative">
-              <div
-                className="text-slate-900 cursor-pointer hover:text-green-600 mr-8 flex"
-                onClick={() => setShowSignOut((prev) => !prev)}
-              >
-                <Person />
-                <p className="hidden xl:block">
-                  {user.user_metadata.displayName}
-                </p>
-              </div>
+const panel =
+  "absolute right-0 top-full mt-2 flex min-w-[14rem] flex-col gap-1 rounded-xl border border-border-muted bg-surface p-2 text-base font-normal text-fg shadow-raised";
 
-              <div
-                className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12 rounded-lg flex flex-col gap-10 text-center bg-gray-200 px-4 py-4 justify-center text-slate-100 ${
-                  showSignOut ? "scale-100 opacity-100" : "scale-0 opacity-0"
-                }`}
+export default function Nav({ user }: { user: User | null }) {
+  const t = useTranslations("Navigation");
+  const pathname = usePathname();
+  const [menuOpen, setMenuOpen] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+  const accountRef = useRef<HTMLDivElement>(null);
+  const closeMenu = () => setMenuOpen(false);
+  const closeAccount = () => setAccountOpen(false);
+  useDismiss(menuOpen, closeMenu, menuRef);
+  useDismiss(accountOpen, closeAccount, accountRef);
+
+  const isActive = (href: string) =>
+    href === "/"
+      ? pathname === "/"
+      : pathname === href || pathname.startsWith(`${href}/`);
+
+  const name = user?.user_metadata.displayName as string | undefined;
+
+  const primary: NavItem[] = user
+    ? [
+        { href: "/homepage", label: t("home"), icon: <Home /> },
+        {
+          href: `/collectionpage/${name}`,
+          label: t("collection"),
+          icon: <Collections />,
+        },
+        { href: "/lexiconpage", label: t("lexicon"), icon: <AutoStories /> },
+        {
+          href: `/animallistspage/${name}`,
+          label: t("lists"),
+          icon: <Summarize />,
+        },
+        { href: "/animallistspage/map", label: t("map"), icon: <Map /> },
+      ]
+    : [{ href: "/lexiconpage", label: t("lexicon"), icon: <AutoStories /> }];
+
+  const account: NavItem[] = user
+    ? [
+        { href: `/profilepage/${name}`, label: t("profile"), icon: <Person /> },
+        { href: "/settingspage", label: t("settings"), icon: <Settings /> },
+      ]
+    : [];
+
+  return (
+    <nav
+      aria-label="NatureLog"
+      className="fixed inset-x-0 top-0 z-50 flex h-10 items-center border-b border-border-muted bg-canvas/95 font-normal backdrop-blur supports-[backdrop-filter]:bg-canvas/80 sm:h-16"
+    >
+      <div className="mx-auto flex w-full items-center justify-between gap-4 px-4 sm:px-8">
+        <div className="flex items-center gap-8">
+          <Link
+            href={user ? "/homepage" : "/"}
+            className="rounded-md text-xl font-bold tracking-tight text-accent-text transition-colors hover:text-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:text-3xl"
+          >
+            NatureLog
+          </Link>
+          <div className="hidden items-center gap-2 lg:flex">
+            {primary.map((item) => (
+              <NavLink
+                key={item.href}
+                item={item}
+                active={isActive(item.href)}
+              />
+            ))}
+          </div>
+        </div>
+
+        <div className="flex items-center gap-2">
+          <GlobalSearch signedIn={!!user} />
+          {user ? (
+            <div ref={accountRef} className="relative hidden lg:block">
+              <button
+                type="button"
+                onClick={() => setAccountOpen((open) => !open)}
+                aria-expanded={accountOpen}
+                className={cn(
+                  linkBase,
+                  "text-fg",
+                  accountOpen && "text-accent-text",
+                )}
               >
-                <div className="space-y-4">
-                  <Link
-                    href={"/profilepage/" + user.user_metadata.displayName}
-                    className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-                  >
-                    <Person />
-                    {t("profile")}
-                  </Link>
-                  <Link
-                    href={"/socialpage/" + user.user_metadata.displayName}
-                    className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-                  >
-                    <Group />
-                    {t("social")}
-                  </Link>
-                  <Link
-                    href="/settingspage"
-                    className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-                  >
-                    <Settings />
-                    {t("settings")}
-                  </Link>
+                <Person aria-hidden />
+                <span className="hidden xl:inline">{name}</span>
+                <span className="sr-only xl:hidden">{t("profile")}</span>
+              </button>
+              {accountOpen && (
+                <div className={panel}>
+                  {account.map((item) => (
+                    <NavLink
+                      key={item.href}
+                      item={item}
+                      active={isActive(item.href)}
+                      onNavigate={closeAccount}
+                      className="px-3 py-2"
+                    />
+                  ))}
+                  <div className="mt-1 border-t border-border-muted pt-2">
+                    <SignOutButton />
+                  </div>
                 </div>
-
-                <form
-                  action="/auth/signout"
-                  method="post"
-                  className="hidden lg:flex"
-                >
-                  <button
-                    type="submit"
-                    className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700  text-nowrap flex items-center gap-2"
-                    aria-label="Konto abmelden"
-                  >
-                    <PowerSettingsNew />
-                    {t("logout")}
-                  </button>
-                </form>
-              </div>
-            </div>
-            <div className="m-2 flex lg:invisible absolute right-5 hover:cursor-pointer">
-              {toggleMenu ? (
-                <Close
-                  className="text-gray-900"
-                  onClick={() => setToggleMenu(false)}
-                />
-              ) : (
-                <Menu
-                  className="text-gray-900"
-                  onClick={() => setToggleMenu(true)}
-                />
               )}
             </div>
-          </div>
-
-          <div
-            className={`shadow-xl shadow-black transition-all duration-500 fixed right-5 top-12  text-xl w-fdivl rounded-lg flex lg:hidden flex-col gap-3 text-center bg-gray-200 border-y  px-4 pt-4  ${
-              toggleMenu ? "scale-100 opacity-100" : "scale-0 opacity-0"
-            } `}
-          >
-            <Link
-              href="/homepage"
-              className="text-slate-600 hover:text-slate-800 transition-all duration-200 w-full flex items-center gap-1"
-              onClick={() => setToggleMenu(false)}
-            >
-              <Home />
-              {t("home")}
-            </Link>
-            <Link
-              href={"/profilepage/" + user.user_metadata.displayName}
-              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-              onClick={() => setToggleMenu(false)}
-            >
-              <Person />
-              {t("profile")}
-            </Link>
-            <Link
-              href={"/socialpage/" + user.user_metadata.displayName}
-              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-            >
-              <Group />
-              {t("social")}
-            </Link>
-            <Link
-              href={"/collectionpage/" + user.user_metadata.displayName}
-              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-              onClick={() => setToggleMenu(false)}
-            >
-              <Collections />
-              {t("collection")}
-            </Link>
-            <Link
-              href="/lexiconpage"
-              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-              onClick={() => setToggleMenu(false)}
-            >
-              <AutoStories />
-              {t("lexicon")}
-            </Link>
-            <Link
-              href={"/animallistspage/" + user.user_metadata.displayName}
-              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1 "
-              onClick={() => setToggleMenu(false)}
-            >
-              <Summarize />
-              {t("lists")}
-            </Link>
-            <Link
-              href={"/animallistspage/map"}
-              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1 "
-              onClick={() => setToggleMenu(false)}
-            >
-              <Map />
-              {t("map")}
-            </Link>
-            <Link
-              href={"/settingspage"}
-              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1 "
-              onClick={() => setToggleMenu(false)}
-            >
-              <Settings />
-              {t("settings")}
-            </Link>
-            <form
-              action="/auth/signout"
-              method="post"
-              className="flex lg:hidden mb-2"
-            >
-              <button
-                type="submit"
-                className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700 text-md  text-nowrap flex items-center gap-2"
-                aria-label="Konto abmelden"
-              >
-                <PowerSettingsNew />
-                {t("logout")}
-              </button>
-            </form>
-          </div>
-        </nav>
-      ) : (
-        <nav className="absolute w-screen top-0 py-3 flex items-center justify-between bg-gray-200 z-50">
-          <div className="flex items-center gap-20">
-            <div>
-              <Link href="/">
-                <h2 className="text-green-600 text-2xl sm:text-4xl ml-10 hover:text-green-700 transition-all duration-200">
-                  NatureLog
-                </h2>
-              </Link>
-            </div>
-            <div className="hidden sm:flex gap-10 ">
-              <Link
-                href="/lexiconpage"
-                className="text-slate-600 hover:text-slate-900 transition-all duration-200"
-              >
-                {t("lexicon")}
-              </Link>
-            </div>
-          </div>
-          <div className="hidden sm:flex">
+          ) : (
             <Link
               href="/loginpage"
-              className="text-slate-100 hover:text-slate-900 bg-green-600 transition-all duration-200 p-2 px-4 rounded-lg mr-10"
+              className="hidden items-center gap-1.5 rounded-lg bg-accent-solid px-4 py-1.5 text-sm font-medium text-accent-fg transition-colors hover:bg-accent-hover focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-canvas sm:flex"
             >
+              <Login fontSize="small" aria-hidden />
               {t("login")}
             </Link>
-          </div>
-          <div
-            className="m-2 flex sm:invisible absolute right-5 hover:cursor-pointer text-gray-900"
-            onClick={() => setToggleMenu(!toggleMenu)}
-          >
-            {toggleMenu ? <Close /> : <Menu />}
-          </div>
-          <div
-            className={`shadow-xl shadow-black transition-all items-center duration-500 fixed right-5 top-12 sm:top-20 text-xl w-fdivl rounded-lg flex lg:hidden flex-col gap-3 text-center bg-gray-200 border-y  p-4  ${
-              toggleMenu ? "scale-100 opacity-100" : "scale-0 opacity-0"
-            } `}
-          >
-            <Link
-              href="/lexiconpage"
-              className="text-slate-600 hover:text-slate-900 transition-all duration-200 flex items-center gap-1"
-            >
-              <AutoStories />
-              {t("lexicon")}
-            </Link>
+          )}
 
-            <Link
-              href="/loginpage"
-              className="text-slate-200 hover:text-slate-900 bg-green-600 transition-all duration-200 p-2 px-4 rounded-lg"
+          <div
+            ref={menuRef}
+            className={cn("relative", user ? "lg:hidden" : "sm:hidden")}
+          >
+            <button
+              type="button"
+              onClick={() => setMenuOpen((open) => !open)}
+              aria-expanded={menuOpen}
+              aria-controls="nav-menu"
+              aria-label={menuOpen ? t("closeMenu") : t("openMenu")}
+              className="flex rounded-md p-1 text-fg transition-colors hover:text-accent-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
             >
-              {t("login")}
-            </Link>
+              {menuOpen ? <Close /> : <Menu />}
+            </button>
+            {menuOpen && (
+              <div id="nav-menu" className={panel}>
+                {[...primary, ...account].map((item) => (
+                  <NavLink
+                    key={item.href}
+                    item={item}
+                    active={isActive(item.href)}
+                    onNavigate={closeMenu}
+                    className="px-3 py-2"
+                  />
+                ))}
+                <div className="mt-1 border-t border-border-muted pt-2">
+                  {user ? (
+                    <SignOutButton />
+                  ) : (
+                    <Link
+                      href="/loginpage"
+                      onClick={closeMenu}
+                      className="flex items-center justify-center gap-2 rounded-lg bg-accent-solid px-4 py-2 text-sm font-medium text-accent-fg hover:bg-accent-hover"
+                    >
+                      <Login fontSize="small" aria-hidden />
+                      {t("login")}
+                    </Link>
+                  )}
+                </div>
+              </div>
+            )}
           </div>
-        </nav>
-      )}
-    </div>
+        </div>
+      </div>
+    </nav>
   );
 }

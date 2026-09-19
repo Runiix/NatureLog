@@ -1,74 +1,8 @@
 import { styled } from "@mui/material";
 import { Slider } from "@mui/material";
 
-export const colorsList = [
-  {
-    eng: "black",
-    ger: "schwarz",
-    styleBg: "bg-black",
-    styleBorder: "border-black",
-    isDark: true,
-  },
-  {
-    eng: "white",
-    ger: "weiß",
-    styleBg: "bg-gray-200",
-    styleBorder: "border-slate-400",
-    isDark: false,
-  },
-  {
-    eng: "brown",
-    ger: "braun",
-    styleBg: "bg-yellow-950",
-    styleBorder: "border-yellow-950",
-    isDark: true,
-  },
-  {
-    eng: "yellow",
-    ger: "gelb",
-    styleBg: "bg-yellow-400",
-    styleBorder: "border-yellow-400",
-    isDark: false,
-  },
-  {
-    eng: "red",
-    ger: "rot",
-    styleBg: "bg-red-600",
-    styleBorder: "border-red-600",
-    isDark: true,
-  },
-  {
-    eng: "green",
-    ger: "grün",
-    styleBg: "bg-green-600",
-    styleBorder: "border-green-600",
-    isDark: true,
-  },
-  {
-    eng: "blue",
-    ger: "blau",
-    styleBg: "bg-blue-600",
-    styleBorder: "border-blue-600",
-    isDark: true,
-  },
-  {
-    eng: "purple",
-    ger: "lila",
-    styleBg: "bg-purple-800",
-    styleBorder: "border-purple-800",
-    isDark: true,
-  },
-  {
-    eng: "orange",
-    ger: "orange",
-    styleBg: "bg-orange-600",
-    styleBorder: "border-orange-600",
-    isDark: true,
-  },
-];
-
 export const SizeSlider = styled(Slider)({
-  color: "#16A34A",
+  color: "rgb(var(--color-accent))",
   height: 8,
   "& .MuiSlider-track": {
     border: "none",
@@ -93,7 +27,7 @@ export const SizeSlider = styled(Slider)({
     width: 24,
     height: 24,
     borderRadius: "50% 50% 50% 0",
-    backgroundColor: "#16A34A",
+    backgroundColor: "rgb(var(--color-accent))",
     transformOrigin: "bottom left",
     transform: "translate(50%, -100%) rotate(-45deg) scale(0)",
     "&::before": { display: "none" },
@@ -105,14 +39,3 @@ export const SizeSlider = styled(Slider)({
     },
   },
 });
-
-export const challenges = [
-  "einene Singvogel",
-  "einen Raubvogel",
-  "einen Wasservogel",
-  "ein Säugetier",
-  "ein Reptil",
-  "eine Amphibie",
-  "ein Insekt",
-  "eine Spinne",
-];

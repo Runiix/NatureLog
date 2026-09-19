@@ -1,35 +1,26 @@
+import { getTranslations } from "next-intl/server";
+import { redirect } from "next/navigation";
 import SettingsList from "@/app/[locale]/components/settings/SettingsList";
+import { PageHeader } from "@/app/[locale]/components/ui/PageHeader";
+import { PageShell } from "@/app/[locale]/components/ui/PageShell";
 import { getUser } from "@/app/[locale]/utils/data";
 import { createClient } from "@/utils/supabase/server";
-import { SupabaseClient } from "@supabase/supabase-js";
 
-const getProfileIsPublic = async (supabase: SupabaseClient, userId: string) => {
-  const { data, error } = await supabase
-    .from("profiles")
-    .select("is_public")
-    .eq("user_id", userId);
-  if (error) {
-    console.error("Error getting public state");
-  }
-  if (!data || data.length === 0) {
-    return false;
-  }
-  return data[0].is_public;
-};
-
-export default async function settingspage() {
+export default async function SettingsPage() {
   const supabase = await createClient();
   const user = await getUser(supabase);
-  if (!user) return <div>Kein Benutzer</div>;
-  const isPublic = await getProfileIsPublic(supabase, user.id);
+  if (!user) redirect("/loginpage");
+
+  const [{ data, error }, t] = await Promise.all([
+    supabase.from("profiles").select("is_public").eq("user_id", user.id).maybeSingle(),
+    getTranslations("Settings"),
+  ]);
+  if (error) console.error("Error getting public state", error);
+
   return (
-    <div>
-      <div className="flex items-center justify-between w-full max-w-[1200px] mx-auto mt-8 shadow-lg shadow-gray-400 p-4 rounded-lg mb-10">
-        <h2 className="text-green-600 text-center text-2xl xl:text-5xl">
-          Einstellungen
-        </h2>{" "}
-      </div>
-      <SettingsList user={user} isPublic={isPublic} />
-    </div>
+    <PageShell width="narrow">
+      <PageHeader title={t("title")} subtitle={t("subtitle")} />
+      <SettingsList user={user} isPublic={data?.is_public ?? false} />
+    </PageShell>
   );
 }

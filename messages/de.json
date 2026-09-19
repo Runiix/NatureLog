@@ -2,11 +2,17 @@
   "General": {
     "searchPlaceholder": "Suchen...",
     "searchAnimal": "Tier suchen...",
-    "searchNatureLoggers": "NatureLogger suchen..."
+    "searchNatureLoggers": "NatureLogger suchen...",
+    "searchLabel": "Suchen",
+    "back": "Zurück",
+    "clearSearch": "Suche leeren",
+    "close": "Schließen",
+    "skipToContent": "Zum Inhalt springen"
   },
   "ErrorPage": {
     "somethingWentWrong": "Es ist leider etwas schief gelaufen :/",
-    "backToLogin": "Zurück zur Anmeldung"
+    "backToLogin": "Zurück zur Anmeldung",
+    "title": "Etwas ist schiefgelaufen"
   },
   "Auth": {
     "email": "E-Mail",
@@ -14,7 +20,44 @@
     "confirmPassword": "Passwort bestätigen",
     "login": "Anmelden",
     "backToLogin": "Zurück zur Anmeldung?",
-    "resetPassword": "Passwort zurücksetzen"
+    "resetPassword": "Passwort zurücksetzen",
+    "loginTitle": "Willkommen zurück",
+    "loginSubtitle": "Melde dich an, um deine Sichtungen festzuhalten.",
+    "signupTitle": "Konto erstellen",
+    "signupSubtitle": "Kostenlos – in weniger als einer Minute.",
+    "resetTitle": "Passwort vergessen?",
+    "resetSubtitle": "Wir schicken dir einen Link, mit dem du ein neues Passwort festlegen kannst.",
+    "newPasswordTitle": "Neues Passwort festlegen",
+    "username": "Benutzername",
+    "usernameHint": "3–30 Zeichen: Buchstaben, Zahlen, Punkt, Unterstrich oder Bindestrich.",
+    "passwordHint": "Mindestens 10 Zeichen mit Groß- und Kleinbuchstaben, Zahl und Sonderzeichen.",
+    "showPassword": "Passwort anzeigen",
+    "hidePassword": "Passwort verbergen",
+    "acceptTerms": "Ich akzeptiere die <terms>Nutzungsbedingungen</terms> und die <privacy>Datenschutzhinweise</privacy>.",
+    "submitLogin": "Anmelden",
+    "submitSignup": "Registrieren",
+    "submitReset": "Link senden",
+    "submitNewPassword": "Passwort speichern",
+    "noAccount": "Noch kein Konto?",
+    "toSignup": "Registrieren",
+    "haveAccount": "Schon ein Konto?",
+    "toLogin": "Anmelden",
+    "forgotPassword": "Passwort vergessen?",
+    "errors": {
+      "invalidCredentials": "E-Mail oder Passwort ist nicht korrekt.",
+      "banned": "Dieses Konto ist gesperrt.",
+      "emailNotConfirmed": "Bitte bestätige zuerst deine E-Mail-Adresse.",
+      "generic": "Das hat nicht geklappt. Bitte versuche es erneut.",
+      "usernameTaken": "Dieser Benutzername ist bereits vergeben.",
+      "usernameInvalid": "Der Benutzername erfüllt die Anforderungen nicht.",
+      "passwordWeak": "Das Passwort erfüllt die Anforderungen nicht.",
+      "passwordMismatch": "Die Passwörter stimmen nicht überein.",
+      "termsRequired": "Bitte akzeptiere die Nutzungsbedingungen.",
+      "resetLinkInvalid": "Der Link ist abgelaufen oder ungültig. Fordere einen neuen an."
+    },
+    "signupSuccess": "Fast geschafft! Wir haben dir eine E-Mail zur Bestätigung geschickt.",
+    "resetSent": "Wenn ein Konto zu dieser Adresse existiert, ist die E-Mail unterwegs.",
+    "passwordChanged": "Passwort geändert. Du kannst dich jetzt anmelden."
   },
   "Navigation": {
     "home": "Home",
@@ -26,7 +69,9 @@
     "lists": "Listen",
     "logout": "Abmelden",
     "map": "Karte",
-    "login": "Anmelden"
+    "login": "Anmelden",
+    "openMenu": "Menü öffnen",
+    "closeMenu": "Menü schließen"
   },
   "Lexicon": {
     "true": "Ja",
@@ -60,7 +105,44 @@
     "Vorwarnliste": "Vorwarnliste",
     "Ausgestorben": "Ausgestorben",
     "sizeFrom": "Größe von",
-    "sizeTo": "Größe bis"
+    "sizeTo": "Größe bis",
+    "title": "Lexikon",
+    "subtitle": "Unsere heimische Tierwelt – filtern, sortieren, entdecken.",
+    "filters": "Filter",
+    "openFilters": "Filter öffnen",
+    "activeFilters": "{count, plural, =0 {Keine Filter} one {# Filter aktiv} other {# Filter aktiv}}",
+    "resetFilters": "Alle Filter zurücksetzen",
+    "removeFilter": "Filter „{label}“ entfernen",
+    "showResults": "Ergebnisse anzeigen",
+    "sections": {
+      "mine": "Meine Sichtungen",
+      "genus": "Tiergruppen",
+      "order": "Ordnungen",
+      "color": "Farben",
+      "endangerment": "Gefährdung",
+      "size": "Größe"
+    },
+    "rareLabel": "Seltene Arten ausblenden",
+    "rareHint": "Irrgäste und Ausnahmeerscheinungen",
+    "onlyUnseenLabel": "Nur nicht gesehene",
+    "onlySeenLabel": "Nur gesehene",
+    "sizeValue": "{from} – {to} cm",
+    "sort": {
+      "label": "Sortieren nach",
+      "common_name": "Name",
+      "size_to": "Größe",
+      "endangerment_status": "Gefährdung",
+      "ascending": "Aufsteigend",
+      "descending": "Absteigend",
+      "toggleOrder": "Reihenfolge umkehren"
+    },
+    "rare": "Selten",
+    "rareTooltip": "Ausnahmeerscheinung oder Irrgast in Deutschland",
+    "cardSize": "{from} – {to} cm",
+    "emptyTitle": "Keine Tiere gefunden",
+    "emptyText": "Passe Suche oder Filter an.",
+    "loadingMore": "Weitere Tiere werden geladen",
+    "imageAlt": "{name}"
   },
   "Social": {
     "followers": "Follower",
@@ -69,6 +151,490 @@
     "topUsers": "Top Nutzer",
     "noFollowers": "Dieser Nutzer hat noch keine Follower.",
     "noFollowing": "Dieser Nutzer folgt noch niemandem.",
-    "searchNatureLoggers": "NatureLogger suchen..."
+    "searchNatureLoggers": "NatureLogger suchen...",
+    "subtitle": "Entdecke andere NatureLogger und folge ihren Sichtungen.",
+    "tabsLabel": "Nutzer anzeigen",
+    "follow": "{name} folgen",
+    "unfollow": "{name} entfolgen",
+    "followShort": "Folgen",
+    "followingShort": "Folge ich",
+    "species": "{count, plural, one {# Art} other {# Arten}}",
+    "avatarAlt": "Profilbild von {name}",
+    "emptySearch": "Niemand gefunden",
+    "emptySearchText": "Kein NatureLogger passt zu deiner Suche.",
+    "emptyTop": "Noch keine anderen NatureLogger",
+    "error": "Das hat nicht geklappt. Bitte versuche es erneut.",
+    "feedTitle": "Neuigkeiten",
+    "feedEmpty": "Noch nichts Neues",
+    "feedEmptyText": "Folge anderen NatureLoggern, um ihre Sichtungen hier zu sehen.",
+    "feedFindPeople": "Leute finden",
+    "feedNewPhoto": "hat ein Foto hinzugefügt",
+    "feedNewSpecies": "hat eine neue Art gesichtet",
+    "feedPhotoAlt": "{animal}, fotografiert von {name}",
+    "feedLoadingMore": "Weitere Beiträge werden geladen"
+  },
+  "Settings": {
+    "title": "Einstellungen",
+    "publicProfile": "Öffentliches Profil",
+    "publicProfileHint": "Wenn aus, sehen nur Personen, denen du folgst und die dir folgen, dein Profil.",
+    "language": "Sprache",
+    "theme": "Darstellung",
+    "themeHint": "Hell, dunkel oder wie dein Gerät.",
+    "themes": {
+      "light": "Hell",
+      "dark": "Dunkel",
+      "system": "System"
+    },
+    "account": "Konto",
+    "subtitle": "Sichtbarkeit, Darstellung und Konto",
+    "privacy": "Privatsphäre",
+    "display": "Anzeige",
+    "languageHint": "Sprache der Oberfläche.",
+    "languages": {
+      "de": "Deutsch",
+      "en": "English"
+    },
+    "deleteAccount": "Konto löschen",
+    "deleteAccountHint": "Löscht dein Konto, deine Fotos und Listen endgültig.",
+    "deleteTitle": "Konto endgültig löschen?",
+    "deleteText": "Alle Fotos, Sichtungen und Listen werden gelöscht. Das kann nicht rückgängig gemacht werden.",
+    "deleteConfirmLabel": "Gib zur Bestätigung deinen Benutzernamen „{name}“ ein",
+    "deleteSubmit": "Konto löschen",
+    "cancel": "Abbrechen",
+    "deleted": "Dein Konto wurde gelöscht.",
+    "deleteError": "Das Konto konnte nicht gelöscht werden. Bitte versuche es erneut oder kontaktiere den Support.",
+    "saved": "Gespeichert",
+    "error": "Das hat nicht geklappt. Bitte versuche es erneut."
+  },
+  "Landing": {
+    "eyebrow": "Dein Naturtagebuch",
+    "title": "Willkommen bei <brand>NatureLog</brand>",
+    "tagline": "Halte deine Naturbeobachtungen fest, sammle deine schönsten Fotos und teile deine Sichtungen mit anderen.",
+    "ctaPrimary": "Jetzt anmelden",
+    "ctaSecondary": "Lexikon entdecken",
+    "scrollHint": "Mehr erfahren",
+    "heroAlt": "Lichtdurchfluteter Wald",
+    "featuresTitle": "Alles für deine Naturbeobachtungen",
+    "featuresSubtitle": "Von der ersten Sichtung bis zur eigenen Artenliste – an einem Ort.",
+    "features": {
+      "lexicon": {
+        "title": "Das Lexikon",
+        "text": "Entdecke unsere heimische Tierwelt – mit Filtern und Suche ganz einfach.",
+        "alt": "Lexikon-Ansicht mit Tierkarten und Filterleiste"
+      },
+      "collection": {
+        "title": "Deine Sammlung",
+        "text": "Tracke deine Sichtungen und lade für jede Art dein Lieblingsfoto hoch.",
+        "alt": "Sammlungsansicht mit eigenen Tierfotos"
+      },
+      "profile": {
+        "title": "Dein Profil",
+        "text": "Lade ein Profilbild hoch, wähle ein Team und zeige deine Lieblingsfotos.",
+        "alt": "Profilseite mit Profilbild, Statistiken und Fotoraster"
+      },
+      "community": {
+        "title": "Die Community",
+        "text": "Sieh dir an, welche Arten andere bereits gesichtet haben, und entdecke ihre Profile.",
+        "alt": "Community-Ansicht mit Nutzerliste"
+      },
+      "lists": {
+        "title": "Eigene Listen",
+        "text": "Erstelle Artenlisten, zeige sie auf der interaktiven Karte oder nutze private Listen für deine Zielarten.",
+        "alt": "Kartenansicht mit Markierungen für Artenlisten"
+      },
+      "app": {
+        "title": "Auch als App",
+        "text": "Nutze NatureLog auf dem Handy oder installiere es direkt aus dem Browser als App.",
+        "alt": "NatureLog auf einem Smartphone"
+      }
+    },
+    "closingTitle": "Bereit für deine nächste Sichtung?",
+    "closingText": "Kostenlos anmelden und direkt loslegen."
+  },
+  "NotFound": {
+    "title": "Seite nicht gefunden",
+    "text": "Diese Seite gibt es nicht (mehr). Vielleicht hilft dir einer dieser Links weiter.",
+    "home": "Zur Startseite",
+    "lexicon": "Zum Lexikon"
+  },
+  "ErrorBoundary": {
+    "title": "Etwas ist schiefgelaufen",
+    "text": "Beim Laden dieser Seite ist ein Fehler aufgetreten. Versuche es erneut.",
+    "retry": "Erneut versuchen",
+    "home": "Zur Startseite"
+  },
+  "Lists": {
+    "myLists": "Meine Listen",
+    "usersLists": "Listen von {name}",
+    "subtitleOwner": "Halte Zielarten und Sichtungen in eigenen Listen fest.",
+    "subtitleVisitor": "Öffentliche Artenlisten",
+    "backToProfile": "Zum Profil",
+    "backToLists": "Alle Listen",
+    "create": "Neue Liste",
+    "createTitle": "Neue Liste erstellen",
+    "editTitle": "Liste bearbeiten",
+    "fields": {
+      "title": "Titel",
+      "titlePlaceholder": "z. B. Gartenvögel 2026",
+      "description": "Beschreibung",
+      "descriptionPlaceholder": "Worum geht es in dieser Liste?",
+      "public": "Öffentliche Liste",
+      "publicHint": "Öffentliche Listen sind auf deinem Profil und – mit Standort – auf der Karte sichtbar.",
+      "location": "Standort hinzufügen",
+      "locationHint": "Klicke auf die Karte, um den Standort zu setzen."
+    },
+    "save": "Speichern",
+    "createSubmit": "Liste erstellen",
+    "cancel": "Abbrechen",
+    "public": "Öffentlich",
+    "private": "Privat",
+    "entries": "{count, plural, =0 {Keine Einträge} one {# Eintrag} other {# Einträge}}",
+    "upvote": "Liste upvoten",
+    "removeUpvote": "Upvote entfernen",
+    "edit": "Liste bearbeiten",
+    "delete": "Liste löschen",
+    "deleteTitle": "Liste löschen?",
+    "deleteText": "„{title}“ und alle Einträge werden endgültig gelöscht.",
+    "deleteConfirm": "Endgültig löschen",
+    "addAnimal": "Tier hinzufügen",
+    "addAnimalTitle": "Tiere hinzufügen",
+    "searchPlaceholder": "Tier suchen …",
+    "searchLabel": "Tier suchen",
+    "noResults": "Keine Tiere gefunden.",
+    "addToList": "{name} zur Liste hinzufügen",
+    "removeFromList": "{name} von der Liste entfernen",
+    "untitled": "Unbenannte Liste",
+    "emptyOwnerTitle": "Du hast noch keine Listen",
+    "emptyOwnerText": "Lege eine Liste an, um Zielarten oder Sichtungen an einem Ort zu sammeln.",
+    "emptyVisitorTitle": "Noch keine öffentlichen Listen",
+    "emptyVisitorText": "{name} hat noch keine Listen veröffentlicht.",
+    "emptyListTitle": "Diese Liste ist noch leer",
+    "emptyListOwnerText": "Füge die ersten Tiere hinzu.",
+    "emptyListVisitorText": "Hier wurden noch keine Tiere eingetragen.",
+    "loadingMore": "Weitere Tiere werden geladen",
+    "toast": {
+      "created": "Liste erstellt",
+      "saved": "Änderungen gespeichert",
+      "deleted": "Liste gelöscht",
+      "error": "Das hat nicht geklappt. Bitte versuche es erneut."
+    }
+  },
+  "Profile": {
+    "stats": {
+      "species": "Arten",
+      "lists": "Listen",
+      "team": "Team",
+      "favorite": "Lieblingstier"
+    },
+    "noFavorite": "Noch keins",
+    "noTeam": "Kein Team",
+    "chooseTeam": "Team wählen",
+    "chooseTeamTitle": "Wähle dein Team",
+    "teams": {
+      "wolf": "Wolf",
+      "kingfisher": "Eisvogel",
+      "adder": "Kreuzotter",
+      "frog": "Frosch",
+      "dragonfly": "Libelle"
+    },
+    "editFavorite": "Lieblingstier ändern",
+    "favoriteLabel": "Lieblingstier",
+    "favoritePlaceholder": "z. B. Eisvogel",
+    "editInstagram": "Instagram-Link bearbeiten",
+    "addInstagram": "Instagram hinzufügen",
+    "instagramLabel": "Instagram-Profil",
+    "instagramHint": "Dein Nutzername oder ein instagram.com-Link. Leer lassen zum Entfernen.",
+    "instagramOf": "Instagram von {name}",
+    "save": "Speichern",
+    "cancel": "Abbrechen",
+    "avatarAlt": "Profilbild von {name}",
+    "changeAvatar": "Profilbild ändern",
+    "photos": "Lieblingsfotos",
+    "photosCount": "{count} von {max}",
+    "addPhoto": "Foto hinzufügen",
+    "replacePhoto": "Foto ersetzen",
+    "deletePhoto": "Foto löschen",
+    "openPhoto": "Foto {number} vergrößern",
+    "photoAlt": "Lieblingsfoto {number} von {name}",
+    "noPhotosOwnerTitle": "Zeig deine schönsten Aufnahmen",
+    "noPhotosOwnerText": "Lade bis zu {max} Lieblingsfotos hoch.",
+    "noPhotosVisitorTitle": "Noch keine Lieblingsfotos",
+    "publicLists": "Öffentliche Listen",
+    "allLists": "Alle Listen",
+    "noListsOwnerTitle": "Noch keine öffentlichen Listen",
+    "noListsOwnerText": "Öffentliche Listen erscheinen hier auf deinem Profil.",
+    "noListsVisitorTitle": "Noch keine öffentlichen Listen",
+    "createList": "Liste anlegen",
+    "upvotes": "{count, plural, one {# Upvote} other {# Upvotes}}",
+    "report": "Melden",
+    "reportPhotoTitle": "Foto melden",
+    "reportReason": "Grund",
+    "reportPlaceholder": "Was stimmt mit diesem Foto nicht?",
+    "reportSubmit": "Foto melden",
+    "privateTitle": "Dieses Profil ist privat",
+    "privateText": "{name} teilt das Profil nur mit Personen, denen {name} ebenfalls folgt.",
+    "privateAction": "Community entdecken",
+    "photoLightbox": "Foto",
+    "toast": {
+      "saved": "Gespeichert",
+      "uploaded": "Foto hochgeladen",
+      "replaced": "Foto ersetzt",
+      "deleted": "Foto gelöscht",
+      "gridFull": "Du hast bereits {max} Lieblingsfotos.",
+      "reported": "Danke – das Foto wurde gemeldet.",
+      "error": "Das hat nicht geklappt. Bitte versuche es erneut.",
+      "invalidInstagram": "Bitte gib einen Instagram-Nutzernamen oder instagram.com-Link ein."
+    },
+    "achievements": {
+      "title": "Abzeichen",
+      "earnedCount": "{earned} von {total} Stufen erreicht",
+      "earned": "erreicht",
+      "locked": "Gesperrt",
+      "tierProgress": "{earned} von {total} Stufen",
+      "nextTier": "{tier}: {count} von {target}",
+      "tiers": {
+        "bronze": "Bronze",
+        "silver": "Silber",
+        "gold": "Gold",
+        "platinum": "Platin",
+        "diamond": "Diamant"
+      },
+      "sightings": {
+        "name": "Entdecker",
+        "text": "Sichte {count, plural, one {# Art} other {# Arten}}.",
+        "maxed": "{count} Arten gesichtet – höchste Stufe erreicht."
+      },
+      "photos": {
+        "name": "Fotograf",
+        "text": "Füge {count, plural, one {# Sichtung} other {# Sichtungen}} ein Foto hinzu.",
+        "maxed": "{count} Sichtungen mit Foto – höchste Stufe erreicht."
+      },
+      "rare": {
+        "name": "Seltene Funde",
+        "text": "Sichte {count, plural, one {eine sehr seltene Art} other {# sehr seltene Arten}}.",
+        "maxed": "{count} sehr seltene Arten – höchste Stufe erreicht."
+      },
+      "endangered": {
+        "name": "Beschützer",
+        "text": "Sichte {count, plural, one {eine stark gefährdete oder vom Aussterben bedrohte Art} other {# stark gefährdete oder vom Aussterben bedrohte Arten}}.",
+        "maxed": "{count} bedrohte Arten – höchste Stufe erreicht."
+      },
+      "allGroups": {
+        "name": "Allrounder",
+        "text": "Sichte ein Säugetier, einen Vogel, ein Reptil, eine Amphibie, ein Insekt und ein Spinnentier."
+      },
+      "listMaker": {
+        "name": "Kurator",
+        "text": "Veröffentliche eine öffentliche Liste."
+      }
+    },
+    "activity": {
+      "title": "Letzte Aktivität",
+      "sighting": "Hat <animal>{name}</animal> gesichtet",
+      "photo": "Hat ein Foto von <animal>{name}</animal> hinzugefügt",
+      "emptyOwner": "Deine Sichtungen erscheinen hier.",
+      "emptyVisitor": "{name} hat noch keine datierten Sichtungen."
+    }
+  },
+  "Favorite": {
+    "add": "{name} zur Sammlung hinzufügen",
+    "addGeneric": "Zur Sammlung hinzufügen",
+    "remove": "{name} aus der Sammlung entfernen",
+    "removeGeneric": "Aus der Sammlung entfernen",
+    "removeTitle": "Aus der Sammlung entfernen?",
+    "removeText": "Die Sichtung, das Datum und dein Foto dieser Art werden aus deiner Sammlung entfernt.",
+    "removeConfirm": "Entfernen",
+    "cancel": "Abbrechen",
+    "added": "Zur Sammlung hinzugefügt",
+    "removed": "Aus der Sammlung entfernt",
+    "error": "Das hat nicht geklappt. Bitte versuche es erneut."
+  },
+  "ListPicker": {
+    "open": "Zu einer Liste hinzufügen",
+    "title": "Zu Listen hinzufügen",
+    "empty": "Du hast noch keine Listen.",
+    "createList": "Liste anlegen",
+    "inList": "In „{title}“ – entfernen",
+    "notInList": "Zu „{title}“ hinzufügen",
+    "error": "Das hat nicht geklappt. Bitte versuche es erneut."
+  },
+  "Collection": {
+    "title": "Sammlung",
+    "titleOf": "Sammlung von {name}",
+    "subtitleOwner": "Alle Arten, die du bereits gesichtet hast.",
+    "subtitleVisitor": "Arten, die {name} gesichtet hat.",
+    "backToProfile": "Zum Profil",
+    "private": "Diese Sammlung ist privat",
+    "privateText": "{name} teilt die Sammlung nur mit Personen, denen {name} ebenfalls folgt.",
+    "all": "Alle",
+    "progress": "{spotted} von {total}",
+    "withoutPhoto": "Ohne Foto",
+    "withoutPhotoHint": "Nur Arten ohne Foto zeigen",
+    "searchPlaceholder": "Art suchen …",
+    "filterLabel": "Nach Gruppe filtern",
+    "spottedOn": "Gesichtet am {date}",
+    "addSighting": "Foto oder Datum hinzufügen",
+    "editSighting": "Sichtung bearbeiten",
+    "openPhoto": "Foto von {name} vergrößern",
+    "photoAlt": "Foto von {name}",
+    "noPhoto": "Noch kein Foto",
+    "emptyOwnerTitle": "Deine Sammlung ist noch leer",
+    "emptyOwnerText": "Markiere im Lexikon Tiere, die du gesehen hast, mit dem Plus.",
+    "emptyVisitorTitle": "Noch keine Sichtungen",
+    "emptyFilteredTitle": "Nichts gefunden",
+    "emptyFilteredText": "Keine Art passt zu Suche und Filter.",
+    "toLexicon": "Zum Lexikon",
+    "loadingMore": "Weitere Arten werden geladen",
+    "edit": {
+      "title": "{name} bearbeiten",
+      "currentPhoto": "Aktuelles Foto",
+      "newPhoto": "Neues Foto",
+      "choosePhoto": "Foto auswählen",
+      "changePhoto": "Anderes Foto wählen",
+      "photoHint": "JPEG, PNG oder WebP. Wird vor dem Hochladen verkleinert.",
+      "date": "Erstmals gesichtet am",
+      "save": "Speichern",
+      "cancel": "Abbrechen",
+      "saved": "Sichtung gespeichert",
+      "nothingToSave": "Wähle ein Foto oder ein Datum.",
+      "error": "Das hat nicht geklappt. Bitte versuche es erneut."
+    }
+  },
+  "Home": {
+    "greeting": "Hallo {name}",
+    "subtitle": "{count, plural, =0 {Deine Sammlung wartet auf die erste Sichtung.} one {Du hast bereits # Art gesichtet.} other {Du hast bereits # Arten gesichtet.}}",
+    "animalOfTheDay": "Tier des Tages",
+    "animalOfTheMonth": "Tier des Monats",
+    "challenge": {
+      "title": "Challenge des Tages",
+      "text": "Fotografiere heute {target}.",
+      "targets": {
+        "songbird": "einen Singvogel",
+        "raptor": "einen Greifvogel",
+        "waterbird": "einen Wasservogel",
+        "mammal": "ein Säugetier",
+        "reptile": "ein Reptil",
+        "amphibian": "eine Amphibie",
+        "insect": "ein Insekt",
+        "spider": "eine Spinne"
+      }
+    },
+    "recent": {
+      "title": "Zuletzt gesichtet",
+      "empty": "Noch keine Sichtungen mit Datum.",
+      "toCollection": "Zur Sammlung",
+      "previous": "Vorheriges Foto",
+      "next": "Nächstes Foto",
+      "goTo": "Foto {number} anzeigen",
+      "photoAlt": "Dein Foto: {name}",
+      "spottedOn": "{name} · {date}",
+      "stats": {
+        "thisMonth": "Neu diesen Monat",
+        "thisYear": "Neu dieses Jahr",
+        "total": "Arten gesamt",
+        "withPhoto": "Mit Foto"
+      }
+    },
+    "quiz": {
+      "title": "Quiz: Welches Tier ist das?",
+      "easy": "Leicht",
+      "hard": "Schwer",
+      "modeLabel": "Schwierigkeit",
+      "choicesLabel": "Antworten",
+      "answerLabel": "Deine Antwort",
+      "answerPlaceholder": "Name des Tiers",
+      "correct": "Richtig! Das ist {name}.",
+      "wrong": "Leider falsch – es ist {name}.",
+      "check": "Prüfen",
+      "reveal": "Auflösen",
+      "next": "Nächstes Tier",
+      "imageAlt": "Gesuchtes Tier"
+    },
+    "imageSearch": {
+      "title": "Tier bestimmen",
+      "text": "Lade ein Foto hoch und suche es mit Google Lens.",
+      "choose": "Foto auswählen",
+      "change": "Anderes Foto",
+      "upload": "Hochladen",
+      "search": "Mit Google Lens suchen",
+      "uploaded": "Hochgeladen – jetzt suchen.",
+      "invalid": "Bitte ein JPEG-, PNG- oder WebP-Foto wählen.",
+      "error": "Das Hochladen hat nicht geklappt."
+    },
+    "links": {
+      "title": "Nützliche Seiten"
+    },
+    "feed": "Neuigkeiten"
+  },
+  "Footer": {
+    "imprint": "Impressum & Datenschutz",
+    "contact": "Kontakt",
+    "terms": "Nutzungsbedingungen",
+    "support": "NatureLog ist ein freies Projekt. Wenn du möchtest, kannst du es unterstützen:",
+    "donate": "per PayPal spenden"
+  },
+  "Animal": {
+    "back": "Zurück",
+    "rare": "Selten",
+    "rareTooltip": "Ausnahmeerscheinung oder Irrgast in Deutschland",
+    "spottedBy": "{count, plural, =0 {Noch niemand hat diese Art gesichtet.} one {# Mitglied hat diese Art gesichtet.} other {# Mitglieder haben diese Art gesichtet.}}",
+    "status": "Gefährdungsstatus",
+    "statusScale": "Skala von „Nicht gefährdet“ bis „Vom Aussterben bedroht“",
+    "facts": "Steckbrief",
+    "size": "Größe",
+    "population": "Population",
+    "presence": "In Deutschland zu sehen",
+    "habitat": "Lebensraum",
+    "dimorphism": "Geschlechtsdimorphismus",
+    "similar": "Ähnliche Arten",
+    "about": "Beschreibung",
+    "communityPhotos": "Fotos aus der Community",
+    "noPhotos": "Noch keine öffentlichen Fotos dieser Art.",
+    "photoBy": "Foto von {name}",
+    "photoAlt": "{animal}, fotografiert von {name}",
+    "credit": "Foto: {author}",
+    "license": "Lizenz: {license}"
+  },
+  "Map": {
+    "title": "Karte",
+    "subtitle": "Öffentliche Artenlisten mit Standort.",
+    "entries": "{count, plural, one {# Eintrag} other {# Einträge}}",
+    "by": "von {name}",
+    "open": "Liste öffnen",
+    "untitled": "Unbenannte Liste",
+    "iconCredit": "Pin-Icons: Freepik – Flaticon"
+  },
+  "Contact": {
+    "title": "Kontakt",
+    "subtitle": "Fragen, Fehler, fehlende Arten oder ein gutes Foto fürs Lexikon? Schreib mir gerne.",
+    "topics": "Zum Beispiel: eine fehlende Funktion, ein Fehler, falsche Informationen, ein fehlendes Tier oder ein Foto für eine Art.",
+    "name": "Dein Name",
+    "email": "Deine E-Mail",
+    "message": "Deine Nachricht",
+    "send": "E-Mail öffnen",
+    "sendHint": "Öffnet dein E-Mail-Programm mit der fertigen Nachricht.",
+    "direct": "Oder direkt per E-Mail:",
+    "subject": "NatureLog – Nachricht von {name}",
+    "required": "Bitte fülle alle Felder aus."
+  },
+  "Legal": {
+    "germanOnly": "Dieser Text ist rechtlich verbindlich nur auf Deutsch verfügbar."
+  },
+  "Meta": {
+    "description": "NatureLog ist dein Naturtagebuch: Sichtungen festhalten, Lieblingsfotos sammeln und mit anderen teilen."
+  },
+  "GlobalSearch": {
+    "open": "Suchen",
+    "title": "NatureLog durchsuchen",
+    "placeholder": "Arten, Personen oder Listen…",
+    "placeholderAnimals": "Arten suchen…",
+    "hint": "Gib mindestens {min} Zeichen ein.",
+    "noResults": "Nichts gefunden für „{term}“.",
+    "loading": "Suche läuft…",
+    "groups": {
+      "animals": "Arten",
+      "users": "Personen",
+      "lists": "Listen"
+    }
   }
 }

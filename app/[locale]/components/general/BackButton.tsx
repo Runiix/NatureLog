@@ -1,16 +1,26 @@
 "use client";
 
 import { ArrowBack } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
 import { useRouter } from "next/navigation";
+import { cn } from "@/app/[locale]/utils/cn";
 
-export default function BackButton() {
+/** History-back button, floating over hero imagery. A real <button> now. */
+export default function BackButton({ className }: { className?: string }) {
   const router = useRouter();
+  const t = useTranslations("General");
   return (
-    <div
-      className="absolute left-2 sm:left-10 top-2 sm:top-12  rounded-full size-8 sm:size-12 flex items-center justify-center hover:text-green-600 hover:bg-gray-900/70 bg-gray-900/50 z-40 cursor-pointer"
+    <button
+      type="button"
       onClick={() => router.back()}
+      aria-label={t("back")}
+      className={cn(
+        "flex h-10 w-10 items-center justify-center rounded-full bg-black/45 text-white backdrop-blur transition-colors hover:bg-black/65",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white",
+        className,
+      )}
     >
-      <ArrowBack className="sm:scale-125" />
-    </div>
+      <ArrowBack />
+    </button>
   );
 }

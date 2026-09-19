@@ -1,35 +1,18 @@
 import { createClient } from "@/utils/supabase/server";
 import Nav from "../components/general/Nav";
-import { SupabaseClient } from "@supabase/supabase-js";
 import "leaflet/dist/leaflet.css";
 import { ReactNode } from "react";
 import { getUser } from "../utils/data";
 
-const getFollowing = async (supabase: SupabaseClient, userId: string) => {
-  const { data, error } = await supabase
-    .from("follows")
-    .select("following_id")
-    .eq("follower_id", userId);
-  if (error) {
-    console.error(error);
-    return [];
-  }
-  const following = data.map((f) => f.following_id);
-  return following;
-};
 export default async function Layout({ children }: { children: ReactNode }) {
   const supabase = await createClient();
   const user = await getUser(supabase);
-  let following = [];
-  if (user) {
-    following = await getFollowing(supabase, user.id);
-  }
   return (
     <>
-      <Nav user={user} following={following} />
-      <main className="min-h-[calc(100vh-2.5rem)] sm:min-h-[calc(100vh-4rem)] mt-10 sm:mt-16">
+      <Nav user={user} />
+      <div className="min-h-full mt-10 sm:mt-16">
         {children}
-      </main>
+      </div>
     </>
   );
 }

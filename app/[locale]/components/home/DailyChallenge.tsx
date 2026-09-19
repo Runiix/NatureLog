@@ -1,24 +1,47 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { challenges } from "../../constants/constants";
+import { PhotoCamera } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
+import useHydrated from "@/app/[locale]/utils/useHydrated";
+import { seededIndex } from "@/app/[locale]/utils/seededIndex";
+import { Skeleton } from "../ui/Skeleton";
+
+const TARGETS = [
+  "songbird",
+  "raptor",
+  "waterbird",
+  "mammal",
+  "reptile",
+  "amphibian",
+  "insect",
+  "spider",
+] as const;
+
+function targetForToday() {
+  const today = new Date().toISOString().slice(0, 10);
+  return TARGETS[seededIndex(`challenge:${today}`, TARGETS.length)];
+}
 
 export default function DailyChallenge() {
-  const [dailyChallenge, setDailyChallenge] = useState("");
-  useEffect(() => {
-    const today = new Date().toISOString().split("T")[0];
-    let seed = 0;
-    for (let i = 0; i < today.length; i++) {
-      seed += today.charCodeAt(i);
-    }
-    const index = seed % challenges.length;
-    setDailyChallenge(challenges[index]);
-  }, []);
+  const t = useTranslations("Home.challenge");
+  // Picked in the browser so the server's clock cannot disagree with the
+  // viewer's and produce a hydration mismatch.
+  const hydrated = useHydrated();
 
   return (
-    <div className="py-4 sm:py-0 flex flex-col gap-4 items-center justify-center h-full">
-      <h2 className="text-2xl text-center">Challenge des Tages</h2>
-      <div>Fotografiere {dailyChallenge}</div>
+    <div className="flex h-full flex-col justify-center gap-3">
+      <span
+        aria-hidden
+        className="flex h-11 w-11 items-center justify-center rounded-full bg-accent/10 text-accent-text"
+      >
+        <PhotoCamera />
+      </span>
+      <h2 className="text-lg font-semibold">{t("title")}</h2>
+      {hydrated ? (
+        <p className="text-fg-muted">{t("text", { target: t(`targets.${targetForToday()}`) })}</p>
+      ) : (
+        <Skeleton className="h-5 w-3/4" />
+      )}
     </div>
   );
 }

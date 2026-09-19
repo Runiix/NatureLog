@@ -1,13 +1,11 @@
-import Footer from "@/app/[locale]/components/general/Footer";
 import { ReactNode } from "react";
+import Footer from "@/app/[locale]/components/general/Footer";
 
-export default async function Layout({ children }: { children: ReactNode }) {
+export default function HomeLayout({ children }: { children: ReactNode }) {
   return (
-    <div className="space-y-10">
-      <section className="mx-auto w-full">{children}</section>
-      <footer>
-        <Footer />
-      </footer>
-    </div>
+    <>
+      {children}
+      <Footer />
+    </>
   );
 }

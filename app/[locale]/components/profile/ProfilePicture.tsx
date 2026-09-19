@@ -1,151 +1,130 @@
 "use client";
 
-import Image from "next/image";
-import { MoreVert, Person } from "@mui/icons-material";
-import { useState } from "react";
-import changeProfilePicture from "../../actions/profile/changeProfilePicture";
-import { CircleLoader } from "react-spinners";
+import { Flag, PhotoCamera, Person } from "@mui/icons-material";
 import imageCompression from "browser-image-compression";
-import addReport from "@/app/[locale]/actions/general/addReport";
-import Modal from "../general/Modal";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+import { useRef, useState } from "react";
+import changeProfilePicture from "../../actions/profile/changeProfilePicture";
+import { Button } from "../ui/Button";
+import { Spinner } from "../ui/Spinner";
+import { useToast } from "../ui/Toast";
+import ReportPhotoDialog from "./ReportPhotoDialog";
 
 export default function ProfilePicture({
   userId,
+  displayName,
   currUser,
   profilePic,
   profilePicUrl,
 }: {
   userId: string;
+  displayName: string;
   currUser: boolean;
   profilePic: boolean;
   profilePicUrl: string;
 }) {
-  const [profilePictureUrl, setProfilePictureUrl] = useState(profilePicUrl);
-  const [loading, setLoading] = useState(false);
-  const [profilePicExists, setProfilePicExists] = useState(profilePic);
-  const [reportModal, setReportModal] = useState(false);
-  const [reportText, setReportText] = useState("");
-  const handleProfilePictureUpload = async (
-    e: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    setLoading(true);
-    if (!e.target.files || e.target.files.length === 0) return;
+  const t = useTranslations("Profile");
+  const toast = useToast();
+  const fileInput = useRef<HTMLInputElement>(null);
+  const [url, setUrl] = useState(profilePicUrl);
+  const [hasPicture, setHasPicture] = useState(profilePic && !!profilePicUrl);
+  const [uploading, setUploading] = useState(false);
+  const [reporting, setReporting] = useState(false);
 
-    const file = e.target.files[0];
-    if (file) {
-      const options = {
+  async function upload(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setUploading(true);
+    try {
+      const compressed = await imageCompression(file, {
         maxSizeMB: 0.1,
         maxWidthOrHeight: 300,
         useWebWorker: true,
-      };
-
-      try {
-        const compressedFile = await imageCompression(file, options);
-        const formData = new FormData();
-        formData.append("file", compressedFile);
-        formData.append("exists", profilePicExists.toString());
-
-        const response = await changeProfilePicture(formData);
-        if (response) {
-          setProfilePictureUrl(
-            `https://umvtbsrjbvivfkcmvtxk.supabase.co/storage/v1/object/public/profiles/${userId}/ProfilePicture/ProfilePic.jpg?t=${new Date().getTime()}`,
-          );
-          setProfilePicExists(true);
-          setLoading(false);
-        }
-      } catch (error) {
-        console.error("Compression failed:", error);
+      });
+      const formData = new FormData();
+      formData.append("file", compressed);
+      const res = await changeProfilePicture(formData);
+      if (res.success) {
+        // A local preview avoids waiting on storage/CDN for the new object.
+        setUrl(URL.createObjectURL(compressed));
+        setHasPicture(true);
+        toast(t("toast.uploaded"));
+      } else {
+        toast(t("toast.error"), "error");
       }
+    } catch (error) {
+      console.error("Profile picture upload failed:", error);
+      toast(t("toast.error"), "error");
+    } finally {
+      setUploading(false);
     }
-  };
-  const handleReportText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setReportText(e.target.value);
-  };
-  const handleAddingReport = async (imageLink: string) => {
-    const res = await addReport(userId, imageLink, reportText);
-    if (res.success) {
-      alert("Das Bild wurde erfolgreich gemeldet");
-    } else {
-      alert(
-        "Beim Melden des Bildes ist etwas schief gelaufen. Versuche es erneut oder melde dich an den Support!",
-      );
-    }
-    setReportModal(false);
-  };
+  }
 
   return (
-    <div className="text-5xl flex items-center justify-center gap-2 sm:gap-4">
-      {loading ? (
-        <CircleLoader color="#16A34A" />
+    <div className="relative shrink-0">
+      <div className="relative h-28 w-28 overflow-hidden rounded-full bg-surface-sunken ring-4 ring-surface sm:h-32 sm:w-32">
+        {hasPicture ? (
+          <Image
+            src={url}
+            alt={t("avatarAlt", { name: displayName })}
+            fill
+            sizes="128px"
+            priority
+            unoptimized
+            className="object-cover"
+          />
+        ) : (
+          <div className="flex h-full w-full items-center justify-center text-fg-subtle [&_svg]:h-16 [&_svg]:w-16">
+            <Person aria-hidden />
+          </div>
+        )}
+        {uploading && (
+          <div className="absolute inset-0 flex items-center justify-center bg-overlay/50 text-white">
+            <Spinner />
+          </div>
+        )}
+      </div>
+
+      {currUser ? (
+        <>
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={() => fileInput.current?.click()}
+            disabled={uploading}
+            aria-label={t("changeAvatar")}
+            className="absolute bottom-0 right-0 h-9 w-9 rounded-full shadow-card"
+          >
+            <PhotoCamera fontSize="small" />
+          </Button>
+          <input
+            ref={fileInput}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={upload}
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden
+          />
+        </>
       ) : (
-        <label className="group ">
-          {profilePicExists === false ? (
-            <Person
-              className={`text-5xl border-2 rounded-full w-20 h-20 ${
-                currUser && "group-hover:text-slate-400 cursor-pointer"
-              }`}
-            />
-          ) : (
-            <div className="relative ">
-              <Image
-                src={profilePictureUrl}
-                alt="profileBanner"
-                className={`z-10 object-cover rounded-full w-100 border-2 bg-gray-900 ${
-                  currUser && "hover:cursor-pointer group-hover:opacity-90"
-                }  h-100 aspect-square`}
-                height={200}
-                width={200}
-                priority
-                unoptimized
-              />
-              {!currUser && (
-                <div>
-                  <button
-                    onClick={() => setReportModal((prev) => !prev)}
-                    className="absolute hover:bg-gray-700 hover:bg-opacity-40 rounded-full group z-50 -top-4 right-0 flex items-center p-2"
-                  >
-                    {" "}
-                    <MoreVert className=" " />
-                  </button>
-                  {reportModal && (
-                    <Modal closeModal={() => setReportModal(false)}>
-                      <div className="flex flex-col items-center p-4 gap-4 mt-4">
-                        <h2>Möchtest du dieses Foto melden?</h2>
-                        <textarea
-                          placeholder="Bitte gib einen Meldegrund an"
-                          value={reportText}
-                          rows={4}
-                          cols={30}
-                          onChange={handleReportText}
-                          className="rounded-lg p-2 bg-gray-900 border border-gray-200"
-                        />
-                        <button
-                          className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700  text-nowrap flex items-center gap-2"
-                          onClick={() =>
-                            handleAddingReport(profilePictureUrl || "")
-                          }
-                        >
-                          Bild melden
-                        </button>
-                      </div>
-                    </Modal>
-                  )}
-                </div>
-              )}
-            </div>
-          )}
-          <p className="hidden group-hover:flex absolute bottom-8 sm:bottom-14 ml-4 sm:ml-5 text-xs hover:cursor-pointer">
-            change
-          </p>
-          {currUser && (
-            <input
-              type="file"
-              id="photo-upload"
-              onChange={handleProfilePictureUpload}
-              className="hidden"
-            />
-          )}
-        </label>
+        hasPicture && (
+          <Button
+            variant="secondary"
+            size="icon"
+            onClick={() => setReporting(true)}
+            aria-label={t("report")}
+            className="absolute bottom-0 right-0 h-9 w-9 rounded-full shadow-card"
+          >
+            <Flag fontSize="small" />
+          </Button>
+        )
+      )}
+
+      {reporting && (
+        <ReportPhotoDialog ownerId={userId} imageLink={url} onClose={() => setReporting(false)} />
       )}
     </div>
   );

@@ -1,287 +1,302 @@
 "use client";
-import { Close, Delete, Edit, MoreVert } from "@mui/icons-material";
-import Image from "next/image";
-import { useEffect, useState } from "react";
-import getProfileGrid from "../../actions/profile/getProfileGrid";
-import { CircleLoader } from "react-spinners";
-import addProfileGridImage from "../../actions/profile/addProfileGridImage";
-import removeProfileGridImage from "../../actions/profile/removeProfileGridImage";
-import changeProfileGridImage from "../../actions/profile/changeProfileGridImage";
-import imageCompression from "browser-image-compression";
-import { User } from "@supabase/supabase-js";
-import addReport from "@/app/[locale]/actions/general/addReport";
 
-type ProfileGridImage = {
+import { AddAPhoto, Delete, Edit, Flag, PhotoLibrary } from "@mui/icons-material";
+import imageCompression from "browser-image-compression";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+import { useRef, useState } from "react";
+import addProfileGridImage from "../../actions/profile/addProfileGridImage";
+import changeProfileGridImage from "../../actions/profile/changeProfileGridImage";
+import getProfileGrid from "../../actions/profile/getProfileGrid";
+import removeProfileGridImage from "../../actions/profile/removeProfileGridImage";
+import Modal from "../general/Modal";
+import { Button } from "../ui/Button";
+import { EmptyState } from "../ui/EmptyState";
+import { Spinner } from "../ui/Spinner";
+import { useToast } from "../ui/Toast";
+import ReportPhotoDialog from "./ReportPhotoDialog";
+
+export const MAX_GRID_IMAGES = 12;
+
+export type ProfileGridImage = {
   name: string;
   gridUrl: string | null;
   modalUrl: string | null;
 };
+
+const THUMB = { maxSizeMB: 0.02, maxWidthOrHeight: 500, useWebWorker: true };
+const FULL = { maxSizeMB: 0.2, maxWidthOrHeight: 1920, useWebWorker: true };
+
+async function compressPair(file: File) {
+  const [thumb, full] = await Promise.all([
+    imageCompression(file, THUMB),
+    imageCompression(file, FULL),
+  ]);
+  const formData = new FormData();
+  formData.append("file", thumb);
+  formData.append("modalFile", full);
+  return formData;
+}
+
+/**
+ * Up to twelve favourite photos. The first render comes from the server
+ * (`initialImages`), so there is no client-side fetch before anything shows;
+ * the action is only called again to refresh after a change.
+ */
 export default function PictureGrid({
-  user,
+  userId,
+  displayName,
   currUser,
+  initialImages,
 }: {
-  user: User;
+  /** Owner of the grid: whose images are listed and who a report is about. */
+  userId: string;
+  displayName: string;
   currUser: boolean;
+  initialImages: ProfileGridImage[];
 }) {
-  const [profileGridFull, setProfileGridFull] = useState(false);
-  const [oldImageUrl, setOldImageUrl] = useState("");
-  const [oldModalUrl, setOldModalUrl] = useState("");
-  const [profileGrid, setProfileGrid] = useState<ProfileGridImage[]>([]);
-  const [refresh, setRefresh] = useState(false);
-  const [imageModal, setImageModal] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [reportModal, setReportModal] = useState<false | number>(false);
-  const [reportText, setReportText] = useState("");
+  const t = useTranslations("Profile");
+  const toast = useToast();
+  const [images, setImages] = useState(initialImages);
+  const [busy, setBusy] = useState<string | "new" | null>(null);
+  const [lightbox, setLightbox] = useState<number | null>(null);
+  const [reporting, setReporting] = useState<ProfileGridImage | null>(null);
+  const addInput = useRef<HTMLInputElement>(null);
+  const replaceInput = useRef<HTMLInputElement>(null);
+  const replaceTarget = useRef<string | null>(null);
 
-  useEffect(() => {
-    const loadProfileGrid = async () => {
-      const gridData = await getProfileGrid(user.id);
-      if (Array.isArray(gridData)) {
-        setProfileGrid(gridData);
-        if (gridData.length === 12) {
-          setProfileGridFull(true);
-        }
+  const full = images.length >= MAX_GRID_IMAGES;
+
+  async function refresh() {
+    setImages(await getProfileGrid(userId));
+  }
+
+  async function add(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    event.target.value = "";
+    if (!file) return;
+    setBusy("new");
+    try {
+      const res = await addProfileGridImage(await compressPair(file));
+      if (res.success) {
+        await refresh();
+        toast(t("toast.uploaded"));
       } else {
-        console.error("Failed to load profile grid:", gridData.error);
+        toast(
+          res.profileGridFull ? t("toast.gridFull", { max: MAX_GRID_IMAGES }) : t("toast.error"),
+          "error",
+        );
       }
-    };
-    loadProfileGrid();
-    setLoading(false);
-  }, [refresh, user.id]);
-
-  const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLoading(true);
-    if (!e.target.files || e.target.files.length === 0) return;
-
-    const file = e.target.files[0];
-    if (file) {
-      const options1 = {
-        maxSizeMB: 0.02,
-        maxWidthOrHeight: 500,
-        useWebWorker: true,
-      };
-      const options2 = {
-        maxSizeMB: 0.2,
-        maxWidthOrHeight: 1920,
-        useWebWorker: true,
-      };
-
-      try {
-        const compressedFile = await imageCompression(file, options1);
-        const modalFile = await imageCompression(file, options2);
-
-        const formData = new FormData();
-        formData.append("file", compressedFile);
-        formData.append("modalFile", modalFile);
-        formData.append("fileName", file.name);
-        const response = await addProfileGridImage(formData);
-        if (response) {
-          setProfileGridFull(response.profileGridFull);
-          setLoading(false);
-          setRefresh((prev) => !prev);
-        }
-      } catch (error) {
-        console.error("Compression failed:", error);
-      }
+    } catch (error) {
+      console.error("Grid upload failed:", error);
+      toast(t("toast.error"), "error");
+    } finally {
+      setBusy(null);
     }
-  };
-  const handleUrlChange = (index: number) => {
-    setOldImageUrl(`${user.id}/ProfileGrid/${profileGrid[index].name}`);
-    setOldModalUrl(`${user.id}/ProfileGridModals/${profileGrid[index].name}`);
-  };
+  }
 
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    setLoading(true);
-    if (!e.target.files || e.target.files.length === 0) return;
-
-    const file = e.target.files[0];
-    if (file) {
-      const options1 = {
-        maxSizeMB: 0.02,
-        maxWidthOrHeight: 500,
-        useWebWorker: true,
-      };
-      const options2 = {
-        maxSizeMB: 0.2,
-        maxWidthOrHeight: 1920,
-        useWebWorker: true,
-      };
-
-      try {
-        const compressedFile = await imageCompression(file, options1);
-        const modalFile = await imageCompression(file, options2);
-
-        const formData = new FormData();
-        formData.append("file", compressedFile);
-        formData.append("modalFile", modalFile);
-        formData.append("old_file", oldImageUrl);
-        formData.append("old_modalFile", oldModalUrl);
-        formData.append("fileName", file.name);
-
-        const response = await changeProfileGridImage(formData);
-        if (response) {
-          setLoading(false);
-          setRefresh((prev) => !prev);
-        }
-      } catch (error) {
-        console.error("Compression failed:", error);
+  async function replace(event: React.ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    const oldName = replaceTarget.current;
+    event.target.value = "";
+    if (!file || !oldName) return;
+    setBusy(oldName);
+    try {
+      const formData = await compressPair(file);
+      formData.append("old_name", oldName);
+      const res = await changeProfileGridImage(formData);
+      if (res.success) {
+        await refresh();
+        toast(t("toast.replaced"));
+      } else {
+        toast(t("toast.error"), "error");
       }
+    } catch (error) {
+      console.error("Grid replace failed:", error);
+      toast(t("toast.error"), "error");
+    } finally {
+      setBusy(null);
     }
-  };
+  }
 
-  const handleFileDelete = async (fileUrl: string, modalUrl: string) => {
+  async function remove(name: string) {
+    setBusy(name);
     const formData = new FormData();
-    formData.append("file", fileUrl);
-    formData.append("modalFile", modalUrl);
-    const response = await removeProfileGridImage(formData);
-    if (response) {
-      setProfileGridFull(response.profileGridFull);
-      setLoading(false);
-      setRefresh((prev) => !prev);
-    }
-  };
-  const handleReportText = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setReportText(e.target.value);
-  };
-  const handleAddingReport = async (imageLink: string) => {
-    const res = await addReport(user.id, imageLink, reportText);
+    formData.append("name", name);
+    const res = await removeProfileGridImage(formData);
     if (res.success) {
-      alert("Das Bild wurde erfolgreich gemeldet");
+      setImages((current) => current.filter((image) => image.name !== name));
+      toast(t("toast.deleted"));
     } else {
-      alert(
-        "Beim Melden des Bildes ist etwas schief gelaufen. Versuche es erneut oder melde dich an den Support!",
-      );
+      toast(t("toast.error"), "error");
     }
-    setReportModal(false);
-  };
+    setBusy(null);
+  }
+
+  const open = lightbox === null ? null : images[lightbox];
 
   return (
-    <div className="min-h-[678px]">
-      <h2 className="text-xl">Lieblingsfotos</h2>
-      <div className="items-center justify-center grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5  gap-1 sm:gap-4 border-t-2 border-gray-200 pt-4">
-        {profileGrid ? (
-          profileGrid.map((image: ProfileGridImage, index: number) => (
-            <div key={index} className="relative">
-              <Image
-                unoptimized
-                src={image.gridUrl || "/images/black.webp"}
-                width={200}
-                height={200}
-                alt=""
-                className="rounded-lg object-cover hover:opacity-90 aspect-square cursor-pointer"
-                onClick={() =>
-                  setImageModal(image.modalUrl || "/images/black.webp")
-                }
-              />
-              {currUser ? (
-                <div className="flex items-center">
-                  <label
-                    className="group cursor-pointer"
-                    onClick={() => handleUrlChange(index)}
-                  >
-                    <Edit className="absolute bottom-4 right-4 hover:bg-gray-700 hover:bg-opacity-40 rounded-full hover:scale-125" />
-                    <input
-                      type="file"
-                      id="photo-upload"
-                      onChange={handleFileChange}
-                      className="hidden"
-                    />
-                  </label>
-                  <button
-                    className="group cursor-pointer"
-                    onClick={() =>
-                      handleFileDelete(
-                        `${user.id}/ProfileGrid/${profileGrid[index].name}`,
-                        `${user.id}/ProfileGridModal/${profileGrid[index].name}`,
-                      )
-                    }
-                    aria-label="Bild aus Liebligsbildern entfernen"
-                  >
-                    <Delete className="absolute bottom-4 left-4 hover:bg-gray-700 hover:bg-opacity-40 rounded-full hover:scale-125" />
-                  </button>
-                </div>
-              ) : (
-                <div className="absolute top-2 right-2 p-2 hover:bg-gray-700 hover:bg-opacity-40 rounded-full group">
-                  <button
-                    onClick={() => setReportModal(index)}
-                    className="relative"
-                  >
-                    {" "}
-                    <MoreVert className="   group-hover:scale-125" />
-                  </button>
-                  {reportModal === index && (
-                    <div className="absolute flex flex-col right-0 p-4 bg-gray-900 border border-gray-200 rounded-lg shadow-xl shadow-black z-50">
-                      <button
-                        className="hover:text-red-600 absolute top-2 right-2"
-                        onClick={() => setReportModal(false)}
-                      >
-                        {" "}
-                        <Close />
-                      </button>
-                      <div className="flex flex-col items-center p-4 gap-4 mt-4">
-                        <h2>Möchtest du dieses Foto melden?</h2>
-
-                        <textarea
-                          placeholder="Bitte gib einen Meldegrund an"
-                          value={reportText}
-                          rows={4}
-                          cols={30}
-                          onChange={handleReportText}
-                          className="rounded-lg p-2 bg-gray-900 border border-gray-200"
-                        />
-                        <button
-                          className="hover:text-gray-900 bg-red-600 font-bold p-4 rounded-lg  hover:bg-red-700  text-nowrap flex items-center gap-2"
-                          onClick={() =>
-                            handleAddingReport(image.gridUrl || "")
-                          }
-                        >
-                          Bild melden
-                        </button>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              )}
-            </div>
-          ))
-        ) : (
-          <CircleLoader color="#16A34A" />
-        )}
-        {!profileGridFull && currUser && (
-          <label className="group border-2 rounded-lg w-10 h-10 flex justify-center items-center cursor-pointer hover:bg-gray-800 hover:scale-110 p-16 ml-5">
-            <div className="text-xl">{profileGrid.length}/12</div>
-            <input
-              type="file"
-              id="photo-upload"
-              onChange={handleFileUpload}
-              className="hidden"
-            />
-          </label>
-        )}
-        {imageModal !== "" && (
-          <div
-            className="fixed top-0 left-0 w-full h-full z-10 bg-black/70 flex items-center justify-center"
-            onClick={() => setImageModal("")}
-          >
-            {" "}
-            <Image
-              unoptimized
-              src={imageModal}
-              alt=""
-              loading="lazy"
-              width={1920}
-              height={1080}
-              className="relative m-auto z-20 sm:w-2/3 max-h-full object-contain"
-            />
-          </div>
-        )}
-        {loading && (
-          <div className="fixed top-0 left-0 w-full h-full z-10 bg-black/70 flex items-center justify-center">
-            Bild wird hochgeladen
-            <CircleLoader color="#16A34A" />
-          </div>
+    <section aria-labelledby="profile-photos" className="flex flex-col gap-4">
+      <div className="flex items-baseline justify-between gap-3">
+        <h2 id="profile-photos" className="text-xl font-semibold tracking-tight">
+          {t("photos")}
+        </h2>
+        {currUser && (
+          <span className="text-sm tabular-nums text-fg-subtle">
+            {t("photosCount", { count: images.length, max: MAX_GRID_IMAGES })}
+          </span>
         )}
       </div>
-    </div>
+
+      {images.length === 0 && !currUser ? (
+        <EmptyState icon={<PhotoLibrary />} title={t("noPhotosVisitorTitle")} />
+      ) : images.length === 0 && busy !== "new" ? (
+        <EmptyState
+          icon={<PhotoLibrary />}
+          title={t("noPhotosOwnerTitle")}
+          description={t("noPhotosOwnerText", { max: MAX_GRID_IMAGES })}
+          action={
+            <Button icon={<AddAPhoto />} onClick={() => addInput.current?.click()}>
+              {t("addPhoto")}
+            </Button>
+          }
+        />
+      ) : (
+        <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
+          {images.map((image, index) => (
+            <li key={image.name} className="group relative aspect-square">
+              <button
+                type="button"
+                onClick={() => setLightbox(index)}
+                aria-label={t("openPhoto", { number: index + 1 })}
+                className="relative block h-full w-full overflow-hidden rounded-xl bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+              >
+                {image.gridUrl && (
+                  <Image
+                    src={image.gridUrl}
+                    alt={t("photoAlt", { name: displayName, number: index + 1 })}
+                    fill
+                    unoptimized
+                    sizes="(min-width: 1024px) 25vw, (min-width: 640px) 33vw, 50vw"
+                    className="object-cover transition-transform duration-300 group-hover:scale-[1.03]"
+                  />
+                )}
+              </button>
+
+              {busy === image.name && (
+                <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-overlay/50 text-white">
+                  <Spinner />
+                </div>
+              )}
+
+              {/* Always visible on touch; revealed on hover/focus with a pointer. */}
+              <div className="absolute right-2 top-2 flex gap-1 opacity-100 transition-opacity [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-focus-within:opacity-100 [@media(hover:hover)]:group-hover:opacity-100">
+                {currUser ? (
+                  <>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      className="h-8 w-8 rounded-full shadow-card"
+                      aria-label={t("replacePhoto")}
+                      disabled={busy !== null}
+                      onClick={() => {
+                        replaceTarget.current = image.name;
+                        replaceInput.current?.click();
+                      }}
+                    >
+                      <Edit fontSize="small" />
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="icon"
+                      className="h-8 w-8 rounded-full shadow-card hover:text-danger"
+                      aria-label={t("deletePhoto")}
+                      disabled={busy !== null}
+                      onClick={() => void remove(image.name)}
+                    >
+                      <Delete fontSize="small" />
+                    </Button>
+                  </>
+                ) : (
+                  <Button
+                    variant="secondary"
+                    size="icon"
+                    className="h-8 w-8 rounded-full shadow-card"
+                    aria-label={t("report")}
+                    onClick={() => setReporting(image)}
+                  >
+                    <Flag fontSize="small" />
+                  </Button>
+                )}
+              </div>
+            </li>
+          ))}
+
+          {currUser && !full && (
+            <li className="aspect-square">
+              <button
+                type="button"
+                onClick={() => addInput.current?.click()}
+                disabled={busy !== null}
+                className="flex h-full w-full flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-border text-sm font-medium text-fg-muted transition-colors hover:border-accent hover:text-accent-text focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:opacity-60"
+              >
+                {busy === "new" ? <Spinner /> : <AddAPhoto />}
+                {t("addPhoto")}
+              </button>
+            </li>
+          )}
+        </ul>
+      )}
+
+      {currUser && (
+        <>
+          <input
+            ref={addInput}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={add}
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden
+          />
+          <input
+            ref={replaceInput}
+            type="file"
+            accept="image/jpeg,image/png,image/webp"
+            onChange={replace}
+            className="sr-only"
+            tabIndex={-1}
+            aria-hidden
+          />
+        </>
+      )}
+
+      {open && (
+        <Modal
+          label={t("photoLightbox")}
+          closeModal={() => setLightbox(null)}
+          styles="max-w-5xl p-2 pt-12 sm:p-3 sm:pt-12 bg-surface-sunken"
+        >
+          {open.modalUrl && (
+            <Image
+              src={open.modalUrl}
+              alt={t("photoAlt", { name: displayName, number: (lightbox ?? 0) + 1 })}
+              width={1920}
+              height={1280}
+              unoptimized
+              className="max-h-[80vh] w-full rounded-lg object-contain"
+            />
+          )}
+        </Modal>
+      )}
+
+      {reporting && (
+        <ReportPhotoDialog
+          ownerId={userId}
+          imageLink={reporting.modalUrl ?? reporting.gridUrl ?? ""}
+          onClose={() => setReporting(null)}
+        />
+      )}
+    </section>
   );
 }

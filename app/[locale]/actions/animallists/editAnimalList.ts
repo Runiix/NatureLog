@@ -1,26 +1,34 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import requireAuth from "@/utils/supabase/requireAuth";
+import { revalidateListPages } from "@/app/[locale]/utils/listAccess";
+import { validateListFields } from "@/app/[locale]/utils/listValidation";
+import { fail, ok } from "@/app/[locale]/utils/result";
 
 export default async function editAnimalList(
   title: string,
   listId: string,
   description: string,
-  publicList: boolean
+  publicList: boolean,
 ) {
-  const supabase = await createClient();
+  const { supabase, user } = await requireAuth();
 
-  const { error } = await supabase
+  // lat/lng are left out on purpose: editing text must not touch the location.
+  const fields = validateListFields({ title, description, publicList });
+  if (!fields.success) return fields;
+
+  const { data, error } = await supabase
     .from("animallists")
-    .update({
-      title: title,
-      description: description,
-      is_public: publicList,
-    })
-    .eq("id", listId);
+    .update(fields.data)
+    .eq("id", listId)
+    .eq("user_id", user.id)
+    .select("id");
   if (error) {
     console.error("Error editing animal list", error);
-    return { success: false, error: error.message };
+    return fail(error.message);
   }
-  return { success: true, error: null };
+  if (data.length === 0) return fail("List not found");
+
+  revalidateListPages();
+  return ok();
 }

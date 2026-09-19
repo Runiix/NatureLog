@@ -1,68 +1,85 @@
 "use client";
+
 import { Close } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
-import { useTransition } from "react";
+import {
+  ALL_ORDERS,
+  COLOR_VALUES,
+  ENDANGERMENT,
+  FILTER_KEYS,
+  GENERA,
+  pickAllowed,
+} from "@/app/[locale]/utils/lexiconFilters";
+import { useUrlFilters } from "./useUrlFilters";
 
+/** Active filters as removable chips, plus "reset all". */
 export default function LexiconFilterList() {
   const t = useTranslations("Lexicon");
-  const searchParams = useSearchParams();
-  const pathName = usePathname();
-  const { replace } = useRouter();
-  const router = useRouter();
-  const [isPending, startTransition] = useTransition();
+  const filters = useUrlFilters();
 
-  const filters = Object.fromEntries(searchParams.entries());
-
-  const removeFilter = (filterKey: string, filterValue: string) => {
-    const newParams = new URLSearchParams(searchParams.toString());
-
-    const values = parsedFilters[filterKey].filter(
-      (val) => val !== filterValue,
-    );
-
-    if (values.length > 0) {
-      newParams.set(filterKey, values.join(","));
-    } else {
-      newParams.delete(filterKey);
+  const chips: { key: string; value: string; label: string }[] = [];
+  // Only values the lexicon knows become chips — the URL is user input, and
+  // translating an unknown value used to throw MISSING_MESSAGE.
+  const allowed: Record<string, readonly string[]> = {
+    genus: GENERA,
+    order: ALL_ORDERS,
+    color: COLOR_VALUES,
+    endangerment: ENDANGERMENT,
+  };
+  for (const [key, values] of Object.entries(allowed)) {
+    for (const value of pickAllowed(filters.searchParams.get(key), values)) {
+      chips.push({ key, value, label: key === "order" ? value : t(value) });
     }
-
-    startTransition(() => {
-      router.replace(`${pathName}?${newParams.toString()}`);
+  }
+  for (const key of ["onlySeen", "onlyUnseen", "excludeRares"] as const) {
+    if (filters.flag(key)) {
+      const label = key === "excludeRares" ? t("rareLabel") : t(`${key}Label`);
+      chips.push({ key, value: "true", label });
+    }
+  }
+  const sizeFrom = Number(filters.searchParams.get("sizeFrom")) || null;
+  const sizeTo = Number(filters.searchParams.get("sizeTo")) || null;
+  if (sizeFrom || sizeTo) {
+    chips.push({
+      key: "size",
+      value: "",
+      label: t("sizeValue", { from: sizeFrom ?? 0, to: sizeTo ?? 500 }),
     });
+  }
+
+  if (chips.length === 0) return null;
+
+  const remove = (chip: (typeof chips)[number]) => {
+    if (chip.key === "size") filters.set({ sizeFrom: null, sizeTo: null });
+    else if (chip.value === "true") filters.set({ [chip.key]: null });
+    else filters.toggle(chip.key, chip.value);
   };
 
-  const parsedFilters = Object.entries(filters).reduce(
-    (acc, [key, value]) => {
-      acc[key] = value.split(",");
-      return acc;
-    },
-    {} as Record<string, string[]>,
-  );
   return (
-    <div className="flex flex-wrap max-w-[60%] mx-auto items-center justify-center sm:gap-2 sm:p-4 mb-1 sm:mb-0 ">
-      {Object.entries(parsedFilters).map(([key, values]) =>
-        values.map((value) => (
-          <span
-            key={`${key}-${value}`}
-            className="px-3 py-1 shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 text-white rounded-lg flex items-center gap-2 text-xs sm:text-sm"
+    <div className="flex flex-wrap items-center gap-2">
+      {chips.map((chip) => (
+        <span
+          key={`${chip.key}-${chip.value}`}
+          className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/10 py-0.5 pl-3 pr-1 text-sm text-accent-text"
+        >
+          {chip.label}
+          <button
+            type="button"
+            onClick={() => remove(chip)}
+            aria-label={t("removeFilter", { label: chip.label })}
+            className="flex rounded-full p-0.5 hover:bg-accent/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
-            {t(key)}:{" "}
-            {key === "sizeFrom" || key === "sizeTo"
-              ? `${value} cm`
-              : key === "order"
-                ? value
-                : t(value)}
-            <button
-              onClick={() => removeFilter(key, value)}
-              className="ml-2 text-xs sm:text-base hover:text-red-600 rounded-lg px-2  cursor-pointer border-[1px] flex items-center justify-center"
-              aria-label="Lexicon Filter schließen"
-            >
-              <Close />
-            </button>
-          </span>
-        )),
-      )}
+            <Close sx={{ fontSize: 16 }} />
+          </button>
+        </span>
+      ))}
+      <button
+        type="button"
+        onClick={() => filters.clear(FILTER_KEYS)}
+        className="rounded px-2 text-sm text-fg-muted underline-offset-4 hover:text-fg hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      >
+        {t("resetFilters")}
+      </button>
     </div>
   );
 }

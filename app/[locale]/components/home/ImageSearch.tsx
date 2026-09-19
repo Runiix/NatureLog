@@ -1,143 +1,116 @@
 "use client";
 
-import { createClient } from "@/utils/supabase/client";
-import { CheckCircle } from "@mui/icons-material";
-import { User } from "@supabase/supabase-js";
-import { useState } from "react";
-import { CircleLoader } from "react-spinners";
+import { AddAPhoto, ImageSearch as ImageSearchIcon, OpenInNew } from "@mui/icons-material";
+import imageCompression from "browser-image-compression";
+import { useTranslations } from "next-intl";
+import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import uploadSearchImage from "@/app/[locale]/actions/home/uploadSearchImage";
+import { Button } from "../ui/Button";
+import { useToast } from "../ui/Toast";
 
-export default function ReverseImageSearch({ user }: { user: User | null }) {
-  const [imageUrl, setImageUrl] = useState("");
-  const [selectedFile, setSelectedFile] = useState<null | File>(null);
-  const [loading, setLoading] = useState(false);
-  const supabase = createClient();
+/**
+ * Reverse image search: pick a photo, it is uploaded (server-validated) and
+ * then opened in Google Lens. One button does both steps after picking; it
+ * used to be three numbered buttons and alert() dialogs.
+ */
+export default function ImageSearch() {
+  const t = useTranslations("Home.imageSearch");
+  const toast = useToast();
+  const input = useRef<HTMLInputElement>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [preview, setPreview] = useState<string | null>(null);
+  const [publicUrl, setPublicUrl] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files) return;
-    const file = e.target.files[0];
-    setSelectedFile(file);
-  };
+  useEffect(() => {
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setPreview(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
 
-  const uploadImage = async () => {
-    if (!selectedFile) {
-      alert("Bitte zuerst ein Bild auswählen.");
-      return;
-    }
-    if (!user) {
-      alert("Bitte zuerst anmelden");
-      return;
-    }
-
-    setLoading(true);
-
-    let imageExists = false;
-    const fileName = `${Date.now()}-${selectedFile.name}`;
-    const filePath = `/${user.id}/${fileName}`;
-
-    const { data: listData, error: listError } = await supabase.storage
-      .from("imagesearch")
-      .list(user?.id, {
-        limit: 2,
-        offset: 0,
-        sortBy: { column: "name", order: "asc" },
+  async function upload() {
+    if (!file) return;
+    setBusy(true);
+    try {
+      const compressed = await imageCompression(file, {
+        maxSizeMB: 1,
+        maxWidthOrHeight: 1600,
+        useWebWorker: true,
       });
-    if (listError) {
-      console.error(listError);
-    }
-    const filteredData = listData?.filter(
-      (item: { name: string }) => item.name !== ".emptyFolderPlaceholder",
-    );
-    if (filteredData?.length === 0) {
-      imageExists = false;
-    }
-    imageExists = true;
-    if (imageExists && filteredData && filteredData.length > 0) {
-      const { error } = await supabase.storage
-        .from("imagesearch")
-        .remove([user.id + "/" + filteredData[0].name]);
-      if (error) {
-        console.error("Upload error:", error.message);
-        alert("Failed to upload image.");
-        setLoading(false);
-        return;
+      const formData = new FormData();
+      formData.append("file", compressed);
+      const res = await uploadSearchImage(formData);
+      if (res.success) {
+        setPublicUrl(res.data);
+        toast(t("uploaded"));
+      } else {
+        toast(res.error === "Invalid image" ? t("invalid") : t("error"), "error");
       }
+    } catch {
+      toast(t("error"), "error");
+    } finally {
+      setBusy(false);
     }
-    const { error } = await supabase.storage
-      .from("imagesearch")
-      .upload(filePath, selectedFile, {
-        cacheControl: "3600",
-        upsert: true,
-      });
-    if (error) {
-      console.error("Upload error:", error.message);
-      alert("Hochladen des Bildes fehlgeschlagen.");
-      setLoading(false);
-      return;
-    }
-
-    const { data: publicUrlData } = supabase.storage
-      .from("imagesearch")
-      .getPublicUrl(`${user.id}/${fileName}`);
-    const publicUrl = publicUrlData.publicUrl;
-
-    setImageUrl(publicUrl);
-    setLoading(false);
-  };
-
-  const handleSearch = () => {
-    if (!imageUrl) {
-      alert("Bitte Zuerst ein Bild hochladen");
-      return;
-    }
-    const searchUrl = `https://lens.google.com/uploadbyurl?url=${encodeURIComponent(
-      imageUrl,
-    )}`;
-    window.open(searchUrl, "_blank");
-  };
+  }
 
   return (
-    <div className="flex flex-col items-center gap-4 p-6">
-      <h1 className="sm:text-2xl font-bold text-center">Tier bestimmen</h1>
-      <label className="text-center group">
-        <div className="bg-green-600 w-64 px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12 flex items-center justify-center cursor-pointer">
-          1. Datei auswählen
-          {selectedFile && <CheckCircle className="ml-2" />}
-        </div>
-        {selectedFile && (
-          <div className="truncate text-xs sm:text-base mt-2">
-            {selectedFile.name}
-          </div>
+    <div className="flex h-full flex-col gap-3">
+      <p className="text-sm text-fg-muted">{t("text")}</p>
+      <button
+        type="button"
+        onClick={() => input.current?.click()}
+        className="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg border border-dashed border-border bg-surface-sunken text-sm text-fg-muted transition-colors hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      >
+        {preview ? (
+          <Image src={preview} alt="" fill unoptimized className="object-cover" />
+        ) : (
+          <span className="flex flex-col items-center gap-2">
+            <AddAPhoto />
+            {t("choose")}
+          </span>
         )}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleFileChange}
-          className="hidden"
-        />
-      </label>
-      <button
-        onClick={uploadImage}
-        disabled={loading}
-        className="bg-green-600 w-64 px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12 "
-        aria-label="Bild hochladen"
-      >
-        {loading ? <CircleLoader size={20} /> : " 2. Bild hochladen"}
-        {imageUrl && !loading && <CheckCircle className="ml-2" />}
       </button>
-      {imageUrl && (
-        <img
-          src={imageUrl}
-          alt="Uploaded"
-          className=" h-24 sm:h-24 object-cover rounded-lg aspect-video"
-        />
-      )}
-      <button
-        onClick={handleSearch}
-        className="bg-green-600 w-64 px-4 rounded-lg hover:bg-green-700 hover:text-gray-900 transition h-12"
-        aria-label="Bild mit Google Lens suchen"
-      >
-        3. Bild auf Google Suchen
-      </button>
+      <input
+        ref={input}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        onChange={(e) => {
+          setFile(e.target.files?.[0] ?? null);
+          setPublicUrl(null);
+        }}
+        className="sr-only"
+        tabIndex={-1}
+        aria-hidden
+      />
+      <div className="mt-auto flex flex-col gap-2 sm:flex-row">
+        {publicUrl ? (
+          <Button
+            fullWidth
+            icon={<OpenInNew />}
+            onClick={() =>
+              window.open(
+                `https://lens.google.com/uploadbyurl?url=${encodeURIComponent(publicUrl)}`,
+                "_blank",
+                "noopener,noreferrer",
+              )
+            }
+          >
+            {t("search")}
+          </Button>
+        ) : (
+          <Button
+            fullWidth
+            icon={<ImageSearchIcon />}
+            loading={busy}
+            disabled={!file}
+            onClick={() => void upload()}
+          >
+            {t("upload")}
+          </Button>
+        )}
+      </div>
     </div>
   );
 }

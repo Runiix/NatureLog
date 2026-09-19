@@ -1,366 +1,245 @@
 "use client";
-import { useEffect, useState, useTransition } from "react";
-import { useSearchParams, usePathname, useRouter } from "next/navigation";
-import { colorsList, SizeSlider } from "../../constants/constants";
+
+import { Check, Favorite, HeartBroken, Star } from "@mui/icons-material";
+import type { User } from "@supabase/supabase-js";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
+import { SizeSlider } from "../../constants/constants";
+import { cn } from "@/app/[locale]/utils/cn";
 import {
-  Check,
-  ExpandMore,
-  Favorite,
-  HeartBroken,
-  Star,
-} from "@mui/icons-material";
+  COLORS,
+  ENDANGERMENT,
+  GENERA,
+  ORDERS_BY_GENUS,
+  SIZE_MAX,
+  SIZE_MIN,
+} from "@/app/[locale]/utils/lexiconFilters";
 import Switch from "../general/Switch";
-import { User } from "@supabase/supabase-js";
+import { useUrlFilters } from "./useUrlFilters";
 
-type ClassToOrder = {
-  class: string;
-  orders: string[];
-};
+function Section({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <section className="flex flex-col gap-3 border-b border-border-muted py-5 first:pt-0 last:border-0">
+      <h3 className="text-xs font-semibold uppercase tracking-wide text-fg-subtle">{title}</h3>
+      {children}
+    </section>
+  );
+}
 
-const OrderValues = [
-  {
-    class: "Säugetier",
-    orders: [
-      "Hasenartige (Lagomorpha)",
-      "Nagetiere (Rodentia)",
-      "Insektenfresser (Eulipotyphla)",
-      "Paarhufer (Artiodactyla)",
-      "Raubtiere (Carnivora)",
-      "Fledertiere (Chiroptera)",
-    ],
-  },
-  {
-    class: "Vogel",
-    orders: [
-      "Galliformes – Hühnervögel",
-      "Anseriformes – Entenvögel",
-      "Caprimulgiformes – Nachtschwalbenvögel",
-      "Apodiformes – Seglervögel",
-      "Otidiformes – Trappen",
-      "Cuculiformes – Kuckucksvögel",
-      "Pterocliformes – Flughühner",
-      "Columbiformes – Taubenvögel",
-      "Gruiformes – Kranichvögel",
-      "Podicipediformes – Lappentaucher",
-      "Phoenicopteriformes – Flamingos",
-      "Charadriiformes – Regenpfeifervögel",
-      "Gaviiformes – Seetaucher",
-      "Procellariiformes – Röhrennasen",
-      "Ciconiiformes – Störche",
-      "Suliformes – Ruderfüßer",
-      "Pelecaniformes – Pelikanvögel",
-      "Accipitriformes – Greifvögel",
-      "Strigiformes – Eulen",
-      "Bucerotiformes – Hornvögel",
-      "Coraciiformes – Rackenvögel",
-      "Piciformes – Spechtvögel",
-      "Falconiformes – Falken",
-      "Psittaciformes – Papageien",
-      "Passeriformes – Sperlingsvögel",
-    ],
-  },
-  {
-    class: "Amphibie",
-    orders: ["Schwanzlurche (Caudata)", "Froschlurche (Anura)"],
-  },
-  { class: "Reptil", orders: ["Testudines", "Sauria", "Serpentes"] },
-  { class: "Insekt", orders: [""] },
-  { class: "Arachnoid", orders: [""] },
-];
+function Chip({
+  selected,
+  onClick,
+  children,
+}: {
+  selected: boolean;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <button
+      type="button"
+      aria-pressed={selected}
+      onClick={onClick}
+      className={cn(
+        "rounded-full border px-3 py-1 text-sm transition-colors",
+        "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+        selected
+          ? "border-accent bg-accent/10 font-medium text-accent-text"
+          : "border-border-muted text-fg-muted hover:border-accent hover:text-fg",
+      )}
+    >
+      {children}
+    </button>
+  );
+}
+
+function ToggleRow({
+  id,
+  icon,
+  label,
+  hint,
+  value,
+  onChange,
+}: {
+  id: string;
+  icon: React.ReactNode;
+  label: string;
+  hint?: string;
+  value: boolean;
+  onChange: () => void;
+}) {
+  return (
+    <div className="flex items-center justify-between gap-3">
+      <label htmlFor={id} className="flex min-w-0 items-center gap-2 text-sm text-fg">
+        <span aria-hidden className="flex shrink-0 [&_svg]:h-5 [&_svg]:w-5">
+          {icon}
+        </span>
+        <span className="flex flex-col">
+          {label}
+          {hint && <span className="text-xs text-fg-subtle">{hint}</span>}
+        </span>
+      </label>
+      <Switch id={id} value={value} onChange={onChange} />
+    </div>
+  );
+}
 
 export default function LexiconFilter({ user }: { user: User | null }) {
-  const searchParams = useSearchParams();
-  const pathName = usePathname();
-  const [isPending, startTransition] = useTransition();
-  const router = useRouter();
-  const [sliderValue, setSliderValue] = useState<number[]>(() => {
-    const sizeFrom = Number(searchParams.get("sizeFrom")) || 0;
-    const sizeTo = Number(searchParams.get("sizeTo")) || 0;
-    return sizeFrom === 0 && sizeTo === 0 ? [0, 500] : [sizeFrom, sizeTo];
-  });
-  const [onlyUnseen, setOnlyUnseen] = useState(
-    Boolean(searchParams.get("onlyUnseen")) || false,
-  );
-  const [onlySeen, setOnlySeen] = useState(
-    Boolean(searchParams.get("onlySeen")) || false,
-  );
-  const [excludeRares, setExcludeRares] = useState(
-    Boolean(searchParams.get("excludeRares")) || false,
-  );
-  const [orderValues, setOrderValues] = useState<ClassToOrder[]>(
-    OrderValues.filter((entry) =>
-      (searchParams.get("genus")?.split(",") || []).includes(entry.class),
-    ),
-  );
-  useEffect(() => {
-    const unseen = searchParams.get("onlyUnseen") || false;
-    const seen = searchParams.get("onlySeen") || false;
-    const noRare = searchParams.get("excludeRares") || false;
-    if (unseen === false) setOnlyUnseen(false);
-    if (seen == false) setOnlySeen(false);
-    if (noRare == false) setExcludeRares(false);
-  }, [searchParams]);
+  const t = useTranslations("Lexicon");
+  const filters = useUrlFilters();
+  const selectedGenera = filters.list("genus");
+  const [size, setSize] = useState<number[]>(() => [
+    Number(filters.searchParams.get("sizeFrom")) || SIZE_MIN,
+    Number(filters.searchParams.get("sizeTo")) || SIZE_MAX,
+  ]);
 
-  const handleFilterChange = (param: string, value: string) => {
-    const params = new URLSearchParams(searchParams.toString());
-    let values = params.get(param)?.split(",") || [];
-    if (values.includes(value)) {
-      values = values.filter((v) => v !== value);
-      if (param === "genus") {
-        setOrderValues((prev) => prev.filter((entry) => entry.class !== value));
-      }
-    } else {
-      values.push(value);
-      if (param === "genus") {
-        const matchedEntry = OrderValues.find((entry) => entry.class === value);
-        const alreadyIncluded = orderValues.some(
-          (entry) => entry.class === value,
-        );
-        if (matchedEntry && !alreadyIncluded) {
-          setOrderValues((prev) => [...prev, matchedEntry]);
-        }
-      }
-    }
-    if (values.length) {
-      params.set(param, values.join(","));
-    } else {
-      params.delete(param);
-    }
-    startTransition(() => {
-      router.replace(`${pathName}?${params.toString()}`);
+  const commitSize = (value: number[]) => {
+    const full = value[0] === SIZE_MIN && value[1] === SIZE_MAX;
+    filters.set({
+      sizeFrom: full ? null : String(value[0]),
+      sizeTo: full ? null : String(value[1]),
     });
   };
-  const handleSliderChange = (event: Event, newValue: number | number[]) => {
-    setSliderValue(newValue as number[]);
-  };
-  const handleSizeChange = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    if (sliderValue[0] === 0 && sliderValue[1] === 500) {
-      params.delete("sizeFrom");
-      params.delete("sizeTo");
-    } else {
-      params.set("sizeFrom", sliderValue[0].toString());
-      params.set("sizeTo", sliderValue[1].toString());
-    }
-    startTransition(() => {
-      router.replace(`${pathName}?${params.toString()}`);
-    });
-  };
-  const handleOnlyUnseenChange = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    let value = params.get("onlyUnseen") || false;
-    if (value === false) {
-      params.set("onlyUnseen", "true");
-      setOnlyUnseen(true);
-    } else {
-      params.delete("onlyUnseen");
-      setOnlyUnseen(false);
-    }
-    startTransition(() => {
-      router.replace(`${pathName}?${params.toString()}`);
-    });
-  };
-  const handleOnlySeenChange = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    let value = params.get("onlySeen") || false;
-    if (value === false) {
-      params.set("onlySeen", "true");
-      setOnlySeen(true);
-    } else {
-      params.delete("onlySeen");
-      setOnlySeen(false);
-    }
-    startTransition(() => {
-      router.replace(`${pathName}?${params.toString()}`);
-    });
-  };
-  const handleExcludeRaresChange = () => {
-    const params = new URLSearchParams(searchParams.toString());
-    let value = params.get("excludeRares") || false;
-    if (value === false) {
-      params.set("excludeRares", "true");
-      setExcludeRares(true);
-    } else {
-      params.delete("excludeRares");
-      setExcludeRares(false);
-    }
-    startTransition(() => {
-      router.replace(`${pathName}?${params.toString()}`);
-    });
-  };
+
+  const toggleFlag = (key: string) => filters.set({ [key]: filters.flag(key) ? null : "true" });
+
+  const visibleOrders = selectedGenera.flatMap((genus) =>
+    (ORDERS_BY_GENUS[genus] ?? []).map((order) => ({ genus, order })),
+  );
+
   return (
-    <div className="space-y-2">
-      <div className="flex flex-col gap-4 border-b border-gray-950 pb-4 mb-4">
-        <div className="space-y-2">
-          {user && (
-            <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 h-11 justify-between gap-2 rounded-lg p-2 relative group">
-              <div className="flex items-center gap-2">
-                <HeartBroken className="text-red-600" />
-                <p className="text-xs">Nur nicht gesehene Arten</p>
-              </div>
-              <Switch
-                value={onlyUnseen}
-                onChange={() => handleOnlyUnseenChange()}
-              />
-              {/* <div className="opacity-0 transition-all absolute duration-200 group-hover:opacity-100 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 border border-gray-200 rounded-lg p-2 -top-8 z-50">
-                <p className="text-xs text-center">
-                  Nur nicht gesehene Arten anzeigen
-                </p>
-              </div> */}
-            </div>
-          )}
-          {user && (
-            <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 h-11 justify-between gap-2 rounded-lg p-2  relative group">
-              <div className="flex items-center gap-2">
-                <Favorite className="text-green-600" />
-                <p className="text-xs">Nur gesehene Arten</p>
-              </div>
-              <Switch
-                value={onlySeen}
-                onChange={() => handleOnlySeenChange()}
-              />
-              {/* <div className="opacity-0 transition-all absolute duration-200 group-hover:opacity-100 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 border border-gray-200 rounded-lg p-2 -top-8 z-50">
-                <p className="text-xs text-center">
-                  Nur gesehene Arten anzeigen
-                </p>
-              </div> */}
-            </div>
-          )}
-          <div className="flex items-center  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900  border border-gray-200 h-11  gap-2 rounded-lg p-2 relative group justify-between">
-            <div className="flex items-center gap-2">
-              <Star className="text-red-600" />
-              <p className="text-xs">Seltene ausblenden</p>
-            </div>
-            <Switch
-              value={excludeRares}
-              onChange={() => handleExcludeRaresChange()}
+    <div className={cn("flex flex-col transition-opacity", filters.isPending && "opacity-70")}>
+      <Section title={t("sections.mine")}>
+        {user && (
+          <>
+            <ToggleRow
+              id="filter-unseen"
+              icon={<HeartBroken className="text-danger" />}
+              label={t("onlyUnseenLabel")}
+              value={filters.flag("onlyUnseen")}
+              onChange={() => toggleFlag("onlyUnseen")}
             />
+            <ToggleRow
+              id="filter-seen"
+              icon={<Favorite className="text-accent-text" />}
+              label={t("onlySeenLabel")}
+              value={filters.flag("onlySeen")}
+              onChange={() => toggleFlag("onlySeen")}
+            />
+          </>
+        )}
+        <ToggleRow
+          id="filter-rare"
+          icon={<Star className="text-amber-500" />}
+          label={t("rareLabel")}
+          hint={t("rareHint")}
+          value={filters.flag("excludeRares")}
+          onChange={() => toggleFlag("excludeRares")}
+        />
+      </Section>
 
-            {/* <div className="opacity-0 transition-all absolute duration-200 group-hover:opacity-100 shadow-black shadow-lg bg-gradient-to-br  from-gray-950 to-70%  to-gray-900 border border-gray-200 rounded-lg p-2 -top-16 z-50">
-              <p className="text-xs text-center">
-                Irrgäste und Ausnahmeerscheinungen ausblenden
-              </p>
-            </div> */}
-          </div>
-        </div>
-      </div>
-      <div className=" border-b border-gray-950 pb-4 mb-4">
-        <h2 className="text-black">Gattungen</h2>
-        <div className="grid grid-cols-2">
-          {[
-            "Säugetier",
-            "Vogel",
-            "Amphibie",
-            "Reptil",
-            "Insekt",
-            "Arachnoid",
-          ].map((genus) => (
-            <div
+      <Section title={t("sections.genus")}>
+        <div className="flex flex-wrap gap-2">
+          {GENERA.map((genus) => (
+            <Chip
               key={genus}
-              className={`${
-                searchParams.get("genus")?.includes(genus)
-                  ? "bg-gradient-to-br from-green-600  to-70% to-gray-950 border border-green-600"
-                  : "from-gray-950"
-              } rounded-lg p-2 cursor-pointer bg-gradient-to-br  hover:from-green-600  to-70% hover:to-gray-950 to-gray-950 border hover:border-green-600 transition-all duration-500`}
-              onClick={() => handleFilterChange("genus", genus)}
+              selected={filters.has("genus", genus)}
+              onClick={() => filters.toggle("genus", genus)}
             >
-              {genus}
-            </div>
+              {t(genus)}
+            </Chip>
           ))}
         </div>
-      </div>
-      {searchParams.get("genus") && (
-        <div className=" border-b border-gray-950 pb-4 mb-4">
-          <h2 className="text-black">Ordnungen</h2>
-          {orderValues &&
-            orderValues.map((Class) => (
-              <div key={Class.class}>
-                <h3 className="text-black">{Class.class}</h3>
-                <div className="flex flex-col border-b border-slate-400 pb-2 mb-2">
-                  {Class.orders.map((order) => (
-                    <div
-                      key={order}
-                      className={`${
-                        searchParams.get("order")?.includes(order)
-                          ? "bg-gradient-to-br from-green-600  to-70% to-gray-950 border border-green-600"
-                          : "from-gray-950"
-                      } rounded-lg p-2 cursor-pointer bg-gradient-to-br  hover:from-green-600  to-70% hover:to-gray-950 to-gray-950 border hover:border-green-600 transition-all duration-500`}
-                      onClick={() => handleFilterChange("order", order)}
-                    >
-                      {order}
-                    </div>
-                  ))}
-                </div>
-              </div>
-            ))}
-        </div>
+      </Section>
+
+      {visibleOrders.length > 0 && (
+        <Section title={t("sections.order")}>
+          <div className="flex flex-col gap-1">
+            {visibleOrders.map(({ order }) => {
+              const selected = filters.has("order", order);
+              return (
+                <button
+                  key={order}
+                  type="button"
+                  aria-pressed={selected}
+                  onClick={() => filters.toggle("order", order)}
+                  className={cn(
+                    "flex items-center justify-between gap-2 rounded-md px-2 py-1.5 text-left text-sm transition-colors",
+                    "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+                    selected ? "bg-accent/10 font-medium text-accent-text" : "text-fg-muted hover:bg-surface-sunken hover:text-fg",
+                  )}
+                >
+                  {order}
+                  {selected && <Check fontSize="small" aria-hidden />}
+                </button>
+              );
+            })}
+          </div>
+        </Section>
       )}
-      <div className="border-b border-gray-950 pb-4 mb-4">
-        <h2 className="text-black">Farben</h2>
-        <div className="flex gap-2 flex-wrap">
-          {colorsList.map((color) => (
-            <div
-              key={color.eng}
-              className={`${
-                color.styleBg
-              } ${searchParams.get("color")?.includes(color.eng) ? "shadow-xl hover:shadow-none" : "hover:shadow-xl"} cursor-pointer transition-all duration-500 w-8 h-8 rounded-full border-2 text-sm sm:text-base border-gray-950 flex items-center justify-center shadow-black`}
-              onClick={() => handleFilterChange("color", color.eng)}
+
+      <Section title={t("sections.color")}>
+        <div className="flex flex-wrap gap-2">
+          {COLORS.map((color) => {
+            const selected = filters.has("color", color.value);
+            return (
+              <button
+                key={color.value}
+                type="button"
+                aria-pressed={selected}
+                aria-label={t(color.value)}
+                title={t(color.value)}
+                onClick={() => filters.toggle("color", color.value)}
+                className={cn(
+                  "flex h-8 w-8 items-center justify-center rounded-full border-2 transition-transform",
+                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent focus-visible:ring-offset-2 focus-visible:ring-offset-surface",
+                  color.swatch,
+                  selected ? "scale-110 border-accent" : "border-border hover:scale-105",
+                )}
+              >
+                {selected && (
+                  <Check
+                    fontSize="small"
+                    aria-hidden
+                    className={color.dark ? "text-white" : "text-black"}
+                  />
+                )}
+              </button>
+            );
+          })}
+        </div>
+      </Section>
+
+      <Section title={t("sections.endangerment")}>
+        <div className="flex flex-wrap gap-2">
+          {ENDANGERMENT.map((status) => (
+            <Chip
+              key={status}
+              selected={filters.has("endangerment", status)}
+              onClick={() => filters.toggle("endangerment", status)}
             >
-              {searchParams.get("color")?.includes(color.eng) && (
-                <Check sx={{ color: color.isDark ? "white" : "black" }} />
-              )}
-            </div>
+              {t(status)}
+            </Chip>
           ))}
         </div>
-      </div>
-      <div className=" border-b border-gray-950 pb-4 mb-4">
-        <h2 className="text-black">Gefährdung</h2>
-        <div className="flex flex-col">
-          {[
-            "Nicht gefährdet",
-            "Extrem selten",
-            "Vorwarnliste",
-            "Gefährdet",
-            "Stark gefährdet",
-            "Vom Aussterben bedroht",
-            "Ausgestorben",
-          ].map((endangerment) => (
-            <div
-              key={endangerment}
-              className={`${
-                searchParams.get("endangerment")?.includes(endangerment)
-                  ? "bg-gradient-to-br from-green-600  to-70% to-gray-950 border border-green-600"
-                  : "from-gray-950"
-              } rounded-lg p-2 cursor-pointer bg-gradient-to-br  hover:from-green-600  to-70% hover:to-gray-950 to-gray-950 border hover:border-green-600 transition-all duration-500`}
-              onClick={() => handleFilterChange("endangerment", endangerment)}
-            >
-              {endangerment}
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="pb-4">
-        <div className="flex items-center justify-between mb-4">
-          <h2 className="text-black">Größe</h2>{" "}
-          <button
-            className="bg-gradient-to-br from-gray-950 to-70%  to-gray-900 border border-gray-200 rounded-lg p-2 text-sm shadow-black shadow-md hover:border-green-600 transition-all duration-200"
-            onClick={handleSizeChange}
-            aria-label="Größe Filter ändern"
-          >
-            Größe ändern
-          </button>
-        </div>
-        <div className="flex flex-col sm:gap-10 items-center px-4 pt-1 sm:pt-0 sm:px-0 mx-4">
+      </Section>
+
+      <Section title={t("sections.size")}>
+        <p className="text-sm tabular-nums text-fg-muted">
+          {t("sizeValue", { from: size[0], to: size[1] })}
+        </p>
+        <div className="px-2">
           <SizeSlider
-            getAriaLabel={() => "Größe"}
-            value={sliderValue}
-            onChange={handleSliderChange}
+            getAriaLabel={(index) => (index === 0 ? t("sizeFrom") : t("sizeTo"))}
+            value={size}
+            onChange={(_, value) => setSize(value as number[])}
+            onChangeCommitted={(_, value) => commitSize(value as number[])}
             valueLabelDisplay="auto"
-            min={0}
-            max={500}
+            min={SIZE_MIN}
+            max={SIZE_MAX}
           />
         </div>
-      </div>
+      </Section>
     </div>
   );
 }

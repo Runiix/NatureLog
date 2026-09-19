@@ -1,150 +1,142 @@
 "use client";
+
+import { Pets, SearchOff } from "@mui/icons-material";
+import type { User } from "@supabase/supabase-js";
+import { useTranslations } from "next-intl";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import getCollectionAnimals from "../../actions/collection/getCollectionAnimals";
-import { CircleLoader } from "react-spinners";
+import type CollectionAnimal from "@/app/[locale]/utils/CollectionAnimalType";
+import { ButtonLink } from "../ui/Button";
+import { EmptyState } from "../ui/EmptyState";
+import { SkeletonCard } from "../ui/Skeleton";
+import { Spinner } from "../ui/Spinner";
 import CollectionCard from "./CollectionCard";
-import { User } from "@supabase/supabase-js";
-import Search from "../general/Search";
-import GenusFilter from "./GenusFilter";
-import ImageExistsFilter from "./ImageExistsFilter";
 
-type SpottedAnimal = {
-  animal_id: number;
-  image: boolean;
-  first_spotted_at: string;
-};
-type Animal = {
-  signedUrls: {
-    collection: string;
-    collectionModal: string;
-  };
-  id: number;
-  common_name: string;
-  image: boolean;
-  first_spotted_at: string;
-};
+const PAGE_SIZE = 20;
 
+/**
+ * Infinite grid of a user's collection, filtered by the URL (query, genus,
+ * noImages). Same generation-counter loader as the lists: a filter change
+ * restarts from page 0 and discards any in-flight "load more".
+ */
 export default function CollectionAnimalGrid({
-  categoryCounts,
-  counts,
   user,
-  currUser,
+  ownerId,
+  isOwner,
+  viewerSpotted,
 }: {
-  categoryCounts: { category: string }[];
-  counts: number[];
+  /** The signed-in viewer — favourites act on their collection. */
   user: User;
-  currUser?: "false";
+  /** Whose collection is being shown. */
+  ownerId: string;
+  isOwner: boolean;
+  /** The viewer's spotted animal ids, for the favourite buttons. */
+  viewerSpotted: number[];
 }) {
+  const t = useTranslations("Collection");
   const searchParams = useSearchParams();
-  const query = searchParams.get("query") || "";
+  const filterKey = searchParams.toString();
+  const filtered =
+    searchParams.has("query") || searchParams.has("genus") || searchParams.has("noImages");
+
+  const [animals, setAnimals] = useState<CollectionAnimal[] | null>(null);
   const [offset, setOffset] = useState(0);
-  const [loadingMoreAnimals, setLoadingMoreAnimals] = useState(true);
-  const { ref: preloadRef, inView: preloadInView } = useInView();
-
-  const [genus, setGenus] = useState<string>("all");
-  const [noImages, setNoImages] = useState("false");
-  const [animalItems, setAnimalItems] = useState<Animal[]>([]);
-  const regex = /[äöüß\s]/g;
+  const [hasMore, setHasMore] = useState(false);
+  const generation = useRef(0);
+  const loadingMore = useRef(false);
+  const { ref: sentinel, inView } = useInView({ rootMargin: "400px" });
 
   useEffect(() => {
-    setGenus(searchParams.get("genus") || "all");
-    setNoImages(searchParams.get("noImages") || "false");
-  }, [searchParams]);
-
-  useEffect(() => {
-    const loadAnimals = async (offset: number) => {
-      try {
-        const pageSize = 20;
-
-        const data = await getCollectionAnimals(
-          user,
-          offset,
-          pageSize,
-          query,
-          Object.fromEntries(searchParams.entries()),
-        );
-        if (data.length < pageSize) {
-          setLoadingMoreAnimals(false);
-        } else {
-          setLoadingMoreAnimals(true);
-        }
-
-        setAnimalItems(data);
+    const current = ++generation.current;
+    const params = Object.fromEntries(new URLSearchParams(filterKey).entries());
+    getCollectionAnimals(ownerId, 0, PAGE_SIZE, params.query ?? "", params)
+      .then((data) => {
+        if (current !== generation.current) return;
+        setAnimals(data);
         setOffset(1);
-      } catch (error) {
-        console.error("Error loading animals:", error);
-      }
-    };
-    loadAnimals(0);
-  }, [query, searchParams]);
+        setHasMore(data.length === PAGE_SIZE);
+      })
+      .catch((error) => console.error("Error loading collection:", error));
+  }, [filterKey, ownerId]);
 
   useEffect(() => {
-    const loadMoreAnimals = async () => {
-      try {
-        const pageSize = 20;
-
-        const data = await getCollectionAnimals(
-          user,
-          offset,
-          pageSize,
-          query,
-          Object.fromEntries(searchParams.entries()),
-        );
-        if (data.length < pageSize) {
-          setLoadingMoreAnimals(false);
-        }
-        setAnimalItems((prevAnimals: Animal[]) => [...prevAnimals, ...data]);
+    if (!inView || !hasMore || offset === 0 || loadingMore.current) return;
+    const current = generation.current;
+    loadingMore.current = true;
+    const params = Object.fromEntries(new URLSearchParams(filterKey).entries());
+    getCollectionAnimals(ownerId, offset, PAGE_SIZE, params.query ?? "", params)
+      .then((data) => {
+        if (current !== generation.current) return;
+        setAnimals((prev) => [...(prev ?? []), ...data]);
         setOffset((prev) => prev + 1);
-      } catch (error) {
-        console.error("Error loading more animals:", error);
-      }
-    };
-    if (preloadInView) {
-      loadMoreAnimals();
-    }
-  }, [preloadInView]);
-  const searchFirstSpotted = (animalId: number) => {
-    const animal = animalItems.find(
-      (animal: { id: number }) => animal.id === animalId,
-    );
-    return animal ? animal.first_spotted_at : null;
-  };
-  return (
-    <div className="mt-4 sm:mt-4 flex items-center flex-col">
-      <GenusFilter counts={counts} categoryCounts={categoryCounts} />
-      <div className="mx-auto items-center justify-center grid grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-2  sm:gap-4 mt-4 sm:mt-4">
-        {animalItems &&
-          animalItems.map((animal: Animal, index: number) => {
-            const isPreloadTrigger = index === animalItems.length - 10;
-            return (
-              <div
-                ref={isPreloadTrigger ? preloadRef : undefined}
-                key={animal.id}
-              >
-                <CollectionCard
-                  id={animal.id}
-                  common_name={animal.common_name}
-                  imageUrl={animal.signedUrls.collection}
-                  modalUrl={animal.signedUrls.collectionModal}
-                  user={user}
-                  currUser={currUser}
-                  idList={animalItems.map((a) => a.id)}
-                  first_spotted_at={searchFirstSpotted(animal.id) || ""}
-                  animalImageExists={animal.image}
-                />
-              </div>
-            );
-          })}
-      </div>
+        setHasMore(data.length === PAGE_SIZE);
+      })
+      .catch((error) => console.error("Error loading more animals:", error))
+      .finally(() => {
+        loadingMore.current = false;
+      });
+  }, [inView, hasMore, offset, filterKey, ownerId]);
 
-      {loadingMoreAnimals && (
-        <div className=" m-10">
-          {" "}
-          <CircleLoader color="#16A34A" />{" "}
+  if (animals === null) {
+    return (
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 2xl:grid-cols-4" aria-hidden>
+        {Array.from({ length: 8 }, (_, i) => (
+          <SkeletonCard key={i} className="aspect-[4/3.6]" />
+        ))}
+      </div>
+    );
+  }
+
+  if (animals.length === 0) {
+    return filtered ? (
+      <EmptyState
+        icon={<SearchOff />}
+        title={t("emptyFilteredTitle")}
+        description={t("emptyFilteredText")}
+      />
+    ) : (
+      <EmptyState
+        icon={<Pets />}
+        title={isOwner ? t("emptyOwnerTitle") : t("emptyVisitorTitle")}
+        description={isOwner ? t("emptyOwnerText") : undefined}
+        action={
+          isOwner ? (
+            <ButtonLink href="/lexiconpage" variant="secondary">
+              {t("toLexicon")}
+            </ButtonLink>
+          ) : undefined
+        }
+      />
+    );
+  }
+
+  return (
+    <>
+      <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 2xl:grid-cols-4">
+        {animals.map((animal) => (
+          <li key={animal.id}>
+            <CollectionCard
+              id={animal.id}
+              common_name={animal.common_name}
+              imageUrl={animal.signedUrls.collection}
+              modalUrl={animal.signedUrls.collectionModal}
+              user={user}
+              ownerId={ownerId}
+              isOwner={isOwner}
+              idList={viewerSpotted}
+              first_spotted_at={animal.first_spotted_at}
+              animalImageExists={animal.image ?? false}
+            />
+          </li>
+        ))}
+      </ul>
+      {hasMore && (
+        <div ref={sentinel} className="flex justify-center py-8 text-accent" aria-live="polite">
+          <Spinner label={t("loadingMore")} />
         </div>
       )}
-    </div>
+    </>
   );
 }

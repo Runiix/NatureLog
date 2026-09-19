@@ -1,57 +1,63 @@
 import type { Config } from "tailwindcss";
 
+/** A theme colour backed by a CSS variable holding bare RGB channels. */
+const token = (name: string) => `rgb(var(--color-${name}) / <alpha-value>)`;
+
 const config: Config = {
-  content: [
-    "./pages/**/*.{js,ts,jsx,tsx,mdx}",
-    "./components/**/*.{js,ts,jsx,tsx,mdx}",
-    "./app/[locale]/**/*.{js,ts,jsx,tsx,mdx}",
-  ],
+  // app/ holds only [locale]; the bracket-free glob scans the same files but
+  // keeps "[locale]" from being read as a glob character class, which made
+  // the dev server miss class names added to existing files.
+  content: ["./app/**/*.{js,ts,jsx,tsx,mdx}"],
+  // The theme is chosen by a `dark` class on <html>, set server-side from a
+  // cookie, rather than by the OS media query alone — so a user's explicit
+  // choice wins and the first paint is already correct.
+  darkMode: "class",
   theme: {
     extend: {
+      colors: {
+        canvas: token("canvas"),
+        surface: {
+          DEFAULT: token("surface"),
+          raised: token("surface-raised"),
+          sunken: token("surface-sunken"),
+        },
+        border: {
+          DEFAULT: token("border"),
+          muted: token("border-muted"),
+        },
+        // `fg` rather than `text` so the utilities read text-fg-muted, not
+        // text-text-muted.
+        fg: {
+          DEFAULT: token("fg"),
+          muted: token("fg-muted"),
+          subtle: token("fg-subtle"),
+        },
+        accent: {
+          DEFAULT: token("accent"),
+          hover: token("accent-hover"),
+          solid: token("accent-solid"),
+          text: token("accent-text"),
+          fg: token("accent-fg"),
+        },
+        danger: {
+          DEFAULT: token("danger"),
+          solid: token("danger-solid"),
+        },
+        overlay: token("overlay"),
+      },
+      boxShadow: {
+        card: "var(--shadow-card)",
+        raised: "var(--shadow-raised)",
+        overlay: "var(--shadow-overlay)",
+      },
       backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "gradient-conic":
-          "conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))",
-      },
-      maskImage: {
-        fade: "linear-gradient(to right, transparent, black 20%, black 80%, transparent)",
-        "fade-circle":
-          "radial-gradient(circle, rgba(0,0,0,1) 40%, rgba(0,0,0,0) 90%)",
+        // Today's card recipe, `bg-gradient-to-br from-… to-70% to-…`, as one
+        // themeable utility.
+        "surface-gradient":
+          "linear-gradient(to bottom right, rgb(var(--color-grad-from)), rgb(var(--color-grad-to)) 70%)",
       },
     },
-    screens: {
-      'sm': '640px',
-      // => @media (min-width: 640px) { ... }
-
-      'md': '768px',
-      // => @media (min-width: 768px) { ... }
-
-      'lg': '1024px',
-      // => @media (min-width: 1024px) { ... }
-
-      'xl': '1280px',
-      // => @media (min-width: 1280px) { ... }
-      '2xl': '1536px',
-      // => @media (min-width: 1536px) { ... }
-    }
   },
-  plugins: [
-    function ({ addUtilities }: any) {
-      addUtilities({
-        ".mask-fade": {
-          maskImage:
-            "linear-gradient(to right, transparent, black 20%, black 80%, transparent)",
-          WebkitMaskImage:
-            "linear-gradient(to right, transparent, black 20%, black 80%, transparent)",
-        },
-        ".mask-fade-circle": {
-          maskImage:
-            "radial-gradient(ellipse at center, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 70%, rgba(0,0,0,0) 90%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse at center, rgba(0,0,0,1) 50%, rgba(0,0,0,0) 70%, rgba(0,0,0,0) 90%)",
-        },
-      });
-    },
-  ],
+  plugins: [],
 };
 export default config;

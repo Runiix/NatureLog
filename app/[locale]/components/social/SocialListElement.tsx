@@ -1,121 +1,81 @@
+"use client";
+
+import { Check, PersonAdd, Visibility } from "@mui/icons-material";
+import { useTranslations } from "next-intl";
+import { useState } from "react";
 import follow from "@/app/[locale]/actions/social/follow";
+import type { SocialUser } from "@/app/[locale]/actions/social/getUsers";
 import unfollow from "@/app/[locale]/actions/social/unfollow";
-import { createClient } from "@/utils/supabase/client";
-import { Add, Favorite, Visibility } from "@mui/icons-material";
-import { Avatar } from "@mui/material";
-import { SupabaseClient, User } from "@supabase/supabase-js";
-import Image from "next/image";
-import Link from "next/link";
-import React, { use, useEffect, useState } from "react";
+import { avatarUrl } from "@/app/[locale]/utils/avatars";
+import { cn } from "@/app/[locale]/utils/cn";
+import { Link } from "@/i18n/navigation";
+import { Avatar } from "../ui/Avatar";
+import { Button } from "../ui/Button";
+import { Card } from "../ui/Card";
+import { useToast } from "../ui/Toast";
 
-type ProfileElement = {
-  username: string;
-  userId: string;
-  profilepicture: string;
-  profilelink: string;
-  following: boolean;
-  user: User;
-  spottedCount: number;
-};
+/**
+ * One person in the community list. The follow button is a sibling of the
+ * profile link rather than nested inside it (a button inside a link is invalid
+ * and made every follow click also navigate).
+ */
+export default function SocialListElement({ person }: { person: SocialUser }) {
+  const t = useTranslations("Social");
+  const toast = useToast();
+  const [isFollowing, setIsFollowing] = useState(person.isFollowing);
+  const [pending, setPending] = useState(false);
 
-const checkForProfilePic = async (supabase: SupabaseClient, userId: string) => {
-  const { data: listData, error: listError } = await supabase.storage
-    .from("profiles")
-    .list(userId + "/ProfilePicture/", {
-      limit: 2,
-      offset: 0,
-      sortBy: { column: "name", order: "asc" },
-    });
-  if (listError) {
-    console.error(listError);
-    return false;
+  async function toggleFollow() {
+    const next = !isFollowing;
+    setPending(true);
+    setIsFollowing(next);
+    // Decide from the current state — the old handler checked the initial
+    // prop, so a second click sent the same action again.
+    const res = next ? await follow(person.id) : await unfollow(person.id);
+    if (!res.success) {
+      setIsFollowing(!next);
+      toast(t("error"), "error");
+    }
+    setPending(false);
   }
-  const filteredData = listData.filter(
-    (item: { name: string }) => item.name !== ".emptyFolderPlaceholder",
-  );
-  if (filteredData.length === 0) {
-    return false;
-  }
-  return true;
-};
-const getProfilePictureUrl = async (
-  supabase: SupabaseClient,
-  userId: string,
-) => {
-  const { data, error } = await supabase.storage
-    .from("profiles")
-    .createSignedUrl(`${userId}/ProfilePicture/ProfilePic.jpg`, 60 * 60);
-  if (error) {
-    return "";
-  }
-  return data.signedUrl;
-};
-export default function SocialListElement({
-  user,
-  username,
-  userId,
-  profilelink,
-  following,
-  spottedCount,
-}: ProfileElement) {
-  const supabase = createClient();
-  const [isFollowing, setIsFollowing] = useState(following);
-  const [profilePicExists, setProfilePicExists] = useState(false);
-  const [profilePictureUrl, setProfilePictureUrl] = useState("");
-  useEffect(() => {
-    const checkProfilePic = async () => {
-      const exists = await checkForProfilePic(supabase, userId);
-      const profilePictureUrl = await getProfilePictureUrl(supabase, userId);
-      setProfilePictureUrl(profilePictureUrl);
-      setProfilePicExists(exists);
-    };
-    checkProfilePic();
-  }, [user, supabase]);
-  const handleFollowing = (event: React.MouseEvent<HTMLButtonElement>) => {
-    event.preventDefault();
-    event.stopPropagation();
-    following ? unfollow(user.id, userId) : follow(user.id, userId);
-    setIsFollowing(!isFollowing);
-  };
+
   return (
-    <Link
-      href={profilelink}
-      className="shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-green-600 border border-gray-200 p-2 pr-2  rounded-lg  hover:cursor-pointer hover:from-green-600 hover:to-gray-950 w-80 sm:w-96  h-20  flex items-center justify-between"
-    >
-      <div className="flex items-center gap-4">
-        {profilePicExists ? (
-          <Image
-            src={profilePictureUrl}
-            alt="Profilbild"
-            width="200"
-            height="200"
-            className="rounded-full size-16 object-cover"
-            unoptimized
-          />
-        ) : (
-          <Avatar />
-        )}
-        <h2>{username}</h2>
-      </div>
-      <div className="flex items-center gap-2 ">
-        <p>{spottedCount}</p>
-        <Visibility />
-        <button
-          onClick={handleFollowing}
-          className={`${
-            isFollowing
-              ? "  shadow-black shadow-md bg-gradient-to-br  from-gray-950 to-70% transition-all duration-200 to-gray-900 hover:border-red-600 p-2  rounded-lg  hover:cursor-pointer hover:from-red-600 hover:to-gray-950"
-              : "rounded-lg p-2 hover:bg-green-600 hover:text-slate-200"
-          }`}
-          aria-label="NatureLogger folgen oder entfolgen"
-        >
-          {isFollowing ? (
-            <Favorite className="text-green-600 hover:text-red-600 target:text-red-600" />
-          ) : (
-            <Add />
-          )}
-        </button>
-      </div>
-    </Link>
+    <Card padding="sm" className="flex items-center gap-3">
+      <Link
+        href={`/profilepage/${person.displayName}`}
+        className="flex min-w-0 flex-1 items-center gap-3 rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+      >
+        <Avatar
+          src={person.hasAvatar ? avatarUrl(person.id) : null}
+          name={person.displayName}
+          alt={t("avatarAlt", { name: person.displayName })}
+        />
+        <span className="flex min-w-0 flex-col">
+          <span className="truncate font-semibold text-fg hover:text-accent-text">
+            {person.displayName}
+          </span>
+          <span className="flex items-center gap-1 text-sm text-fg-muted">
+            <Visibility aria-hidden fontSize="inherit" />
+            {t("species", { count: person.spottedCount })}
+          </span>
+        </span>
+      </Link>
+      <Button
+        size="sm"
+        variant={isFollowing ? "secondary" : "primary"}
+        loading={pending}
+        onClick={() => void toggleFollow()}
+        aria-pressed={isFollowing}
+        aria-label={
+          isFollowing
+            ? t("unfollow", { name: person.displayName })
+            : t("follow", { name: person.displayName })
+        }
+        icon={isFollowing ? <Check /> : <PersonAdd />}
+        className={cn("shrink-0", isFollowing && "hover:border-danger hover:text-danger")}
+      >
+        {isFollowing ? t("followingShort") : t("followShort")}
+      </Button>
+    </Card>
   );
 }

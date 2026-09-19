@@ -1,107 +1,88 @@
 import AnimalLists from "@/app/[locale]/components/animallists/AnimalLists";
-import Search from "@/app/[locale]/components/general/Search";
-import { SpottedAnimal } from "@/app/[locale]/utils/AnimalType";
 import { getUser } from "@/app/[locale]/utils/data";
+import { getProfileTarget } from "@/app/[locale]/utils/users";
 import { createClient } from "@/utils/supabase/server";
-import { ArrowBack } from "@mui/icons-material";
-import { SupabaseClient } from "@supabase/supabase-js";
-import Link from "next/link";
+import type { TypedSupabaseClient } from "@/utils/supabase/types";
+import { notFound, redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { PageHeader } from "@/app/[locale]/components/ui/PageHeader";
+import { PageShell } from "@/app/[locale]/components/ui/PageShell";
+import CreateListButton from "@/app/[locale]/components/animallists/CreateListButton";
 
 const getAnimalLists = async (
-  supabase: SupabaseClient,
+  supabase: TypedSupabaseClient,
   userId: string,
   onlyPublic: boolean,
 ) => {
-  if (onlyPublic === true) {
-    const { data, error } = await supabase
-      .from("animallists")
-      .select("id, title, description, is_public")
-      .eq("user_id", userId)
-      .eq("is_public", onlyPublic.toString());
-    if (error) console.error("Error getting Animal Lists", error);
-    else return data;
-  } else {
-    const { data, error } = await supabase
-      .from("animallists")
-      .select("id, title, description, is_public")
-      .eq("user_id", userId);
-    if (error) console.error("Error getting Animal Lists", error);
-    else return data;
+  let query = supabase
+    .from("animallists")
+    .select("id, title, description, is_public")
+    .eq("user_id", userId);
+
+  if (onlyPublic) query = query.eq("is_public", true);
+
+  const { data, error } = await query;
+  if (error) {
+    console.error("Error getting Animal Lists", error);
+    return [];
   }
-  return [];
+  return data;
 };
-const getParamUserId = async (supabase: SupabaseClient, username: string) => {
-  const { data, error } = await supabase
-    .from("users")
-    .select("*")
-    .eq("display_name", username);
-  if (error) console.error("Error fetching user id", error);
-  if (data) return data[0];
-  return [];
-};
-const getSpottedList = async (supabase: SupabaseClient, userId: string) => {
+
+const getSpottedIds = async (
+  supabase: TypedSupabaseClient,
+  userId: string,
+): Promise<number[]> => {
   const { data, error } = await supabase
     .from("spotted")
-    .select("animal_id, image, first_spotted_at")
+    .select("animal_id")
     .eq("user_id", userId);
-  if (error) console.error("Error getting spotted List", error);
-  else {
-    return data;
+  if (error) {
+    console.error("Error getting spotted List", error);
+    return [];
   }
-  return [];
+  return data
+    .map((row) => row.animal_id)
+    .filter((id): id is number => id !== null);
 };
 
-export default async function AnimalListsPage(params: any) {
+export default async function AnimalListsPage({ params }: { params: Promise<{ username: string; locale: string }> }) {
   const supabase = await createClient();
-  const user = await getUser(supabase);
-  const Userparams = await params.params;
-  if (!user) return <div>Loading...</div>;
-  const paramUser = await getParamUserId(supabase, Userparams.username);
+  const { username } = await params;
+  const viewer = await getUser(supabase);
+  if (!viewer) redirect("/loginpage");
 
-  if (user && paramUser && paramUser.id === user.id) {
-    const animalLists = await getAnimalLists(supabase, user.id, false);
-    const spottedList = await getSpottedList(supabase, user.id);
-    const spottedIds: number[] = spottedList.map(
-      (animal: SpottedAnimal) => animal.animal_id,
-    );
+  const target = await getProfileTarget(supabase, username);
+  if (!target) notFound();
 
-    return (
-      <div className="w-full mt-4 flex flex-col gap-4">
-        <AnimalLists
-          data={animalLists}
-          user={user}
-          spottedList={spottedIds}
-          currUser={true}
-        />
-      </div>
-    );
-  } else {
-    const animalLists = await getAnimalLists(supabase, paramUser.id, true);
-    const spottedList = await getSpottedList(supabase, paramUser.id);
-    const spottedIds: number[] = spottedList.map(
-      (animal: SpottedAnimal) => animal.animal_id,
-    );
-    return (
-      <div className="w-full mt-4 flex flex-col gap-4">
-        <div className="flex items-center justify-between w-full max-w-[1200px] mx-auto mt-8 shadow-lg shadow-gray-400 p-4 rounded-lg">
-          <Link
-            href={`/profilepage/${paramUser.display_name}`}
-            className="text-xs sm:text-base absolute top-12 sm:top-20 left-5 bg-green-600 rounded-lg p-1 sm:p-2 hover:text-gray-900 hover:bg-green-700 flex items-center"
-          >
-            <ArrowBack />
-            ZUM PROFIL
-          </Link>
-          <h2 className="text-green-600 text-center text-2xl xl:text-5xl">
-            {paramUser.display_name}s Listen
-          </h2>{" "}
-        </div>
-        <AnimalLists
-          data={animalLists}
-          user={paramUser}
-          spottedList={spottedIds}
-          currUser={false}
-        />
-      </div>
-    );
-  }
+  const isOwner = viewer.id === target.id;
+
+  const t = await getTranslations("Lists");
+
+  // Own lists include private ones; a visitor only ever sees the public set.
+  // The spotted ids drive the favourite buttons, which act on the *viewer's*
+  // collection, so they are the viewer's — they used to be the owner's.
+  const [animalLists, spottedIds] = await Promise.all([
+    getAnimalLists(supabase, target.id, !isOwner),
+    getSpottedIds(supabase, viewer.id),
+  ]);
+
+  return (
+    <PageShell>
+      <PageHeader
+        title={isOwner ? t("myLists") : t("usersLists", { name: target.displayName })}
+        subtitle={isOwner ? t("subtitleOwner") : t("subtitleVisitor")}
+        backHref={isOwner ? undefined : `/profilepage/${target.displayName}`}
+        backLabel={t("backToProfile")}
+        actions={isOwner && animalLists.length > 0 ? <CreateListButton /> : undefined}
+      />
+      <AnimalLists
+        data={animalLists}
+        user={viewer}
+        spottedList={spottedIds}
+        currUser={isOwner}
+        ownerName={target.displayName}
+      />
+    </PageShell>
+  );
 }

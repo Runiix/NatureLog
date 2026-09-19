@@ -1,50 +1,37 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
-import { LatLng } from "leaflet";
+import requireAuth from "@/utils/supabase/requireAuth";
+import { revalidateListPages } from "@/app/[locale]/utils/listAccess";
+import { validateListFields } from "@/app/[locale]/utils/listValidation";
+import { fail, ok } from "@/app/[locale]/utils/result";
 
 export default async function addAnimalList({
   title,
   description,
-  userId,
   publicList,
   lat,
   lng,
 }: {
   title: string;
   description: string;
-  userId: string;
   publicList: boolean;
   lat: number | null;
   lng: number | null;
 }) {
-  const supabase = await createClient();
-  if (lat !== null && lng !== null) {
-    const { error } = await supabase.from("animallists").insert({
-      user_id: userId,
-      title: title,
-      description: description,
-      is_public: publicList,
-      has_location: true,
-      lat: lat,
-      lng: lng,
-    });
-    if (error) {
-      console.error("Error adding animal list", error);
-      return { success: false, error: error.message };
-    }
-    return { success: true, error: null };
-  } else {
-    const { error } = await supabase.from("animallists").insert({
-      user_id: userId,
-      title: title,
-      description: description,
-      is_public: publicList,
-    });
-    if (error) {
-      console.error("Error adding animal list", error);
-      return { success: false, error: error.message };
-    }
-    return { success: true, error: null };
+  const { supabase, user } = await requireAuth();
+
+  const fields = validateListFields({ title, description, publicList, lat, lng });
+  if (!fields.success) return fields;
+
+  const { error } = await supabase.from("animallists").insert({
+    user_id: user.id,
+    ...fields.data,
+  });
+  if (error) {
+    console.error("Error adding animal list", error);
+    return fail(error.message);
   }
+
+  revalidateListPages();
+  return ok();
 }

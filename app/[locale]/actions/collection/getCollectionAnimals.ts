@@ -1,16 +1,41 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
-import { User } from "@supabase/supabase-js";
+import { collectionImageName } from "@/app/[locale]/utils/storagePaths";
+import requireAuth from "@/utils/supabase/requireAuth";
+import { escapeLike } from "@/app/[locale]/utils/escapeLike";
+import { canViewProfile } from "@/app/[locale]/utils/visibility";
+import type { Tables } from "@/utils/supabase/types";
+
+type SpottedAnimalRow = Pick<
+  Tables<"user_spotted_animals">,
+  "id" | "common_name" | "image" | "first_spotted_at"
+>;
+
+/** A row that has the id and name the UI needs to render it at all. */
+type RenderableRow = SpottedAnimalRow & { id: number; common_name: string };
+
+/** Drops rows the UI could not render, narrowing id and name in the process. */
+function renderableRows(rows: SpottedAnimalRow[]): RenderableRow[] {
+  return rows.flatMap((row) =>
+    row.id !== null && row.common_name !== null
+      ? [{ ...row, id: row.id, common_name: row.common_name }]
+      : [],
+  );
+}
 
 export default async function getCollectionAnimals(
-  user: User,
+  ownerId: string,
   offset: number,
   pageSize: number,
   query: string,
   searchParams: Record<string, string>
 ) {
-  const supabase = await createClient();
+  const { supabase, user } = await requireAuth();
+
+  // The collection belongs to ownerId, not to the caller, so the same
+  // public/mutual-follow rule that guards the profile guards it here.
+  if (!(await canViewProfile(supabase, user.id, ownerId))) return [];
+
   const params = new URLSearchParams(searchParams);
   const genus = params.get("genus") || "all";
   const noImages = params.get("noImages") === "true";
@@ -33,8 +58,8 @@ export default async function getCollectionAnimals(
     let queryBuilder = supabase
       .from("user_spotted_animals")
       .select("id, common_name, image, first_spotted_at")
-      .eq("user_id", user.id)
-      .ilike("common_name", `%${query}%`)
+      .eq("user_id", ownerId)
+      .ilike("common_name", `%${escapeLike(query)}%`)
       .order("common_name", { ascending: true })
       .range(from, to);
 
@@ -52,10 +77,10 @@ export default async function getCollectionAnimals(
       return [];
     }
 
-    return data;
+    return renderableRows(data);
   }
 
-  async function withSignedUrls(animalData: any[]) {
+  async function withSignedUrls(animalData: RenderableRow[]) {
     return await Promise.all(
       animalData.map(async (animal) => {
         if (animal.image === false) {
@@ -68,9 +93,9 @@ export default async function getCollectionAnimals(
           };
         }
 
-        const safeName = animal.common_name.replace(/[äöüß\s]/g, "_") + ".jpg";
-        const collectionUrl = await getSignedUrlForImage(user.id, "Collection", safeName);
-        const collectionModalUrl = await getSignedUrlForImage(user.id, "CollectionModals", safeName);
+        const safeName = collectionImageName(animal.common_name);
+        const collectionUrl = await getSignedUrlForImage(ownerId, "Collection", safeName);
+        const collectionModalUrl = await getSignedUrlForImage(ownerId, "CollectionModals", safeName);
 
         return {
           ...animal,

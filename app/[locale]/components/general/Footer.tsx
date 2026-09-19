@@ -1,36 +1,41 @@
-import { Copyright } from "@mui/icons-material";
-import Link from "next/link";
-import React from "react";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 
-export default function Footer() {
+export default async function Footer() {
+  const t = await getTranslations("Footer");
+  const linkClass =
+    "rounded text-fg-muted hover:text-fg hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
+
   return (
-    <div className="p-5 bg-gray-950 flex  flex-col  gap-4  items-center sm:items-start pb-10">
-      <div className="flex flex-col sm:flex-row items-center gap-4">
-        <p className="text-xs sm:ml-20 flex items-center">
-          <Copyright />
-          Ruben Liebert 2025
-        </p>
-        <Link href="/impressum" className="text-xs hover:text-green-600">
-          Impressum & Datenschutz
-        </Link>
-        <Link href="/contactpage" className="text-xs hover:text-green-600">
-          Kontakt
-        </Link>
+    <footer className="border-t border-border-muted bg-canvas font-normal text-fg">
+      <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-8 text-sm sm:px-6 md:flex-row md:items-start md:justify-between">
+        <div className="flex flex-col gap-2">
+          <p className="font-semibold text-accent-text">NatureLog</p>
+          <p className="max-w-md text-fg-muted">
+            {t("support")}{" "}
+            <a
+              className="font-medium text-accent-text underline-offset-4 hover:underline"
+              href="https://www.paypal.me/RubenLiebert"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              {t("donate")}
+            </a>
+          </p>
+        </div>
+        <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2">
+          <Link href="/impressum" className={linkClass}>
+            {t("imprint")}
+          </Link>
+          <Link href="/termsofservice" className={linkClass}>
+            {t("terms")}
+          </Link>
+          <Link href="/contactpage" className={linkClass}>
+            {t("contact")}
+          </Link>
+          <span className="text-fg-subtle">© Ruben Liebert {new Date().getFullYear()}</span>
+        </nav>
       </div>
-      <div>
-        <p className="sm:ml-20 text-xs flex flex-col lg:flex-row text-center sm:text-start mt-5 sm:mt-0 gap-1 ml-auto">
-          Diese Website ist ein freies Projekt. Wenn du möchtest, kannst du es
-          freiwillig unterstützen:
-          <a
-            className="text-green-600 underline"
-            href="https://www.paypal.me/RubenLiebert"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            per PayPal spenden
-          </a>
-        </p>
-      </div>
-    </div>
+    </footer>
   );
 }

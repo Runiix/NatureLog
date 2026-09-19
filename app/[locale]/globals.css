@@ -7,6 +7,7 @@
     text-wrap: balance;
   }
 }
+
 html,
 body {
   overflow-x: hidden;
@@ -15,13 +16,83 @@ body {
   width: 12px;
 }
 ::-webkit-scrollbar-track {
-  background: #1f2937; /* gray-800 */
+  background: rgb(var(--color-surface-sunken));
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: #4b5563; /* slate-600 */
+  background: rgb(var(--color-border));
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #6b7280; /* slate-500 */
+  background: rgb(var(--color-fg-subtle));
+}
+
+/*
+ * Theme tokens. Values are space-separated RGB channels (no rgb() wrapper) so
+ * Tailwind's <alpha-value> placeholder works: bg-surface/80, bg-overlay/60.
+ * Light is the default; the .dark class (set server-side from the theme
+ * cookie, or by the head script for "system") swaps the palette. accent-text
+ * is green-400 in dark mode because green-600 on gray-900 is only 2.9:1.
+ */
+@layer base {
+  /* Native controls, scrollbars (outside WebKit) and form widgets follow the
+     theme. Shipped with the toggle rather than with the tokens: until a
+     screen used the tokens, a dark-OS user would have seen dark native
+     controls on the light legacy page. */
+  :root {
+    color-scheme: light;
+    --color-canvas: 229 231 235; /* gray-200: body and nav background today */
+    --color-surface: 255 255 255;
+    --color-surface-raised: 249 250 251; /* gray-50 */
+    --color-surface-sunken: 243 244 246; /* gray-100 */
+    --color-border: 148 163 184; /* slate-400 */
+    --color-border-muted: 203 213 225; /* slate-300 */
+    --color-fg: 15 23 42; /* slate-900 */
+    --color-fg-muted: 71 85 105; /* slate-600: nav links today */
+    --color-fg-subtle: 100 116 139; /* slate-500 */
+    --color-accent: 22 163 74; /* green-600: brand */
+    --color-accent-hover: 21 128 61; /* green-700 */
+    --color-accent-solid: 21 128 61; /* button fill, 5.0:1 with white */
+    --color-accent-text: 21 128 61; /* green text on light surfaces */
+    --color-accent-fg: 255 255 255;
+    --color-danger: 220 38 38; /* red-600 */
+    --color-danger-solid: 185 28 28; /* red-700, 6.5:1 with white */
+    --color-overlay: 15 23 42;
+    --color-grad-from: 255 255 255;
+    --color-grad-to: 243 244 246;
+    --shadow-card:
+      0 10px 15px -3px rgb(156 163 175 / 1), 0 4px 6px -4px rgb(156 163 175 / 1); /* shadow-lg shadow-gray-400 */
+    --shadow-raised:
+      0 20px 25px -5px rgb(156 163 175 / 0.6),
+      0 8px 10px -6px rgb(156 163 175 / 0.6);
+    --shadow-overlay: 0 25px 50px -12px rgb(15 23 42 / 0.35);
+  }
+
+  .dark {
+    color-scheme: dark;
+    --color-canvas: 3 7 18; /* gray-950 */
+    --color-surface: 17 24 39; /* gray-900: card body today */
+    --color-surface-raised: 31 41 55; /* gray-800 */
+    --color-surface-sunken: 3 7 18;
+    --color-border: 226 232 240; /* slate-200: card outline today */
+    --color-border-muted: 55 65 81; /* gray-700 */
+    --color-fg: 241 245 249; /* slate-100: text today */
+    --color-fg-muted: 209 213 219; /* gray-300: descriptions today */
+    --color-fg-subtle: 148 163 184; /* slate-400 */
+    --color-accent: 22 163 74;
+    --color-accent-hover: 21 128 61;
+    --color-accent-solid: 22 163 74;
+    --color-accent-text: 74 222 128; /* green-400, 8.9:1 on gray-900 */
+    --color-accent-fg: 255 255 255;
+    --color-danger: 248 113 113; /* red-400 for text/icons on dark */
+    --color-danger-solid: 185 28 28;
+    --color-overlay: 0 0 0; /* bg-black/70 today */
+    --color-grad-from: 3 7 18; /* from-gray-950 */
+    --color-grad-to: 17 24 39; /* to-gray-900 */
+    --shadow-card:
+      0 10px 15px -3px rgb(0 0 0 / 1), 0 4px 6px -4px rgb(0 0 0 / 1); /* shadow-lg shadow-black */
+    --shadow-raised:
+      0 20px 25px -5px rgb(0 0 0 / 0.7), 0 8px 10px -6px rgb(0 0 0 / 0.7);
+    --shadow-overlay: 0 25px 50px -12px rgb(0 0 0 / 0.8);
+  }
 }
