@@ -589,11 +589,16 @@
     "imprint": "Impressum & Datenschutz",
     "contact": "Kontakt",
     "terms": "Nutzungsbedingungen",
+    "about": "Über NatureLog",
+    "faq": "Häufige Fragen",
+    "lexicon": "Tierlexikon",
     "support": "NatureLog ist ein freies Projekt. Wenn du möchtest, kannst du es unterstützen:",
     "donate": "per PayPal spenden"
   },
   "Animal": {
     "back": "Zurück",
+    "breadcrumb": "Brotkrumen-Navigation",
+    "lexicon": "Tierlexikon",
     "rare": "Selten",
     "rareTooltip": "Ausnahmeerscheinung oder Irrgast in Deutschland",
     "spottedBy": "{count, plural, =0 {Noch niemand hat diese Art gesichtet.} one {# Mitglied hat diese Art gesichtet.} other {# Mitglieder haben diese Art gesichtet.}}",
@@ -665,8 +670,100 @@
   "Legal": {
     "germanOnly": "Dieser Text ist rechtlich verbindlich nur auf Deutsch verfügbar."
   },
+  "About": {
+    "title": "Über NatureLog",
+    "subtitle": "Das kostenlose Naturtagebuch für Tierbeobachtungen in Deutschland.",
+    "whatTitle": "Was ist NatureLog?",
+    "whatText": "NatureLog ist eine kostenlose Web-App, mit der du deine Tiersichtungen festhältst. Im Tierlexikon findest du {count} heimische Arten – Vögel, Säugetiere, Amphibien, Reptilien, Insekten und Spinnen – mit Steckbrief, Größe, Lebensraum und Gefährdungsstatus. Jede Art, die du in der Natur entdeckst, markierst du als gesehen und lädst dein schönstes Foto dazu hoch. So entsteht nach und nach dein persönliches Naturtagebuch.",
+    "audienceTitle": "Für wen ist NatureLog?",
+    "audience": {
+      "birders": "Vogelbeobachter, die ihre Artenliste pflegen möchten",
+      "photographers": "Naturfotografen, die ihre besten Tierfotos an einem Ort sammeln",
+      "families": "Familien und Kinder, die gemeinsam die Natur vor der Haustür entdecken",
+      "schools": "Lehrkräfte und Schulklassen, die heimische Arten kennenlernen",
+      "walkers": "Alle, die beim Spaziergang wissen wollen, welches Tier sie gerade gesehen haben"
+    },
+    "featuresTitle": "Was du mit NatureLog machen kannst",
+    "extrasTitle": "Außerdem",
+    "extras": {
+      "daily": "Tier des Tages und eine tägliche Foto-Challenge",
+      "quiz": "Ein Quiz, mit dem du heimische Arten spielerisch lernst",
+      "lens": "Tiere per Foto bestimmen mit Google Lens",
+      "suggest": "Fehlende Arten vorschlagen und Lexikon-Texte verbessern"
+    },
+    "freeTitle": "Kostenlos und unabhängig",
+    "freeText": "NatureLog ist ein freies Projekt aus Deutschland. Registrierung und alle Funktionen sind kostenlos. Du nutzt NatureLog direkt im Browser oder installierst es auf deinem Handy als App – ganz ohne App Store.",
+    "ctaLexicon": "Tierlexikon entdecken",
+    "ctaRegister": "Kostenlos registrieren",
+    "ctaFaq": "Häufige Fragen"
+  },
+  "Faq": {
+    "title": "Häufige Fragen",
+    "subtitle": "Alles Wichtige zu NatureLog auf einen Blick.",
+    "items": {
+      "whatIs": {
+        "q": "Was ist NatureLog?",
+        "a": "NatureLog ist ein kostenloses Naturtagebuch im Browser. Du hältst fest, welche Tiere du in der Natur gesehen hast, lädst zu jeder Art dein schönstes Foto hoch und teilst deine Sichtungen mit anderen Naturfreunden."
+      },
+      "free": {
+        "q": "Ist NatureLog kostenlos?",
+        "a": "Ja. Die Registrierung und alle Funktionen sind kostenlos, es gibt kein Abo. NatureLog ist ein freies Projekt – wer möchte, kann es mit einer Spende unterstützen."
+      },
+      "app": {
+        "q": "Gibt es NatureLog als App für Android und iPhone?",
+        "a": "NatureLog ist eine Web-App, die du ohne App Store installieren kannst. Unter Android öffnest du naturelog.de in Chrome und wählst „App installieren“ oder „Zum Startbildschirm hinzufügen“. Auf dem iPhone öffnest du die Seite in Safari, tippst auf „Teilen“ und dann auf „Zum Home-Bildschirm“."
+      },
+      "species": {
+        "q": "Welche Tiere findet man im Tierlexikon?",
+        "a": "Das Lexikon enthält {count} in Deutschland heimische Arten: Vögel, Säugetiere, Amphibien, Reptilien, Insekten und Spinnen. Zu jeder Art gibt es einen Steckbrief mit Größe, Lebensraum, Gefährdungsstatus, Beobachtungszeit und ähnlichen Arten."
+      },
+      "identify": {
+        "q": "Kann ich mit NatureLog ein Tier bestimmen?",
+        "a": "Ja, auf zwei Wegen. Im Tierlexikon grenzt du Arten mit Filtern nach Tiergruppe, Ordnung, Farbe, Größe und Gefährdung ein. Außerdem kannst du ein Foto hochladen und es mit Google Lens suchen lassen."
+      },
+      "record": {
+        "q": "Wie halte ich eine Tiersichtung fest?",
+        "a": "Erstelle ein kostenloses Konto, öffne die Art im Tierlexikon und markiere sie als gesehen. Die Art landet dann in deiner Sammlung, wo du ein eigenes Foto hinzufügen kannst."
+      },
+      "photos": {
+        "q": "Kann ich eigene Tierfotos hochladen und teilen?",
+        "a": "Ja. Zu jeder gesichteten Art kannst du dein Lieblingsfoto hochladen. Ist dein Profil öffentlich, erscheinen deine Fotos auch bei der jeweiligen Art im Lexikon. Hochgeladene Fotos werden auf unsere Inhaltsregeln geprüft."
+      },
+      "privacy": {
+        "q": "Wer kann meine Sichtungen sehen?",
+        "a": "Das entscheidest du selbst: In den Einstellungen stellst du dein Profil auf öffentlich oder privat. Ein privates Profil sehen nur Personen, denen du folgst und die dir folgen. Artenlisten kannst du außerdem als private Listen anlegen, zum Beispiel für deine Zielarten."
+      },
+      "missing": {
+        "q": "Was mache ich, wenn eine Art im Lexikon fehlt?",
+        "a": "Über „Fehlendes Tier vorschlagen“ im Lexikon kannst du neue Arten vorschlagen. Auch Verbesserungen an bestehenden Texten kannst du direkt auf der Seite einer Art einreichen."
+      },
+      "deleteAccount": {
+        "q": "Kann ich mein Konto wieder löschen?",
+        "a": "Ja, jederzeit in den Einstellungen. Dabei werden auch deine Sichtungen und Fotos gelöscht. Details zum Umgang mit deinen Daten findest du in der Datenschutzerklärung."
+      }
+    },
+    "moreQuestions": "Deine Frage ist nicht dabei?",
+    "contact": "Schreib uns über das Kontaktformular."
+  },
   "Meta": {
-    "description": "NatureLog ist dein Naturtagebuch: Sichtungen festhalten, Lieblingsfotos sammeln und mit anderen teilen."
+    "title": "NatureLog – Naturtagebuch & Tierlexikon für deine Tiersichtungen",
+    "description": "NatureLog ist dein kostenloses Naturtagebuch: Tiersichtungen festhalten, heimische Arten im Tierlexikon entdecken, Lieblingsfotos sammeln und mit anderen teilen.",
+    "lexiconTitle": "Tierlexikon – heimische Tiere in Deutschland entdecken",
+    "lexiconDescription": "Das Tierlexikon von NatureLog: heimische Vögel, Säugetiere, Amphibien, Reptilien und Insekten mit Steckbrief, Größe, Lebensraum und Gefährdungsstatus. Mit Filtern und Suche.",
+    "animalTitle": "{name} ({scientific}) – Steckbrief, Größe & Lebensraum",
+    "animalDescription": "{name} ({scientific}) im Steckbrief: Größe, Lebensraum, Gefährdungsstatus und Fotos aus der NatureLog-Community.",
+    "imprintTitle": "Impressum & Datenschutz",
+    "imprintDescription": "Impressum und Datenschutzerklärung von NatureLog.",
+    "termsTitle": "Nutzungsbedingungen",
+    "termsDescription": "Nutzungsbedingungen von NatureLog für das Hochladen von Bildern und Texten.",
+    "contactTitle": "Kontakt",
+    "contactDescription": "Fragen, Feedback oder Ideen zu NatureLog? Schreib uns über das Kontaktformular.",
+    "loginTitle": "Anmelden oder registrieren",
+    "loginDescription": "Melde dich bei NatureLog an oder erstelle kostenlos ein Konto, um deine Tiersichtungen festzuhalten.",
+    "aboutTitle": "Über NatureLog – die kostenlose App für Naturbeobachtungen",
+    "aboutDescription": "Was ist NatureLog? Eine kostenlose Web-App für Naturfreunde in Deutschland: Tiersichtungen festhalten, Arten bestimmen, Fotos sammeln und Artenlisten auf der Karte teilen.",
+    "faqTitle": "Häufige Fragen zu NatureLog",
+    "faqDescription": "Antworten auf häufige Fragen zu NatureLog: Kosten, App-Installation, Tierlexikon, Sichtungen, Fotos, Datenschutz und mehr."
   },
   "GlobalSearch": {
     "open": "Suchen",

@@ -9,24 +9,37 @@ import {
   Wc,
 } from "@mui/icons-material";
 import type { User } from "@supabase/supabase-js";
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
 import { notFound } from "next/navigation";
+import { cache } from "react";
 import AnimalBanner from "@/app/[locale]/components/animals/AnimalBanner";
 import RecentAnimalImageUploads, {
   type CommunityPhoto,
 } from "@/app/[locale]/components/animals/RecentAnimalImageUploads";
 import FavoriteFunctionality from "@/app/[locale]/components/general/FavoriteFunctionality";
+import { JsonLd } from "@/app/[locale]/components/general/JsonLd";
 import ListFunctionality from "@/app/[locale]/components/general/ListFunctionality";
 import SuggestEditDialog from "@/app/[locale]/components/lexicon/SuggestEditDialog";
 import { Card } from "@/app/[locale]/components/ui/Card";
 import { cn } from "@/app/[locale]/utils/cn";
 import { getUser } from "@/app/[locale]/utils/data";
+import {
+  SITE_NAME,
+  SITE_URL,
+  absoluteUrl,
+  localizedPath,
+  pageMetadata,
+  toDescription,
+} from "@/app/[locale]/utils/seo";
 import { collectionImageName } from "@/app/[locale]/utils/storagePaths";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/utils/supabase/server";
 import type { TypedSupabaseClient } from "@/utils/supabase/types";
 
-const getAnimalData = async (supabase: TypedSupabaseClient, name: string) => {
+/** Cached per request, so generateMetadata and the page share one query. */
+const getAnimalData = cache(async (name: string) => {
+  const supabase = await createClient();
   const { data, error } = await supabase
     .from("animals")
     .select("*")
@@ -34,7 +47,26 @@ const getAnimalData = async (supabase: TypedSupabaseClient, name: string) => {
     .maybeSingle();
   if (error) console.error("Error fetching animal Data", error);
   return data;
-};
+});
+
+type Props = { params: Promise<{ common_name: string; locale: string }> };
+
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { common_name, locale } = await params;
+  const [animal, t] = await Promise.all([
+    getAnimalData(common_name),
+    getTranslations({ locale, namespace: "Meta" }),
+  ]);
+  if (!animal) return {};
+  const names = { name: animal.common_name, scientific: animal.scientific_name };
+  return pageMetadata({
+    locale,
+    path: `/animalpage/${encodeURIComponent(animal.common_name)}`,
+    title: t("animalTitle", names),
+    description: animal.description ? toDescription(animal.description) : t("animalDescription", names),
+    image: animal.image_link,
+  });
+}
 
 const getSpottedList = async (supabase: TypedSupabaseClient, user: User) => {
   const { data, error } = await supabase
@@ -165,18 +197,15 @@ function Fact({
   );
 }
 
-export default async function AnimalPage({
-  params,
-}: {
-  params: Promise<{ common_name: string; locale: string }>;
-}) {
-  const { common_name } = await params;
+export default async function AnimalPage({ params }: Props) {
+  const { common_name, locale } = await params;
   const supabase = await createClient();
-  const [user, animal, t, tLex] = await Promise.all([
+  const [user, animal, t, tLex, tMeta] = await Promise.all([
     getUser(supabase),
-    getAnimalData(supabase, common_name),
+    getAnimalData(common_name),
     getTranslations("Animal"),
     getTranslations("Lexicon"),
+    getTranslations("Meta"),
   ]);
   // An unknown species used to throw on `animal.id`; it is a 404.
   if (!animal) notFound();
@@ -191,8 +220,41 @@ export default async function AnimalPage({
   const statusStep = STATUS_SCALE.indexOf(status as (typeof STATUS_SCALE)[number]);
   const hasDimorphism = animal.sexual_dimorphism && animal.sexual_dimorphism !== "Nein";
 
+  const pageUrl = absoluteUrl(localizedPath(locale, `/animalpage/${encodeURIComponent(animal.common_name)}`));
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "WebPage",
+        "@id": pageUrl,
+        url: pageUrl,
+        name: tMeta("animalTitle", { name: animal.common_name, scientific: animal.scientific_name }),
+        inLanguage: locale,
+        isPartOf: { "@id": `${SITE_URL}/#website` },
+        ...(animal.image_link ? { primaryImageOfPage: animal.image_link } : {}),
+        about: {
+          "@type": "Taxon",
+          name: animal.scientific_name,
+          alternateName: animal.common_name,
+          taxonRank: "species",
+          ...(animal.description ? { description: animal.description } : {}),
+          ...(animal.image_link ? { image: animal.image_link } : {}),
+        },
+      },
+      {
+        "@type": "BreadcrumbList",
+        itemListElement: [
+          { "@type": "ListItem", position: 1, name: SITE_NAME, item: absoluteUrl(localizedPath(locale, "/")) },
+          { "@type": "ListItem", position: 2, name: t("lexicon"), item: absoluteUrl(localizedPath(locale, "/lexiconpage")) },
+          { "@type": "ListItem", position: 3, name: animal.common_name, item: pageUrl },
+        ],
+      },
+    ],
+  };
+
   return (
     <div className="w-full bg-canvas font-normal text-fg">
+      <JsonLd data={structuredData} />
       <AnimalBanner
         image={animal.image_link}
         alt={animal.common_name}
@@ -206,6 +268,13 @@ export default async function AnimalPage({
         <Card variant="solid" padding="lg" className="flex flex-col gap-6">
           <header className="flex flex-wrap items-start justify-between gap-4">
             <div className="flex min-w-0 flex-col gap-1">
+              <nav aria-label={t("breadcrumb")} className="text-sm text-fg-subtle">
+                <Link href="/lexiconpage" className="text-accent-text hover:underline">
+                  {t("lexicon")}
+                </Link>
+                <span aria-hidden> › </span>
+                <span aria-current="page">{animal.common_name}</span>
+              </nav>
               <div className="flex flex-wrap items-center gap-2">
                 <h1 className="text-3xl font-semibold tracking-tight sm:text-4xl">
                   {animal.common_name}

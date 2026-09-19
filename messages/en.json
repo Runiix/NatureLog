@@ -589,11 +589,16 @@
     "imprint": "Imprint & privacy",
     "contact": "Contact",
     "terms": "Terms of use",
+    "about": "About NatureLog",
+    "faq": "FAQ",
+    "lexicon": "Wildlife lexicon",
     "support": "NatureLog is a free project. If you like, you can support it:",
     "donate": "donate via PayPal"
   },
   "Animal": {
     "back": "Back",
+    "breadcrumb": "Breadcrumb",
+    "lexicon": "Wildlife lexicon",
     "rare": "Rare",
     "rareTooltip": "Exceptional sighting or vagrant in Germany",
     "spottedBy": "{count, plural, =0 {Nobody has spotted this species yet.} one {# member has spotted this species.} other {# members have spotted this species.}}",
@@ -665,8 +670,100 @@
   "Legal": {
     "germanOnly": "This text is legally binding in German only."
   },
+  "About": {
+    "title": "About NatureLog",
+    "subtitle": "The free nature journal for wildlife observations in Germany.",
+    "whatTitle": "What is NatureLog?",
+    "whatText": "NatureLog is a free web app for recording your wildlife sightings. The lexicon covers {count} species native to Germany – birds, mammals, amphibians, reptiles, insects and spiders – with profile, size, habitat and conservation status. Mark every species you spot in the wild as seen and add your best photo of it. Step by step, that becomes your personal nature journal.",
+    "audienceTitle": "Who is NatureLog for?",
+    "audience": {
+      "birders": "Birdwatchers who keep a species list",
+      "photographers": "Nature photographers who want their best wildlife photos in one place",
+      "families": "Families and children exploring the nature on their doorstep",
+      "schools": "Teachers and school classes learning about native species",
+      "walkers": "Anyone who wants to know which animal they just saw on a walk"
+    },
+    "featuresTitle": "What you can do with NatureLog",
+    "extrasTitle": "Also",
+    "extras": {
+      "daily": "Animal of the day and a daily photo challenge",
+      "quiz": "A quiz to learn native species in a playful way",
+      "lens": "Identify animals from a photo with Google Lens",
+      "suggest": "Suggest missing species and improve lexicon texts"
+    },
+    "freeTitle": "Free and independent",
+    "freeText": "NatureLog is a free project from Germany. Registration and every feature are free of charge. Use NatureLog right in your browser or install it on your phone as an app – no app store needed.",
+    "ctaLexicon": "Explore the lexicon",
+    "ctaRegister": "Register for free",
+    "ctaFaq": "FAQ"
+  },
+  "Faq": {
+    "title": "Frequently asked questions",
+    "subtitle": "Everything important about NatureLog at a glance.",
+    "items": {
+      "whatIs": {
+        "q": "What is NatureLog?",
+        "a": "NatureLog is a free nature journal in your browser. Record which animals you have seen in the wild, add your best photo of each species and share your sightings with other nature lovers."
+      },
+      "free": {
+        "q": "Is NatureLog free?",
+        "a": "Yes. Registration and every feature are free, and there is no subscription. NatureLog is a free project – if you like, you can support it with a donation."
+      },
+      "app": {
+        "q": "Is there a NatureLog app for Android and iPhone?",
+        "a": "NatureLog is a web app you can install without an app store. On Android, open naturelog.de in Chrome and choose “Install app” or “Add to home screen”. On iPhone, open the site in Safari, tap “Share” and then “Add to Home Screen”."
+      },
+      "species": {
+        "q": "Which animals are in the lexicon?",
+        "a": "The lexicon contains {count} species native to Germany: birds, mammals, amphibians, reptiles, insects and spiders. Each species has a profile with size, habitat, conservation status, when to see it and similar species."
+      },
+      "identify": {
+        "q": "Can NatureLog help me identify an animal?",
+        "a": "Yes, in two ways. In the lexicon you narrow species down with filters for animal group, order, colour, size and conservation status. You can also upload a photo and search it with Google Lens."
+      },
+      "record": {
+        "q": "How do I record a sighting?",
+        "a": "Create a free account, open the species in the lexicon and mark it as seen. It then appears in your collection, where you can add your own photo."
+      },
+      "photos": {
+        "q": "Can I upload and share my own wildlife photos?",
+        "a": "Yes. You can upload your favourite photo for every species you have seen. If your profile is public, your photos also appear on that species' lexicon page. Uploaded photos are checked against our content rules."
+      },
+      "privacy": {
+        "q": "Who can see my sightings?",
+        "a": "You decide: set your profile to public or private in the settings. A private profile is visible only to people you follow who also follow you. You can also keep species lists private, for example for your target species."
+      },
+      "missing": {
+        "q": "What if a species is missing from the lexicon?",
+        "a": "Use “Suggest a missing animal” in the lexicon to propose new species. You can also submit improvements to existing texts right on a species' page."
+      },
+      "deleteAccount": {
+        "q": "Can I delete my account?",
+        "a": "Yes, at any time in the settings. This also deletes your sightings and photos. Details on how your data is handled are in the privacy policy."
+      }
+    },
+    "moreQuestions": "Your question isn't here?",
+    "contact": "Get in touch through the contact form."
+  },
   "Meta": {
-    "description": "NatureLog is your nature journal: record sightings, collect your favourite photos and share them with others."
+    "title": "NatureLog – nature journal & wildlife lexicon for your sightings",
+    "description": "NatureLog is your free nature journal: record wildlife sightings, explore native species in the lexicon, collect your favourite photos and share them with others.",
+    "lexiconTitle": "Wildlife lexicon – discover native animals in Germany",
+    "lexiconDescription": "The NatureLog wildlife lexicon: native birds, mammals, amphibians, reptiles and insects with profile, size, habitat and conservation status. With filters and search.",
+    "animalTitle": "{name} ({scientific}) – profile, size & habitat",
+    "animalDescription": "{name} ({scientific}) at a glance: size, habitat, conservation status and photos from the NatureLog community.",
+    "imprintTitle": "Imprint & privacy",
+    "imprintDescription": "Imprint and privacy policy of NatureLog.",
+    "termsTitle": "Terms of use",
+    "termsDescription": "NatureLog terms of use for uploading images and texts.",
+    "contactTitle": "Contact",
+    "contactDescription": "Questions, feedback or ideas about NatureLog? Get in touch through the contact form.",
+    "loginTitle": "Sign in or register",
+    "loginDescription": "Sign in to NatureLog or create a free account to record your wildlife sightings.",
+    "aboutTitle": "About NatureLog – the free app for nature observations",
+    "aboutDescription": "What is NatureLog? A free web app for nature lovers in Germany: record wildlife sightings, identify species, collect photos and share species lists on a map.",
+    "faqTitle": "NatureLog FAQ",
+    "faqDescription": "Answers to common questions about NatureLog: cost, installing the app, the lexicon, sightings, photos, privacy and more."
   },
   "GlobalSearch": {
     "open": "Search",

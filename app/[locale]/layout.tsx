@@ -11,6 +11,7 @@ import { ThemeProvider } from "./components/ui/theme/ThemeProvider";
 import { ThemeScript } from "./components/ui/theme/ThemeScript";
 import { ToastProvider } from "./components/ui/Toast";
 import { THEME_COOKIE, parseTheme } from "./components/ui/theme/theme";
+import { SITE_NAME, SITE_URL } from "./utils/seo";
 const open_sans = Open_Sans({ subsets: ["latin"] });
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
@@ -19,15 +20,30 @@ const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL ?? "";
  * Namespaces only server components read. Leaving them out of the client
  * provider keeps them out of every page's serialized payload.
  */
-const SERVER_ONLY_NAMESPACES = ["Landing", "NotFound", "Footer", "Legal", "Meta", "ErrorPage"];
+const SERVER_ONLY_NAMESPACES = ["Landing", "NotFound", "Footer", "Legal", "Meta", "ErrorPage", "About", "Faq"];
 
 export async function generateMetadata({ params }: Pick<Props, "params">): Promise<Metadata> {
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: "Meta" });
   return {
-    title: { default: "NatureLog", template: "%s · NatureLog" },
+    metadataBase: new URL(SITE_URL),
+    title: { default: t("title"), template: `%s | ${SITE_NAME}` },
     description: t("description"),
+    applicationName: SITE_NAME,
     manifest: "/manifest.json",
+    // Without these Google finds no favicon and shows a generic globe.
+    icons: {
+      icon: [
+        { url: "/favicon.ico", sizes: "any" },
+        { url: "/icons/icon.png", type: "image/png", sizes: "96x96" },
+      ],
+      apple: "/icons/apple-icon.png",
+    },
+    openGraph: {
+      siteName: SITE_NAME,
+      locale: locale === "de" ? "de_DE" : "en_US",
+      type: "website",
+    },
   };
 }
 type Props = {

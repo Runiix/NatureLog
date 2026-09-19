@@ -104,15 +104,15 @@ body {
   width: 12px;
 }
 ::-webkit-scrollbar-track {
-  background: rgb(var(--color-surface-sunken));
+  background: rgb(var(--color-scrollbar-track));
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb {
-  background: rgb(var(--color-border));
+  background: rgb(var(--color-scrollbar-thumb));
   border-radius: 8px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: rgb(var(--color-fg-subtle));
+  background: rgb(var(--color-scrollbar-thumb-hover));
 }
 
 /*
@@ -148,6 +148,9 @@ body {
     --color-overlay: 15 23 42;
     --color-grad-from: 255 255 255;
     --color-grad-to: 243 244 246;
+    --color-scrollbar-track: 243 244 246; /* gray-100 */
+    --color-scrollbar-thumb: 148 163 184; /* slate-400 */
+    --color-scrollbar-thumb-hover: 100 116 139; /* slate-500 */
     --shadow-card:
       0 10px 15px -3px rgb(156 163 175 / 1), 0 4px 6px -4px rgb(156 163 175 / 1); /* shadow-lg shadow-gray-400 */
     --shadow-raised:
@@ -177,6 +180,9 @@ body {
     --color-overlay: 0 0 0; /* bg-black/70 today */
     --color-grad-from: 3 7 18; /* from-gray-950 */
     --color-grad-to: 17 24 39; /* to-gray-900 */
+    --color-scrollbar-track: 3 7 18; /* gray-950 */
+    --color-scrollbar-thumb: 55 65 81; /* gray-700 */
+    --color-scrollbar-thumb-hover: 75 85 99; /* gray-600 */
     --shadow-card:
       0 10px 15px -3px rgb(0 0 0 / 1), 0 4px 6px -4px rgb(0 0 0 / 1); /* shadow-lg shadow-black */
     --shadow-raised:

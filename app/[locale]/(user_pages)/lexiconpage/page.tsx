@@ -1,5 +1,7 @@
 import { AddCircleOutline } from "@mui/icons-material";
+import type { Metadata } from "next";
 import { getTranslations } from "next-intl/server";
+import getAnimals from "@/app/[locale]/actions/lexicon/getAnimals";
 import { ButtonLink } from "@/app/[locale]/components/ui/Button";
 import Search from "@/app/[locale]/components/general/Search";
 import LexiconFilterList from "@/app/[locale]/components/lexicon/LexiconFilterList";
@@ -8,11 +10,38 @@ import LexiconSort from "@/app/[locale]/components/lexicon/LexiconSort";
 import { PageHeader } from "@/app/[locale]/components/ui/PageHeader";
 import { ScrollToTop } from "@/app/[locale]/components/ui/ScrollToTop";
 import { getUser } from "@/app/[locale]/utils/data";
+import { pageMetadata } from "@/app/[locale]/utils/seo";
 import { createClient } from "@/utils/supabase/server";
 
-export default async function LexiconPage() {
+const PAGE_SIZE = 24;
+
+type Props = {
+  params: Promise<{ locale: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+};
+
+export async function generateMetadata({ params }: Pick<Props, "params">): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Meta" });
+  return pageMetadata({ locale, path: "/lexiconpage", title: t("lexiconTitle"), description: t("lexiconDescription") });
+}
+
+export default async function LexiconPage({ searchParams }: Props) {
+  const filters = Object.fromEntries(
+    Object.entries(await searchParams).flatMap(([key, value]) =>
+      typeof value === "string" ? [[key, value]] : [],
+    ),
+  );
+  // Must equal the client's `useSearchParams().toString()`, so the grid knows
+  // this first page is already the right one.
+  const filterKey = new URLSearchParams(filters).toString();
+
   const supabase = await createClient();
-  const [user, t] = await Promise.all([getUser(supabase), getTranslations("Lexicon")]);
+  const [user, t, firstPage] = await Promise.all([
+    getUser(supabase),
+    getTranslations("Lexicon"),
+    getAnimals(filters, 0, PAGE_SIZE),
+  ]);
 
   // The favourite buttons need the viewer's spotted ids; one small query here
   // instead of a browser round-trip after the grid has rendered.
@@ -40,7 +69,13 @@ export default async function LexiconPage() {
         <LexiconSort />
       </div>
       <LexiconFilterList />
-      <LexiconGrid user={user} spottedList={spottedIds} />
+      <LexiconGrid
+        key={filterKey}
+        user={user}
+        spottedList={spottedIds}
+        initialAnimals={firstPage}
+        initialKey={filterKey}
+      />
       <ScrollToTop />
     </>
   );

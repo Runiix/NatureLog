@@ -1,4 +1,13 @@
+import type { Metadata } from "next";
+import { getTranslations } from "next-intl/server";
 import LegalPage from "@/app/[locale]/components/general/LegalPage";
+import { pageMetadata } from "@/app/[locale]/utils/seo";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Meta" });
+  return pageMetadata({ locale, path: "/impressum", title: t("imprintTitle"), description: t("imprintDescription") });
+}
 
 const H3 = "mt-6 text-lg font-semibold text-fg";
 const H4 = "mt-4 font-semibold text-fg";

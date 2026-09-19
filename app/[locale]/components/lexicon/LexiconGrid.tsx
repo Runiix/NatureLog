@@ -9,7 +9,6 @@ import { useInView } from "react-intersection-observer";
 import getAnimals from "../../actions/lexicon/getAnimals";
 import type { Tables } from "@/utils/supabase/types";
 import { EmptyState } from "../ui/EmptyState";
-import { SkeletonCard } from "../ui/Skeleton";
 import { Spinner } from "../ui/Spinner";
 import LexiconCard from "./LexiconCard";
 
@@ -20,27 +19,37 @@ const PAGE_SIZE = 24;
  * Infinite lexicon grid for the current URL filters. `spottedList` comes from
  * the server with the page — it used to be fetched in the browser after
  * render, and the filters were then re-run once it arrived.
+ *
+ * The first page is rendered on the server (`initialAnimals` for the filters
+ * in `initialKey`), so crawlers see real links to every species on it. The
+ * page remounts the grid per filter key; only a key the server did not render
+ * is fetched here.
  */
 export default function LexiconGrid({
   user,
   spottedList,
+  initialAnimals,
+  initialKey,
 }: {
   user: User | null;
   spottedList: number[];
+  initialAnimals: Animal[];
+  initialKey: string;
 }) {
   const t = useTranslations("Lexicon");
   const searchParams = useSearchParams();
   const filterKey = searchParams.toString();
   const sortBy = searchParams.get("sortBy");
 
-  const [animals, setAnimals] = useState<Animal[] | null>(null);
-  const [offset, setOffset] = useState(0);
-  const [hasMore, setHasMore] = useState(false);
+  const [animals, setAnimals] = useState<Animal[]>(initialAnimals);
+  const [offset, setOffset] = useState(1);
+  const [hasMore, setHasMore] = useState(initialAnimals.length === PAGE_SIZE);
   const generation = useRef(0);
   const loadingMore = useRef(false);
   const { ref: sentinel, inView } = useInView({ rootMargin: "600px" });
 
   useEffect(() => {
+    if (filterKey === initialKey) return;
     const current = ++generation.current;
     const params = Object.fromEntries(new URLSearchParams(filterKey).entries());
     getAnimals(params, 0, PAGE_SIZE)
@@ -51,7 +60,7 @@ export default function LexiconGrid({
         setHasMore(data.length === PAGE_SIZE);
       })
       .catch((error) => console.error("Error loading animals:", error));
-  }, [filterKey]);
+  }, [filterKey, initialKey]);
 
   useEffect(() => {
     if (!inView || !hasMore || offset === 0 || loadingMore.current) return;
@@ -61,7 +70,7 @@ export default function LexiconGrid({
     getAnimals(params, offset, PAGE_SIZE)
       .then((data) => {
         if (current !== generation.current) return;
-        setAnimals((prev) => [...(prev ?? []), ...data]);
+        setAnimals((prev) => [...prev, ...data]);
         setOffset((prev) => prev + 1);
         setHasMore(data.length === PAGE_SIZE);
       })
@@ -70,16 +79,6 @@ export default function LexiconGrid({
         loadingMore.current = false;
       });
   }, [inView, hasMore, offset, filterKey]);
-
-  if (animals === null) {
-    return (
-      <div className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3 2xl:grid-cols-4" aria-hidden>
-        {Array.from({ length: 9 }, (_, i) => (
-          <SkeletonCard key={i} className="aspect-[4/3.5]" />
-        ))}
-      </div>
-    );
-  }
 
   if (animals.length === 0) {
     return <EmptyState icon={<SearchOff />} title={t("emptyTitle")} description={t("emptyText")} />;

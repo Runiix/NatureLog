@@ -24,6 +24,15 @@ export default async function Footer() {
           </p>
         </div>
         <nav aria-label="Footer" className="flex flex-wrap gap-x-5 gap-y-2">
+          <Link href="/lexiconpage" className={linkClass}>
+            {t("lexicon")}
+          </Link>
+          <Link href="/aboutpage" className={linkClass}>
+            {t("about")}
+          </Link>
+          <Link href="/faqpage" className={linkClass}>
+            {t("faq")}
+          </Link>
           <Link href="/impressum" className={linkClass}>
             {t("imprint")}
           </Link>

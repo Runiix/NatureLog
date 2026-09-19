@@ -1,8 +1,14 @@
 {
-  "name": "Nature Log App",
-  "short_name": "Nature Log",
-  "description": "A Web App for tracking you animal sightings",
+  "name": "NatureLog – Naturtagebuch",
+  "short_name": "NatureLog",
+  "description": "Dein Naturtagebuch: Tiersichtungen festhalten, heimische Arten entdecken und Fotos teilen.",
+  "lang": "de",
   "icons": [
+    {
+      "src": "/icons/icon.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
     {
       "src": "/icons/apple-icon.png",
       "sizes": "180x180",

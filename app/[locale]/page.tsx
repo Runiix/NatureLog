@@ -15,6 +15,16 @@ import Mobile from "./assets/images/Mobile.png";
 import Achievements from "./assets/images/Abzeichen.png";
 import { getUser } from "@/app/[locale]/utils/data";
 import { ButtonLink } from "./components/ui/Button";
+import type { Metadata } from "next";
+import Footer from "./components/general/Footer";
+import { JsonLd } from "./components/general/JsonLd";
+import { LOGO_PATH, SITE_NAME, SITE_URL, absoluteUrl, pageMetadata } from "./utils/seo";
+
+export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
+  const { locale } = await params;
+  const t = await getTranslations({ locale, namespace: "Meta" });
+  return pageMetadata({ locale, path: "/", title: t("title"), description: t("description"), absoluteTitle: true });
+}
 
 // Copy lives in messages/*.json under Landing.features.<id>; only the images
 // are code.
@@ -28,15 +38,40 @@ const FEATURES = [
   { id: "app", src: Mobile },
 ] as const;
 
-export default async function LandingPage() {
+export default async function LandingPage({ params }: { params: Promise<{ locale: string }> }) {
+  const { locale } = await params;
   const supabase = await createClient();
-  const [user, t] = await Promise.all([
+  const [user, t, tMeta] = await Promise.all([
     getUser(supabase),
     getTranslations("Landing"),
+    getTranslations("Meta"),
   ]);
 
   return (
     <div className="w-full bg-canvas font-normal text-fg">
+      <JsonLd
+        data={{
+          "@context": "https://schema.org",
+          "@graph": [
+            {
+              "@type": "Organization",
+              "@id": `${SITE_URL}/#organization`,
+              name: SITE_NAME,
+              url: SITE_URL,
+              logo: absoluteUrl(LOGO_PATH),
+            },
+            {
+              "@type": "WebSite",
+              "@id": `${SITE_URL}/#website`,
+              name: SITE_NAME,
+              url: SITE_URL,
+              description: tMeta("description"),
+              inLanguage: locale,
+              publisher: { "@id": `${SITE_URL}/#organization` },
+            },
+          ],
+        }}
+      />
       <Nav user={user} />
 
       <section className="relative isolate flex min-h-[100svh] items-center justify-center overflow-hidden px-4 pt-16">
@@ -133,6 +168,7 @@ export default async function LandingPage() {
           </ButtonLink>
         </div>
       </section>
+      <Footer />
     </div>
   );
 }
