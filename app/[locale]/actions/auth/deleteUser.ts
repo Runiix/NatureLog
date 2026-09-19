@@ -1,6 +1,8 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
+import { createAdminClient } from "@/utils/supabase/admin";
+import { QUEUE_BUCKET } from "@/utils/moderation/submitImage";
 import { getUser } from "../../utils/data";
 
 export default async function deleteUser() {
@@ -142,6 +144,33 @@ const accessToken = session?.access_token;
 
     if (searchFilesError) {
       console.error("Error deleting search files:", searchFilesError);
+    }
+  }
+
+  // Images waiting for review sit in the private quarantine bucket. The
+  // moderation and lexicon rows cascade away with the account, so their
+  // paths have to be read first; the files need the service role.
+  const [{ data: moderationRows, error: moderationError }, { data: lexiconRows, error: lexiconError }] =
+    await Promise.all([
+      supabase.from("image_moderation").select("queue_paths").eq("user_id", user.id),
+      supabase.from("lexicon_submissions").select("queue_paths").eq("user_id", user.id),
+    ]);
+  const queueQueryError = moderationError ?? lexiconError;
+  if (queueQueryError) {
+    console.error("Error getting queued images:", queueQueryError);
+    return { success: false, error: queueQueryError.message };
+  }
+  const queuePaths = [...(moderationRows ?? []), ...(lexiconRows ?? [])].flatMap(
+    (row) => row.queue_paths,
+  );
+  if (queuePaths.length) {
+    const { error: queueDeleteError } = await createAdminClient()
+      .storage.from(QUEUE_BUCKET)
+      .remove(queuePaths);
+    if (queueDeleteError) {
+      // Abort: once the account is gone the paths can no longer be found.
+      console.error("Error deleting queued images:", queueDeleteError);
+      return { success: false, error: queueDeleteError.message };
     }
   }
 
