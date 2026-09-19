@@ -144,6 +144,11 @@
         "text": "Upload a profile picture, pick a team and show off your favourite photos.",
         "alt": "Profile page with avatar, statistics and photo grid"
       },
+      "achievements": {
+        "title": "Earn achievements",
+        "text": "Collect badges for your sightings, photos and rare finds – and climb from bronze all the way to diamond.",
+        "alt": "Achievements overview with badges, tiers and progress bars"
+      },
       "community": {
         "title": "The community",
         "text": "See which species others have spotted and explore their profiles.",
@@ -261,6 +266,7 @@
     "cancel": "Cancel",
     "avatarAlt": "{name}'s profile picture",
     "changeAvatar": "Change profile picture",
+    "deleteAvatar": "Delete profile picture",
     "photos": "Favourite photos",
     "photosCount": "{count} of {max}",
     "addPhoto": "Add photo",
@@ -298,7 +304,8 @@
       "invalidInstagram": "Please enter an Instagram username or an instagram.com link.",
       "underReview": "Thanks! Your photo will appear once it has been reviewed.",
       "imageRejected": "This photo can't be uploaded because it breaks our content rules.",
-      "withdrawn": "Photo withdrawn"
+      "withdrawn": "Photo withdrawn",
+      "avatarDeleted": "Profile picture deleted"
     },
     "achievements": {
       "title": "Achievements",

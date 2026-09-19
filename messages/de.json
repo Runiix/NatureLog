@@ -234,6 +234,11 @@
         "text": "Lade ein Profilbild hoch, wähle ein Team und zeige deine Lieblingsfotos.",
         "alt": "Profilseite mit Profilbild, Statistiken und Fotoraster"
       },
+      "achievements": {
+        "title": "Sammle Abzeichen",
+        "text": "Verdiene Abzeichen für deine Sichtungen, Fotos und seltenen Funde – und steige von Bronze bis Diamant auf.",
+        "alt": "Abzeichen-Übersicht mit Stufen und Fortschrittsbalken"
+      },
       "community": {
         "title": "Die Community",
         "text": "Sieh dir an, welche Arten andere bereits gesichtet haben, und entdecke ihre Profile.",
@@ -351,6 +356,7 @@
     "cancel": "Abbrechen",
     "avatarAlt": "Profilbild von {name}",
     "changeAvatar": "Profilbild ändern",
+    "deleteAvatar": "Profilbild löschen",
     "photos": "Lieblingsfotos",
     "photosCount": "{count} von {max}",
     "addPhoto": "Foto hinzufügen",
@@ -388,7 +394,8 @@
       "invalidInstagram": "Bitte gib einen Instagram-Nutzernamen oder instagram.com-Link ein.",
       "underReview": "Danke! Dein Foto erscheint, sobald es geprüft wurde.",
       "imageRejected": "Dieses Foto kann nicht hochgeladen werden, weil es gegen unsere Inhaltsregeln verstößt.",
-      "withdrawn": "Foto zurückgezogen"
+      "withdrawn": "Foto zurückgezogen",
+      "avatarDeleted": "Profilbild gelöscht"
     },
     "achievements": {
       "title": "Abzeichen",

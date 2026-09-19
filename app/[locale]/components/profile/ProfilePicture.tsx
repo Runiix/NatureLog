@@ -1,11 +1,12 @@
 "use client";
 
-import { Flag, PhotoCamera, Person } from "@mui/icons-material";
+import { Delete, Flag, PhotoCamera, Person } from "@mui/icons-material";
 import imageCompression from "browser-image-compression";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useRef, useState } from "react";
 import changeProfilePicture from "../../actions/profile/changeProfilePicture";
+import removeProfilePicture from "../../actions/profile/removeProfilePicture";
 import { Button } from "../ui/Button";
 import { Spinner } from "../ui/Spinner";
 import { useToast } from "../ui/Toast";
@@ -31,6 +32,24 @@ export default function ProfilePicture({
   const [hasPicture, setHasPicture] = useState(profilePic && !!profilePicUrl);
   const [uploading, setUploading] = useState(false);
   const [reporting, setReporting] = useState(false);
+
+  async function remove() {
+    setUploading(true);
+    try {
+      const res = await removeProfilePicture();
+      if (res.success) {
+        setHasPicture(false);
+        toast(t("toast.avatarDeleted"));
+      } else {
+        toast(t("toast.error"), "error");
+      }
+    } catch (error) {
+      console.error("Profile picture removal failed:", error);
+      toast(t("toast.error"), "error");
+    } finally {
+      setUploading(false);
+    }
+  }
 
   async function upload(event: React.ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -104,6 +123,18 @@ export default function ProfilePicture({
           >
             <PhotoCamera fontSize="small" />
           </Button>
+          {hasPicture && (
+            <Button
+              variant="secondary"
+              size="icon"
+              onClick={() => void remove()}
+              disabled={uploading}
+              aria-label={t("deleteAvatar")}
+              className="absolute bottom-0 left-0 h-9 w-9 rounded-full shadow-card hover:text-danger"
+            >
+              <Delete fontSize="small" />
+            </Button>
+          )}
           <input
             ref={fileInput}
             type="file"

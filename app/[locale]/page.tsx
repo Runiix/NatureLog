@@ -5,12 +5,14 @@ import Nav from "./components/general/Nav";
 import HomeHero from "./assets/images/HomeHero.webp";
 import { createClient } from "@/utils/supabase/server";
 import LandingInfo from "./components/landing/LandingInfo";
+import { ScrollHint } from "./components/landing/ScrollHint";
 import Lexikon from "./assets/images/Lexikon.png";
 import Sammlung from "./assets/images/Sammlung.png";
 import Profil from "./assets/images/Profil.png";
 import Community from "./assets/images/community.png";
 import Lists from "./assets/images/Listen.png";
 import Mobile from "./assets/images/Mobile.png";
+import Achievements from "./assets/images/Abzeichen.png";
 import { getUser } from "@/app/[locale]/utils/data";
 import { ButtonLink } from "./components/ui/Button";
 
@@ -20,6 +22,7 @@ const FEATURES = [
   { id: "lexicon", src: Lexikon },
   { id: "collection", src: Sammlung },
   { id: "profile", src: Profil },
+  { id: "achievements", src: Achievements },
   { id: "community", src: Community },
   { id: "lists", src: Lists },
   { id: "app", src: Mobile },
@@ -27,7 +30,10 @@ const FEATURES = [
 
 export default async function LandingPage() {
   const supabase = await createClient();
-  const [user, t] = await Promise.all([getUser(supabase), getTranslations("Landing")]);
+  const [user, t] = await Promise.all([
+    getUser(supabase),
+    getTranslations("Landing"),
+  ]);
 
   return (
     <div className="w-full bg-canvas font-normal text-fg">
@@ -54,7 +60,9 @@ export default async function LandingPage() {
           </p>
           <h1 className="text-balance text-4xl font-bold tracking-tight sm:text-6xl">
             {t.rich("title", {
-              brand: (chunks) => <span className="text-green-400">{chunks}</span>,
+              brand: (chunks) => (
+                <span className="text-green-400">{chunks}</span>
+              ),
             })}
           </h1>
           <p className="max-w-xl text-balance text-base text-white/85 sm:text-lg">
@@ -76,13 +84,16 @@ export default async function LandingPage() {
           </div>
         </div>
 
-        <a
-          href="#features"
+        <ScrollHint
+          targetId="features"
           className="absolute bottom-6 left-1/2 flex -translate-x-1/2 flex-col items-center gap-1 rounded-lg px-3 py-1 text-sm text-white/80 hover:text-white focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white"
         >
           {t("scrollHint")}
-          <ArrowDownward fontSize="small" className="motion-safe:animate-bounce" />
-        </a>
+          <ArrowDownward
+            fontSize="small"
+            className="motion-safe:animate-bounce"
+          />
+        </ScrollHint>
       </section>
 
       <section id="features" className="scroll-mt-16 px-4 py-16 sm:py-24">
@@ -91,7 +102,9 @@ export default async function LandingPage() {
             <h2 className="text-balance text-3xl font-semibold tracking-tight sm:text-4xl">
               {t("featuresTitle")}
             </h2>
-            <p className="mt-3 text-balance text-fg-muted sm:text-lg">{t("featuresSubtitle")}</p>
+            <p className="mt-3 text-balance text-fg-muted sm:text-lg">
+              {t("featuresSubtitle")}
+            </p>
           </header>
           <ul className="mt-8 divide-y divide-border-muted">
             {FEATURES.map((feature, index) => (
