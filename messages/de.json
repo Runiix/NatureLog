@@ -713,8 +713,19 @@
     "tabs": {
       "label": "Admin-Bereiche",
       "images": "Fotos",
+      "reports": "Meldungen",
       "lexicon": "Lexikon-Vorschläge",
       "new": "Neues Tier"
+    },
+    "reports": {
+      "title": "Gemeldete Fotos",
+      "empty": "Keine offenen Meldungen.",
+      "count": "{count, plural, one {Einmal gemeldet} other {#-mal gemeldet}}",
+      "noReason": "Kein Grund angegeben",
+      "imageGone": "Foto existiert nicht mehr",
+      "remove": "Foto entfernen",
+      "dismiss": "Verwerfen",
+      "dismissed": "Meldungen verworfen"
     },
     "lexicon": {
       "pendingTitle": "Vorschläge zur Prüfung",

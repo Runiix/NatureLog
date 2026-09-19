@@ -1,19 +1,22 @@
 import { getTranslations } from "next-intl/server";
 import getLexiconQueue from "@/app/[locale]/actions/admin/getLexiconQueue";
 import getModerationQueue from "@/app/[locale]/actions/admin/getModerationQueue";
+import getReports from "@/app/[locale]/actions/admin/getReports";
 import CreateAnimalForm from "@/app/[locale]/components/admin/CreateAnimalForm";
 import LexiconQueue from "@/app/[locale]/components/admin/LexiconQueue";
 import ModerationQueue from "@/app/[locale]/components/admin/ModerationQueue";
+import ReportQueue from "@/app/[locale]/components/admin/ReportQueue";
 import { PageHeader } from "@/app/[locale]/components/ui/PageHeader";
 import { PageShell } from "@/app/[locale]/components/ui/PageShell";
 import { cn } from "@/app/[locale]/utils/cn";
 import { Link } from "@/i18n/navigation";
+import { createAdminClient } from "@/utils/supabase/admin";
 import requireAdmin from "@/utils/supabase/requireAdmin";
 
 // Signed image URLs expire, so the queue is always read fresh.
 export const dynamic = "force-dynamic";
 
-const TABS = ["images", "lexicon", "new"] as const;
+const TABS = ["images", "reports", "lexicon", "new"] as const;
 type Tab = (typeof TABS)[number];
 
 export default async function AdminPage({
@@ -33,20 +36,35 @@ export default async function AdminPage({
     return count ?? 0;
   };
 
-  const [t, imageCount, lexiconCount, content] = await Promise.all([
+  // Reports aren't readable with the user's client, so they're counted as admin.
+  const reportCount = async () => {
+    const { count } = await createAdminClient()
+      .from("reports")
+      .select("id", { count: "exact", head: true });
+    return count ?? 0;
+  };
+
+  const [t, imageCount, reportsCount, lexiconCount, content] = await Promise.all([
     getTranslations("Admin"),
     pendingCount("image_moderation"),
+    reportCount(),
     pendingCount("lexicon_submissions"),
     tab === "images"
       ? getModerationQueue().then(({ pending, recent }) => (
           <ModerationQueue pending={pending} recent={recent} />
         ))
-      : tab === "lexicon"
-        ? getLexiconQueue().then((items) => <LexiconQueue items={items} />)
-        : Promise.resolve(<CreateAnimalForm />),
+      : tab === "reports"
+        ? getReports().then((items) => <ReportQueue items={items} />)
+        : tab === "lexicon"
+          ? getLexiconQueue().then((items) => <LexiconQueue items={items} />)
+          : Promise.resolve(<CreateAnimalForm />),
   ]);
 
-  const counts: Partial<Record<Tab, number>> = { images: imageCount, lexicon: lexiconCount };
+  const counts: Partial<Record<Tab, number>> = {
+    images: imageCount,
+    reports: reportsCount,
+    lexicon: lexiconCount,
+  };
 
   return (
     <PageShell>

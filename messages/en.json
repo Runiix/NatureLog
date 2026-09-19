@@ -713,8 +713,19 @@
     "tabs": {
       "label": "Admin sections",
       "images": "Photos",
+      "reports": "Reports",
       "lexicon": "Lexicon suggestions",
       "new": "New animal"
+    },
+    "reports": {
+      "title": "Reported photos",
+      "empty": "No open reports.",
+      "count": "{count, plural, one {Reported once} other {Reported # times}}",
+      "noReason": "No reason given",
+      "imageGone": "Photo no longer exists",
+      "remove": "Remove photo",
+      "dismiss": "Dismiss",
+      "dismissed": "Reports dismissed"
     },
     "lexicon": {
       "pendingTitle": "Suggestions waiting for review",
