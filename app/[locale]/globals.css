@@ -8,6 +8,94 @@
   }
 }
 
+/*
+ * Lists map pins and clusters. Leaflet renders these from HTML strings
+ * (divIcon), so they are plain classes rather than Tailwind utilities, kept
+ * outside @layer so Tailwind never purges them. --pin-color is set per pin
+ * from the list's animal count.
+ */
+.list-pin-icon {
+  background: none;
+  border: none;
+}
+.list-pin {
+  position: absolute;
+  left: 0;
+  bottom: 8px;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  max-width: 220px;
+  padding: 3px 3px 3px 10px;
+  border-radius: 9999px;
+  background: var(--pin-color);
+  color: #fff;
+  font: 600 12px/1.2 ui-sans-serif, system-ui, sans-serif;
+  white-space: nowrap;
+  box-shadow: 0 2px 6px rgb(0 0 0 / 0.35);
+  cursor: pointer;
+  transition: transform 120ms ease;
+}
+.list-pin::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -7px;
+  transform: translateX(-50%);
+  border: 7px solid transparent;
+  border-bottom: 0;
+  border-top-color: var(--pin-color);
+}
+.list-pin__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.list-pin__count {
+  min-width: 22px;
+  padding: 2px 6px;
+  border-radius: 9999px;
+  background: rgb(255 255 255 / 0.92);
+  color: var(--pin-color);
+  font-weight: 700;
+  text-align: center;
+}
+.list-pin--active {
+  transform: translateX(-50%) scale(1.12);
+  box-shadow:
+    0 0 0 3px #fff,
+    0 0 0 5px var(--pin-color),
+    0 4px 10px rgb(0 0 0 / 0.4);
+}
+.list-cluster-icon {
+  background: none;
+  border: none;
+}
+.list-cluster {
+  display: flex;
+  height: 100%;
+  width: 100%;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  border-radius: 9999px;
+  border: 3px solid rgb(var(--color-accent));
+  background: rgb(var(--color-surface) / 0.95);
+  color: rgb(var(--color-fg));
+  box-shadow: 0 0 0 5px rgb(var(--color-accent) / 0.25), 0 2px 6px rgb(0 0 0 / 0.3);
+  font-family: ui-sans-serif, system-ui, sans-serif;
+  line-height: 1.05;
+  text-align: center;
+}
+.list-cluster__lists {
+  font-size: 15px;
+  font-weight: 700;
+}
+.list-cluster__animals {
+  font-size: 9px;
+  color: rgb(var(--color-fg-muted));
+}
+
 html,
 body {
   overflow-x: hidden;

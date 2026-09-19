@@ -1,38 +1,21 @@
 "use client";
 
-import {
-  MapContainer,
-  TileLayer,
-  Marker,
-  useMapEvents,
-  Popup,
-} from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import { useState } from "react";
 import L, { LatLng } from "leaflet";
-import MarkerClusterGroup from "react-leaflet-cluster";
-import MapPopup from "./MapPopup";
 
-export type MapMarker = {
-  id: string;
-  title: string | null;
-  description: string | null;
-  entry_count: number;
-  lat: number;
-  lng: number;
-  username: string;
-  upvotes: number;
-};
-
+/**
+ * Location picker for the list form: click the map to drop a pin. The public
+ * lists map has its own component (listsmap/ListsMapLeaflet).
+ */
 export default function MapLeaflet({
   onLocationSelect,
-  markers,
   height,
   iconUrl,
   setMarker,
 }: {
   onLocationSelect?: (location: LatLng) => void;
-  markers?: MapMarker[];
   height: string;
   iconUrl: string;
   setMarker: boolean;
@@ -69,16 +52,6 @@ export default function MapLeaflet({
         className="dark:[filter:invert(1)_hue-rotate(180deg)_brightness(0.95)_contrast(0.9)]"
       />
       {setMarker && <LocationPicker />}
-      <MarkerClusterGroup>
-        {markers &&
-          markers.map((marker) => (
-            <Marker key={marker.id} position={[marker.lat, marker.lng]} icon={icon}>
-              <Popup>
-                <MapPopup marker={marker} />
-              </Popup>
-            </Marker>
-          ))}
-      </MarkerClusterGroup>
     </MapContainer>
   );
 }
