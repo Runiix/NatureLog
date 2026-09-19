@@ -14,6 +14,24 @@ Die Supabase CLI wird absichtlich **nicht** als npm-devDependency geführt. Das 
 
 Die lokale Konfiguration liegt weiterhin in `supabase/config.toml`.
 
+## Umgebungsvariablen:
+
+In `.env.local` (lokal) und beim Hoster:
+
+- `NEXT_PUBLIC_SUPABASE_URL`, `NEXT_PUBLIC_SUPABASE_ANON_KEY`
+- `SUPABASE_SERVICE_ROLE_KEY`: nur serverseitig, **ohne** `NEXT_PUBLIC_`-Präfix (Supabase Dashboard → Project Settings → API Keys). Umgeht alle RLS-Policies.
+- `OPENAI_API_KEY`: für die automatische Bildprüfung (`omni-moderation-latest`, kostenlos). Ohne Key landet jedes Upload-Bild in der Admin-Warteschlange und die Bildsuche lehnt alle Bilder ab.
+
+## Bildmoderation und Admins:
+
+Jedes hochgeladene Bild wird serverseitig geprüft (`utils/moderation/`). Unauffällige Bilder gehen direkt online, grenzwertige landen im privaten Bucket `moderation_queue` und warten auf ein Admin, eindeutig unzulässige werden abgelehnt. Admins sehen die Warteschlange unter `/adminpage` (Link im Profil-Menü).
+
+Admin-Rechte werden im Supabase SQL Editor vergeben:
+
+```sql
+insert into public.user_roles (user_id, role) values ('<user-uuid>', 'admin');
+```
+
 ## Seiten:
 
 - Lexikonseite: zeigt alle vorkommenden Wildtiere an (aktuell nur in Deutschland vorkommende Arten, Insekten noch nicht hinzugefügt)

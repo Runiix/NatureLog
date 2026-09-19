@@ -3,6 +3,8 @@
 import requireAuth from "@/utils/supabase/requireAuth";
 import { validateImage } from "@/utils/supabase/imageUpload";
 import { fail, ok } from "@/app/[locale]/utils/result";
+import { checkImage } from "@/utils/moderation/checkImage";
+import { IMAGE_REJECTED } from "@/utils/moderation/submitImage";
 
 /**
  * Stores a photo for reverse image search and returns its public URL (Google
@@ -17,6 +19,11 @@ export default async function uploadSearchImage(formData: FormData) {
 
   const image = await validateImage(formData.get("file"));
   if (!image) return fail<string>("Invalid image");
+
+  // The image is sent to Google and never shown to other users, so there is
+  // no review queue: anything that does not pass the check is refused.
+  const { verdict } = await checkImage(image);
+  if (verdict !== "pass") return fail<string>(IMAGE_REJECTED);
 
   const { data: previous } = await supabase.storage.from("imagesearch").list(user.id);
   const stale = (previous ?? [])

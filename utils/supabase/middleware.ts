@@ -69,6 +69,7 @@ export async function updateSession(request: NextRequest) {
     "/socialpage",
     "/settingspage",
     "/animallistspage",
+    "/adminpage",
   ];
   const authPages = ["/loginpage", "/passwordreset"];
 

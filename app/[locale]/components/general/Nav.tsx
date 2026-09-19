@@ -3,6 +3,7 @@
 import { Link, usePathname } from "@/i18n/navigation";
 import { useEffect, useRef, useState } from "react";
 import {
+  AdminPanelSettings,
   AutoStories,
   Close,
   Collections,
@@ -94,7 +95,13 @@ function SignOutButton() {
 const panel =
   "absolute right-0 top-full mt-2 flex min-w-[14rem] flex-col gap-1 rounded-xl border border-border-muted bg-surface p-2 text-base font-normal text-fg shadow-raised";
 
-export default function Nav({ user }: { user: User | null }) {
+export default function Nav({
+  user,
+  isAdmin = false,
+}: {
+  user: User | null;
+  isAdmin?: boolean;
+}) {
   const t = useTranslations("Navigation");
   const pathname = usePathname();
   const [menuOpen, setMenuOpen] = useState(false);
@@ -135,6 +142,9 @@ export default function Nav({ user }: { user: User | null }) {
     ? [
         { href: `/profilepage/${name}`, label: t("profile"), icon: <Person /> },
         { href: "/settingspage", label: t("settings"), icon: <Settings /> },
+        ...(isAdmin
+          ? [{ href: "/adminpage", label: t("admin"), icon: <AdminPanelSettings /> }]
+          : []),
       ]
     : [];
 

@@ -71,6 +71,7 @@ export default function EditSightingDialog({
     }
     setSaving(true);
     setError(null);
+    let pending = false;
     try {
       if (file) {
         const [thumb, full] = await Promise.all([
@@ -83,7 +84,13 @@ export default function EditSightingDialog({
         formData.append("id", String(animalId));
         if (dateChanged) formData.append("date", date);
         const res = await addCollectionImage(formData);
+        if (res.error === "imageRejected") {
+          setError(t("imageRejected"));
+          setSaving(false);
+          return;
+        }
         if (!res.success) throw new Error(res.error ?? "upload failed");
+        pending = res.pending;
       } else {
         const formData = new FormData();
         formData.append("id", String(animalId));
@@ -91,8 +98,9 @@ export default function EditSightingDialog({
         const res = await addSpottedDate(formData);
         if (!res.success) throw new Error(res.error);
       }
-      toast(t("saved"));
-      onSaved({ photoChanged: file !== null, date: dateChanged ? date : null });
+      toast(pending ? t("underReview") : t("saved"));
+      // A photo waiting for review is not live yet, so the card keeps the old one.
+      onSaved({ photoChanged: file !== null && !pending, date: dateChanged ? date : null });
     } catch (err) {
       console.error("Saving sighting failed:", err);
       setError(t("error"));

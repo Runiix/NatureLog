@@ -7,6 +7,7 @@ import GenusFilter from "@/app/[locale]/components/collection/GenusFilter";
 import { EmptyState } from "@/app/[locale]/components/ui/EmptyState";
 import { PageHeader } from "@/app/[locale]/components/ui/PageHeader";
 import { PageShell } from "@/app/[locale]/components/ui/PageShell";
+import { ScrollToTop } from "@/app/[locale]/components/ui/ScrollToTop";
 import Search from "@/app/[locale]/components/general/Search";
 import ImageExistsFilter from "@/app/[locale]/components/collection/ImageExistsFilter";
 import type { TypedSupabaseClient } from "@/utils/supabase/types";
@@ -134,6 +135,7 @@ export default async function CollectionPage({
         isOwner={isOwner}
         viewerSpotted={viewerSpotted ?? ownerSpotted}
       />
+      <ScrollToTop />
     </PageShell>
   );
 }

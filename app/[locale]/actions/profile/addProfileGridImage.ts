@@ -2,6 +2,7 @@
 
 import requireAuth from "@/utils/supabase/requireAuth";
 import { validateImage } from "@/utils/supabase/imageUpload";
+import { submitModeratedImage } from "@/utils/moderation/submitImage";
 
 const MAX_GRID_IMAGES = 12;
 
@@ -13,53 +14,52 @@ export default async function addProfileGridImage(formData: FormData) {
     validateImage(formData.get("modalFile")),
   ]);
   if (!file || !modalFile) {
-    return { success: false, profileGridFull: false, error: "Invalid image" };
+    return { success: false, pending: false, profileGridFull: false, error: "Invalid image" };
   }
 
-  const { data: existing, error: listError } = await supabase.storage
-    .from("profiles")
-    .list(`${user.id}/ProfileGrid`, { limit: MAX_GRID_IMAGES + 1 });
-  if (listError) {
-    console.error("Error listing profile grid", listError);
-    return { success: false, profileGridFull: false, error: listError.message };
+  // Images waiting for review count towards the cap too, or a user could
+  // queue up any number of them.
+  const [{ data: existing, error: listError }, { count: pendingCount, error: pendingError }] =
+    await Promise.all([
+      supabase.storage
+        .from("profiles")
+        .list(`${user.id}/ProfileGrid`, { limit: MAX_GRID_IMAGES + 1 }),
+      supabase
+        .from("image_moderation")
+        .select("id", { count: "exact", head: true })
+        .match({ user_id: user.id, kind: "profile_grid", status: "pending" })
+        .is("payload->>oldName", null),
+    ]);
+  if (listError || pendingError) {
+    console.error("Error counting profile grid", listError ?? pendingError);
+    return {
+      success: false,
+      pending: false,
+      profileGridFull: false,
+      error: (listError ?? pendingError)!.message,
+    };
   }
-  const imageCount = existing.filter(
-    (object) => object.name !== ".emptyFolderPlaceholder",
-  ).length;
+  const imageCount =
+    existing.filter((object) => object.name !== ".emptyFolderPlaceholder").length +
+    (pendingCount ?? 0);
   if (imageCount >= MAX_GRID_IMAGES) {
-    return { success: false, profileGridFull: true, error: "Grid is full" };
+    return { success: false, pending: false, profileGridFull: true, error: "Grid is full" };
   }
 
-  // The object name is generated here, never taken from the client: the old
-  // client-supplied filename was joined straight into the storage key.
-  const name = `${crypto.randomUUID()}.${file.extension}`;
-
-  const { error: gridError } = await supabase.storage
-    .from("profiles")
-    .upload(`${user.id}/ProfileGrid/${name}`, file.file, {
-      cacheControl: "3600",
-      contentType: file.contentType,
-    });
-  if (gridError) {
-    console.error("Error uploading grid image", gridError);
-    return { success: false, profileGridFull: false, error: gridError.message };
-  }
-
-  const { error: modalError } = await supabase.storage
-    .from("profiles")
-    .upload(`${user.id}/ProfileGridModals/${name}`, modalFile.file, {
-      cacheControl: "3600",
-      contentType: modalFile.contentType,
-    });
-  if (modalError) {
-    console.error("Error uploading grid modal image", modalError);
-    // Don't leave a thumbnail behind that has no full-size counterpart.
-    await supabase.storage.from("profiles").remove([`${user.id}/ProfileGrid/${name}`]);
-    return { success: false, profileGridFull: false, error: modalError.message };
+  const outcome = await submitModeratedImage({
+    kind: "profile_grid",
+    userId: user.id,
+    files: [file, modalFile],
+    checkFile: modalFile,
+    payload: {},
+  });
+  if (!outcome.ok) {
+    return { success: false, pending: false, profileGridFull: false, error: outcome.error };
   }
 
   return {
     success: true,
+    pending: outcome.status === "pending",
     profileGridFull: imageCount + 1 >= MAX_GRID_IMAGES,
     error: null,
   };

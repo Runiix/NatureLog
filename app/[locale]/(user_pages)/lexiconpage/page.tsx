@@ -4,6 +4,7 @@ import LexiconFilterList from "@/app/[locale]/components/lexicon/LexiconFilterLi
 import LexiconGrid from "@/app/[locale]/components/lexicon/LexiconGrid";
 import LexiconSort from "@/app/[locale]/components/lexicon/LexiconSort";
 import { PageHeader } from "@/app/[locale]/components/ui/PageHeader";
+import { ScrollToTop } from "@/app/[locale]/components/ui/ScrollToTop";
 import { getUser } from "@/app/[locale]/utils/data";
 import { createClient } from "@/utils/supabase/server";
 
@@ -24,12 +25,13 @@ export default async function LexiconPage() {
   return (
     <>
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <Search placeholder="searchAnimal" className="sm:w-72" />
+      <div className="flex items-center gap-2 sm:justify-between sm:gap-3">
+        <Search placeholder="searchAnimal" className="min-w-0 flex-1 sm:w-72 sm:flex-none" />
         <LexiconSort />
       </div>
       <LexiconFilterList />
       <LexiconGrid user={user} spottedList={spottedIds} />
+      <ScrollToTop />
     </>
   );
 }

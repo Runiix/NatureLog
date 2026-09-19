@@ -25,9 +25,9 @@ export default async function AnimalBanner({
   const t = await getTranslations("Animal");
 
   return (
-    <div className="relative h-[42svh] min-h-64 w-full overflow-hidden bg-surface-sunken sm:h-[55svh]">
+    <div className="relative h-[42svh] min-h-64 w-full overflow-hidden bg-surface-sunken sm:h-[55svh] lg:h-[65svh] xl:h-[75svh]">
       {image && (
-        <Image src={image} alt={alt} fill priority sizes="100vw" className="object-cover" />
+        <Image src={image} alt={alt} fill priority sizes="100vw" className="object-cover object-[center_30%]" />
       )}
       <div aria-hidden className="absolute inset-0 bg-gradient-to-t from-canvas via-transparent to-black/30" />
       <BackButton className="absolute left-4 top-4 sm:left-8 sm:top-6" />

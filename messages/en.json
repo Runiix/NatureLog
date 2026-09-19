@@ -11,7 +11,8 @@
     "profile": "Profile",
     "collection": "Collection",
     "openMenu": "Open menu",
-    "closeMenu": "Close menu"
+    "closeMenu": "Close menu",
+    "admin": "Admin"
   },
   "Lexicon": {
     "true": "Yes",
@@ -294,7 +295,10 @@
       "gridFull": "You already have {max} favourite photos.",
       "reported": "Thanks – the photo has been reported.",
       "error": "That didn't work. Please try again.",
-      "invalidInstagram": "Please enter an Instagram username or an instagram.com link."
+      "invalidInstagram": "Please enter an Instagram username or an instagram.com link.",
+      "underReview": "Thanks! Your photo will appear once it has been reviewed.",
+      "imageRejected": "This photo can't be uploaded because it breaks our content rules.",
+      "withdrawn": "Photo withdrawn"
     },
     "achievements": {
       "title": "Achievements",
@@ -345,7 +349,10 @@
       "photo": "Added a photo of <animal>{name}</animal>",
       "emptyOwner": "Your sightings will show up here.",
       "emptyVisitor": "{name} has no dated sightings yet."
-    }
+    },
+    "inReview": "In review",
+    "replacementInReview": "New version in review",
+    "withdrawPhoto": "Withdraw photo"
   },
   "General": {
     "searchPlaceholder": "Search…",
@@ -354,6 +361,7 @@
     "searchLabel": "Search",
     "back": "Back",
     "clearSearch": "Clear search",
+    "scrollToTop": "Back to top",
     "close": "Close",
     "skipToContent": "Skip to content"
   },
@@ -497,7 +505,9 @@
       "cancel": "Cancel",
       "saved": "Sighting saved",
       "nothingToSave": "Choose a photo or a date.",
-      "error": "That didn't work. Please try again."
+      "error": "That didn't work. Please try again.",
+      "underReview": "Saved. Your photo will appear once it has been reviewed.",
+      "imageRejected": "This photo can't be uploaded because it breaks our content rules."
     }
   },
   "Home": {
@@ -559,7 +569,8 @@
       "search": "Search with Google Lens",
       "uploaded": "Uploaded – now search.",
       "invalid": "Please choose a JPEG, PNG or WebP photo.",
-      "error": "The upload didn't work."
+      "error": "The upload didn't work.",
+      "rejected": "This photo can't be used because it breaks our content rules."
     },
     "links": {
       "title": "Useful sites"
@@ -635,6 +646,35 @@
       "animals": "Species",
       "users": "People",
       "lists": "Lists"
+    }
+  },
+  "Admin": {
+    "title": "Admin",
+    "subtitle": "Review uploaded photos",
+    "pendingTitle": "Waiting for review",
+    "pendingEmpty": "No photos are waiting for review.",
+    "recentTitle": "Recently approved",
+    "recentEmpty": "No approved photos yet.",
+    "approve": "Approve",
+    "reject": "Reject",
+    "takeDown": "Remove",
+    "uploadedBy": "Uploaded by {name}",
+    "unknownUser": "Unknown user",
+    "decidedAuto": "Checked automatically",
+    "decidedAdmin": "Approved by an admin",
+    "noPreview": "Preview unavailable",
+    "flagged": "Flagged: {categories}",
+    "notChecked": "The automatic check could not run",
+    "kind": {
+      "profile_picture": "Profile picture",
+      "profile_grid": "Profile photo",
+      "collection": "Collection photo"
+    },
+    "toast": {
+      "approved": "Photo approved",
+      "rejected": "Photo rejected",
+      "takenDown": "Photo removed",
+      "error": "That didn't work. Please try again."
     }
   }
 }

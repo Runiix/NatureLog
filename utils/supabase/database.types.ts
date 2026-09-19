@@ -198,6 +198,54 @@ export type Database = {
         }
         Relationships: []
       }
+      image_moderation: {
+        Row: {
+          created_at: string
+          decided_by: string
+          flagged_categories: string[]
+          id: string
+          kind: string
+          live_paths: string[]
+          payload: Json
+          queue_paths: string[]
+          reviewed_at: string | null
+          reviewed_by: string | null
+          scores: Json | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          decided_by: string
+          flagged_categories?: string[]
+          id?: string
+          kind: string
+          live_paths?: string[]
+          payload?: Json
+          queue_paths?: string[]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          scores?: Json | null
+          status: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          decided_by?: string
+          flagged_categories?: string[]
+          id?: string
+          kind?: string
+          live_paths?: string[]
+          payload?: Json
+          queue_paths?: string[]
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          scores?: Json | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       lastimages: {
         Row: {
           created_at: string
@@ -356,6 +404,24 @@ export type Database = {
           },
         ]
       }
+      user_roles: {
+        Row: {
+          created_at: string
+          role: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          role: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          role?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       users: {
         Row: {
           created_at: string
@@ -413,6 +479,7 @@ export type Database = {
         Args: { p_user_id: string }
         Returns: undefined
       }
+      is_admin: { Args: never; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

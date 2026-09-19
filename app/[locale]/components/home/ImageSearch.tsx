@@ -46,7 +46,14 @@ export default function ImageSearch() {
         setPublicUrl(res.data);
         toast(t("uploaded"));
       } else {
-        toast(res.error === "Invalid image" ? t("invalid") : t("error"), "error");
+        toast(
+          res.error === "Invalid image"
+            ? t("invalid")
+            : res.error === "imageRejected"
+              ? t("rejected")
+              : t("error"),
+          "error",
+        );
       }
     } catch {
       toast(t("error"), "error");

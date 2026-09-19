@@ -46,13 +46,18 @@ export default function ProfilePicture({
       const formData = new FormData();
       formData.append("file", compressed);
       const res = await changeProfilePicture(formData);
-      if (res.success) {
+      if (res.success && res.pending) {
+        toast(t("toast.underReview"));
+      } else if (res.success) {
         // A local preview avoids waiting on storage/CDN for the new object.
         setUrl(URL.createObjectURL(compressed));
         setHasPicture(true);
         toast(t("toast.uploaded"));
       } else {
-        toast(t("toast.error"), "error");
+        toast(
+          res.error === "imageRejected" ? t("toast.imageRejected") : t("toast.error"),
+          "error",
+        );
       }
     } catch (error) {
       console.error("Profile picture upload failed:", error);

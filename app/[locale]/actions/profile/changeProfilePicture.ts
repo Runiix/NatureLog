@@ -2,35 +2,22 @@
 
 import requireAuth from "@/utils/supabase/requireAuth";
 import { validateImage } from "@/utils/supabase/imageUpload";
+import { submitModeratedImage } from "@/utils/moderation/submitImage";
 
 export default async function changeProfilePicture(formData: FormData) {
-  const { supabase, user } = await requireAuth();
+  const { user } = await requireAuth();
 
   const image = await validateImage(formData.get("file"));
-  if (!image) return { success: false, error: "Invalid image" };
+  if (!image) return { success: false, pending: false, error: "Invalid image" };
 
-  // One fixed object per user, so upsert covers both first upload and
-  // replacement — no need to trust a client-sent "exists" flag to pick the call.
-  const { error: uploadError } = await supabase.storage
-    .from("profiles")
-    .upload(`${user.id}/ProfilePicture/ProfilePic.jpg`, image.file, {
-      cacheControl: "3600",
-      contentType: image.contentType,
-      upsert: true,
-    });
-  if (uploadError) {
-    console.error("Error uploading profile picture", uploadError);
-    return { success: false, error: uploadError.message };
-  }
+  const outcome = await submitModeratedImage({
+    kind: "profile_picture",
+    userId: user.id,
+    files: [image],
+    checkFile: image,
+    payload: {},
+  });
+  if (!outcome.ok) return { success: false, pending: false, error: outcome.error };
 
-  const { error: profileError } = await supabase
-    .from("profiles")
-    .update({ profile_picture: true })
-    .eq("user_id", user.id);
-  if (profileError) {
-    console.error("Error flagging profile picture", profileError);
-    return { success: false, error: profileError.message };
-  }
-
-  return { success: true, error: null };
+  return { success: true, pending: outcome.status === "pending", error: null };
 }

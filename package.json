@@ -9,7 +9,7 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "typecheck": "tsc --noEmit",
-    "update-types": "supabase gen types typescript --project-id umvtbsrjbvivfkcmvtxk --schema public > utils/supabase/database.types.ts",
+    "update-types": "npx supabase gen types typescript --project-id umvtbsrjbvivfkcmvtxk --schema public > utils/supabase/database.types.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "lint:ci": "eslint . --max-warnings 0"
@@ -34,6 +34,7 @@
     "react-intersection-observer": "^9.10.2",
     "react-leaflet": "5.0.0",
     "react-leaflet-cluster": "4.0.0",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^2.6.1",
     "use-debounce": "^10.0.4"
   },

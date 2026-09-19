@@ -157,6 +157,9 @@ const config: Config = {
   // paths; this makes both resolve the same way as tsconfig's paths.
   moduleNameMapper: {
     "^@/(.*)$": "<rootDir>/$1",
+    // Tests import server modules directly; outside the react-server build
+    // condition the real package throws on import.
+    "^server-only$": "<rootDir>/node_modules/server-only/empty.js",
   },
 
   // Options that will be passed to the testEnvironment

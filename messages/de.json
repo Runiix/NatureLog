@@ -6,6 +6,7 @@
     "searchLabel": "Suchen",
     "back": "Zurück",
     "clearSearch": "Suche leeren",
+    "scrollToTop": "Nach oben",
     "close": "Schließen",
     "skipToContent": "Zum Inhalt springen"
   },
@@ -71,7 +72,8 @@
     "map": "Karte",
     "login": "Anmelden",
     "openMenu": "Menü öffnen",
-    "closeMenu": "Menü schließen"
+    "closeMenu": "Menü schließen",
+    "admin": "Admin"
   },
   "Lexicon": {
     "true": "Ja",
@@ -383,7 +385,10 @@
       "gridFull": "Du hast bereits {max} Lieblingsfotos.",
       "reported": "Danke – das Foto wurde gemeldet.",
       "error": "Das hat nicht geklappt. Bitte versuche es erneut.",
-      "invalidInstagram": "Bitte gib einen Instagram-Nutzernamen oder instagram.com-Link ein."
+      "invalidInstagram": "Bitte gib einen Instagram-Nutzernamen oder instagram.com-Link ein.",
+      "underReview": "Danke! Dein Foto erscheint, sobald es geprüft wurde.",
+      "imageRejected": "Dieses Foto kann nicht hochgeladen werden, weil es gegen unsere Inhaltsregeln verstößt.",
+      "withdrawn": "Foto zurückgezogen"
     },
     "achievements": {
       "title": "Abzeichen",
@@ -434,7 +439,10 @@
       "photo": "Hat ein Foto von <animal>{name}</animal> hinzugefügt",
       "emptyOwner": "Deine Sichtungen erscheinen hier.",
       "emptyVisitor": "{name} hat noch keine datierten Sichtungen."
-    }
+    },
+    "inReview": "In Prüfung",
+    "replacementInReview": "Neue Version in Prüfung",
+    "withdrawPhoto": "Foto zurückziehen"
   },
   "Favorite": {
     "add": "{name} zur Sammlung hinzufügen",
@@ -497,7 +505,9 @@
       "cancel": "Abbrechen",
       "saved": "Sichtung gespeichert",
       "nothingToSave": "Wähle ein Foto oder ein Datum.",
-      "error": "Das hat nicht geklappt. Bitte versuche es erneut."
+      "error": "Das hat nicht geklappt. Bitte versuche es erneut.",
+      "underReview": "Gespeichert. Dein Foto erscheint, sobald es geprüft wurde.",
+      "imageRejected": "Dieses Foto kann nicht hochgeladen werden, weil es gegen unsere Inhaltsregeln verstößt."
     }
   },
   "Home": {
@@ -559,7 +569,8 @@
       "search": "Mit Google Lens suchen",
       "uploaded": "Hochgeladen – jetzt suchen.",
       "invalid": "Bitte ein JPEG-, PNG- oder WebP-Foto wählen.",
-      "error": "Das Hochladen hat nicht geklappt."
+      "error": "Das Hochladen hat nicht geklappt.",
+      "rejected": "Dieses Foto kann nicht verwendet werden, weil es gegen unsere Inhaltsregeln verstößt."
     },
     "links": {
       "title": "Nützliche Seiten"
@@ -635,6 +646,35 @@
       "animals": "Arten",
       "users": "Personen",
       "lists": "Listen"
+    }
+  },
+  "Admin": {
+    "title": "Admin",
+    "subtitle": "Hochgeladene Fotos prüfen",
+    "pendingTitle": "Warten auf Prüfung",
+    "pendingEmpty": "Keine Fotos warten auf eine Prüfung.",
+    "recentTitle": "Zuletzt freigegeben",
+    "recentEmpty": "Noch keine freigegebenen Fotos.",
+    "approve": "Freigeben",
+    "reject": "Ablehnen",
+    "takeDown": "Entfernen",
+    "uploadedBy": "Hochgeladen von {name}",
+    "unknownUser": "Unbekannter Nutzer",
+    "decidedAuto": "Automatisch geprüft",
+    "decidedAdmin": "Von einem Admin freigegeben",
+    "noPreview": "Keine Vorschau verfügbar",
+    "flagged": "Markiert: {categories}",
+    "notChecked": "Die automatische Prüfung konnte nicht laufen",
+    "kind": {
+      "profile_picture": "Profilbild",
+      "profile_grid": "Profilfoto",
+      "collection": "Sammlungsfoto"
+    },
+    "toast": {
+      "approved": "Foto freigegeben",
+      "rejected": "Foto abgelehnt",
+      "takenDown": "Foto entfernt",
+      "error": "Das hat nicht geklappt. Bitte versuche es erneut."
     }
   }
 }
