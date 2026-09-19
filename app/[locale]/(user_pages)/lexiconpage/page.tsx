@@ -1,4 +1,6 @@
+import { AddCircleOutline } from "@mui/icons-material";
 import { getTranslations } from "next-intl/server";
+import { ButtonLink } from "@/app/[locale]/components/ui/Button";
 import Search from "@/app/[locale]/components/general/Search";
 import LexiconFilterList from "@/app/[locale]/components/lexicon/LexiconFilterList";
 import LexiconGrid from "@/app/[locale]/components/lexicon/LexiconGrid";
@@ -24,7 +26,15 @@ export default async function LexiconPage() {
 
   return (
     <>
-      <PageHeader title={t("title")} subtitle={t("subtitle")} />
+      <PageHeader
+        title={t("title")}
+        subtitle={t("subtitle")}
+        actions={
+          <ButtonLink href="/suggestanimalpage" variant="secondary" size="sm" icon={<AddCircleOutline />}>
+            {t("suggestMissing")}
+          </ButtonLink>
+        }
+      />
       <div className="flex items-center gap-2 sm:justify-between sm:gap-3">
         <Search placeholder="searchAnimal" className="min-w-0 flex-1 sm:w-72 sm:flex-none" />
         <LexiconSort />

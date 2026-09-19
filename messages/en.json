@@ -83,7 +83,8 @@
     "emptyTitle": "No animals found",
     "emptyText": "Adjust your search or filters.",
     "loadingMore": "Loading more animals",
-    "imageAlt": "{name}"
+    "imageAlt": "{name}",
+    "suggestMissing": "Suggest missing animal"
   },
   "Settings": {
     "title": "Settings",
@@ -683,7 +684,7 @@
   },
   "Admin": {
     "title": "Admin",
-    "subtitle": "Review uploaded photos",
+    "subtitle": "Review photos and lexicon suggestions",
     "pendingTitle": "Waiting for review",
     "pendingEmpty": "No photos are waiting for review.",
     "recentTitle": "Recently approved",
@@ -708,6 +709,132 @@
       "rejected": "Photo rejected",
       "takenDown": "Photo removed",
       "error": "That didn't work. Please try again."
+    },
+    "tabs": {
+      "label": "Admin sections",
+      "images": "Photos",
+      "lexicon": "Lexicon suggestions",
+      "new": "New animal"
+    },
+    "lexicon": {
+      "pendingTitle": "Suggestions waiting for review",
+      "pendingEmpty": "No lexicon suggestions are waiting.",
+      "suggestedBy": "Suggested by {name}",
+      "current": "Current",
+      "proposed": "Suggested",
+      "photo": "Photo",
+      "noDescription": "No description yet.",
+      "rejectNote": "Note for the user (optional)",
+      "kind": {
+        "description": "New description",
+        "image": "New photo",
+        "new_animal": "New animal"
+      },
+      "toast": {
+        "approved": "Suggestion applied",
+        "rejected": "Suggestion declined",
+        "errorWithReason": "That didn't work: {reason}"
+      }
+    },
+    "createAnimal": {
+      "title": "Add an animal to the lexicon",
+      "submit": "Add animal",
+      "created": "{name} was added to the lexicon",
+      "view": "Open {name}",
+      "errors": {
+        "invalid": "Some details are not valid.",
+        "nameTaken": "The lexicon already has an animal with this name.",
+        "failed": "That didn't work. Please try again."
+      }
+    }
+  },
+  "LexiconSuggest": {
+    "fields": {
+      "common_name": "Common name (German)",
+      "scientific_name": "Scientific name",
+      "category": "Animal group",
+      "taxonomic_order": "Order",
+      "endangerment_status": "Conservation status",
+      "description": "Description",
+      "habitat": "Habitat",
+      "population_estimate": "Population",
+      "presence_time": "Seen in Germany",
+      "sexual_dimorphism": "Sexual dimorphism",
+      "size_from": "Size from",
+      "size_to": "Size to",
+      "colors": "Colours",
+      "similar_animals": "Similar species",
+      "very_rare": "Rare species (vagrant or exceptional sighting)",
+      "image_credit_text": "Photo credit",
+      "image_credit_link": "Credit link (https)",
+      "image_license_text": "Licence",
+      "image_license_link": "Licence link (https)"
+    },
+    "choose": "Please choose",
+    "noOrders": "No orders for this group",
+    "germanHint": "Please write in German, like the rest of the lexicon.",
+    "sizeHint": "In centimetres",
+    "similarHint": "Names separated by commas",
+    "fixErrors": "Please check the highlighted fields.",
+    "unchanged": "The description is unchanged.",
+    "reviewHint": "An admin reviews every suggestion before it appears in the lexicon.",
+    "submit": "Send suggestion",
+    "cancel": "Cancel",
+    "submitted": "Thank you! An admin will review your suggestion.",
+    "errors": {
+      "required": "Required",
+      "tooLong": "Too long",
+      "tooShort": "Please write at least {min} characters",
+      "invalid": "Not a valid value",
+      "sizeOrder": "Must not be smaller than “size from”"
+    },
+    "submitErrors": {
+      "invalid": "Some details are not valid.",
+      "notFound": "This animal no longer exists.",
+      "consentMissing": "Please confirm that this is your own photo.",
+      "nameTaken": "The lexicon already has an animal with this name.",
+      "limitReached": "You already have 10 open suggestions. Please wait until an admin has reviewed them.",
+      "duplicate": "You already have an open suggestion of this kind for this animal.",
+      "failed": "That didn't work. Please try again.",
+      "imageRejected": "This photo can't be used."
+    },
+    "image": {
+      "label": "Photo",
+      "choose": "Choose photo",
+      "change": "Change photo",
+      "remove": "Remove photo",
+      "preview": "Preview of the chosen photo",
+      "missing": "Please choose a photo.",
+      "consent": "This is my own photo. I allow Naturelog to show it in the lexicon under CC BY 4.0, credited with my username."
+    },
+    "dialog": {
+      "open": "Suggest improvement",
+      "title": "Improve “{name}”",
+      "description": "Description",
+      "image": "Photo"
+    },
+    "kind": {
+      "description": "Description",
+      "image": "Photo",
+      "new_animal": "New animal"
+    },
+    "page": {
+      "title": "Suggest a missing animal",
+      "subtitle": "Know a species the lexicon is missing? Tell us about it.",
+      "back": "Lexicon"
+    },
+    "mine": {
+      "title": "My suggestions",
+      "empty": "You haven't suggested anything yet.",
+      "withdraw": "Withdraw",
+      "withdrawn": "Suggestion withdrawn",
+      "error": "That didn't work. Please try again.",
+      "note": "Note from the team: {note}",
+      "status": {
+        "pending": "In review",
+        "approved": "Accepted",
+        "rejected": "Declined"
+      }
     }
   }
 }

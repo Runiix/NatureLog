@@ -270,6 +270,72 @@ export type Database = {
         }
         Relationships: []
       }
+      lexicon_submissions: {
+        Row: {
+          animal_id: number | null
+          created_at: string
+          data: Json
+          flagged_categories: string[]
+          id: string
+          kind: string
+          previous: Json | null
+          queue_paths: string[]
+          review_note: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          scores: Json | null
+          status: string
+          user_id: string
+        }
+        Insert: {
+          animal_id?: number | null
+          created_at?: string
+          data?: Json
+          flagged_categories?: string[]
+          id?: string
+          kind: string
+          previous?: Json | null
+          queue_paths?: string[]
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          scores?: Json | null
+          status?: string
+          user_id?: string
+        }
+        Update: {
+          animal_id?: number | null
+          created_at?: string
+          data?: Json
+          flagged_categories?: string[]
+          id?: string
+          kind?: string
+          previous?: Json | null
+          queue_paths?: string[]
+          review_note?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          scores?: Json | null
+          status?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "lexicon_submissions_animal_id_fkey"
+            columns: ["animal_id"]
+            isOneToOne: false
+            referencedRelation: "animals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "lexicon_submissions_animal_id_fkey"
+            columns: ["animal_id"]
+            isOneToOne: false
+            referencedRelation: "user_spotted_animals"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       listupvotes: {
         Row: {
           created_at: string | null
@@ -480,6 +546,7 @@ export type Database = {
         Returns: undefined
       }
       is_admin: { Args: never; Returns: boolean }
+      lexicon_pending_count: { Args: never; Returns: number }
     }
     Enums: {
       [_ in never]: never

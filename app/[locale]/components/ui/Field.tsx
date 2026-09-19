@@ -31,6 +31,12 @@ export const Textarea = forwardRef<
   );
 });
 
+export const Select = forwardRef<HTMLSelectElement, React.SelectHTMLAttributes<HTMLSelectElement>>(
+  function Select({ className, ...props }, ref) {
+    return <select ref={ref} className={cn(controlStyles, className)} {...props} />;
+  },
+);
+
 type ControlProps = {
   id?: string;
   "aria-invalid"?: boolean;

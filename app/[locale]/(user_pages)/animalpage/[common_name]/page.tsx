@@ -17,6 +17,7 @@ import RecentAnimalImageUploads, {
 } from "@/app/[locale]/components/animals/RecentAnimalImageUploads";
 import FavoriteFunctionality from "@/app/[locale]/components/general/FavoriteFunctionality";
 import ListFunctionality from "@/app/[locale]/components/general/ListFunctionality";
+import SuggestEditDialog from "@/app/[locale]/components/lexicon/SuggestEditDialog";
 import { Card } from "@/app/[locale]/components/ui/Card";
 import { cn } from "@/app/[locale]/utils/cn";
 import { getUser } from "@/app/[locale]/utils/data";
@@ -229,15 +230,22 @@ export default async function AnimalPage({
               )}
             </div>
             {user && (
-              <div className="flex items-center gap-1 rounded-full border border-border-muted p-1">
-                <FavoriteFunctionality
-                  user={user}
-                  id={animal.id}
-                  name={animal.common_name}
-                  spottedList={spottedList}
-                  buttonStyles="h-11 w-11"
+              <div className="flex flex-col items-end gap-2">
+                <div className="flex items-center gap-1 rounded-full border border-border-muted p-1">
+                  <FavoriteFunctionality
+                    user={user}
+                    id={animal.id}
+                    name={animal.common_name}
+                    spottedList={spottedList}
+                    buttonStyles="h-11 w-11"
+                  />
+                  <ListFunctionality user={user} id={animal.id} buttonStyles="h-11 w-11" />
+                </div>
+                <SuggestEditDialog
+                  animalId={animal.id}
+                  animalName={animal.common_name}
+                  currentDescription={animal.description}
                 />
-                <ListFunctionality user={user} id={animal.id} buttonStyles="h-11 w-11" />
               </div>
             )}
           </header>

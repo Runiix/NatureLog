@@ -144,7 +144,8 @@
     "emptyTitle": "Keine Tiere gefunden",
     "emptyText": "Passe Suche oder Filter an.",
     "loadingMore": "Weitere Tiere werden geladen",
-    "imageAlt": "{name}"
+    "imageAlt": "{name}",
+    "suggestMissing": "Fehlendes Tier vorschlagen"
   },
   "Social": {
     "followers": "Follower",
@@ -683,7 +684,7 @@
   },
   "Admin": {
     "title": "Admin",
-    "subtitle": "Hochgeladene Fotos prüfen",
+    "subtitle": "Fotos und Lexikon-Vorschläge prüfen",
     "pendingTitle": "Warten auf Prüfung",
     "pendingEmpty": "Keine Fotos warten auf eine Prüfung.",
     "recentTitle": "Zuletzt freigegeben",
@@ -708,6 +709,132 @@
       "rejected": "Foto abgelehnt",
       "takenDown": "Foto entfernt",
       "error": "Das hat nicht geklappt. Bitte versuche es erneut."
+    },
+    "tabs": {
+      "label": "Admin-Bereiche",
+      "images": "Fotos",
+      "lexicon": "Lexikon-Vorschläge",
+      "new": "Neues Tier"
+    },
+    "lexicon": {
+      "pendingTitle": "Vorschläge zur Prüfung",
+      "pendingEmpty": "Keine Lexikon-Vorschläge offen.",
+      "suggestedBy": "Vorgeschlagen von {name}",
+      "current": "Aktuell",
+      "proposed": "Vorschlag",
+      "photo": "Foto",
+      "noDescription": "Noch keine Beschreibung.",
+      "rejectNote": "Hinweis für den Nutzer (optional)",
+      "kind": {
+        "description": "Neue Beschreibung",
+        "image": "Neues Foto",
+        "new_animal": "Neues Tier"
+      },
+      "toast": {
+        "approved": "Vorschlag übernommen",
+        "rejected": "Vorschlag abgelehnt",
+        "errorWithReason": "Das hat nicht geklappt: {reason}"
+      }
+    },
+    "createAnimal": {
+      "title": "Tier zum Lexikon hinzufügen",
+      "submit": "Tier hinzufügen",
+      "created": "{name} wurde zum Lexikon hinzugefügt",
+      "view": "{name} öffnen",
+      "errors": {
+        "invalid": "Einige Angaben sind ungültig.",
+        "nameTaken": "Im Lexikon gibt es bereits ein Tier mit diesem Namen.",
+        "failed": "Das hat nicht geklappt. Bitte versuche es erneut."
+      }
+    }
+  },
+  "LexiconSuggest": {
+    "fields": {
+      "common_name": "Deutscher Name",
+      "scientific_name": "Wissenschaftlicher Name",
+      "category": "Tiergruppe",
+      "taxonomic_order": "Ordnung",
+      "endangerment_status": "Gefährdungsstatus",
+      "description": "Beschreibung",
+      "habitat": "Lebensraum",
+      "population_estimate": "Bestand",
+      "presence_time": "In Deutschland zu sehen",
+      "sexual_dimorphism": "Geschlechtsdimorphismus",
+      "size_from": "Größe von",
+      "size_to": "Größe bis",
+      "colors": "Farben",
+      "similar_animals": "Ähnliche Arten",
+      "very_rare": "Seltene Art (Irrgast oder Ausnahmeerscheinung)",
+      "image_credit_text": "Fotonachweis",
+      "image_credit_link": "Link zum Nachweis (https)",
+      "image_license_text": "Lizenz",
+      "image_license_link": "Link zur Lizenz (https)"
+    },
+    "choose": "Bitte wählen",
+    "noOrders": "Keine Ordnungen für diese Gruppe",
+    "germanHint": "Bitte auf Deutsch schreiben, wie im restlichen Lexikon.",
+    "sizeHint": "In Zentimetern",
+    "similarHint": "Namen durch Kommas getrennt",
+    "fixErrors": "Bitte prüfe die markierten Felder.",
+    "unchanged": "Die Beschreibung ist unverändert.",
+    "reviewHint": "Jeder Vorschlag wird von einem Admin geprüft, bevor er im Lexikon erscheint.",
+    "submit": "Vorschlag senden",
+    "cancel": "Abbrechen",
+    "submitted": "Danke! Ein Admin prüft deinen Vorschlag.",
+    "errors": {
+      "required": "Pflichtfeld",
+      "tooLong": "Zu lang",
+      "tooShort": "Bitte mindestens {min} Zeichen schreiben",
+      "invalid": "Kein gültiger Wert",
+      "sizeOrder": "Darf nicht kleiner als „Größe von“ sein"
+    },
+    "submitErrors": {
+      "invalid": "Einige Angaben sind ungültig.",
+      "notFound": "Dieses Tier gibt es nicht mehr.",
+      "consentMissing": "Bitte bestätige, dass es dein eigenes Foto ist.",
+      "nameTaken": "Im Lexikon gibt es bereits ein Tier mit diesem Namen.",
+      "limitReached": "Du hast bereits 10 offene Vorschläge. Bitte warte, bis ein Admin sie geprüft hat.",
+      "duplicate": "Du hast für dieses Tier bereits einen offenen Vorschlag dieser Art.",
+      "failed": "Das hat nicht geklappt. Bitte versuche es erneut.",
+      "imageRejected": "Dieses Foto kann nicht verwendet werden."
+    },
+    "image": {
+      "label": "Foto",
+      "choose": "Foto auswählen",
+      "change": "Foto ändern",
+      "remove": "Foto entfernen",
+      "preview": "Vorschau des gewählten Fotos",
+      "missing": "Bitte wähle ein Foto aus.",
+      "consent": "Das ist mein eigenes Foto. Ich erlaube Naturelog, es unter CC BY 4.0 mit meinem Benutzernamen im Lexikon zu zeigen."
+    },
+    "dialog": {
+      "open": "Verbesserung vorschlagen",
+      "title": "„{name}“ verbessern",
+      "description": "Beschreibung",
+      "image": "Foto"
+    },
+    "kind": {
+      "description": "Beschreibung",
+      "image": "Foto",
+      "new_animal": "Neues Tier"
+    },
+    "page": {
+      "title": "Fehlendes Tier vorschlagen",
+      "subtitle": "Du kennst eine Art, die im Lexikon fehlt? Erzähl uns davon.",
+      "back": "Lexikon"
+    },
+    "mine": {
+      "title": "Meine Vorschläge",
+      "empty": "Du hast noch nichts vorgeschlagen.",
+      "withdraw": "Zurückziehen",
+      "withdrawn": "Vorschlag zurückgezogen",
+      "error": "Das hat nicht geklappt. Bitte versuche es erneut.",
+      "note": "Hinweis vom Team: {note}",
+      "status": {
+        "pending": "In Prüfung",
+        "approved": "Angenommen",
+        "rejected": "Abgelehnt"
+      }
     }
   }
 }

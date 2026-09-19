@@ -70,6 +70,7 @@ export async function updateSession(request: NextRequest) {
     "/settingspage",
     "/animallistspage",
     "/adminpage",
+    "/suggestanimalpage",
   ];
   const authPages = ["/loginpage", "/passwordreset"];
 
