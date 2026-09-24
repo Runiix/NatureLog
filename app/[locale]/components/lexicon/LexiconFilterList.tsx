@@ -9,11 +9,16 @@ import {
   FILTER_KEYS,
   GENERA,
   pickAllowed,
+  showsInvertebrates,
 } from "@/app/[locale]/utils/lexiconFilters";
 import { useUrlFilters } from "./useUrlFilters";
 
 /** Active filters as removable chips, plus "reset all". */
-export default function LexiconFilterList() {
+export default function LexiconFilterList({
+  hideInvertebratesByDefault,
+}: {
+  hideInvertebratesByDefault: boolean;
+}) {
   const t = useTranslations("Lexicon");
   const filters = useUrlFilters();
 
@@ -37,6 +42,10 @@ export default function LexiconFilterList() {
       chips.push({ key, value: "true", label });
     }
   }
+  const invertebratesParam = filters.searchParams.get("invertebrates");
+  if (!showsInvertebrates(invertebratesParam, hideInvertebratesByDefault)) {
+    chips.push({ key: "invertebrates", value: "hide", label: t("invertebratesHidden") });
+  }
   const sizeFrom = Number(filters.searchParams.get("sizeFrom")) || null;
   const sizeTo = Number(filters.searchParams.get("sizeTo")) || null;
   if (sizeFrom || sizeTo) {
@@ -48,9 +57,12 @@ export default function LexiconFilterList() {
   }
 
   if (chips.length === 0) return null;
+  // Hidden by the user's setting alone: nothing to reset.
+  const onlyDefault = chips.length === 1 && chips[0].key === "invertebrates" && !invertebratesParam;
 
   const remove = (chip: (typeof chips)[number]) => {
     if (chip.key === "size") filters.set({ sizeFrom: null, sizeTo: null });
+    else if (chip.key === "invertebrates") filters.set({ invertebrates: hideInvertebratesByDefault ? "show" : null });
     else if (chip.value === "true") filters.set({ [chip.key]: null });
     else filters.toggle(chip.key, chip.value);
   };
@@ -73,13 +85,15 @@ export default function LexiconFilterList() {
           </button>
         </span>
       ))}
-      <button
-        type="button"
-        onClick={() => filters.clear(FILTER_KEYS)}
-        className="rounded px-2 text-sm text-fg-muted underline-offset-4 hover:text-fg hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-      >
-        {t("resetFilters")}
-      </button>
+      {!onlyDefault && (
+        <button
+          type="button"
+          onClick={() => filters.clear(FILTER_KEYS)}
+          className="rounded px-2 text-sm text-fg-muted underline-offset-4 hover:text-fg hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
+        >
+          {t("resetFilters")}
+        </button>
+      )}
     </div>
   );
 }

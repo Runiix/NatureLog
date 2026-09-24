@@ -6,6 +6,7 @@ import {
   type ActivityEvent,
 } from "./achievements";
 import { getListStats } from "./animalLists";
+import { isInvertebrate } from "./lexiconFilters";
 
 export type ProfileList = {
   id: string;
@@ -21,7 +22,9 @@ export type ProfileData = {
   favoriteAnimal: string | null;
   instaLink: string | null;
   teamIcon: string | null;
-  animalCount: number;
+  /** Headline count; invertebrates are curated, so they are counted apart. */
+  vertebrateCount: number;
+  invertebrateCount: number;
   listsCount: number;
   lists: ProfileList[];
   achievements: Achievement[];
@@ -140,7 +143,8 @@ export async function getProfileData(
     favoriteAnimal: profile?.favorite_animal || null,
     instaLink: profile?.insta_link ?? null,
     teamIcon: profile?.team_link ?? null,
-    animalCount: sightings.length,
+    vertebrateCount: known.filter((row) => !isInvertebrate(row.animal.category)).length,
+    invertebrateCount: known.filter((row) => isInvertebrate(row.animal.category)).length,
     listsCount,
     lists,
     achievements: computeAchievements({

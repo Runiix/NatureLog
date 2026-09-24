@@ -324,7 +324,7 @@ export default async function AnimalPage({ params }: Props) {
               <h2 className="text-xs font-medium uppercase tracking-wide text-fg-subtle">
                 {t("status")}
               </h2>
-              <p className="text-lg font-semibold">{status && tLex.has(status) ? tLex(status) : status ?? "–"}</p>
+              <p className="text-lg font-semibold">{status ? (tLex.has(status) ? tLex(status) : status) : tLex("noStatus")}</p>
               {statusStep >= 0 && (
                 <div role="img" aria-label={t("statusScale")} className="flex gap-1">
                   {STATUS_SCALE.map((step, i) => (

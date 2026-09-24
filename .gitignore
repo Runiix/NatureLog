@@ -34,3 +34,7 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# invertebrate import: API cache, facts, drafts, images, backups
+/scripts/invertebrates/.cache/
+/scripts/invertebrates/out/

@@ -6,6 +6,7 @@ type Call = [method: string, ...args: unknown[]];
 const calls: Call[] = [];
 let spottedIds: number[] = [];
 let signedIn = true;
+let hideInvertebrates = false;
 
 /** A PostgREST-style builder that records every call and resolves to []. */
 function recorder(table: string) {
@@ -30,6 +31,7 @@ jest.mock("@/utils/supabase/server", () => ({
 }));
 jest.mock("@/app/[locale]/utils/data", () => ({
   getUser: () => Promise.resolve(signedIn ? { id: "viewer" } : null),
+  getHideInvertebrates: (_: unknown, user: unknown) => Promise.resolve(Boolean(user) && hideInvertebrates),
 }));
 
 import getAnimals from "@/app/[locale]/actions/lexicon/getAnimals";
@@ -41,17 +43,18 @@ beforeEach(() => {
   calls.length = 0;
   spottedIds = [];
   signedIn = true;
+  hideInvertebrates = false;
 });
 
 describe("getAnimals sanitises URL filters", () => {
   test("unknown sort columns fall back to the name", async () => {
     await getAnimals({ sortBy: "password_hash" }, 0, 20);
-    expect(animalCalls("order")[0]).toEqual(["common_name", { ascending: true }]);
+    expect(animalCalls("order")[0]).toEqual(["common_name", { ascending: true, nullsFirst: false }]);
   });
 
   test("conservation sort uses the ordinal column", async () => {
     await getAnimals({ sortBy: "endangerment_status", sortOrder: "descending" }, 0, 20);
-    expect(animalCalls("order")[0]).toEqual(["endangerment_order", { ascending: false }]);
+    expect(animalCalls("order")[0]).toEqual(["endangerment_order", { ascending: false, nullsFirst: false }]);
   });
 
   test("colour values cannot inject extra PostgREST conditions", async () => {
@@ -98,5 +101,41 @@ describe("getAnimals sanitises URL filters", () => {
     await getAnimals({ onlySeen: "true" }, 0, 20);
     expect(calls.some(([name]) => name.startsWith("spotted."))).toBe(false);
     expect(animalCalls("in")).toEqual([]);
+  });
+});
+
+describe("getAnimals and the invertebrate switch", () => {
+  const vertebrates = ["Säugetier", "Vogel", "Amphibie", "Reptil"];
+
+  test("shows every group when the user has not hidden invertebrates", async () => {
+    await getAnimals({}, 0, 20);
+    expect(animalCalls("in")).toEqual([]);
+  });
+
+  test("the user's setting hides invertebrates when the URL says nothing", async () => {
+    hideInvertebrates = true;
+    await getAnimals({}, 0, 20);
+    expect(animalCalls("in")).toEqual([["category", vertebrates]]);
+  });
+
+  test("the URL overrides the setting in both directions", async () => {
+    hideInvertebrates = true;
+    await getAnimals({ invertebrates: "show" }, 0, 20);
+    expect(animalCalls("in")).toEqual([]);
+
+    calls.length = 0;
+    hideInvertebrates = false;
+    await getAnimals({ invertebrates: "hide" }, 0, 20);
+    expect(animalCalls("in")).toEqual([["category", vertebrates]]);
+  });
+
+  test("hidden groups are removed from a genus selection", async () => {
+    await getAnimals({ invertebrates: "hide", genus: "Vogel,Insekt" }, 0, 20);
+    expect(animalCalls("in")).toEqual([["category", ["Vogel"]]]);
+
+    calls.length = 0;
+    const result = await getAnimals({ invertebrates: "hide", genus: "Insekt,Arachnoid" }, 0, 20);
+    expect(result).toEqual([]);
+    expect(calls.some(([name]) => name.startsWith("animals."))).toBe(false);
   });
 });

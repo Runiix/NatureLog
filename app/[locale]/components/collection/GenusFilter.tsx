@@ -17,7 +17,7 @@ export default function GenusFilter({
   counts,
   categoryCounts,
 }: {
-  counts: number[];
+  counts: Record<string, number>;
   categoryCounts: { category: string }[];
 }) {
   const t = useTranslations("Collection");
@@ -45,7 +45,7 @@ export default function GenusFilter({
       value: "all",
       label: t("all"),
       spotted: categoryCounts.length,
-      total: counts[6] ?? 0,
+      total: counts.all ?? 0,
     },
     ...filterSpottedAnimals(categoryCounts, counts).map((genus) => ({
       value: genus.value,

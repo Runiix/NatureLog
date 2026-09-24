@@ -145,7 +145,12 @@
     "emptyText": "Passe Suche oder Filter an.",
     "loadingMore": "Weitere Tiere werden geladen",
     "imageAlt": "{name}",
-    "suggestMissing": "Fehlendes Tier vorschlagen"
+    "suggestMissing": "Fehlendes Tier vorschlagen",
+    "Sonstige Wirbellose": "Sonstige Wirbellose",
+    "noStatus": "Keine Angabe",
+    "invertebratesLabel": "Wirbellose anzeigen",
+    "invertebratesHint": "Insekten, Spinnen, Schnecken und Co.",
+    "invertebratesHidden": "Wirbellose ausgeblendet"
   },
   "Social": {
     "followers": "Follower",
@@ -161,7 +166,7 @@
     "unfollow": "{name} entfolgen",
     "followShort": "Folgen",
     "followingShort": "Folge ich",
-    "species": "{count, plural, one {# Art} other {# Arten}}",
+    "species": "{count, plural, one {# Wirbeltier} other {# Wirbeltiere}}",
     "avatarAlt": "Profilbild von {name}",
     "emptySearch": "Niemand gefunden",
     "emptySearchText": "Kein NatureLogger passt zu deiner Suche.",
@@ -207,7 +212,9 @@
     "deleted": "Dein Konto wurde gelöscht.",
     "deleteError": "Das Konto konnte nicht gelöscht werden. Bitte versuche es erneut oder kontaktiere den Support.",
     "saved": "Gespeichert",
-    "error": "Das hat nicht geklappt. Bitte versuche es erneut."
+    "error": "Das hat nicht geklappt. Bitte versuche es erneut.",
+    "hideInvertebrates": "Wirbellose ausblenden",
+    "hideInvertebratesHint": "Insekten, Spinnen und Schnecken sind im Lexikon und in der Tages-Challenge standardmäßig ausgeblendet."
   },
   "Landing": {
     "eyebrow": "Dein Naturtagebuch",
@@ -329,10 +336,11 @@
   },
   "Profile": {
     "stats": {
-      "species": "Arten",
       "lists": "Listen",
       "team": "Team",
-      "favorite": "Lieblingstier"
+      "favorite": "Lieblingstier",
+      "vertebrates": "Wirbeltiere",
+      "invertebrates": "+ {count} Wirbellose"
     },
     "noFavorite": "Noch keins",
     "noTeam": "Kein Team",
@@ -434,7 +442,7 @@
       },
       "allGroups": {
         "name": "Allrounder",
-        "text": "Sichte ein Säugetier, einen Vogel, ein Reptil, eine Amphibie, ein Insekt und ein Spinnentier."
+        "text": "Sichte ein Säugetier, einen Vogel, ein Reptil, eine Amphibie, ein Insekt, ein Spinnentier und ein anderes wirbelloses Tier."
       },
       "listMaker": {
         "name": "Kurator",
@@ -516,6 +524,14 @@
       "error": "Das hat nicht geklappt. Bitte versuche es erneut.",
       "underReview": "Gespeichert. Dein Foto erscheint, sobald es geprüft wurde.",
       "imageRejected": "Dieses Foto kann nicht hochgeladen werden, weil es gegen unsere Inhaltsregeln verstößt."
+    },
+    "sort": {
+      "label": "Sortieren nach",
+      "common_name": "Name",
+      "first_spotted_at": "Sichtungsdatum",
+      "ascending": "Aufsteigend",
+      "descending": "Absteigend",
+      "toggleOrder": "Reihenfolge umkehren"
     }
   },
   "Home": {
@@ -534,7 +550,8 @@
         "reptile": "ein Reptil",
         "amphibian": "eine Amphibie",
         "insect": "ein Insekt",
-        "spider": "eine Spinne"
+        "spider": "eine Spinne",
+        "snail": "eine Schnecke"
       }
     },
     "recent": {
@@ -674,7 +691,7 @@
     "title": "Über NatureLog",
     "subtitle": "Das kostenlose Naturtagebuch für Tierbeobachtungen in Deutschland.",
     "whatTitle": "Was ist NatureLog?",
-    "whatText": "NatureLog ist eine kostenlose Web-App, mit der du deine Tiersichtungen festhältst. Im Tierlexikon findest du {count} heimische Arten – Vögel, Säugetiere, Amphibien, Reptilien, Insekten und Spinnen – mit Steckbrief, Größe, Lebensraum und Gefährdungsstatus. Jede Art, die du in der Natur entdeckst, markierst du als gesehen und lädst dein schönstes Foto dazu hoch. So entsteht nach und nach dein persönliches Naturtagebuch.",
+    "whatText": "NatureLog ist eine kostenlose Web-App, mit der du deine Tiersichtungen festhältst. Im Tierlexikon findest du {count} heimische Arten – Vögel, Säugetiere, Amphibien, Reptilien sowie ausgewählte Insekten, Spinnen und andere Wirbellose – mit Steckbrief, Größe, Lebensraum und Gefährdungsstatus. Jede Art, die du in der Natur entdeckst, markierst du als gesehen und lädst dein schönstes Foto dazu hoch. So entsteht nach und nach dein persönliches Naturtagebuch.",
     "audienceTitle": "Für wen ist NatureLog?",
     "audience": {
       "birders": "Vogelbeobachter, die ihre Artenliste pflegen möchten",
@@ -715,7 +732,7 @@
       },
       "species": {
         "q": "Welche Tiere findet man im Tierlexikon?",
-        "a": "Das Lexikon enthält {count} in Deutschland heimische Arten: Vögel, Säugetiere, Amphibien, Reptilien, Insekten und Spinnen. Zu jeder Art gibt es einen Steckbrief mit Größe, Lebensraum, Gefährdungsstatus, Beobachtungszeit und ähnlichen Arten."
+        "a": "Das Lexikon enthält {count} in Deutschland heimische Arten: Vögel, Säugetiere, Amphibien, Reptilien sowie ausgewählte Insekten, Spinnen und andere Wirbellose. Zu jeder Art gibt es einen Steckbrief mit Größe, Lebensraum, Gefährdungsstatus, Beobachtungszeit und ähnlichen Arten."
       },
       "identify": {
         "q": "Kann ich mit NatureLog ein Tier bestimmen?",
@@ -749,7 +766,7 @@
     "title": "NatureLog – Naturtagebuch & Tierlexikon für deine Tiersichtungen",
     "description": "NatureLog ist dein kostenloses Naturtagebuch: Tiersichtungen festhalten, heimische Arten im Tierlexikon entdecken, Lieblingsfotos sammeln und mit anderen teilen.",
     "lexiconTitle": "Tierlexikon – heimische Tiere in Deutschland entdecken",
-    "lexiconDescription": "Das Tierlexikon von NatureLog: heimische Vögel, Säugetiere, Amphibien, Reptilien und Insekten mit Steckbrief, Größe, Lebensraum und Gefährdungsstatus. Mit Filtern und Suche.",
+    "lexiconDescription": "Das Tierlexikon von NatureLog: heimische Vögel, Säugetiere, Amphibien, Reptilien, Insekten und andere Wirbellose mit Steckbrief, Größe, Lebensraum und Gefährdungsstatus. Mit Filtern und Suche.",
     "animalTitle": "{name} ({scientific}) – Steckbrief, Größe & Lebensraum",
     "animalDescription": "{name} ({scientific}) im Steckbrief: Größe, Lebensraum, Gefährdungsstatus und Fotos aus der NatureLog-Community.",
     "imprintTitle": "Impressum & Datenschutz",

@@ -12,7 +12,10 @@
     "update-types": "npx supabase gen types typescript --project-id umvtbsrjbvivfkcmvtxk --schema public > utils/supabase/database.types.ts",
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
-    "lint:ci": "eslint . --max-warnings 0"
+    "lint:ci": "eslint . --max-warnings 0",
+    "inverts:fetch": "node --env-file=.env.local --import tsx scripts/invertebrates/fetch.ts",
+    "inverts:draft": "node --import tsx scripts/invertebrates/draft.ts",
+    "inverts:import": "node --env-file=.env.local --import tsx scripts/invertebrates/import.ts"
   },
   "dependencies": {
     "@emotion/cache": "^11.14.0",
@@ -54,8 +57,10 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^30.3.0",
     "postcss": "^8",
+    "sharp": "^0.35.4",
     "tailwindcss": "^3.4.1",
     "ts-node": "^10.9.2",
+    "tsx": "^4.23.15",
     "typescript": "^5",
     "typescript-eslint": "^8.70.0"
   },

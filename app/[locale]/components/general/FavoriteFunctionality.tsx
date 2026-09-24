@@ -24,6 +24,7 @@ export default function FavoriteFunctionality({
   name,
   spottedList,
   buttonStyles,
+  onImage = false,
 }: {
   user: User | null;
   id: number;
@@ -31,6 +32,8 @@ export default function FavoriteFunctionality({
   name?: string;
   spottedList: number[];
   buttonStyles?: string;
+  /** Small raised round button for placing on top of a photo. */
+  onImage?: boolean;
 }) {
   const t = useTranslations("Favorite");
   const toast = useToast();
@@ -68,7 +71,7 @@ export default function FavoriteFunctionality({
   return (
     <>
       <Button
-        variant="ghost"
+        variant={onImage ? "secondary" : "ghost"}
         size="icon"
         loading={pending}
         aria-label={label}
@@ -80,7 +83,7 @@ export default function FavoriteFunctionality({
           else void setSpotted(true);
         }}
         className={cn(
-          "h-9 w-9 rounded-full",
+          onImage ? "h-8 w-8 rounded-full shadow-card" : "h-9 w-9 rounded-full",
           isSpotted ? "text-accent-text hover:text-accent-text" : "hover:text-accent-text",
           buttonStyles,
         )}

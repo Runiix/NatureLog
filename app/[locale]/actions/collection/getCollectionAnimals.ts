@@ -4,6 +4,7 @@ import { collectionImageName } from "@/app/[locale]/utils/storagePaths";
 import requireAuth from "@/utils/supabase/requireAuth";
 import { escapeLike } from "@/app/[locale]/utils/escapeLike";
 import { canViewProfile } from "@/app/[locale]/utils/visibility";
+import { parseCollectionSort } from "@/app/[locale]/utils/collectionSort";
 import type { Tables } from "@/utils/supabase/types";
 
 type SpottedAnimalRow = Pick<
@@ -39,6 +40,7 @@ export default async function getCollectionAnimals(
   const params = new URLSearchParams(searchParams);
   const genus = params.get("genus") || "all";
   const noImages = params.get("noImages") === "true";
+  const sort = parseCollectionSort(params);
 
   const from = offset * pageSize;
   const to = (offset + 1) * pageSize - 1;
@@ -60,8 +62,11 @@ export default async function getCollectionAnimals(
       .select("id, common_name, image, first_spotted_at")
       .eq("user_id", ownerId)
       .ilike("common_name", `%${escapeLike(query)}%`)
-      .order("common_name", { ascending: true })
-      .range(from, to);
+      // Undated sightings go last either way.
+      .order(sort.column, { ascending: sort.ascending, nullsFirst: false });
+    // Same-day sightings stay in a stable order across pages.
+    if (sort.column !== "common_name") queryBuilder = queryBuilder.order("common_name", { ascending: true });
+    queryBuilder = queryBuilder.order("id", { ascending: true }).range(from, to);
 
     if (genus !== "all") {
       queryBuilder = queryBuilder.eq("category", genus);

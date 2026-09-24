@@ -15,14 +15,22 @@ const TARGETS = [
   "amphibian",
   "insect",
   "spider",
+  "snail",
 ] as const;
 
-function targetForToday() {
-  const today = new Date().toISOString().slice(0, 10);
-  return TARGETS[seededIndex(`challenge:${today}`, TARGETS.length)];
+type Target = (typeof TARGETS)[number];
+
+const INVERTEBRATE_TARGETS: readonly Target[] = ["insect", "spider", "snail"];
+
+/** The target for a day (`YYYY-MM-DD`); the same for everyone with the same setting. */
+export function targetForDay(day: string, hideInvertebrates: boolean): Target {
+  const targets = hideInvertebrates
+    ? TARGETS.filter((target) => !INVERTEBRATE_TARGETS.includes(target))
+    : TARGETS;
+  return targets[seededIndex(`challenge:${day}`, targets.length)];
 }
 
-export default function DailyChallenge() {
+export default function DailyChallenge({ hideInvertebrates }: { hideInvertebrates: boolean }) {
   const t = useTranslations("Home.challenge");
   // Picked in the browser so the server's clock cannot disagree with the
   // viewer's and produce a hydration mismatch.
@@ -38,7 +46,9 @@ export default function DailyChallenge() {
       </span>
       <h2 className="text-lg font-semibold">{t("title")}</h2>
       {hydrated ? (
-        <p className="text-fg-muted">{t("text", { target: t(`targets.${targetForToday()}`) })}</p>
+        <p className="text-fg-muted">{t("text", {
+            target: t(`targets.${targetForDay(new Date().toISOString().slice(0, 10), hideInvertebrates)}`),
+          })}</p>
       ) : (
         <Skeleton className="h-5 w-3/4" />
       )}

@@ -12,15 +12,23 @@ export default async function SettingsPage() {
   if (!user) redirect("/loginpage");
 
   const [{ data, error }, t] = await Promise.all([
-    supabase.from("profiles").select("is_public").eq("user_id", user.id).maybeSingle(),
+    supabase
+      .from("profiles")
+      .select("is_public, hide_invertebrates")
+      .eq("user_id", user.id)
+      .maybeSingle(),
     getTranslations("Settings"),
   ]);
-  if (error) console.error("Error getting public state", error);
+  if (error) console.error("Error getting settings", error);
 
   return (
     <PageShell width="narrow">
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
-      <SettingsList user={user} isPublic={data?.is_public ?? false} />
+      <SettingsList
+        user={user}
+        isPublic={data?.is_public ?? false}
+        hideInvertebrates={data?.hide_invertebrates ?? false}
+      />
     </PageShell>
   );
 }

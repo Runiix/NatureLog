@@ -70,11 +70,11 @@ describe("computeAchievements", () => {
     expect(result.listMaker).toMatchObject({ earned: true });
   });
 
-  test("all groups needs one sighting in each of the six groups", () => {
+  test("all groups needs one sighting in each of the seven groups", () => {
     const five = ANIMAL_GROUPS.slice(0, 5).map((category) => sighting({ category }));
     expect(byId(five).allGroups).toMatchObject({ earned: false, progress: 5 });
-    const six = ANIMAL_GROUPS.map((category) => sighting({ category }));
-    expect(byId(six).allGroups).toMatchObject({ earned: true });
+    const all = ANIMAL_GROUPS.map((category) => sighting({ category }));
+    expect(byId(all).allGroups).toMatchObject({ earned: true });
     // Unknown or missing categories do not count.
     expect(
       byId([...five, sighting({ category: null }), sighting({ category: "Fisch" })]).allGroups,

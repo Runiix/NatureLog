@@ -9,7 +9,7 @@ import LexiconGrid from "@/app/[locale]/components/lexicon/LexiconGrid";
 import LexiconSort from "@/app/[locale]/components/lexicon/LexiconSort";
 import { PageHeader } from "@/app/[locale]/components/ui/PageHeader";
 import { ScrollToTop } from "@/app/[locale]/components/ui/ScrollToTop";
-import { getUser } from "@/app/[locale]/utils/data";
+import { getHideInvertebrates, getUser } from "@/app/[locale]/utils/data";
 import { pageMetadata } from "@/app/[locale]/utils/seo";
 import { createClient } from "@/utils/supabase/server";
 
@@ -42,6 +42,7 @@ export default async function LexiconPage({ searchParams }: Props) {
     getTranslations("Lexicon"),
     getAnimals(filters, 0, PAGE_SIZE),
   ]);
+  const hideInvertebrates = await getHideInvertebrates(supabase, user);
 
   // The favourite buttons need the viewer's spotted ids; one small query here
   // instead of a browser round-trip after the grid has rendered.
@@ -68,7 +69,7 @@ export default async function LexiconPage({ searchParams }: Props) {
         <Search placeholder="searchAnimal" className="min-w-0 flex-1 sm:w-72 sm:flex-none" />
         <LexiconSort />
       </div>
-      <LexiconFilterList />
+      <LexiconFilterList hideInvertebratesByDefault={hideInvertebrates} />
       <LexiconGrid
         key={filterKey}
         user={user}

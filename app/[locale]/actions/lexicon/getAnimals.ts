@@ -1,13 +1,15 @@
 "use server";
 
 import { createClient } from "@/utils/supabase/server";
-import { getUser } from "@/app/[locale]/utils/data";
+import { getHideInvertebrates, getUser } from "@/app/[locale]/utils/data";
 import { escapeLike } from "@/app/[locale]/utils/escapeLike";
 import {
   ALL_ORDERS,
   COLOR_VALUES,
   ENDANGERMENT,
   GENERA,
+  isInvertebrate,
+  showsInvertebrates,
   SIZE_MAX,
   SIZE_MIN,
   SORT_COLUMNS,
@@ -54,14 +56,26 @@ export default async function getAnimals(
   const onlySeen = params.get("onlySeen") === "true";
   const onlyUnseen = params.get("onlyUnseen") === "true";
   const excludeRares = params.get("excludeRares") === "true";
+  const invertebratesParam = params.get("invertebrates");
 
   const size = Math.min(Math.max(1, Math.trunc(pageSize)), MAX_PAGE_SIZE);
   const from = Math.max(0, Math.trunc(offset)) * size;
   const to = from + size - 1;
 
+  // The user is only needed for the seen filters and the invertebrate default.
+  const user =
+    onlySeen || onlyUnseen || invertebratesParam === null ? await getUser(supabase) : null;
+  const hideByDefault = invertebratesParam === null && (await getHideInvertebrates(supabase, user));
+
+  let groups = genus;
+  if (!showsInvertebrates(invertebratesParam, hideByDefault)) {
+    groups = (genus.length > 0 ? genus : GENERA).filter((group) => !isInvertebrate(group));
+    if (groups.length === 0) return [];
+  }
+
   let query = supabase.from("animals").select("*");
 
-  if (genus.length > 0) query = query.in("category", genus);
+  if (groups.length > 0) query = query.in("category", groups);
   if (order.length > 0) query = query.in("taxonomic_order", order);
   if (endangerment.length > 0) query = query.in("endangerment_status", endangerment);
   if (colors.length > 0) {
@@ -74,7 +88,6 @@ export default async function getAnimals(
   if (search) query = query.ilike("common_name", `%${escapeLike(search)}%`);
 
   if (onlySeen || onlyUnseen) {
-    const user = await getUser(supabase);
     if (user) {
       const { data } = await supabase.from("spotted").select("animal_id").eq("user_id", user.id);
       const ids = (data ?? [])
@@ -90,7 +103,8 @@ export default async function getAnimals(
   }
 
   const sortColumn = sortBy === "endangerment_status" ? "endangerment_order" : sortBy;
-  query = query.order(sortColumn, { ascending });
+  // Animals without a Rote Liste rating go last in both directions.
+  query = query.order(sortColumn, { ascending, nullsFirst: false });
   if (sortColumn !== "common_name") query = query.order("id", { ascending });
 
   const { data, error } = await query.range(from, to);

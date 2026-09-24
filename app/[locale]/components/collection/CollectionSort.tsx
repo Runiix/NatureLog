@@ -1,16 +1,16 @@
 "use client";
 
 import { useTranslations } from "next-intl";
-import { SORT_COLUMNS } from "@/app/[locale]/utils/lexiconFilters";
+import { COLLECTION_SORT_COLUMNS } from "@/app/[locale]/utils/collectionSort";
 import SortControl from "../general/SortControl";
 
-export default function LexiconSort() {
-  const t = useTranslations("Lexicon.sort");
+export default function CollectionSort() {
+  const t = useTranslations("Collection.sort");
   return (
     <SortControl
-      id="lexicon-sort"
+      id="collection-sort"
       defaultColumn="common_name"
-      options={SORT_COLUMNS.map((column) => ({ value: column, label: t(column) }))}
+      options={COLLECTION_SORT_COLUMNS.map((column) => ({ value: column, label: t(column) }))}
       labels={{
         label: t("label"),
         toggleOrder: t("toggleOrder"),

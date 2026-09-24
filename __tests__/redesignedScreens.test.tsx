@@ -103,7 +103,8 @@ describe.each(["de", "en"] as const)("redesigned screens render in %s", (locale)
       locale,
       <ProfileInfos
         displayName="anna"
-        animalCount={42}
+        vertebrateCount={42}
+        invertebrateCount={5}
         listsCount={3}
         teamIcon="https://x.supabase.co/storage/v1/object/public/profile_icons/teams/wolf-portrait.jpg"
         favoriteAnimal={null}
@@ -120,7 +121,8 @@ describe.each(["de", "en"] as const)("redesigned screens render in %s", (locale)
       locale,
       <ProfileInfos
         displayName="ben"
-        animalCount={0}
+        vertebrateCount={0}
+        invertebrateCount={0}
         listsCount={0}
         teamIcon={null}
         favoriteAnimal="Luchs"
@@ -133,8 +135,10 @@ describe.each(["de", "en"] as const)("redesigned screens render in %s", (locale)
   });
 
   test("settings: switch, theme and language controls are exposed", () => {
-    renderIn(locale, <SettingsList user={user} isPublic />);
-    expect(screen.getByRole("switch")).toHaveAttribute("aria-checked", "true");
+    renderIn(locale, <SettingsList user={user} isPublic hideInvertebrates={false} />);
+    const [publicSwitch, invertebrateSwitch] = screen.getAllByRole("switch");
+    expect(publicSwitch).toHaveAttribute("aria-checked", "true");
+    expect(invertebrateSwitch).toHaveAttribute("aria-checked", "false");
     expect(screen.getAllByRole("radiogroup")).toHaveLength(2);
   });
 });

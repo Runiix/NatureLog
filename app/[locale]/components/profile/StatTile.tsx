@@ -14,12 +14,15 @@ const interactive =
 export function StatTile({
   label,
   value,
+  detail,
   href,
   onClick,
   actionLabel,
 }: {
   label: string;
   value: React.ReactNode;
+  /** Small line under the value. */
+  detail?: React.ReactNode;
   href?: string;
   onClick?: () => void;
   /** Accessible name when the tile is a control, e.g. "Change favourite animal". */
@@ -29,6 +32,7 @@ export function StatTile({
     <>
       <span className="text-xs font-medium uppercase tracking-wide text-fg-subtle">{label}</span>
       <span className="w-full truncate text-lg font-semibold tabular-nums text-fg">{value}</span>
+      {detail && <span className="w-full truncate text-xs tabular-nums text-fg-muted">{detail}</span>}
     </>
   );
 

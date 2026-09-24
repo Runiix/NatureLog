@@ -110,10 +110,10 @@ export default defineConfig([
     },
   },
 
-  // Config and build files run in Node, outside the app bundle.
+  // Config, build files and CLI scripts run in Node, outside the app bundle.
   {
     name: "naturelog/config-files",
-    files: ["*.{js,mjs,cjs,ts}", "**/*.config.{js,mjs,cjs,ts}", "i18n/**/*.ts"],
+    files: ["*.{js,mjs,cjs,ts}", "**/*.config.{js,mjs,cjs,ts}", "i18n/**/*.ts", "scripts/**/*.ts"],
     rules: {
       "@typescript-eslint/no-require-imports": "off",
       "no-console": "off",

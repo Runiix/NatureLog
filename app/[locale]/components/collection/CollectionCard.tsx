@@ -80,7 +80,10 @@ export default function CollectionCard({
           </div>
         )}
 
-        <div className="absolute right-2 top-2">
+        {/* Actions sit on the photo, so the name below gets the card's full width. */}
+        <div className="absolute bottom-2 right-2 flex gap-1.5">
+          <FavoriteFunctionality user={user} id={id} name={common_name} spottedList={idList} onImage />
+          <ListFunctionality user={user} id={id} onImage />
           {isOwner ? (
             <Button
               variant="secondary"
@@ -107,31 +110,28 @@ export default function CollectionCard({
         </div>
       </div>
 
-      <div className="flex flex-1 items-start justify-between gap-2 p-3 sm:p-4">
-        <div className="min-w-0">
-          <Link
-            href={`/animalpage/${common_name}`}
-            className="block truncate font-semibold text-fg hover:text-accent-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent rounded sm:text-lg"
-          >
-            {common_name}
-          </Link>
-          {spottedAt && (
-            <p className="mt-0.5 flex items-center gap-1 text-xs text-fg-muted sm:text-sm">
-              <Visibility aria-hidden fontSize="inherit" />
-              {t("spottedOn", {
-                date: format.dateTime(new Date(spottedAt), {
-                  day: "numeric",
-                  month: "long",
-                  year: "numeric",
-                }),
-              })}
-            </p>
-          )}
-        </div>
-        <div className="-mr-1 -mt-1 flex shrink-0 items-center">
-          <FavoriteFunctionality user={user} id={id} name={common_name} spottedList={idList} />
-          <ListFunctionality user={user} id={id} />
-        </div>
+      <div className="flex-1 p-3 sm:p-4">
+        {/* Names are German; lang lets long compounds hyphenate across two lines. */}
+        <Link
+          href={`/animalpage/${common_name}`}
+          lang="de"
+          title={common_name}
+          className="line-clamp-2 hyphens-auto break-words rounded font-semibold text-fg hover:text-accent-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent sm:text-lg"
+        >
+          {common_name}
+        </Link>
+        {spottedAt && (
+          <p className="mt-0.5 flex items-center gap-1 text-xs text-fg-muted sm:text-sm">
+            <Visibility aria-hidden fontSize="inherit" />
+            {t("spottedOn", {
+              date: format.dateTime(new Date(spottedAt), {
+                day: "2-digit",
+                month: "2-digit",
+                year: "numeric",
+              }),
+            })}
+          </p>
+        )}
       </div>
 
       {dialog === "photo" && (

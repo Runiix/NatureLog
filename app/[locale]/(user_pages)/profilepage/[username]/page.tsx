@@ -77,7 +77,8 @@ export default async function ProfilePage({
           />
           <ProfileInfos
             displayName={target.displayName}
-            animalCount={profile.animalCount}
+            vertebrateCount={profile.vertebrateCount}
+            invertebrateCount={profile.invertebrateCount}
             listsCount={profile.listsCount}
             teamIcon={profile.teamIcon}
             favoriteAnimal={profile.favoriteAnimal}

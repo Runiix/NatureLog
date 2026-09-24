@@ -369,36 +369,42 @@ export type Database = {
         Row: {
           created_at: string
           favorite_animal: string | null
+          hide_invertebrates: boolean
           id: number
           insta_link: string | null
           is_public: boolean
           profile_picture: boolean | null
           region: string | null
           spotted_count: number | null
+          spotted_invertebrate_count: number
           team_link: string | null
           user_id: string | null
         }
         Insert: {
           created_at?: string
           favorite_animal?: string | null
+          hide_invertebrates?: boolean
           id?: number
           insta_link?: string | null
           is_public?: boolean
           profile_picture?: boolean | null
           region?: string | null
           spotted_count?: number | null
+          spotted_invertebrate_count?: number
           team_link?: string | null
           user_id?: string | null
         }
         Update: {
           created_at?: string
           favorite_animal?: string | null
+          hide_invertebrates?: boolean
           id?: number
           insta_link?: string | null
           is_public?: boolean
           profile_picture?: boolean | null
           region?: string | null
           spotted_count?: number | null
+          spotted_invertebrate_count?: number
           team_link?: string | null
           user_id?: string | null
         }
@@ -537,16 +543,12 @@ export type Database = {
       }
     }
     Functions: {
-      decrement_spotted_count: {
-        Args: { p_user_id: string }
-        Returns: undefined
-      }
-      increment_spotted_count: {
-        Args: { p_user_id: string }
-        Returns: undefined
-      }
       is_admin: { Args: never; Returns: boolean }
       lexicon_pending_count: { Args: never; Returns: number }
+      refresh_spotted_counts: {
+        Args: { p_user_id: string }
+        Returns: undefined
+      }
     }
     Enums: {
       [_ in never]: never

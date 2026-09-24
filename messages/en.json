@@ -84,7 +84,12 @@
     "emptyText": "Adjust your search or filters.",
     "loadingMore": "Loading more animals",
     "imageAlt": "{name}",
-    "suggestMissing": "Suggest missing animal"
+    "suggestMissing": "Suggest missing animal",
+    "Sonstige Wirbellose": "Other invertebrates",
+    "noStatus": "Not assessed",
+    "invertebratesLabel": "Show invertebrates",
+    "invertebratesHint": "Insects, spiders, snails and more",
+    "invertebratesHidden": "Invertebrates hidden"
   },
   "Settings": {
     "title": "Settings",
@@ -117,7 +122,9 @@
     "deleted": "Your account has been deleted.",
     "deleteError": "The account could not be deleted. Please try again or contact support.",
     "saved": "Saved",
-    "error": "That didn't work. Please try again."
+    "error": "That didn't work. Please try again.",
+    "hideInvertebrates": "Hide invertebrates",
+    "hideInvertebratesHint": "Insects, spiders and snails are hidden by default in the lexicon and the daily challenge."
   },
   "Landing": {
     "eyebrow": "Your nature journal",
@@ -239,10 +246,11 @@
   },
   "Profile": {
     "stats": {
-      "species": "Species",
       "lists": "Lists",
       "team": "Team",
-      "favorite": "Favourite animal"
+      "favorite": "Favourite animal",
+      "vertebrates": "Vertebrates",
+      "invertebrates": "+ {count} invertebrates"
     },
     "noFavorite": "None yet",
     "noTeam": "No team",
@@ -344,7 +352,7 @@
       },
       "allGroups": {
         "name": "All-rounder",
-        "text": "Spot a mammal, bird, reptile, amphibian, insect and arachnid."
+        "text": "Spot a mammal, bird, reptile, amphibian, insect, arachnid and another invertebrate."
       },
       "listMaker": {
         "name": "Curator",
@@ -437,7 +445,7 @@
     "unfollow": "Unfollow {name}",
     "followShort": "Follow",
     "followingShort": "Following",
-    "species": "{count, plural, one {# species} other {# species}}",
+    "species": "{count, plural, one {# vertebrate} other {# vertebrates}}",
     "avatarAlt": "{name}'s profile picture",
     "emptySearch": "No one found",
     "emptySearchText": "No NatureLogger matches your search.",
@@ -516,6 +524,14 @@
       "error": "That didn't work. Please try again.",
       "underReview": "Saved. Your photo will appear once it has been reviewed.",
       "imageRejected": "This photo can't be uploaded because it breaks our content rules."
+    },
+    "sort": {
+      "label": "Sort by",
+      "common_name": "Name",
+      "first_spotted_at": "Date spotted",
+      "ascending": "Ascending",
+      "descending": "Descending",
+      "toggleOrder": "Reverse order"
     }
   },
   "Home": {
@@ -534,7 +550,8 @@
         "reptile": "a reptile",
         "amphibian": "an amphibian",
         "insect": "an insect",
-        "spider": "a spider"
+        "spider": "a spider",
+        "snail": "a snail"
       }
     },
     "recent": {
@@ -674,7 +691,7 @@
     "title": "About NatureLog",
     "subtitle": "The free nature journal for wildlife observations in Germany.",
     "whatTitle": "What is NatureLog?",
-    "whatText": "NatureLog is a free web app for recording your wildlife sightings. The lexicon covers {count} species native to Germany – birds, mammals, amphibians, reptiles, insects and spiders – with profile, size, habitat and conservation status. Mark every species you spot in the wild as seen and add your best photo of it. Step by step, that becomes your personal nature journal.",
+    "whatText": "NatureLog is a free web app for recording your wildlife sightings. The lexicon covers {count} species native to Germany – birds, mammals, amphibians, reptiles and a selection of insects, spiders and other invertebrates – with profile, size, habitat and conservation status. Mark every species you spot in the wild as seen and add your best photo of it. Step by step, that becomes your personal nature journal.",
     "audienceTitle": "Who is NatureLog for?",
     "audience": {
       "birders": "Birdwatchers who keep a species list",
@@ -715,7 +732,7 @@
       },
       "species": {
         "q": "Which animals are in the lexicon?",
-        "a": "The lexicon contains {count} species native to Germany: birds, mammals, amphibians, reptiles, insects and spiders. Each species has a profile with size, habitat, conservation status, when to see it and similar species."
+        "a": "The lexicon contains {count} species native to Germany: birds, mammals, amphibians, reptiles and a selection of insects, spiders and other invertebrates. Each species has a profile with size, habitat, conservation status, when to see it and similar species."
       },
       "identify": {
         "q": "Can NatureLog help me identify an animal?",
@@ -749,7 +766,7 @@
     "title": "NatureLog – nature journal & wildlife lexicon for your sightings",
     "description": "NatureLog is your free nature journal: record wildlife sightings, explore native species in the lexicon, collect your favourite photos and share them with others.",
     "lexiconTitle": "Wildlife lexicon – discover native animals in Germany",
-    "lexiconDescription": "The NatureLog wildlife lexicon: native birds, mammals, amphibians, reptiles and insects with profile, size, habitat and conservation status. With filters and search.",
+    "lexiconDescription": "The NatureLog wildlife lexicon: native birds, mammals, amphibians, reptiles, insects and other invertebrates with profile, size, habitat and conservation status. With filters and search.",
     "animalTitle": "{name} ({scientific}) – profile, size & habitat",
     "animalDescription": "{name} ({scientific}) at a glance: size, habitat, conservation status and photos from the NatureLog community.",
     "imprintTitle": "Imprint & privacy",

@@ -1,6 +1,6 @@
+import { GENERA } from "@/app/[locale]/utils/lexiconFilters";
 import type { MapAnimal, MapAnimals, MapMarker } from "./types";
 
-export const CATEGORIES = ["Säugetier", "Vogel", "Reptil", "Amphibie", "Insekt", "Arachnoid"] as const;
 export const MIN_ENTRY_OPTIONS = [25, 50, 100, 150, 200, 250] as const;
 export const MIN_UPVOTE_OPTIONS = [1, 5, 10] as const;
 export const SINCE_OPTIONS = ["all", "30d", "1y"] as const;
@@ -37,7 +37,7 @@ export function parseFilters(params: URLSearchParams): MapFilters {
   return {
     q: (params.get("q") ?? "").slice(0, MAX_QUERY_LENGTH),
     animal: Number.isInteger(animal) && animal > 0 ? animal : null,
-    category: category && (CATEGORIES as readonly string[]).includes(category) ? category : null,
+    category: category && (GENERA as readonly string[]).includes(category) ? category : null,
     minEntries: (MIN_ENTRY_OPTIONS as readonly number[]).includes(minEntries) ? minEntries : 0,
     minUpvotes: (MIN_UPVOTE_OPTIONS as readonly number[]).includes(minUpvotes) ? minUpvotes : 0,
     since: (SINCE_OPTIONS as readonly string[]).includes(since ?? "") ? (since as Since) : "all",

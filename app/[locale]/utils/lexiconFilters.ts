@@ -5,7 +5,30 @@
  * Values are the literal strings stored in the `animals` table.
  */
 
-export const GENERA = ["Säugetier", "Vogel", "Amphibie", "Reptil", "Insekt", "Arachnoid"] as const;
+export const GENERA = [
+  "Säugetier",
+  "Vogel",
+  "Amphibie",
+  "Reptil",
+  "Insekt",
+  "Arachnoid",
+  "Sonstige Wirbellose",
+] as const;
+
+/** Groups behind the "Wirbellose" switch; they are counted apart from vertebrates. */
+export const INVERTEBRATE_GROUPS: readonly string[] = ["Insekt", "Arachnoid", "Sonstige Wirbellose"];
+export const VERTEBRATE_GROUPS: readonly string[] = GENERA.filter((genus) => !INVERTEBRATE_GROUPS.includes(genus));
+
+export const isInvertebrate = (category: string | null | undefined) =>
+  category != null && INVERTEBRATE_GROUPS.includes(category);
+
+/**
+ * The "Wirbellose anzeigen" switch. The URL holds `show` or `hide` only when
+ * it differs from the user's setting; without it the setting decides.
+ */
+export function showsInvertebrates(value: string | null, hideByDefault: boolean) {
+  return value === "show" || (value !== "hide" && !hideByDefault);
+}
 
 export const ORDERS_BY_GENUS: Record<string, readonly string[]> = {
   Säugetier: [
@@ -45,6 +68,31 @@ export const ORDERS_BY_GENUS: Record<string, readonly string[]> = {
   ],
   Amphibie: ["Schwanzlurche (Caudata)", "Froschlurche (Anura)"],
   Reptil: ["Testudines", "Sauria", "Serpentes"],
+  Insekt: [
+    "Schmetterlinge (Lepidoptera)",
+    "Käfer (Coleoptera)",
+    "Libellen (Odonata)",
+    "Hautflügler (Hymenoptera)",
+    "Heuschrecken (Orthoptera)",
+    "Schnabelkerfe (Hemiptera)",
+    "Zweiflügler (Diptera)",
+    "Netzflügler (Neuroptera)",
+    "Ohrwürmer (Dermaptera)",
+  ],
+  Arachnoid: [
+    "Webspinnen (Araneae)",
+    "Weberknechte (Opiliones)",
+    "Zecken (Ixodida)",
+    "Pseudoskorpione (Pseudoscorpiones)",
+  ],
+  "Sonstige Wirbellose": [
+    "Landlungenschnecken (Stylommatophora)",
+    "Asseln (Isopoda)",
+    "Doppelfüßer (Diplopoda)",
+    "Hundertfüßer (Chilopoda)",
+    "Zehnfußkrebse (Decapoda)",
+    "Wenigborster (Oligochaeta)",
+  ],
 };
 
 export const ALL_ORDERS = Object.values(ORDERS_BY_GENUS).flat();
@@ -91,6 +139,7 @@ export const FILTER_KEYS = [
   "onlySeen",
   "onlyUnseen",
   "excludeRares",
+  "invertebrates",
 ] as const;
 
 /** Splits a comma-separated URL value and keeps only allowed entries. */
@@ -113,5 +162,6 @@ export function countActiveFilters(params: URLSearchParams): number {
   );
   const flags = FLAG_KEYS.filter((key) => params.get(key) === "true").length;
   const size = params.has("sizeFrom") || params.has("sizeTo") ? 1 : 0;
-  return values + flags + size;
+  const invertebrates = ["show", "hide"].includes(params.get("invertebrates") ?? "") ? 1 : 0;
+  return values + flags + size + invertebrates;
 }

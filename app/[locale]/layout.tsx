@@ -31,6 +31,9 @@ export async function generateMetadata({ params }: Pick<Props, "params">): Promi
     description: t("description"),
     applicationName: SITE_NAME,
     manifest: "/manifest.json",
+    // Ownership proof for the Google Search Console property. Google re-checks
+    // it now and then, so the tag has to stay.
+    verification: { google: "nNiNlSqoBv1vhlzxO2zam-iyN2z0cVYHQ_X76RlDurQ" },
     // Without these Google finds no favicon and shows a generic globe.
     icons: {
       icon: [

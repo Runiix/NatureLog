@@ -6,6 +6,7 @@ import {
   COLORS,
   ENDANGERMENT,
   GENERA,
+  isInvertebrate,
   ORDERS_BY_GENUS,
 } from "@/app/[locale]/utils/lexiconFilters";
 import {
@@ -55,6 +56,8 @@ export default function AnimalFieldsForm({
   );
 
   const orders = ORDERS_BY_GENUS[value.category];
+  // Most invertebrates have no Rote Liste rating.
+  const statusOptional = isInvertebrate(value.category);
   const label = (raw: string) => (tLex.has(raw) ? tLex(raw) : raw);
 
   return (
@@ -102,13 +105,17 @@ export default function AnimalFieldsForm({
           </Select>
         </Field>
 
-        <Field label={t("fields.endangerment_status")} error={error("endangerment_status")} required>
+        <Field
+          label={t("fields.endangerment_status")}
+          error={error("endangerment_status")}
+          required={!statusOptional}
+        >
           <Select
             value={value.endangerment_status}
             onChange={(event) => set("endangerment_status", event.target.value)}
             disabled={disabled}
           >
-            <option value="">{t("choose")}</option>
+            <option value="">{statusOptional ? tLex("noStatus") : t("choose")}</option>
             {ENDANGERMENT.map((status) => (
               <option key={status} value={status}>
                 {label(status)}

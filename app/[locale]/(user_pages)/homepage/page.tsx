@@ -14,7 +14,7 @@ import UseFullLinks from "@/app/[locale]/components/home/UseFullLinks";
 import FollowFeed from "@/app/[locale]/components/social/FollowFeed";
 import { Card, CardTitle } from "@/app/[locale]/components/ui/Card";
 import { PageShell } from "@/app/[locale]/components/ui/PageShell";
-import { getUser } from "@/app/[locale]/utils/data";
+import { getHideInvertebrates, getUser } from "@/app/[locale]/utils/data";
 import { seededIndex } from "@/app/[locale]/utils/seededIndex";
 import { createClient } from "@/utils/supabase/server";
 import type { Tables, TypedSupabaseClient } from "@/utils/supabase/types";
@@ -73,11 +73,12 @@ export default async function HomePage() {
   if (!user) redirect("/loginpage");
   const name = user.user_metadata.displayName as string;
 
-  const [t, featured, recent, stats] = await Promise.all([
+  const [t, featured, recent, stats, hideInvertebrates] = await Promise.all([
     getTranslations("Home"),
     getFeaturedAnimals(supabase),
     getLastSpottedAnimals(),
     getSpottingStats(supabase, user.id),
+    getHideInvertebrates(supabase, user),
   ]);
 
   return (
@@ -102,7 +103,7 @@ export default async function HomePage() {
             </div>
           )}
           <Card className="md:col-span-2">
-            <DailyChallenge />
+            <DailyChallenge hideInvertebrates={hideInvertebrates} />
           </Card>
 
           <Card className="flex flex-col gap-3 md:col-span-3">

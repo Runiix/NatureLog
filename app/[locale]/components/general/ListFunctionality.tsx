@@ -18,10 +18,13 @@ export default function ListFunctionality({
   user,
   id,
   buttonStyles,
+  onImage = false,
 }: {
   user: User;
   id: number;
   buttonStyles?: string;
+  /** Small raised round button for placing on top of a photo. */
+  onImage?: boolean;
 }) {
   const t = useTranslations("ListPicker");
   const toast = useToast();
@@ -56,11 +59,11 @@ export default function ListFunctionality({
   return (
     <>
       <Button
-        variant="ghost"
+        variant={onImage ? "secondary" : "ghost"}
         size="icon"
         onClick={(event) => void openPicker(event)}
         aria-label={t("open")}
-        className={cn("h-9 w-9 rounded-full", buttonStyles)}
+        className={cn(onImage ? "h-8 w-8 rounded-full shadow-card" : "h-9 w-9 rounded-full", buttonStyles)}
       >
         <PlaylistAdd />
       </Button>

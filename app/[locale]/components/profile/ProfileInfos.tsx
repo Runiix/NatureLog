@@ -29,7 +29,8 @@ import { StatTile } from "./StatTile";
  */
 export default function ProfileInfos({
   displayName,
-  animalCount,
+  vertebrateCount,
+  invertebrateCount,
   listsCount,
   teamIcon,
   favoriteAnimal,
@@ -37,7 +38,8 @@ export default function ProfileInfos({
   instaLink,
 }: {
   displayName: string;
-  animalCount: number;
+  vertebrateCount: number;
+  invertebrateCount: number;
   listsCount: number;
   teamIcon: string | null;
   favoriteAnimal: string | null;
@@ -96,8 +98,9 @@ export default function ProfileInfos({
 
       <div className="grid grid-cols-2 gap-3 lg:grid-cols-4">
         <StatTile
-          label={t("stats.species")}
-          value={animalCount}
+          label={t("stats.vertebrates")}
+          value={vertebrateCount}
+          detail={invertebrateCount > 0 ? t("stats.invertebrates", { count: invertebrateCount }) : undefined}
           href={`/collectionpage/${displayName}`}
         />
         <StatTile

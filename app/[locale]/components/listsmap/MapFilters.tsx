@@ -4,10 +4,10 @@ import { Close, ExpandMore, Search, Tune } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
 import { useEffect, useId, useMemo, useState } from "react";
 import { cn } from "@/app/[locale]/utils/cn";
+import { GENERA } from "@/app/[locale]/utils/lexiconFilters";
 import Modal from "../general/Modal";
 import { Button } from "../ui/Button";
 import {
-  CATEGORIES,
   activeFilterCount,
   isDefaultFilters,
   MIN_ENTRY_OPTIONS,
@@ -296,7 +296,7 @@ function FilterFields({ filters, onChange, onReset, animalChoices }: FilterProps
           onChange={(value) => onChange({ category: value || null })}
           options={[
             { value: "", label: t("allCategories") },
-            ...CATEGORIES.map((category) => ({ value: category, label: tLex(category) })),
+            ...GENERA.map((category) => ({ value: category, label: tLex(category) })),
           ]}
         />
         <FilterSelect

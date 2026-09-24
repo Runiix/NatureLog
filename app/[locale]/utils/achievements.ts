@@ -53,7 +53,7 @@ export type SingleAchievement = {
 
 export type Achievement = TieredAchievement | SingleAchievement;
 
-/** The six animal groups in the lexicon (values of animals.category). */
+/** The seven animal groups in the lexicon (values of animals.category). */
 export const ANIMAL_GROUPS: readonly string[] = GENERA;
 const ENDANGERED = new Set(["Stark gefährdet", "Vom Aussterben bedroht"]);
 

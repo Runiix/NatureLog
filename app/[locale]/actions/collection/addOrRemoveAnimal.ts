@@ -16,9 +16,8 @@ function revalidateSpottedPages() {
  * `isSpotted` is the state the client currently shows; the action sets the
  * opposite. It is idempotent against the database: adding an animal already
  * collected, or removing one that is not, changes nothing — so a double click
- * no longer writes two rows, and the denormalised spotted_count is only
- * touched when a row really changed. It used to increment even when the
- * insert failed, and revalidated whatever path the client sent.
+ * no longer writes two rows. The profile's sighting counts are kept by a
+ * database trigger on `spotted`.
  */
 export async function addOrRemoveAnimals(formData: FormData) {
   const { supabase, user } = await requireAuth();
@@ -30,20 +29,13 @@ export async function addOrRemoveAnimals(formData: FormData) {
   const shouldBeSpotted = formData.get("isSpotted") !== "true";
 
   if (!shouldBeSpotted) {
-    const { data: removed, error } = await supabase
+    const { error } = await supabase
       .from("spotted")
       .delete()
-      .match({ user_id: user.id, animal_id: animalId })
-      .select("id");
+      .match({ user_id: user.id, animal_id: animalId });
     if (error) {
       console.error("Error removing animal", error);
       return { success: false as const, error: error.message };
-    }
-    if (removed.length > 0) {
-      const { error: rpcError } = await supabase.rpc("decrement_spotted_count", {
-        p_user_id: user.id,
-      });
-      if (rpcError) console.error("Error decrementing spotted count", rpcError);
     }
   } else {
     const { data: existing, error: readError } = await supabase
@@ -63,10 +55,6 @@ export async function addOrRemoveAnimals(formData: FormData) {
         console.error("Error inserting animal", error);
         return { success: false as const, error: error.message };
       }
-      const { error: rpcError } = await supabase.rpc("increment_spotted_count", {
-        p_user_id: user.id,
-      });
-      if (rpcError) console.error("Error incrementing spotted count", rpcError);
     }
   }
 

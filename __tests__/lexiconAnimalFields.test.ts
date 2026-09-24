@@ -70,7 +70,7 @@ describe("parseAnimalFields", () => {
     });
   });
 
-  test("requires an order from the group's list, and drops it for groups without one", () => {
+  test("requires an order from the group's list", () => {
     expect(parseAnimalFields({ ...valid, taxonomic_order: "" })).toMatchObject({
       ok: false,
       errors: { taxonomic_order: "required" },
@@ -81,7 +81,25 @@ describe("parseAnimalFields", () => {
     });
     expect(
       parseAnimalFields({ ...valid, category: "Insekt", taxonomic_order: "anything" }),
-    ).toMatchObject({ ok: true, value: { taxonomic_order: null } });
+    ).toMatchObject({ ok: false, errors: { taxonomic_order: "invalid" } });
+    expect(
+      parseAnimalFields({ ...valid, category: "Insekt", taxonomic_order: "Käfer (Coleoptera)" }),
+    ).toMatchObject({ ok: true, value: { taxonomic_order: "Käfer (Coleoptera)" } });
+  });
+
+  test("only invertebrates may leave the endangerment status empty", () => {
+    expect(parseAnimalFields({ ...valid, endangerment_status: "" })).toMatchObject({
+      ok: false,
+      errors: { endangerment_status: "required" },
+    });
+    expect(
+      parseAnimalFields({
+        ...valid,
+        category: "Sonstige Wirbellose",
+        taxonomic_order: "Asseln (Isopoda)",
+        endangerment_status: "",
+      }),
+    ).toMatchObject({ ok: true, value: { endangerment_status: null, endangerment_order: null } });
   });
 
   test("checks the size range", () => {

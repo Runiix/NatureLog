@@ -1,6 +1,6 @@
 "use client";
 
-import { Check, Favorite, HeartBroken, Star } from "@mui/icons-material";
+import { BugReport, Check, Favorite, HeartBroken, Star } from "@mui/icons-material";
 import type { User } from "@supabase/supabase-js";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
@@ -10,9 +10,13 @@ import {
   COLORS,
   ENDANGERMENT,
   GENERA,
+  INVERTEBRATE_GROUPS,
+  isInvertebrate,
   ORDERS_BY_GENUS,
+  showsInvertebrates,
   SIZE_MAX,
   SIZE_MIN,
+  VERTEBRATE_GROUPS,
 } from "@/app/[locale]/utils/lexiconFilters";
 import Switch from "../general/Switch";
 import { useUrlFilters } from "./useUrlFilters";
@@ -84,7 +88,15 @@ function ToggleRow({
   );
 }
 
-export default function LexiconFilter({ user }: { user: User | null }) {
+const INVERTEBRATE_ORDERS = INVERTEBRATE_GROUPS.flatMap((genus) => ORDERS_BY_GENUS[genus] ?? []);
+
+export default function LexiconFilter({
+  user,
+  hideInvertebratesByDefault,
+}: {
+  user: User | null;
+  hideInvertebratesByDefault: boolean;
+}) {
   const t = useTranslations("Lexicon");
   const filters = useUrlFilters();
   const selectedGenera = filters.list("genus");
@@ -102,6 +114,23 @@ export default function LexiconFilter({ user }: { user: User | null }) {
   };
 
   const toggleFlag = (key: string) => filters.set({ [key]: filters.flag(key) ? null : "true" });
+
+  const invertebratesShown = showsInvertebrates(
+    filters.searchParams.get("invertebrates"),
+    hideInvertebratesByDefault,
+  );
+  const toggleInvertebrates = () => {
+    const show = !invertebratesShown;
+    const keepGenera = selectedGenera.filter((genus) => show || !isInvertebrate(genus));
+    const keepOrders = filters.list("order").filter((order) => show || !INVERTEBRATE_ORDERS.includes(order));
+    filters.set({
+      // Matching the setting needs no URL value, so "reset" lands there too.
+      invertebrates: show === !hideInvertebratesByDefault ? null : show ? "show" : "hide",
+      // Hidden groups cannot stay selected.
+      genus: keepGenera.join(",") || null,
+      order: keepOrders.join(",") || null,
+    });
+  };
 
   const visibleOrders = selectedGenera.flatMap((genus) =>
     (ORDERS_BY_GENUS[genus] ?? []).map((order) => ({ genus, order })),
@@ -139,8 +168,16 @@ export default function LexiconFilter({ user }: { user: User | null }) {
       </Section>
 
       <Section title={t("sections.genus")}>
+        <ToggleRow
+          id="filter-invertebrates"
+          icon={<BugReport className="text-fg-muted" />}
+          label={t("invertebratesLabel")}
+          hint={t("invertebratesHint")}
+          value={invertebratesShown}
+          onChange={toggleInvertebrates}
+        />
         <div className="flex flex-wrap gap-2">
-          {GENERA.map((genus) => (
+          {(invertebratesShown ? GENERA : VERTEBRATE_GROUPS).map((genus) => (
             <Chip
               key={genus}
               selected={filters.has("genus", genus)}

@@ -10,10 +10,12 @@ import { PageShell } from "@/app/[locale]/components/ui/PageShell";
 import { ScrollToTop } from "@/app/[locale]/components/ui/ScrollToTop";
 import Search from "@/app/[locale]/components/general/Search";
 import ImageExistsFilter from "@/app/[locale]/components/collection/ImageExistsFilter";
+import CollectionSort from "@/app/[locale]/components/collection/CollectionSort";
 import type { TypedSupabaseClient } from "@/utils/supabase/types";
 import { getProfileTarget } from "@/app/[locale]/utils/users";
 import { canViewProfile } from "@/app/[locale]/utils/visibility";
 import { notFound, redirect } from "next/navigation";
+import { GENERA } from "@/app/[locale]/utils/lexiconFilters";
 
 
 const getSpottedIds = async (
@@ -108,10 +110,8 @@ export default async function CollectionPage({
 
   const [counts, ownerSpotted, viewerSpotted] = await Promise.all([
     Promise.all(
-      ["Säugetier", "Vogel", "Reptil", "Amphibie", "Insekt", "Arachnoid", "all"].map((genus) =>
-        getAnimalCount(supabase, genus),
-      ),
-    ),
+      [...GENERA, "all"].map(async (genus) => [genus, await getAnimalCount(supabase, genus)] as const),
+    ).then((entries): Record<string, number> => Object.fromEntries(entries)),
     getSpottedIds(supabase, target.id),
     isOwner ? Promise.resolve(null) : getSpottedIds(supabase, viewer.id),
   ]);
@@ -123,9 +123,14 @@ export default async function CollectionPage({
     <PageShell>
       {header}
       <div className="flex flex-col gap-3 sm:gap-4">
-        <div className="flex items-center gap-2 sm:gap-3">
-          <Search placeholder="searchAnimal" className="min-w-0 flex-1 sm:w-72 sm:flex-none" />
-          <ImageExistsFilter />
+        <div className="flex flex-wrap items-center gap-2 sm:gap-3">
+          <div className="flex min-w-[12rem] flex-1 items-center gap-2 sm:flex-none sm:gap-3">
+            <Search placeholder="searchAnimal" className="min-w-0 flex-1 sm:w-72 sm:flex-none" />
+            <ImageExistsFilter />
+          </div>
+          <div className="sm:ml-auto">
+            <CollectionSort />
+          </div>
         </div>
         <GenusFilter counts={counts} categoryCounts={categoryCounts} />
       </div>

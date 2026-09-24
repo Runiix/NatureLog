@@ -1,5 +1,6 @@
 "use client";
 
+import changeHideInvertebrates from "@/app/[locale]/actions/profile/changeHideInvertebrates";
 import changePublicProfile from "@/app/[locale]/actions/profile/changePublicProfile";
 import Switch from "@/app/[locale]/components/general/Switch";
 import type { User } from "@supabase/supabase-js";
@@ -51,44 +52,66 @@ function SettingsSection({ title, children }: { title: string; children: React.R
   );
 }
 
-export default function SettingsList({ user, isPublic }: { user: User; isPublic: boolean }) {
+/**
+ * A switch that flips at once and settles on the value the server stored.
+ * `save` returns the stored value, or null when saving failed.
+ */
+function useServerToggle(initial: boolean, save: () => Promise<boolean | null>) {
   const t = useTranslations("Settings");
   const toast = useToast();
-  const [publicProfile, setPublicProfile] = useState(isPublic);
+  const [value, setValue] = useState(initial);
   const [saving, setSaving] = useState(false);
 
-  const togglePublic = async () => {
+  const toggle = async () => {
     if (saving) return;
     setSaving(true);
-    const previous = publicProfile;
-    setPublicProfile(!previous);
+    const previous = value;
+    setValue(!previous);
     try {
-      const result = await changePublicProfile();
-      if (result.success) {
-        // The server toggles its own stored value; trust what it returns.
-        setPublicProfile(result.isPublic ?? !previous);
-        toast(t("saved"));
-      } else {
-        setPublicProfile(previous);
+      const stored = await save();
+      if (stored === null) {
+        setValue(previous);
         toast(t("error"), "error");
+      } else {
+        setValue(stored);
+        toast(t("saved"));
       }
     } catch {
-      setPublicProfile(previous);
+      setValue(previous);
       toast(t("error"), "error");
     } finally {
       setSaving(false);
     }
   };
 
+  return [value, () => void toggle()] as const;
+}
+
+export default function SettingsList({
+  user,
+  isPublic,
+  hideInvertebrates,
+}: {
+  user: User;
+  isPublic: boolean;
+  hideInvertebrates: boolean;
+}) {
+  const t = useTranslations("Settings");
+  // The server toggles its own stored value; trust what it returns.
+  const [publicProfile, togglePublic] = useServerToggle(isPublic, async () => {
+    const result = await changePublicProfile();
+    return result.success ? (result.isPublic ?? null) : null;
+  });
+  const [invertebratesHidden, toggleInvertebrates] = useServerToggle(hideInvertebrates, async () => {
+    const result = await changeHideInvertebrates();
+    return result.success ? (result.hideInvertebrates ?? null) : null;
+  });
+
   return (
     <div className="flex flex-col gap-8">
       <SettingsSection title={t("privacy")}>
         <SettingsRow id="setting-public" label={t("publicProfile")} hint={t("publicProfileHint")}>
-          <Switch
-            id="setting-public"
-            value={publicProfile}
-            onChange={() => void togglePublic()}
-          />
+          <Switch id="setting-public" value={publicProfile} onChange={togglePublic} />
         </SettingsRow>
       </SettingsSection>
 
@@ -98,6 +121,17 @@ export default function SettingsList({ user, isPublic }: { user: User; isPublic:
         </SettingsRow>
         <SettingsRow label={t("language")} hint={t("languageHint")}>
           <LanguageSwitcher />
+        </SettingsRow>
+        <SettingsRow
+          id="setting-invertebrates"
+          label={t("hideInvertebrates")}
+          hint={t("hideInvertebratesHint")}
+        >
+          <Switch
+            id="setting-invertebrates"
+            value={invertebratesHidden}
+            onChange={toggleInvertebrates}
+          />
         </SettingsRow>
       </SettingsSection>
 

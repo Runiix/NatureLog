@@ -2,6 +2,7 @@ import {
   COLOR_VALUES,
   ENDANGERMENT,
   GENERA,
+  isInvertebrate,
   ORDERS_BY_GENUS,
 } from "@/app/[locale]/utils/lexiconFilters";
 import type { TablesInsert, TypedSupabaseClient } from "@/utils/supabase/types";
@@ -179,10 +180,12 @@ export function parseAnimalFields(
     taxonomic_order = null;
   }
 
-  const endangerment_status = text("endangerment_status");
-  const statusIndex = (ENDANGERMENT as readonly string[]).indexOf(endangerment_status);
-  if (endangerment_status === "") errors.endangerment_status = "required";
-  else if (statusIndex < 0) errors.endangerment_status = "invalid";
+  // Most invertebrates have no Rote Liste rating, so they may leave it empty.
+  const endangerment_status = text("endangerment_status") || null;
+  const statusIndex = (ENDANGERMENT as readonly string[]).indexOf(endangerment_status ?? "");
+  if (endangerment_status === null) {
+    if (!isInvertebrate(category)) errors.endangerment_status = "required";
+  } else if (statusIndex < 0) errors.endangerment_status = "invalid";
 
   const description = optionalText("description", DESCRIPTION_MAX);
 
