@@ -66,7 +66,7 @@ export default async function LexiconPage({ searchParams }: Props) {
         }
       />
       <div className="flex items-center gap-2 sm:justify-between sm:gap-3">
-        <Search placeholder="searchAnimal" className="min-w-0 flex-1 sm:w-72 sm:flex-none" />
+        <Search placeholder="searchAnimal" debounceMs={600} className="min-w-0 flex-1 sm:w-72 sm:flex-none" />
         <LexiconSort />
       </div>
       <LexiconFilterList hideInvertebratesByDefault={hideInvertebrates} />

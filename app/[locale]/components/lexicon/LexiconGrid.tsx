@@ -8,7 +8,9 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { useInView } from "react-intersection-observer";
 import getAnimals from "../../actions/lexicon/getAnimals";
 import type { Tables } from "@/utils/supabase/types";
+import useSearchPending from "@/app/[locale]/utils/searchPending";
 import { EmptyState } from "../ui/EmptyState";
+import { LoadingOverlay } from "../ui/LoadingOverlay";
 import { Spinner } from "../ui/Spinner";
 import LexiconCard from "./LexiconCard";
 
@@ -130,6 +132,8 @@ export default function LexiconGrid({
   initialKey: string;
 }) {
   const t = useTranslations("Lexicon");
+  const tGeneral = useTranslations("General");
+  const searching = useSearchPending();
   const searchParams = useSearchParams();
   const filterKey = searchParams.toString();
   const sortBy = searchParams.get("sortBy");
@@ -232,36 +236,38 @@ export default function LexiconGrid({
       });
   }, [inView, hasMore, offset, filterKey]);
 
-  if (animals.length === 0) {
-    return <EmptyState icon={<SearchOff />} title={t("emptyTitle")} description={t("emptyText")} />;
-  }
-
   return (
-    <>
-      <ul className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3 2xl:grid-cols-4">
-        {animals.map((animal) => (
-          <li key={animal.id}>
-            <LexiconCard
-              id={animal.id}
-              common_name={animal.common_name}
-              scientific_name={animal.scientific_name}
-              endangerment_status={animal.endangerment_status}
-              size_from={animal.size_from}
-              size_to={animal.size_to}
-              sortBy={sortBy}
-              very_rare={animal.very_rare}
-              imageUrl={animal.lexicon_link}
-              user={user}
-              spottedList={spottedList}
-            />
-          </li>
-        ))}
-      </ul>
-      {hasMore && (
-        <div ref={sentinel} className="flex justify-center py-8 text-accent" aria-live="polite">
-          <Spinner label={t("loadingMore")} />
-        </div>
+    <LoadingOverlay loading={searching} label={tGeneral("searching")}>
+      {animals.length === 0 ? (
+        <EmptyState icon={<SearchOff />} title={t("emptyTitle")} description={t("emptyText")} />
+      ) : (
+        <>
+          <ul className="grid grid-cols-2 gap-3 sm:gap-4 xl:grid-cols-3 2xl:grid-cols-4">
+            {animals.map((animal) => (
+              <li key={animal.id}>
+                <LexiconCard
+                  id={animal.id}
+                  common_name={animal.common_name}
+                  scientific_name={animal.scientific_name}
+                  endangerment_status={animal.endangerment_status}
+                  size_from={animal.size_from}
+                  size_to={animal.size_to}
+                  sortBy={sortBy}
+                  very_rare={animal.very_rare}
+                  imageUrl={animal.lexicon_link}
+                  user={user}
+                  spottedList={spottedList}
+                />
+              </li>
+            ))}
+          </ul>
+          {hasMore && (
+            <div ref={sentinel} className="flex justify-center py-8 text-accent" aria-live="polite">
+              <Spinner label={t("loadingMore")} />
+            </div>
+          )}
+        </>
       )}
-    </>
+    </LoadingOverlay>
   );
 }

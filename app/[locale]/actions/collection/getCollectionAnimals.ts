@@ -40,6 +40,8 @@ export default async function getCollectionAnimals(
   const params = new URLSearchParams(searchParams);
   const genus = params.get("genus") || "all";
   const noImages = params.get("noImages") === "true";
+  const noDate = params.get("noDate") === "true";
+  const year = params.get("year");
   const sort = parseCollectionSort(params);
 
   const from = offset * pageSize;
@@ -74,6 +76,14 @@ export default async function getCollectionAnimals(
 
     if (noImages) {
       queryBuilder = queryBuilder.is("image", false);
+    }
+
+    if (noDate) {
+      queryBuilder = queryBuilder.is("first_spotted_at", null);
+    } else if (year && /^\d{4}$/.test(year)) {
+      queryBuilder = queryBuilder
+        .gte("first_spotted_at", `${year}-01-01`)
+        .lt("first_spotted_at", `${Number(year) + 1}-01-01`);
     }
 
     const { data, error } = await queryBuilder;

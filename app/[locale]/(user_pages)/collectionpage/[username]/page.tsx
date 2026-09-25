@@ -3,7 +3,8 @@ import CollectionAnimalGrid from "@/app/[locale]/components/collection/Collectio
 import { getUser } from "@/app/[locale]/utils/data";
 import { Lock } from "@mui/icons-material";
 import { getTranslations } from "next-intl/server";
-import GenusFilter from "@/app/[locale]/components/collection/GenusFilter";
+import CollectionOverview from "@/app/[locale]/components/collection/CollectionOverview";
+import NoDateFilter from "@/app/[locale]/components/collection/NoDateFilter";
 import { EmptyState } from "@/app/[locale]/components/ui/EmptyState";
 import { PageHeader } from "@/app/[locale]/components/ui/PageHeader";
 import { PageShell } from "@/app/[locale]/components/ui/PageShell";
@@ -18,21 +19,34 @@ import { notFound, redirect } from "next/navigation";
 import { GENERA } from "@/app/[locale]/utils/lexiconFilters";
 
 
-const getSpottedIds = async (
+type SpottedRow = { animal_id: number; first_spotted_at: string | null };
+
+const getSpottedRows = async (
   supabase: TypedSupabaseClient,
   userId: string,
-): Promise<number[]> => {
+): Promise<SpottedRow[]> => {
   const { data, error } = await supabase
     .from("spotted")
-    .select("animal_id")
+    .select("animal_id, first_spotted_at")
     .eq("user_id", userId);
   if (error) {
     console.error("Error getting spotted List", error);
     return [];
   }
-  return data
-    .map((row) => row.animal_id)
-    .filter((id): id is number => id !== null);
+  return data.filter((row): row is SpottedRow => row.animal_id !== null);
+};
+
+/** Species first spotted per year, newest year first. Undated sightings are left out. */
+const getYearCounts = (rows: SpottedRow[]) => {
+  const counts = new Map<string, number>();
+  for (const { first_spotted_at } of rows) {
+    if (!first_spotted_at) continue;
+    const year = first_spotted_at.slice(0, 4);
+    counts.set(year, (counts.get(year) ?? 0) + 1);
+  }
+  return [...counts]
+    .map(([year, count]) => ({ year, count }))
+    .sort((a, b) => b.year.localeCompare(a.year));
 };
 
 const getCategoryCounts = async (
@@ -108,13 +122,15 @@ export default async function CollectionPage({
     );
   }
 
-  const [counts, ownerSpotted, viewerSpotted] = await Promise.all([
+  const [counts, ownerRows, viewerRows] = await Promise.all([
     Promise.all(
       [...GENERA, "all"].map(async (genus) => [genus, await getAnimalCount(supabase, genus)] as const),
     ).then((entries): Record<string, number> => Object.fromEntries(entries)),
-    getSpottedIds(supabase, target.id),
-    isOwner ? Promise.resolve(null) : getSpottedIds(supabase, viewer.id),
+    getSpottedRows(supabase, target.id),
+    isOwner ? Promise.resolve(null) : getSpottedRows(supabase, viewer.id),
   ]);
+  const ownerSpotted = ownerRows.map((row) => row.animal_id);
+  const viewerSpotted = viewerRows?.map((row) => row.animal_id) ?? null;
   const categoryCounts = (await getCategoryCounts(supabase, ownerSpotted)).filter(
     (row): row is { category: string } => row.category !== null,
   );
@@ -125,14 +141,19 @@ export default async function CollectionPage({
       <div className="flex flex-col gap-3 sm:gap-4">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <div className="flex min-w-[12rem] flex-1 items-center gap-2 sm:flex-none sm:gap-3">
-            <Search placeholder="searchAnimal" className="min-w-0 flex-1 sm:w-72 sm:flex-none" />
+            <Search placeholder="searchAnimal" debounceMs={600} className="min-w-0 flex-1 sm:w-72 sm:flex-none" />
             <ImageExistsFilter />
+            <NoDateFilter />
           </div>
           <div className="sm:ml-auto">
             <CollectionSort />
           </div>
         </div>
-        <GenusFilter counts={counts} categoryCounts={categoryCounts} />
+        <CollectionOverview
+          counts={counts}
+          categoryCounts={categoryCounts}
+          yearCounts={getYearCounts(ownerRows)}
+        />
       </div>
       <CollectionAnimalGrid
         user={viewer}
