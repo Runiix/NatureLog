@@ -24,7 +24,7 @@ export default async function changeHideInvertebrates() {
     .eq("user_id", user.id);
   if (error) {
     console.error("Error changing invertebrate setting", error);
-    return { success: false, error: error.message };
+    return { success: false, error: "failed" };
   }
 
   revalidatePath("/[locale]/settingspage", "page");

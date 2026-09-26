@@ -44,3 +44,15 @@ export function flaggedCategories(scores: CategoryScores): string[] {
     .sort(([, a], [, b]) => b - a)
     .map(([category]) => category);
 }
+
+const SEVERITY: Record<Verdict, number> = { pass: 0, review: 1, block: 2 };
+
+/**
+ * Every uploaded size is scored (a clean full-size image must not carry an
+ * unsafe thumbnail), and the most severe result decides.
+ */
+export function worstResult<T extends { verdict: Verdict }>(results: T[]): T {
+  return results.reduce((worst, result) =>
+    SEVERITY[result.verdict] > SEVERITY[worst.verdict] ? result : worst,
+  );
+}

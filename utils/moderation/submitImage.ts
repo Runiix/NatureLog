@@ -3,6 +3,7 @@ import type { Json } from "@/utils/supabase/database.types";
 import { createAdminClient } from "@/utils/supabase/admin";
 import type { ValidatedImage } from "@/utils/supabase/imageUpload";
 import { checkImage } from "./checkImage";
+import { worstResult } from "./verdict";
 import { publishImage, type ImageFile, type ImageKind, type PublishPayload } from "./publish";
 
 export const QUEUE_BUCKET = "moderation_queue";
@@ -27,22 +28,20 @@ const toImageFile = (image: ValidatedImage): ImageFile => ({
  * - quarantined for an admin when it is borderline or could not be checked,
  * - refused when it is clearly unsafe.
  *
- * `checkFile` is the version that gets scored (the largest one uploaded).
+ * Every file is scored; the most severe result decides.
  */
 export async function submitModeratedImage({
   kind,
   userId,
   files,
-  checkFile,
   payload,
 }: {
   kind: ImageKind;
   userId: string;
   files: ValidatedImage[];
-  checkFile: ValidatedImage;
   payload: PublishPayload;
 }): Promise<SubmitOutcome> {
-  const result = await checkImage(checkFile);
+  const result = worstResult(await Promise.all(files.map(checkImage)));
   if (result.verdict === "block") return { ok: false, error: IMAGE_REJECTED };
 
   const admin = createAdminClient();

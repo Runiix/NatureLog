@@ -139,19 +139,9 @@ export default function LexiconGrid({
   const sortBy = searchParams.get("sortBy");
 
   // Never true on the first page load, so hydration always uses the server props.
-  const [restored] = useState(() => {
-    const snapshot = cameBackTo(initialKey) ? readSnapshot(initialKey) : null;
-    // TEMP debug for scroll restoration — remove once verified.
-    if (typeof window !== "undefined") {
-      console.log("[lexicon restore]", {
-        traversedTo: traversedTo?.href ?? null,
-        initialKey,
-        restored: snapshot ? snapshot.animals.length : null,
-        scrollY: snapshot?.scrollY,
-      });
-    }
-    return snapshot;
-  });
+  const [restored] = useState(() =>
+    cameBackTo(initialKey) ? readSnapshot(initialKey) : null,
+  );
 
   const [animals, setAnimals] = useState<Animal[]>(restored?.animals ?? initialAnimals);
   const [offset, setOffset] = useState(restored?.offset ?? 1);

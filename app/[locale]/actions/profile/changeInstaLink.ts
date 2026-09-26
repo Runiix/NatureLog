@@ -17,7 +17,7 @@ export default async function changeInstaLink(formData: FormData) {
     .eq("user_id", user.id);
   if (error) {
     console.error("Error changing Instagram link", error);
-    return fail<string | null>(error.message);
+    return fail<string | null>("failed");
   }
 
   revalidatePath("/[locale]/profilepage/[username]", "page");

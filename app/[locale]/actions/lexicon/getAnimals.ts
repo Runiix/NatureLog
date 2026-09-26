@@ -16,8 +16,7 @@ import {
   pickAllowed,
   type SortColumn,
 } from "@/app/[locale]/utils/lexiconFilters";
-
-const MAX_PAGE_SIZE = 50;
+import { pageRange } from "@/app/[locale]/utils/pageRange";
 
 const toSize = (raw: string | null) => {
   if (raw === null || raw === "") return null;
@@ -58,9 +57,7 @@ export default async function getAnimals(
   const excludeRares = params.get("excludeRares") === "true";
   const invertebratesParam = params.get("invertebrates");
 
-  const size = Math.min(Math.max(1, Math.trunc(pageSize)), MAX_PAGE_SIZE);
-  const from = Math.max(0, Math.trunc(offset)) * size;
-  const to = from + size - 1;
+  const { from, to } = pageRange(offset, pageSize);
 
   // The user is only needed for the seen filters and the invertebrate default.
   const user =

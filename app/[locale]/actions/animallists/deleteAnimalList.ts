@@ -15,7 +15,7 @@ export default async function deleteAnimalList(listId: string) {
     .select("id");
   if (error) {
     console.error("Error deleting animal list", error);
-    return fail(error.message);
+    return fail("failed");
   }
   // A filtered delete that matches nothing is not an error to Postgres; it is
   // to the user, who would otherwise see "deleted" for a list that remains.

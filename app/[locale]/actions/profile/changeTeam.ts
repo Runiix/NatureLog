@@ -23,7 +23,7 @@ export default async function changeTeam(team: string) {
     .limit(1);
   if (readError) {
     console.error("Error reading profile", readError);
-    return fail<string>(readError.message);
+    return fail<string>("failed");
   }
   const { error } =
     existing.length > 0
@@ -31,7 +31,7 @@ export default async function changeTeam(team: string) {
       : await supabase.from("profiles").insert({ user_id: user.id, team_link });
   if (error) {
     console.error("Error changing team", error);
-    return fail<string>(error.message);
+    return fail<string>("failed");
   }
 
   revalidatePath("/[locale]/profilepage/[username]", "page");

@@ -38,7 +38,7 @@ export default async function uploadSearchImage(formData: FormData) {
   });
   if (error) {
     console.error("Error uploading search image", error);
-    return fail<string>(error.message);
+    return fail<string>("failed");
   }
 
   const { data } = supabase.storage.from("imagesearch").getPublicUrl(path);

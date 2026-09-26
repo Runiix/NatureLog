@@ -29,7 +29,7 @@ export default async function addAnimalList({
   });
   if (error) {
     console.error("Error adding animal list", error);
-    return fail(error.message);
+    return fail("failed");
   }
 
   revalidateListPages();

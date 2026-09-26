@@ -15,7 +15,7 @@ export default async function unfollow(followingId: string) {
     .eq("following_id", followingId);
   if (error) {
     console.error("Error unfollowing", error);
-    return fail(error.message);
+    return fail("failed");
   }
 
   revalidatePath("/[locale]/profilepage/[username]", "page");

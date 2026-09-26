@@ -22,9 +22,10 @@ export default async function addReport(
   const { error } = await supabase
     .from("reports")
     .insert({ image_link: imageLink, user_id: reportedUserId, report_text: text });
-  if (error) {
+  // 23505: this user already reported this image; the first report stands.
+  if (error && error.code !== "23505") {
     console.error("Error adding new report", error);
-    return fail(error.message);
+    return fail("failed");
   }
   return ok();
 }

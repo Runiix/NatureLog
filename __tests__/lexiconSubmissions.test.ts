@@ -69,8 +69,7 @@ function mockClient() {
             mockStorage.push({ bucket, op: "remove", paths });
             return Promise.resolve({ error: null });
           },
-          download: () =>
-            Promise.resolve({ data: new Blob(["x"], { type: "image/jpeg" }), error: null }),
+          download: () => Promise.resolve({ data: mockDownload(), error: null }),
           getPublicUrl: (path: string) => ({ data: { publicUrl: `https://cdn/${bucket}/${path}` } }),
         };
       },
@@ -80,6 +79,8 @@ function mockClient() {
 
 const mockSupabase = mockClient();
 const mockCheckImage = jest.fn();
+const JPEG = new Uint8Array([0xff, 0xd8, 0xff, 0xe0]);
+let mockDownload = () => new Blob([JPEG], { type: "image/jpeg" });
 
 jest.mock("next/cache", () => ({ revalidatePath: jest.fn() }));
 jest.mock("@/utils/supabase/requireAuth", () => ({
@@ -317,6 +318,25 @@ describe("approveLexiconSubmission", () => {
       .map((entry) => entry.paths[0]);
     expect(mockStorage).toContainEqual({ bucket: "animalImages", op: "remove", paths: published });
     expect(callsTo("lexicon_submissions", "update")).toEqual([]);
+  });
+
+  test("refuses a queued file that is not really an image", async () => {
+    mockRespond = ({ table, op }) => {
+      if (table === "lexicon_submissions" && op === "select") {
+        return { data: submission({ kind: "image", queue_paths: ["lexicon/user-1/a.jpg", "lexicon/user-1/b.jpg"] }) };
+      }
+      if (table === "animals" && op === "select") return { data: { id: 5, category: "Säugetier" } };
+      return { data: { id: 5 } };
+    };
+    const original = mockDownload;
+    mockDownload = () => new Blob(["<svg onload=alert(1)>"], { type: "image/svg+xml" });
+    jest.spyOn(console, "error").mockImplementation(() => {});
+    try {
+      expect(await approveLexiconSubmission("sub-1")).toMatchObject({ success: false });
+      expect(mockStorage.filter((entry) => entry.bucket === "animalImages")).toEqual([]);
+    } finally {
+      mockDownload = original;
+    }
   });
 
   test("does nothing for a proposal that is no longer pending", async () => {

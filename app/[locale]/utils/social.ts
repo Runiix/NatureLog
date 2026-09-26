@@ -27,3 +27,19 @@ export async function getFollowingIds(
     .map((follow) => follow.following_id)
     .filter((id): id is string => id !== null);
 }
+
+/**
+ * The followed users whose sightings may appear in a feed: those with a public
+ * profile and those who follow back. Mirrors canViewProfile in visibility.ts.
+ */
+export function visibleFeedUsers(
+  following: string[],
+  publicRows: { user_id: string | null }[],
+  followBackRows: { follower_id: string | null }[],
+): string[] {
+  const visible = new Set<string | null>([
+    ...publicRows.map((row) => row.user_id),
+    ...followBackRows.map((row) => row.follower_id),
+  ]);
+  return following.filter((id) => visible.has(id));
+}

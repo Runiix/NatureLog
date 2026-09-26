@@ -36,7 +36,7 @@ export default async function addProfileGridImage(formData: FormData) {
       success: false,
       pending: false,
       profileGridFull: false,
-      error: (listError ?? pendingError)!.message,
+      error: "failed",
     };
   }
   const imageCount =
@@ -50,7 +50,6 @@ export default async function addProfileGridImage(formData: FormData) {
     kind: "profile_grid",
     userId: user.id,
     files: [file, modalFile],
-    checkFile: modalFile,
     payload: {},
   });
   if (!outcome.ok) {

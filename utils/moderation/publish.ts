@@ -16,8 +16,6 @@ export type PublishPayload = {
   animalId?: number;
   /** collection: new first-spotted date (yyyy-mm-dd). */
   date?: string | null;
-  /** collection: display name recorded in `lastimages`. */
-  username?: string | null;
   /** profile_grid: image this one replaces. */
   oldName?: string | null;
 };
@@ -90,17 +88,20 @@ async function publishCollectionImage(
   client: TypedSupabaseClient,
   userId: string,
   [file, modalFile]: ImageFile[],
-  { animalId, date, username }: PublishPayload,
+  { animalId, date }: PublishPayload,
 ): Promise<string[]> {
   // The object name comes from the animals table, never from the client, and
   // the spotted row must (still) exist.
-  const [{ data: animal }, { data: spotted }] = await Promise.all([
+  // The username shown in the feed comes from the users table: auth
+  // user_metadata is writable by the user and could impersonate someone.
+  const [{ data: animal }, { data: spotted }, { data: owner }] = await Promise.all([
     client.from("animals").select("common_name").eq("id", animalId!).maybeSingle(),
     client
       .from("spotted")
       .select("id")
       .match({ user_id: userId, animal_id: animalId! })
       .maybeSingle(),
+    client.from("users").select("display_name").eq("id", userId).maybeSingle(),
   ]);
   if (!animal || !spotted) throw new Error("Animal is not in the collection");
 
@@ -127,7 +128,7 @@ async function publishCollectionImage(
   const { error: lastImagesError } = await client.from("lastimages").insert({
     user_id: userId,
     image_url: publicUrl.publicUrl,
-    username: username ?? null,
+    username: owner?.display_name ?? null,
   });
   if (lastImagesError) console.error("Error inserting into lastimages", lastImagesError);
 

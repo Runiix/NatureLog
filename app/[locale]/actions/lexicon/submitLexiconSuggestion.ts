@@ -4,6 +4,7 @@ import type { Json } from "@/utils/supabase/database.types";
 import requireAuth from "@/utils/supabase/requireAuth";
 import { validateImage, type ValidatedImage } from "@/utils/supabase/imageUpload";
 import { checkImage } from "@/utils/moderation/checkImage";
+import { worstResult } from "@/utils/moderation/verdict";
 import { IMAGE_REJECTED } from "@/utils/moderation/submitImage";
 import { nameTaken, parseAnimalFields, parseDescription } from "@/utils/lexicon/animalFields";
 import { queueImages, removeQueuedImages, type StoredImage } from "@/utils/lexicon/animalImages";
@@ -106,7 +107,7 @@ export default async function submitLexiconSuggestion(
     ]);
     if (!thumb || !main) return result("invalid");
 
-    const check = await checkImage(main);
+    const check = worstResult(await Promise.all([thumb, main].map(checkImage)));
     if (check.verdict === "block") return result(IMAGE_REJECTED);
 
     try {

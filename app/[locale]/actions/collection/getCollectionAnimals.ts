@@ -6,6 +6,7 @@ import { escapeLike } from "@/app/[locale]/utils/escapeLike";
 import { canViewProfile } from "@/app/[locale]/utils/visibility";
 import { parseCollectionSort } from "@/app/[locale]/utils/collectionSort";
 import type { Tables } from "@/utils/supabase/types";
+import { pageRange } from "@/app/[locale]/utils/pageRange";
 
 type SpottedAnimalRow = Pick<
   Tables<"user_spotted_animals">,
@@ -44,8 +45,7 @@ export default async function getCollectionAnimals(
   const year = params.get("year");
   const sort = parseCollectionSort(params);
 
-  const from = offset * pageSize;
-  const to = (offset + 1) * pageSize - 1;
+  const { from, to } = pageRange(offset, pageSize);
 
   async function getSignedUrlForImage(userId: string, folder: string, fileName: string) {
     const { data, error } = await supabase.storage

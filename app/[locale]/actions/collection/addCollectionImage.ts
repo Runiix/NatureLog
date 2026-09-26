@@ -42,11 +42,9 @@ export default async function addCollectionImage(formData: FormData) {
     kind: "collection",
     userId: user.id,
     files: [file, modalFile],
-    checkFile: modalFile,
     payload: {
       animalId,
       date: typeof date === "string" && date !== "" ? date : null,
-      username: user.user_metadata.displayName ?? null,
     },
   });
   if (!outcome.ok) return { success: false, pending: false, error: outcome.error };

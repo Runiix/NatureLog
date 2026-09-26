@@ -14,7 +14,6 @@ export default async function changeProfilePicture(formData: FormData) {
     kind: "profile_picture",
     userId: user.id,
     files: [image],
-    checkFile: image,
     payload: {},
   });
   if (!outcome.ok) return { success: false, pending: false, error: outcome.error };

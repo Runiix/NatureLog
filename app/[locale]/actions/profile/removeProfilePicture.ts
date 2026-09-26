@@ -17,7 +17,7 @@ export default async function removeProfilePicture() {
     .eq("user_id", user.id);
   if (error) {
     console.error("Error clearing profile picture", error);
-    return fail(error.message);
+    return fail("failed");
   }
 
   const { error: removeError } = await supabase.storage

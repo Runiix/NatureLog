@@ -26,7 +26,7 @@ export default async function addSpottedDate(formData: FormData) {
     .select("id");
   if (error) {
     console.error("Error updating date", error);
-    return fail<string>(error.message);
+    return fail<string>("failed");
   }
   if (data.length === 0) return fail<string>("Animal is not in your collection");
 

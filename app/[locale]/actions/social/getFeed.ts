@@ -1,8 +1,9 @@
 "use server";
 
 import requireAuth from "@/utils/supabase/requireAuth";
-import { getFollowingIds } from "../../utils/social";
+import { getFollowingIds, visibleFeedUsers } from "../../utils/social";
 import type { Tables } from "@/utils/supabase/types";
+import { pageRange } from "@/app/[locale]/utils/pageRange";
 
 export type FeedEntry = Tables<"spotted"> & {
   common_name: string | null;
@@ -20,13 +21,22 @@ export default async function getFeed(
   const following = await getFollowingIds(supabase, user.id);
   if (following.length === 0) return [];
 
-  const from = offset * pageSize;
-  const to = (offset + 1) * pageSize - 1;
+  // Following is one-sided, so it alone must not unlock a private profile.
+  // Same rule as canViewProfile (utils/visibility.ts): public or mutual follow.
+  // A failed query yields no rows, so an error never widens access.
+  const [{ data: publicRows }, { data: followBackRows }] = await Promise.all([
+    supabase.from("profiles").select("user_id").in("user_id", following).eq("is_public", true),
+    supabase.from("follows").select("follower_id").in("follower_id", following).eq("following_id", user.id),
+  ]);
+  const visible = visibleFeedUsers(following, publicRows ?? [], followBackRows ?? []);
+  if (visible.length === 0) return [];
+
+  const { from, to } = pageRange(offset, pageSize);
 
   const { data: feed, error: feedError } = await supabase
     .from("spotted")
     .select("*")
-    .in("user_id", following)
+    .in("user_id", visible)
     // Postgres sorts NULLs first in a descending order; without nullsFirst:
     // false every sighting that never had a photo sat above the real news.
     .order("image_updated_at", { ascending: false, nullsFirst: false })

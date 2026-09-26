@@ -2,6 +2,7 @@
 
 import requireAuth from "@/utils/supabase/requireAuth";
 import { canReadList } from "@/app/[locale]/utils/listAccess";
+import { pageRange } from "@/app/[locale]/utils/pageRange";
 
 /** One page of a list's animals, alphabetical. */
 export default async function getAnimalListItems(
@@ -12,8 +13,7 @@ export default async function getAnimalListItems(
   const { supabase, user } = await requireAuth();
   if (!(await canReadList(supabase, user.id, listId))) return [];
 
-  const from = offset * pageSize;
-  const to = from + pageSize - 1;
+  const { from, to } = pageRange(offset, pageSize);
 
   const { data: items, error: itemsError } = await supabase
     .from("animallistitems")

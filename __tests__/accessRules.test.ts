@@ -2,6 +2,7 @@
  * @jest-environment node
  */
 import { canViewProfile } from "@/app/[locale]/utils/visibility";
+import { visibleFeedUsers } from "@/app/[locale]/utils/social";
 import { validateListFields, MAX_LIST_TITLE } from "@/app/[locale]/utils/listValidation";
 import type { TypedSupabaseClient } from "@/utils/supabase/types";
 
@@ -112,5 +113,22 @@ describe("validateListFields", () => {
     [{ ...base, publicList: "true" as unknown as boolean }, "Invalid visibility"],
   ])("rejects %#", (input, error) => {
     expect(validateListFields(input)).toMatchObject({ success: false, error });
+  });
+});
+
+describe("visibleFeedUsers", () => {
+
+  it("keeps public and mutual follows, drops one-sided follows of private users", () => {
+    expect(
+      visibleFeedUsers(
+        ["public", "mutual", "private"],
+        [{ user_id: "public" }],
+        [{ follower_id: "mutual" }],
+      ),
+    ).toEqual(["public", "mutual"]);
+  });
+
+  it("shows nothing when the lookups return nothing", () => {
+    expect(visibleFeedUsers(["private"], [], [])).toEqual([]);
   });
 });

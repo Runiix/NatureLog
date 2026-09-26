@@ -25,7 +25,7 @@ export default async function removeProfileGridImage(formData: FormData) {
     ]);
   if (error) {
     console.error("Error removing grid image", error);
-    return { success: false, profileGridFull: false, error: error.message };
+    return { success: false, profileGridFull: false, error: "failed" };
   }
 
   return { success: true, profileGridFull: false, error: null };

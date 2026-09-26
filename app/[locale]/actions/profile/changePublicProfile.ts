@@ -31,7 +31,7 @@ export default async function changePublicProfile() {
 
   if (error) {
     console.error("Error changing profile status", error);
-    return { success: false, error: error.message };
+    return { success: false, error: "failed" };
   }
 
   revalidatePath("/settingspage");

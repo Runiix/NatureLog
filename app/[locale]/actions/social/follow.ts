@@ -22,7 +22,7 @@ export default async function follow(followingId: string) {
     .limit(1);
   if (readError) {
     console.error("Error reading follow", readError);
-    return fail(readError.message);
+    return fail("failed");
   }
 
   if (existing.length === 0) {
@@ -31,7 +31,7 @@ export default async function follow(followingId: string) {
       .insert({ follower_id: user.id, following_id: followingId });
     if (error) {
       console.error("Error following", error);
-      return fail(error.message);
+      return fail("failed");
     }
   }
 

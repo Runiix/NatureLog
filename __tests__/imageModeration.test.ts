@@ -1,7 +1,7 @@
 /**
  * @jest-environment node
  */
-import { classifyScores, flaggedCategories } from "@/utils/moderation/verdict";
+import { classifyScores, flaggedCategories, worstResult } from "@/utils/moderation/verdict";
 import { checkImage } from "@/utils/moderation/checkImage";
 import type { ValidatedImage } from "@/utils/supabase/imageUpload";
 
@@ -39,6 +39,17 @@ describe("classifyScores", () => {
       "sexual",
       "violence",
     ]);
+  });
+});
+
+describe("worstResult", () => {
+  test("the most severe verdict decides", () => {
+    const pass = { verdict: "pass" as const };
+    const review = { verdict: "review" as const };
+    const block = { verdict: "block" as const };
+    expect(worstResult([pass, block, review])).toBe(block);
+    expect(worstResult([pass, review])).toBe(review);
+    expect(worstResult([pass])).toBe(pass);
   });
 });
 
@@ -129,7 +140,6 @@ describe("submitModeratedImage", () => {
       kind: "profile_picture",
       userId: "user-1",
       files: [image],
-      checkFile: image,
       payload: {},
     });
   };

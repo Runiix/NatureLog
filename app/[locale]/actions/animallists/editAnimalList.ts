@@ -25,7 +25,7 @@ export default async function editAnimalList(
     .select("id");
   if (error) {
     console.error("Error editing animal list", error);
-    return fail(error.message);
+    return fail("failed");
   }
   if (data.length === 0) return fail("List not found");
 

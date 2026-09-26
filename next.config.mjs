@@ -3,7 +3,10 @@ import createNextIntlPlugin from "next-intl/plugin";
 
 const cspHeader = `
   default-src 'self';
-  script-src 'self' 'unsafe-eval' 'unsafe-inline'  cdn.jsdelivr.net;
+  script-src 'self' 'unsafe-inline'${
+    // Only the dev server's hot reload needs eval.
+    process.env.NODE_ENV === "production" ? "" : " 'unsafe-eval'"
+  };
   style-src 'self' 'unsafe-inline';
 img-src 'self' blob: data: https://umvtbsrjbvivfkcmvtxk.supabase.co https://a.tile.openstreetmap.org https://b.tile.openstreetmap.org https://c.tile.openstreetmap.org;
   font-src 'self';
@@ -38,6 +41,7 @@ const nextConfig = {
     },
   },
   reactStrictMode: false,
+  poweredByHeader: false,
   async headers() {
     return [
       {

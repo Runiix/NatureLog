@@ -35,7 +35,7 @@ export async function addOrRemoveAnimals(formData: FormData) {
       .match({ user_id: user.id, animal_id: animalId });
     if (error) {
       console.error("Error removing animal", error);
-      return { success: false as const, error: error.message };
+      return { success: false as const, error: "failed" };
     }
   } else {
     const { data: existing, error: readError } = await supabase
@@ -45,7 +45,7 @@ export async function addOrRemoveAnimals(formData: FormData) {
       .limit(1);
     if (readError) {
       console.error("Error reading spotted row", readError);
-      return { success: false as const, error: readError.message };
+      return { success: false as const, error: "failed" };
     }
     if (existing.length === 0) {
       const { error } = await supabase
@@ -53,7 +53,7 @@ export async function addOrRemoveAnimals(formData: FormData) {
         .insert({ user_id: user.id, animal_id: animalId });
       if (error) {
         console.error("Error inserting animal", error);
-        return { success: false as const, error: error.message };
+        return { success: false as const, error: "failed" };
       }
     }
   }

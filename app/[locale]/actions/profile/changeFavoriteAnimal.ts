@@ -17,7 +17,7 @@ export default async function changeFavoriteAnimal(formData: FormData) {
     .eq("user_id", user.id);
   if (error) {
     console.error("Error changing favorite animal", error);
-    return fail<string>(error.message);
+    return fail<string>("failed");
   }
 
   revalidatePath("/[locale]/profilepage/[username]", "page");

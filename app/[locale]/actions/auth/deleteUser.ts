@@ -1,27 +1,17 @@
 "use server";
 
-import { createClient } from "@/utils/supabase/server";
+import requireAuth from "@/utils/supabase/requireAuth";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { QUEUE_BUCKET } from "@/utils/moderation/submitImage";
-import { getUser } from "../../utils/data";
 
 export default async function deleteUser() {
-  const supabase = await createClient();
-  const [
-    user,
-    {
-      data: { session },
-    },
-  ] = await Promise.all([getUser(supabase), supabase.auth.getSession()]);
-
-const accessToken = session?.access_token;
-  if (!user) return { success: false, error: "User not found" };
+  const { supabase, user } = await requireAuth();
 
   const { data: collectionFiles, error: getCollectionFilesError } =
     await supabase.storage.from("profiles").list(`${user.id}/Collection`);
   if (getCollectionFilesError) {
     console.error("Error getting Collection files:", getCollectionFilesError);
-    return { success: false, error: getCollectionFilesError.message };
+    return { success: false, error: "failed" };
   }
   if (collectionFiles?.length) {
     const filePaths = collectionFiles.map(
@@ -44,7 +34,7 @@ const accessToken = session?.access_token;
       "Error getting Collection Modal files:",
       getCollectionModalFilesError
     );
-    return { success: false, error: getCollectionModalFilesError.message };
+    return { success: false, error: "failed" };
   }
   if (collectionModalFiles?.length) {
     const filePaths = collectionModalFiles.map(
@@ -67,7 +57,7 @@ const accessToken = session?.access_token;
     await supabase.storage.from("profiles").list(`${user.id}/ProfileGrid`);
   if (getProfileGridError) {
     console.error("Error getting Profile Grid files:", getProfileGridError);
-    return { success: false, error: getProfileGridError.message };
+    return { success: false, error: "failed" };
   }
   if (profileGridFiles?.length) {
     const filePaths = profileGridFiles.map(
@@ -92,7 +82,7 @@ const accessToken = session?.access_token;
       "Error getting Profile Grid Modal files:",
       getProfileGridModalError
     );
-    return { success: false, error: getProfileGridModalError.message };
+    return { success: false, error: "failed" };
   }
   if (profileGridModalFiles?.length) {
     const filePaths = profileGridModalFiles.map(
@@ -115,7 +105,7 @@ const accessToken = session?.access_token;
     await supabase.storage.from("profiles").list(`${user.id}/ProfilePicture`);
   if (getProfilePicError) {
     console.error("Error getting Profile Picture files:", getProfilePicError);
-    return { success: false, error: getProfilePicError.message };
+    return { success: false, error: "failed" };
   }
   if (profilePicFiles?.length) {
     const filePaths = profilePicFiles.map(
@@ -135,7 +125,7 @@ const accessToken = session?.access_token;
     await supabase.storage.from("imagesearch").list(`${user.id}`);
   if (getSearchFilesError) {
     console.error("Error getting search files:", getSearchFilesError);
-    return { success: false, error: getSearchFilesError.message };
+    return { success: false, error: "failed" };
   }
   if (searchFiles?.length) {
     const filePaths = searchFiles.map((file) => `${user.id}/${file.name}`);
@@ -160,7 +150,7 @@ const accessToken = session?.access_token;
   const queueQueryError = moderationError ?? lexiconError;
   if (queueQueryError) {
     console.error("Error getting queued images:", queueQueryError);
-    return { success: false, error: queueQueryError.message };
+    return { success: false, error: "failed" };
   }
   const queuePaths = [...(moderationRows ?? []), ...(lexiconRows ?? [])].flatMap(
     (row) => row.queue_paths,
@@ -172,22 +162,15 @@ const accessToken = session?.access_token;
     if (queueDeleteError) {
       // Abort: once the account is gone the paths can no longer be found.
       console.error("Error deleting queued images:", queueDeleteError);
-      return { success: false, error: queueDeleteError.message };
+      return { success: false, error: "failed" };
     }
   }
 
-  const res = await fetch(`https://umvtbsrjbvivfkcmvtxk.supabase.co/functions/v1/delete-user-account`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${accessToken}`,
-    },
-    body: JSON.stringify({ user_id: user.id }), 
-  })
-
-  if (!res.ok) {
-    const error = await res.text()
-    throw new Error(`Failed to delete user: ${error}`)
+  // The id comes from the verified session, never from the request.
+  const { error: deleteError } = await createAdminClient().auth.admin.deleteUser(user.id);
+  if (deleteError) {
+    console.error("Error deleting user:", deleteError);
+    return { success: false, error: "failed" };
   }
   // The account is gone; end the session too, or the browser keeps auth
   // cookies for a user that no longer exists. Failure here is harmless.

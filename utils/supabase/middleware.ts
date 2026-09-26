@@ -75,7 +75,9 @@ export async function updateSession(request: NextRequest) {
     "/adminpage",
     "/suggestanimalpage",
   ];
-  const authPages = ["/loginpage", "/passwordreset"];
+  // /passwordreset is not listed: a signed-in user opening a reset link must
+  // still reach the form.
+  const authPages = ["/loginpage"];
 
   if (!user && protectedPaths.some((path) => normalizedPathname.startsWith(path))) {
     const url = request.nextUrl.clone();

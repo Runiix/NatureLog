@@ -26,7 +26,7 @@ export default async function handleListUpvotes(listId: string, upvoted: boolean
       .eq("list_id", listId);
     if (error) {
       console.error("Error removing upvote", error);
-      return fail(error.message);
+      return fail("failed");
     }
     return ok();
   }
@@ -39,7 +39,7 @@ export default async function handleListUpvotes(listId: string, upvoted: boolean
     .limit(1);
   if (readError) {
     console.error("Error reading upvote", readError);
-    return fail(readError.message);
+    return fail("failed");
   }
   if (existing.length > 0) return ok();
 
@@ -50,7 +50,7 @@ export default async function handleListUpvotes(listId: string, upvoted: boolean
   // insert lands here — the upvote exists, which is what was asked for.
   if (error && error.code !== UNIQUE_VIOLATION) {
     console.error("Error adding upvote", error);
-    return fail(error.message);
+    return fail("failed");
   }
   return ok();
 }

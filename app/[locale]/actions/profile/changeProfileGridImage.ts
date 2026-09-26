@@ -12,10 +12,19 @@ import { submitModeratedImage } from "@/utils/moderation/submitImage";
  * the new image goes to review, the old one stays until it is approved.
  */
 export default async function changeProfileGridImage(formData: FormData) {
-  const { user } = await requireAuth();
+  const { supabase, user } = await requireAuth();
 
   const oldName = formData.get("old_name");
   if (!isSafeObjectName(oldName)) {
+    return { success: false, pending: false, error: "Invalid image name" };
+  }
+
+  // A replace must name an existing image; otherwise it adds one and slips
+  // past the grid cap in addProfileGridImage.
+  const { data: existing } = await supabase.storage
+    .from("profiles")
+    .list(`${user.id}/ProfileGrid`, { search: oldName });
+  if (!existing?.some((object) => object.name === oldName)) {
     return { success: false, pending: false, error: "Invalid image name" };
   }
 
@@ -31,7 +40,6 @@ export default async function changeProfileGridImage(formData: FormData) {
     kind: "profile_grid",
     userId: user.id,
     files: [file, modalFile],
-    checkFile: modalFile,
     payload: { oldName },
   });
   if (!outcome.ok) return { success: false, pending: false, error: outcome.error };

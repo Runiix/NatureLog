@@ -1,6 +1,7 @@
 import "server-only";
 import { QUEUE_BUCKET } from "@/utils/moderation/submitImage";
 import type { TypedSupabaseClient } from "@/utils/supabase/types";
+import { validateImage } from "@/utils/supabase/imageUpload";
 import type { AnimalImagePair, StoredImage } from "./animalStorage";
 
 export {
@@ -57,14 +58,17 @@ export async function downloadQueuedImages(
   const downloads = await Promise.all(
     queuePaths.map((path) => supabase.storage.from(QUEUE_BUCKET).download(path)),
   );
-  const [thumb, main] = downloads.map(({ data, error }, index) => {
-    if (error || !data) throw new Error(`Queued image missing: ${queuePaths[index]}`);
-    return {
-      data,
-      contentType: data.type || "image/jpeg",
-      extension: queuePaths[index].split(".").pop() ?? "jpg",
-    };
-  });
+  // A user can write to their queue folder directly, bypassing the server
+  // action, so the stored type and path extension are untrusted: re-sniff the
+  // bytes before anything reaches the public bucket.
+  const [thumb, main] = await Promise.all(
+    downloads.map(async ({ data, error }, index) => {
+      if (error || !data) throw new Error(`Queued image missing: ${queuePaths[index]}`);
+      const image = await validateImage(new File([data], queuePaths[index]));
+      if (!image) throw new Error(`Queued image is not a valid image: ${queuePaths[index]}`);
+      return { data, contentType: image.contentType, extension: image.extension };
+    }),
+  );
   return { thumb, main };
 }
 

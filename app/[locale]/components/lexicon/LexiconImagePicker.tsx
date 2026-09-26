@@ -3,7 +3,7 @@
 import { AddAPhoto, Delete } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import { Button } from "../ui/Button";
 
 /**
@@ -26,18 +26,14 @@ export default function LexiconImagePicker({
 }) {
   const t = useTranslations("LexiconSuggest.image");
   const input = useRef<HTMLInputElement>(null);
-  const [objectUrl, setObjectUrl] = useState<string | null>(null);
   // The parent may clear the file (after a submit); the old preview goes with it.
-  const preview = file ? objectUrl : null;
+  const preview = useMemo(() => (file ? URL.createObjectURL(file) : null), [file]);
 
   // Object URLs hold the file in memory until revoked: on replacement, when
   // the parent clears the file, and on unmount.
-  useEffect(() => {
-    if (!file) return;
-    const url = URL.createObjectURL(file);
-    setObjectUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
+  useEffect(() => () => {
+    if (preview) URL.revokeObjectURL(preview);
+  }, [preview]);
 
   function pick(next: File | null) {
     onFileChange(next);
