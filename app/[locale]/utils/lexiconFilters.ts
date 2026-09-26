@@ -145,7 +145,8 @@ export const FILTER_KEYS = [
 /** Splits a comma-separated URL value and keeps only allowed entries. */
 export function pickAllowed(raw: string | null, allowed: readonly string[]): string[] {
   if (!raw) return [];
-  return raw.split(",").filter((value) => allowed.includes(value));
+  const allowedSet = new Set(allowed);
+  return raw.split(",").filter((value) => allowedSet.has(value));
 }
 
 const LIST_KEYS = ["genus", "order", "color", "endangerment"] as const;

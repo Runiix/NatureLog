@@ -81,7 +81,8 @@ export default function Search({
           handleSearch(e.target.value);
         }}
         onKeyDown={(e) => {
-          if (e.key === "Enter") handleSearch.flush();
+          // Enter also confirms an IME candidate; only a finished term submits.
+          if (e.key === "Enter" && !e.nativeEvent.isComposing) handleSearch.flush();
         }}
         className="h-10 w-full rounded-lg border border-border bg-surface pl-9 pr-9 text-sm text-fg placeholder:text-fg-subtle transition-colors hover:border-fg-subtle focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30 [&::-webkit-search-cancel-button]:hidden"
       />

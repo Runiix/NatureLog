@@ -71,8 +71,10 @@ export default async function getLastSpottedAnimals() {
         }
 
         const safeName = collectionImageName(animal.common_name);
-        const collectionUrl = await getSignedUrlForImage(user.id, "Collection", safeName);
-        const collectionModalUrl = await getSignedUrlForImage(user.id, "CollectionModals", safeName);
+        const [collectionUrl, collectionModalUrl] = await Promise.all([
+          getSignedUrlForImage(user.id, "Collection", safeName),
+          getSignedUrlForImage(user.id, "CollectionModals", safeName),
+        ]);
 
         return {
           ...animal,

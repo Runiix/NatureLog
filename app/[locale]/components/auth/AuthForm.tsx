@@ -13,6 +13,75 @@ import { PasswordInput } from "./PasswordInput";
 type Mode = "login" | "signup" | "reset";
 type Notice = { tone: "error" | "success"; text: string } | null;
 
+/** Message keys for each mode's heading, subheading and submit button. */
+const COPY = {
+  login: { title: "loginTitle", subtitle: "loginSubtitle", submit: "submitLogin" },
+  signup: { title: "signupTitle", subtitle: "signupSubtitle", submit: "submitSignup" },
+  reset: { title: "resetTitle", subtitle: "resetSubtitle", submit: "submitReset" },
+} as const;
+
+const SWITCH_LINK =
+  "rounded font-medium text-accent-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent";
+
+/** Sign-up consent checkbox, with links to the terms and the privacy page. */
+function TermsCheckbox({ error }: { error?: string }) {
+  const t = useTranslations("Auth");
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="flex items-start gap-2 text-sm text-fg-muted">
+        <input
+          type="checkbox"
+          name="terms"
+          className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-[rgb(var(--color-accent))]"
+          aria-invalid={error ? true : undefined}
+        />
+        <span>
+          {t.rich("acceptTerms", {
+            terms: (chunks) => (
+              <Link href="/termsofservice" target="_blank" className="text-accent-text underline">
+                {chunks}
+              </Link>
+            ),
+            privacy: (chunks) => (
+              <Link href="/impressum" target="_blank" className="text-accent-text underline">
+                {chunks}
+              </Link>
+            ),
+          })}
+        </span>
+      </label>
+      {error && (
+        <p role="alert" className="text-xs text-danger">
+          {error}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/** Link under the card: to sign-up from login, back to login otherwise. */
+function ModeSwitch({ mode, switchTo }: { mode: Mode; switchTo: (next: Mode) => void }) {
+  const t = useTranslations("Auth");
+  if (mode === "login") {
+    return (
+      <p className="text-center text-sm text-fg-muted">
+        {t("noAccount")}{" "}
+        <button type="button" onClick={() => switchTo("signup")} className={SWITCH_LINK}>
+          {t("toSignup")}
+        </button>
+      </p>
+    );
+  }
+  return (
+    <p className="text-center text-sm text-fg-muted">
+      {mode === "signup" && `${t("haveAccount")} `}
+      <button type="button" onClick={() => switchTo("login")} className={SWITCH_LINK}>
+        {t("toLogin")}
+      </button>
+    </p>
+  );
+}
+
 /**
  * Sign in, sign up and "forgot password" in one card. Errors are mapped from
  * codes to localised messages (the old form logged raw auth errors to the
@@ -85,9 +154,7 @@ export default function AuthForm() {
     }
   }
 
-  const title = mode === "login" ? t("loginTitle") : mode === "signup" ? t("signupTitle") : t("resetTitle");
-  const subtitle =
-    mode === "login" ? t("loginSubtitle") : mode === "signup" ? t("signupSubtitle") : t("resetSubtitle");
+  const copy = COPY[mode];
 
   return (
     <div className="flex flex-col gap-6">
@@ -98,8 +165,8 @@ export default function AuthForm() {
         >
           NatureLog
         </Link>
-        <h1 className="mt-2 text-2xl font-semibold tracking-tight">{title}</h1>
-        <p className="text-sm text-fg-muted">{subtitle}</p>
+        <h1 className="mt-2 text-2xl font-semibold tracking-tight">{t(copy.title)}</h1>
+        <p className="text-sm text-fg-muted">{t(copy.subtitle)}</p>
       </header>
 
       {notice && (
@@ -159,67 +226,13 @@ export default function AuthForm() {
             {t("forgotPassword")}
           </button>
         )}
-        {mode === "signup" && (
-          <div className="flex flex-col gap-1">
-            <label className="flex items-start gap-2 text-sm text-fg-muted">
-              <input
-                type="checkbox"
-                name="terms"
-                className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-[rgb(var(--color-accent))]"
-                aria-invalid={fieldErrors.terms ? true : undefined}
-              />
-              <span>
-                {t.rich("acceptTerms", {
-                  terms: (chunks) => (
-                    <Link href="/termsofservice" target="_blank" className="text-accent-text underline">
-                      {chunks}
-                    </Link>
-                  ),
-                  privacy: (chunks) => (
-                    <Link href="/impressum" target="_blank" className="text-accent-text underline">
-                      {chunks}
-                    </Link>
-                  ),
-                })}
-              </span>
-            </label>
-            {fieldErrors.terms && (
-              <p role="alert" className="text-xs text-danger">
-                {fieldErrors.terms}
-              </p>
-            )}
-          </div>
-        )}
+        {mode === "signup" && <TermsCheckbox error={fieldErrors.terms} />}
         <Button type="submit" size="lg" fullWidth loading={pending}>
-          {mode === "login" ? t("submitLogin") : mode === "signup" ? t("submitSignup") : t("submitReset")}
+          {t(copy.submit)}
         </Button>
       </form>
 
-      <p className="text-center text-sm text-fg-muted">
-        {mode === "login" ? (
-          <>
-            {t("noAccount")}{" "}
-            <button
-              type="button"
-              onClick={() => switchTo("signup")}
-              className="rounded font-medium text-accent-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              {t("toSignup")}
-            </button>
-          </>
-        ) : (
-          <>
-            {mode === "signup" && `${t("haveAccount")} `}
-            <button
-              type="button"
-              onClick={() => switchTo("login")}
-              className="rounded font-medium text-accent-text hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
-            >
-              {t("toLogin")}
-            </button>
-          </>
-        )}
-      </p>
+      <ModeSwitch mode={mode} switchTo={switchTo} />
     </div>
   );
 }

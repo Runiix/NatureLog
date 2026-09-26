@@ -1,28 +1,10 @@
 "use client";
 
 import { AddAPhoto, Delete } from "@mui/icons-material";
-import imageCompression from "browser-image-compression";
 import { useTranslations } from "next-intl";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import { Button } from "../ui/Button";
-
-const THUMB = { maxSizeMB: 0.05, maxWidthOrHeight: 600, useWebWorker: true };
-const FULL = { maxSizeMB: 0.4, maxWidthOrHeight: 1920, useWebWorker: true };
-
-/**
- * Compresses a picked photo into the two sizes the lexicon stores: the grid
- * thumbnail and the banner. Appended as `file` and `modalFile`, like every
- * other upload in the app.
- */
-export async function appendLexiconImage(formData: FormData, file: File) {
-  const [thumb, full] = await Promise.all([
-    imageCompression(file, THUMB),
-    imageCompression(file, FULL),
-  ]);
-  formData.append("file", thumb);
-  formData.append("modalFile", full);
-}
 
 /**
  * Photo picker with preview. With `consent`, it also shows the licence
@@ -48,15 +30,16 @@ export default function LexiconImagePicker({
   // The parent may clear the file (after a submit); the old preview goes with it.
   const preview = file ? objectUrl : null;
 
-  // Object URLs hold the file in memory until revoked: on replacement and on
-  // unmount.
+  // Object URLs hold the file in memory until revoked: on replacement, when
+  // the parent clears the file, and on unmount.
   useEffect(() => {
-    if (!objectUrl) return;
-    return () => URL.revokeObjectURL(objectUrl);
-  }, [objectUrl]);
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    setObjectUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
 
   function pick(next: File | null) {
-    setObjectUrl(next ? URL.createObjectURL(next) : null);
     onFileChange(next);
   }
 
@@ -77,7 +60,14 @@ export default function LexiconImagePicker({
       />
       {preview ? (
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-surface-sunken">
-          <Image src={preview} alt={t("preview")} fill unoptimized className="object-cover" />
+          <Image
+            src={preview}
+            alt={t("preview")}
+            fill
+            unoptimized
+            sizes="(min-width: 768px) 768px, 100vw"
+            className="object-cover"
+          />
         </div>
       ) : null}
       <div className="flex flex-wrap gap-2">

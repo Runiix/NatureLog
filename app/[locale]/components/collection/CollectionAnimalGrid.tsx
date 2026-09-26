@@ -18,6 +18,34 @@ import CollectionCard from "./CollectionCard";
 
 const PAGE_SIZE = 20;
 
+/** No matches for the filters, or an empty collection (with a nudge for the owner). */
+function EmptyCollection({ filtered, isOwner }: { filtered: boolean; isOwner: boolean }) {
+  const t = useTranslations("Collection");
+  if (filtered) {
+    return (
+      <EmptyState
+        icon={<SearchOff />}
+        title={t("emptyFilteredTitle")}
+        description={t("emptyFilteredText")}
+      />
+    );
+  }
+  return (
+    <EmptyState
+      icon={<Pets />}
+      title={isOwner ? t("emptyOwnerTitle") : t("emptyVisitorTitle")}
+      description={isOwner ? t("emptyOwnerText") : undefined}
+      action={
+        isOwner ? (
+          <ButtonLink href="/lexiconpage" variant="secondary">
+            {t("toLexicon")}
+          </ButtonLink>
+        ) : undefined
+      }
+    />
+  );
+}
+
 /**
  * Infinite grid of a user's collection, filtered by the URL (query, genus,
  * noImages, noDate, year). Same generation-counter loader as the lists: a filter change
@@ -105,26 +133,7 @@ export default function CollectionAnimalGrid({
   return (
     <LoadingOverlay loading={searching} label={tGeneral("searching")}>
       {animals.length === 0 ? (
-        filtered ? (
-          <EmptyState
-            icon={<SearchOff />}
-            title={t("emptyFilteredTitle")}
-            description={t("emptyFilteredText")}
-          />
-        ) : (
-          <EmptyState
-            icon={<Pets />}
-            title={isOwner ? t("emptyOwnerTitle") : t("emptyVisitorTitle")}
-            description={isOwner ? t("emptyOwnerText") : undefined}
-            action={
-              isOwner ? (
-                <ButtonLink href="/lexiconpage" variant="secondary">
-                  {t("toLexicon")}
-                </ButtonLink>
-              ) : undefined
-            }
-          />
-        )
+        <EmptyCollection filtered={filtered} isOwner={isOwner} />
       ) : (
         <>
           <ul className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-3 2xl:grid-cols-4">

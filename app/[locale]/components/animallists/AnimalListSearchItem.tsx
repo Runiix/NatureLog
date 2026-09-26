@@ -34,17 +34,23 @@ export default function AnimalListSearchItem({
 }) {
   const t = useTranslations("Lists");
   const toast = useToast();
-  const [isInList, setIsInList] = useState(inList);
+  // The last toggle, shown until the parent's reload changes `inList`.
+  const [toggled, setToggled] = useState<{ base: boolean; value: boolean } | null>(null);
+  const isInList = toggled?.base === inList ? toggled.value : inList;
   const [pending, setPending] = useState(false);
 
   const toggle = async () => {
     setPending(true);
-    const res = isInList
-      ? await removeAnimalFromAnimalList(listId, animalId)
-      : await addAnimalToAnimalList(listId, animalId);
-    setPending(false);
+    let res;
+    try {
+      res = isInList
+        ? await removeAnimalFromAnimalList(listId, animalId)
+        : await addAnimalToAnimalList(listId, animalId);
+    } finally {
+      setPending(false);
+    }
     if (res.success) {
-      setIsInList(!isInList);
+      setToggled({ base: inList, value: !isInList });
       onChanged();
     } else {
       toast(t("toast.error"), "error");

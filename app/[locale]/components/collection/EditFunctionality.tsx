@@ -86,7 +86,6 @@ export default function EditSightingDialog({
         const res = await addCollectionImage(formData);
         if (res.error === "imageRejected") {
           setError(t("imageRejected"));
-          setSaving(false);
           return;
         }
         if (!res.success) throw new Error(res.error ?? "upload failed");
@@ -104,6 +103,7 @@ export default function EditSightingDialog({
     } catch (err) {
       console.error("Saving sighting failed:", err);
       setError(t("error"));
+    } finally {
       setSaving(false);
     }
   }
@@ -123,7 +123,7 @@ export default function EditSightingDialog({
             className="group relative flex aspect-[4/3] w-full items-center justify-center overflow-hidden rounded-lg border border-dashed border-border bg-surface-sunken text-fg-muted transition-colors hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
           >
             {shown ? (
-              <Image src={shown} alt="" fill unoptimized className="object-cover" />
+              <Image src={shown} alt="" fill unoptimized sizes="(min-width: 640px) 512px, 100vw" className="object-cover" />
             ) : (
               <span className="flex flex-col items-center gap-2 text-sm">
                 <AddAPhoto />

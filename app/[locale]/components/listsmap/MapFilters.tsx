@@ -132,6 +132,8 @@ function AnimalCombobox({
         onFocus={() => setOpen(true)}
         onBlur={() => setOpen(false)}
         onKeyDown={(event) => {
+          // While an IME is composing, these keys pick and confirm its candidates.
+          if (event.nativeEvent.isComposing) return;
           if (event.key === "ArrowDown") {
             event.preventDefault();
             setOpen(true);

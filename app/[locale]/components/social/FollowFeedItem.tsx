@@ -63,6 +63,7 @@ export default function FollowFeedItem({ post }: { post: FeedEntry }) {
             alt={t("feedPhotoAlt", { animal, name: author })}
             fill
             unoptimized
+            sizes="(min-width: 1280px) 22rem, 100vw"
             className="object-cover"
           />
         </button>

@@ -35,7 +35,7 @@ import {
 import { collectionImageName } from "@/app/[locale]/utils/storagePaths";
 import { Link } from "@/i18n/navigation";
 import { createClient } from "@/utils/supabase/server";
-import type { TypedSupabaseClient } from "@/utils/supabase/types";
+import type { Tables, TypedSupabaseClient } from "@/utils/supabase/types";
 
 /** Cached per request, so generateMetadata and the page share one query. */
 const getAnimalData = cache(async (name: string) => {
@@ -197,31 +197,18 @@ function Fact({
   );
 }
 
-export default async function AnimalPage({ params }: Props) {
-  const { common_name, locale } = await params;
-  const supabase = await createClient();
-  const [user, animal, t, tLex, tMeta] = await Promise.all([
-    getUser(supabase),
-    getAnimalData(common_name),
-    getTranslations("Animal"),
-    getTranslations("Lexicon"),
-    getTranslations("Meta"),
-  ]);
-  // An unknown species used to throw on `animal.id`; it is a 404.
-  if (!animal) notFound();
+type Animal = Tables<"animals">;
+type Translate = Awaited<ReturnType<typeof getTranslations>>;
 
-  const [spottedList, spottedCount, photos] = await Promise.all([
-    user ? getSpottedList(supabase, user) : Promise.resolve([]),
-    getSpottedCount(supabase, animal.id),
-    getCommunityPhotos(supabase, animal.id, animal.common_name, user?.id ?? null),
-  ]);
-
-  const status = animal.endangerment_status;
-  const statusStep = STATUS_SCALE.indexOf(status as (typeof STATUS_SCALE)[number]);
-  const hasDimorphism = animal.sexual_dimorphism && animal.sexual_dimorphism !== "Nein";
-
-  const pageUrl = absoluteUrl(localizedPath(locale, `/animalpage/${encodeURIComponent(animal.common_name)}`));
-  const structuredData = {
+/** schema.org WebPage + Taxon, with the breadcrumb trail, for search engines. */
+function animalStructuredData(
+  animal: Animal,
+  locale: string,
+  pageUrl: string,
+  t: Translate,
+  tMeta: Translate,
+) {
+  return {
     "@context": "https://schema.org",
     "@graph": [
       {
@@ -251,6 +238,101 @@ export default async function AnimalPage({ params }: Props) {
       },
     ],
   };
+}
+
+/** Endangerment status as text, plus a five-step scale when it is a known step. */
+function EndangermentStatus({ status, t, tLex }: { status: string | null; t: Translate; tLex: Translate }) {
+  const statusStep = STATUS_SCALE.indexOf(status as (typeof STATUS_SCALE)[number]);
+  return (
+    <div className="flex flex-col gap-2">
+      <h2 className="text-xs font-medium uppercase tracking-wide text-fg-subtle">
+        {t("status")}
+      </h2>
+      <p className="text-lg font-semibold">{status ? (tLex.has(status) ? tLex(status) : status) : tLex("noStatus")}</p>
+      {statusStep >= 0 && (
+        <div role="img" aria-label={t("statusScale")} className="flex gap-1">
+          {STATUS_SCALE.map((step, i) => (
+            <span
+              key={step}
+              className={cn(
+                "h-2 flex-1 rounded-full",
+                i <= statusStep ? SCALE_TONES[i] : "bg-surface-sunken",
+              )}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+/** Size always; the other facts only when the species has them recorded. */
+function AnimalFacts({ animal, t }: { animal: Animal; t: Translate }) {
+  const hasDimorphism = animal.sexual_dimorphism && animal.sexual_dimorphism !== "Nein";
+  return (
+    <dl className="flex flex-col gap-4">
+      <Fact icon={<Height />} label={t("size")}>
+        {formatSizeRange(animal.size_from, animal.size_to)}
+      </Fact>
+      {animal.population_estimate && (
+        <Fact icon={<Numbers />} label={t("population")}>
+          {animal.population_estimate}
+        </Fact>
+      )}
+      {animal.presence_time && (
+        <Fact icon={<CalendarMonth />} label={t("presence")}>
+          {animal.presence_time}
+        </Fact>
+      )}
+      {animal.habitat && (
+        <Fact icon={<Landscape />} label={t("habitat")}>
+          {animal.habitat}
+        </Fact>
+      )}
+      {hasDimorphism && (
+        <Fact icon={<Wc />} label={t("dimorphism")}>
+          {animal.sexual_dimorphism}
+        </Fact>
+      )}
+      {animal.similar_animals && animal.similar_animals.length > 0 && (
+        <Fact icon={<Compare />} label={t("similar")}>
+          <span className="flex flex-wrap gap-x-3 gap-y-1">
+            {animal.similar_animals.map((similar) => (
+              <Link
+                key={similar}
+                href={`/animalpage/${similar}`}
+                className="text-accent-text hover:underline"
+              >
+                {similar}
+              </Link>
+            ))}
+          </span>
+        </Fact>
+      )}
+    </dl>
+  );
+}
+
+export default async function AnimalPage({ params }: Props) {
+  const [{ common_name, locale }, supabase] = await Promise.all([params, createClient()]);
+  const [user, animal, t, tLex, tMeta] = await Promise.all([
+    getUser(supabase),
+    getAnimalData(common_name),
+    getTranslations("Animal"),
+    getTranslations("Lexicon"),
+    getTranslations("Meta"),
+  ]);
+  // An unknown species used to throw on `animal.id`; it is a 404.
+  if (!animal) notFound();
+
+  const [spottedList, spottedCount, photos] = await Promise.all([
+    user ? getSpottedList(supabase, user) : Promise.resolve([]),
+    getSpottedCount(supabase, animal.id),
+    getCommunityPhotos(supabase, animal.id, animal.common_name, user?.id ?? null),
+  ]);
+
+  const pageUrl = absoluteUrl(localizedPath(locale, `/animalpage/${encodeURIComponent(animal.common_name)}`));
+  const structuredData = animalStructuredData(animal, locale, pageUrl, t, tMeta);
 
   return (
     <div className="w-full bg-canvas font-normal text-fg">
@@ -320,25 +402,7 @@ export default async function AnimalPage({ params }: Props) {
           </header>
 
           <div className="grid gap-6 border-t border-border-muted pt-6 sm:grid-cols-2">
-            <div className="flex flex-col gap-2">
-              <h2 className="text-xs font-medium uppercase tracking-wide text-fg-subtle">
-                {t("status")}
-              </h2>
-              <p className="text-lg font-semibold">{status ? (tLex.has(status) ? tLex(status) : status) : tLex("noStatus")}</p>
-              {statusStep >= 0 && (
-                <div role="img" aria-label={t("statusScale")} className="flex gap-1">
-                  {STATUS_SCALE.map((step, i) => (
-                    <span
-                      key={step}
-                      className={cn(
-                        "h-2 flex-1 rounded-full",
-                        i <= statusStep ? SCALE_TONES[i] : "bg-surface-sunken",
-                      )}
-                    />
-                  ))}
-                </div>
-              )}
-            </div>
+            <EndangermentStatus status={animal.endangerment_status} t={t} tLex={tLex} />
             <div className="flex items-center gap-3 rounded-lg bg-surface-raised p-4">
               <Groups aria-hidden className="text-accent-text" />
               <p className="text-fg-muted">{t("spottedBy", { count: spottedCount })}</p>
@@ -357,46 +421,7 @@ export default async function AnimalPage({ params }: Props) {
           )}
           <Card padding="lg" className={cn(!animal.description && "lg:col-span-2")}>
             <h2 className="mb-4 text-xl font-semibold">{t("facts")}</h2>
-            <dl className="flex flex-col gap-4">
-              <Fact icon={<Height />} label={t("size")}>
-                {formatSizeRange(animal.size_from, animal.size_to)}
-              </Fact>
-              {animal.population_estimate && (
-                <Fact icon={<Numbers />} label={t("population")}>
-                  {animal.population_estimate}
-                </Fact>
-              )}
-              {animal.presence_time && (
-                <Fact icon={<CalendarMonth />} label={t("presence")}>
-                  {animal.presence_time}
-                </Fact>
-              )}
-              {animal.habitat && (
-                <Fact icon={<Landscape />} label={t("habitat")}>
-                  {animal.habitat}
-                </Fact>
-              )}
-              {hasDimorphism && (
-                <Fact icon={<Wc />} label={t("dimorphism")}>
-                  {animal.sexual_dimorphism}
-                </Fact>
-              )}
-              {animal.similar_animals && animal.similar_animals.length > 0 && (
-                <Fact icon={<Compare />} label={t("similar")}>
-                  <span className="flex flex-wrap gap-x-3 gap-y-1">
-                    {animal.similar_animals.map((similar) => (
-                      <Link
-                        key={similar}
-                        href={`/animalpage/${similar}`}
-                        className="text-accent-text hover:underline"
-                      >
-                        {similar}
-                      </Link>
-                    ))}
-                  </span>
-                </Fact>
-              )}
-            </dl>
+            <AnimalFacts animal={animal} t={t} />
           </Card>
         </div>
 

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import SocialFilter from "@/app/[locale]/components/social/SocialFilter";
 import SocialList from "@/app/[locale]/components/social/SocialList";
@@ -9,8 +10,10 @@ export default async function SocialPage() {
   return (
     <PageShell>
       <PageHeader title={t("social")} subtitle={t("subtitle")} />
-      <SocialFilter />
-      <SocialList />
+      <Suspense>
+        <SocialFilter />
+        <SocialList />
+      </Suspense>
     </PageShell>
   );
 }

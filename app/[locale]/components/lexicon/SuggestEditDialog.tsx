@@ -10,7 +10,8 @@ import Modal from "../general/Modal";
 import { Button } from "../ui/Button";
 import { Field, Textarea } from "../ui/Field";
 import { useToast } from "../ui/Toast";
-import LexiconImagePicker, { appendLexiconImage } from "./LexiconImagePicker";
+import LexiconImagePicker from "./LexiconImagePicker";
+import { appendLexiconImage } from "@/app/[locale]/utils/lexiconImage";
 
 type Tab = "description" | "image";
 

@@ -9,7 +9,8 @@ import {
   type AnimalFieldErrors,
 } from "@/utils/lexicon/animalFields";
 import AnimalFieldsForm from "../lexicon/AnimalFieldsForm";
-import LexiconImagePicker, { appendLexiconImage } from "../lexicon/LexiconImagePicker";
+import LexiconImagePicker from "../lexicon/LexiconImagePicker";
+import { appendLexiconImage } from "@/app/[locale]/utils/lexiconImage";
 import { Button, ButtonLink } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { useToast } from "../ui/Toast";

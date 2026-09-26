@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import ListsMapExplorer from "@/app/[locale]/components/listsmap/ListsMapExplorer";
 import type { MapAnimals } from "@/app/[locale]/components/listsmap/types";
@@ -90,7 +91,9 @@ export default async function ListMapPage() {
   return (
     <PageShell className="max-w-7xl">
       <PageHeader title={t("title")} subtitle={t("subtitle")} />
-      <ListsMapExplorer lists={markers} animals={animals} />
+      <Suspense>
+        <ListsMapExplorer lists={markers} animals={animals} />
+      </Suspense>
     </PageShell>
   );
 }

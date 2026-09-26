@@ -33,6 +33,248 @@ export type AnimalListItemType = {
 };
 
 /**
+ * The list's entries, paged: the first page reloads whenever `reloadItems` is
+ * called, later pages load as the sentinel scrolls into view.
+ */
+function useListItems(listId: string) {
+  const [items, setItems] = useState<AnimalListItemType[]>([]);
+  const [initialLoad, setInitialLoad] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
+  const [offset, setOffset] = useState(0);
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  // Bumped whenever the items are reloaded from page 0. A load-more that
+  // started under an older generation discards its result instead of
+  // appending stale rows (the old cause of duplicates after a delete).
+  const loadGeneration = useRef(0);
+  const { ref: sentinelRef, inView } = useInView({ rootMargin: "200px" });
+
+  const reloadItems = () => setRefreshKey((key) => key + 1);
+
+  useEffect(() => {
+    const generation = ++loadGeneration.current;
+    const loadFirstPage = async () => {
+      try {
+        const data = await getAnimalListItems(listId, 0, PAGE_SIZE);
+        if (generation !== loadGeneration.current) return;
+        setItems(data);
+        setOffset(1);
+        setHasMore(data.length === PAGE_SIZE);
+      } catch (error) {
+        console.error("Error loading animals:", error);
+      } finally {
+        if (generation === loadGeneration.current) setInitialLoad(false);
+      }
+    };
+    void loadFirstPage();
+  }, [listId, refreshKey]);
+
+  useEffect(() => {
+    if (!inView || !hasMore || offset === 0) return;
+    const generation = loadGeneration.current;
+    // A re-run supersedes this page fetch, so its result must not append.
+    let cancelled = false;
+    const loadNextPage = async () => {
+      try {
+        const data = await getAnimalListItems(listId, offset, PAGE_SIZE);
+        if (cancelled || generation !== loadGeneration.current) return;
+        setItems((prev) => [...prev, ...data]);
+        setOffset((prev) => prev + 1);
+        setHasMore(data.length === PAGE_SIZE);
+      } catch (error) {
+        console.error("Error loading more animals:", error);
+      }
+    };
+    void loadNextPage();
+    return () => {
+      cancelled = true;
+    };
+  }, [inView, hasMore, offset, listId]);
+
+  return { items, initialLoad, hasMore, sentinelRef, refreshKey, reloadItems };
+}
+
+/** Entry count and upvotes, refetched with the items; upvoting is optimistic. */
+function useListStats(listId: string, refreshKey: number) {
+  const t = useTranslations("Lists");
+  const toast = useToast();
+  const [entryCount, setEntryCount] = useState<number | null>(null);
+  const [upvotes, setUpvotes] = useState(0);
+  const [hasUpvoted, setHasUpvoted] = useState(false);
+  const [upvotePending, setUpvotePending] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+    const load = async () => {
+      const [upvote, count] = await Promise.all([getUpvotes(listId), getCount(listId)]);
+      if (cancelled) return;
+      setHasUpvoted(upvote.hasUpvoted);
+      setUpvotes(upvote.upvotes);
+      setEntryCount(count);
+    };
+    load().catch((error) => console.error("Error loading list stats:", error));
+    return () => {
+      cancelled = true;
+    };
+  }, [listId, refreshKey]);
+
+  async function toggleUpvote() {
+    if (upvotePending) return;
+    const next = !hasUpvoted;
+    setUpvotePending(true);
+    setHasUpvoted(next);
+    setUpvotes((prev) => prev + (next ? 1 : -1));
+    try {
+      const res = await handleListUpvotes(listId, next);
+      if (!res.success) {
+        setHasUpvoted(!next);
+        setUpvotes((prev) => prev + (next ? -1 : 1));
+        toast(t("toast.error"), "error");
+      }
+    } finally {
+      setUpvotePending(false);
+    }
+  }
+
+  return { entryCount, upvotes, hasUpvoted, upvotePending, toggleUpvote };
+}
+
+/** Skeletons while the first page loads, then the entries or an empty state. */
+function ListEntries({
+  items,
+  initialLoad,
+  listId,
+  user,
+  spottedList,
+  currUser,
+  onChanged,
+  onAdd,
+}: {
+  items: AnimalListItemType[];
+  initialLoad: boolean;
+  listId: string;
+  user: User;
+  spottedList: number[];
+  currUser: boolean;
+  onChanged: () => void;
+  onAdd: () => void;
+}) {
+  const t = useTranslations("Lists");
+  if (initialLoad) {
+    return Array.from({ length: 4 }, (_, i) => <Skeleton key={i} className="h-16 w-full" />);
+  }
+  if (items.length === 0) {
+    return (
+      <EmptyState
+        icon={<Pets />}
+        title={t("emptyListTitle")}
+        description={currUser ? t("emptyListOwnerText") : t("emptyListVisitorText")}
+        action={
+          currUser ? (
+            <Button icon={<Add />} onClick={onAdd}>
+              {t("addAnimal")}
+            </Button>
+          ) : undefined
+        }
+      />
+    );
+  }
+  return (
+    <ul className="flex flex-col gap-2">
+      {items.map((animal) => (
+        <AnimalListItem
+          key={animal.id}
+          listId={listId}
+          animalId={animal.id}
+          name={animal.common_name}
+          image={animal.lexicon_link}
+          user={user}
+          spottedList={spottedList}
+          onRemoved={onChanged}
+          currUser={currUser}
+        />
+      ))}
+    </ul>
+  );
+}
+
+/** Title, visibility, entry count and upvotes; edit and delete for the owner. */
+function ListHeader({
+  displayTitle,
+  description,
+  isPublic,
+  currUser,
+  stats: { entryCount, upvotes, hasUpvoted, upvotePending, toggleUpvote },
+  onEdit,
+  onDelete,
+}: {
+  displayTitle: string;
+  description: string | null;
+  isPublic: boolean;
+  currUser: boolean;
+  stats: ReturnType<typeof useListStats>;
+  onEdit: () => void;
+  onDelete: () => void;
+}) {
+  const t = useTranslations("Lists");
+  return (
+    <header className="flex flex-col gap-4">
+      <div className="flex flex-wrap items-start justify-between gap-3">
+        <div className="flex min-w-0 flex-col gap-2">
+          <h2 className="text-2xl font-semibold tracking-tight">{displayTitle}</h2>
+          <div className="flex flex-wrap items-center gap-2 text-sm text-fg-muted">
+            <VisibilityBadge isPublic={isPublic} />
+            <span>
+              {entryCount === null ? (
+                <Skeleton className="inline-block h-3 w-16 align-middle" />
+              ) : (
+                t("entries", { count: entryCount })
+              )}
+            </span>
+          </div>
+        </div>
+        <div className="flex items-center gap-1">
+          <Button
+            variant="secondary"
+            size="sm"
+            onClick={() => void toggleUpvote()}
+            disabled={upvotePending}
+            aria-pressed={hasUpvoted}
+            aria-label={hasUpvoted ? t("removeUpvote") : t("upvote")}
+            icon={hasUpvoted ? <ThumbUp /> : <ThumbUpOutlined />}
+            className={cn(hasUpvoted && "border-accent text-accent-text")}
+          >
+            {upvotes}
+          </Button>
+          {currUser && (
+            <>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onEdit}
+                aria-label={t("edit")}
+              >
+                <Edit />
+              </Button>
+              <Button
+                variant="ghost"
+                size="icon"
+                onClick={onDelete}
+                aria-label={t("delete")}
+                className="hover:text-danger"
+              >
+                <Delete />
+              </Button>
+            </>
+          )}
+        </div>
+      </div>
+      {description && <p className="max-w-prose text-fg-muted">{description}</p>}
+    </header>
+  );
+}
+
+/**
  * One list's detail view. Title, description and visibility are read from the
  * props on every render: each edit revalidates the page, so the server is the
  * source of truth and there are no local copies to drift.
@@ -60,91 +302,11 @@ export default function AnimalList({
   const t = useTranslations("Lists");
   const toast = useToast();
 
-  const [items, setItems] = useState<AnimalListItemType[]>([]);
-  const [initialLoad, setInitialLoad] = useState(true);
-  const [hasMore, setHasMore] = useState(false);
-  const [offset, setOffset] = useState(0);
-  const [refreshKey, setRefreshKey] = useState(0);
-  const [entryCount, setEntryCount] = useState<number | null>(null);
-
-  const [upvotes, setUpvotes] = useState(0);
-  const [hasUpvoted, setHasUpvoted] = useState(false);
-  const [upvotePending, setUpvotePending] = useState(false);
+  const { items, initialLoad, hasMore, sentinelRef, refreshKey, reloadItems } = useListItems(listId);
+  const stats = useListStats(listId, refreshKey);
 
   const [dialog, setDialog] = useState<"edit" | "delete" | "add" | null>(null);
   const [deleting, setDeleting] = useState(false);
-
-  // Bumped whenever the items are reloaded from page 0. A load-more that
-  // started under an older generation discards its result instead of
-  // appending stale rows (the old cause of duplicates after a delete).
-  const loadGeneration = useRef(0);
-  const loadingMore = useRef(false);
-  const { ref: sentinelRef, inView } = useInView({ rootMargin: "200px" });
-
-  const reloadItems = () => setRefreshKey((key) => key + 1);
-
-  useEffect(() => {
-    const load = async () => {
-      const [upvote, count] = await Promise.all([getUpvotes(listId), getCount(listId)]);
-      setHasUpvoted(upvote.hasUpvoted);
-      setUpvotes(upvote.upvotes);
-      setEntryCount(count);
-    };
-    load().catch((error) => console.error("Error loading list stats:", error));
-  }, [listId, refreshKey]);
-
-  useEffect(() => {
-    const generation = ++loadGeneration.current;
-    const loadFirstPage = async () => {
-      try {
-        const data = await getAnimalListItems(listId, 0, PAGE_SIZE);
-        if (generation !== loadGeneration.current) return;
-        setItems(data);
-        setOffset(1);
-        setHasMore(data.length === PAGE_SIZE);
-      } catch (error) {
-        console.error("Error loading animals:", error);
-      } finally {
-        if (generation === loadGeneration.current) setInitialLoad(false);
-      }
-    };
-    void loadFirstPage();
-  }, [listId, refreshKey]);
-
-  useEffect(() => {
-    if (!inView || !hasMore || offset === 0 || loadingMore.current) return;
-    const generation = loadGeneration.current;
-    loadingMore.current = true;
-    const loadNextPage = async () => {
-      try {
-        const data = await getAnimalListItems(listId, offset, PAGE_SIZE);
-        if (generation !== loadGeneration.current) return;
-        setItems((prev) => [...prev, ...data]);
-        setOffset((prev) => prev + 1);
-        setHasMore(data.length === PAGE_SIZE);
-      } catch (error) {
-        console.error("Error loading more animals:", error);
-      } finally {
-        loadingMore.current = false;
-      }
-    };
-    void loadNextPage();
-  }, [inView, hasMore, offset, listId]);
-
-  async function toggleUpvote() {
-    if (upvotePending) return;
-    const next = !hasUpvoted;
-    setUpvotePending(true);
-    setHasUpvoted(next);
-    setUpvotes((prev) => prev + (next ? 1 : -1));
-    const res = await handleListUpvotes(listId, next);
-    if (!res.success) {
-      setHasUpvoted(!next);
-      setUpvotes((prev) => prev + (next ? -1 : 1));
-      toast(t("toast.error"), "error");
-    }
-    setUpvotePending(false);
-  }
 
   async function deleteList() {
     setDeleting(true);
@@ -166,93 +328,27 @@ export default function AnimalList({
 
   return (
     <Card variant="solid" padding="lg" className="flex flex-col gap-6">
-      <header className="flex flex-col gap-4">
-        <div className="flex flex-wrap items-start justify-between gap-3">
-          <div className="flex min-w-0 flex-col gap-2">
-            <h2 className="text-2xl font-semibold tracking-tight">{displayTitle}</h2>
-            <div className="flex flex-wrap items-center gap-2 text-sm text-fg-muted">
-              <VisibilityBadge isPublic={isPublic} />
-              <span>
-                {entryCount === null ? (
-                  <Skeleton className="inline-block h-3 w-16 align-middle" />
-                ) : (
-                  t("entries", { count: entryCount })
-                )}
-              </span>
-            </div>
-          </div>
-          <div className="flex items-center gap-1">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => void toggleUpvote()}
-              disabled={upvotePending}
-              aria-pressed={hasUpvoted}
-              aria-label={hasUpvoted ? t("removeUpvote") : t("upvote")}
-              icon={hasUpvoted ? <ThumbUp /> : <ThumbUpOutlined />}
-              className={cn(hasUpvoted && "border-accent text-accent-text")}
-            >
-              {upvotes}
-            </Button>
-            {currUser && (
-              <>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setDialog("edit")}
-                  aria-label={t("edit")}
-                >
-                  <Edit />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="icon"
-                  onClick={() => setDialog("delete")}
-                  aria-label={t("delete")}
-                  className="hover:text-danger"
-                >
-                  <Delete />
-                </Button>
-              </>
-            )}
-          </div>
-        </div>
-        {description && <p className="max-w-prose text-fg-muted">{description}</p>}
-      </header>
+      <ListHeader
+        displayTitle={displayTitle}
+        description={description}
+        isPublic={isPublic}
+        currUser={currUser}
+        stats={stats}
+        onEdit={() => setDialog("edit")}
+        onDelete={() => setDialog("delete")}
+      />
 
       <section aria-label={displayTitle} className="flex flex-col gap-2">
-        {initialLoad ? (
-          Array.from({ length: 4 }, (_, i) => <Skeleton key={i} className="h-16 w-full" />)
-        ) : items.length === 0 ? (
-          <EmptyState
-            icon={<Pets />}
-            title={t("emptyListTitle")}
-            description={currUser ? t("emptyListOwnerText") : t("emptyListVisitorText")}
-            action={
-              currUser ? (
-                <Button icon={<Add />} onClick={() => setDialog("add")}>
-                  {t("addAnimal")}
-                </Button>
-              ) : undefined
-            }
-          />
-        ) : (
-          <ul className="flex flex-col gap-2">
-            {items.map((animal) => (
-              <AnimalListItem
-                key={animal.id}
-                listId={listId}
-                animalId={animal.id}
-                name={animal.common_name}
-                image={animal.lexicon_link}
-                user={user}
-                spottedList={spottedList}
-                onRemoved={reloadItems}
-                currUser={currUser}
-              />
-            ))}
-          </ul>
-        )}
+        <ListEntries
+          items={items}
+          initialLoad={initialLoad}
+          listId={listId}
+          user={user}
+          spottedList={spottedList}
+          currUser={currUser}
+          onChanged={reloadItems}
+          onAdd={() => setDialog("add")}
+        />
         {hasMore && (
           <div ref={sentinelRef} className="flex justify-center py-4 text-accent" aria-live="polite">
             <Spinner label={t("loadingMore")} />

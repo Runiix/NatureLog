@@ -13,16 +13,15 @@ import {
 } from "@/app/[locale]/utils/lexiconFilters";
 import { useUrlFilters } from "./useUrlFilters";
 
-/** Active filters as removable chips, plus "reset all". */
-export default function LexiconFilterList({
-  hideInvertebratesByDefault,
-}: {
-  hideInvertebratesByDefault: boolean;
-}) {
-  const t = useTranslations("Lexicon");
-  const filters = useUrlFilters();
+type Chip = { key: string; value: string; label: string };
 
-  const chips: { key: string; value: string; label: string }[] = [];
+/** One chip per active filter in the URL, in a fixed order. */
+function activeFilterChips(
+  filters: ReturnType<typeof useUrlFilters>,
+  hideInvertebratesByDefault: boolean,
+  t: ReturnType<typeof useTranslations>,
+) {
+  const chips: Chip[] = [];
   // Only values the lexicon knows become chips — the URL is user input, and
   // translating an unknown value used to throw MISSING_MESSAGE.
   const allowed: Record<string, readonly string[]> = {
@@ -42,8 +41,7 @@ export default function LexiconFilterList({
       chips.push({ key, value: "true", label });
     }
   }
-  const invertebratesParam = filters.searchParams.get("invertebrates");
-  if (!showsInvertebrates(invertebratesParam, hideInvertebratesByDefault)) {
+  if (!showsInvertebrates(filters.searchParams.get("invertebrates"), hideInvertebratesByDefault)) {
     chips.push({ key: "invertebrates", value: "hide", label: t("invertebratesHidden") });
   }
   const sizeFrom = Number(filters.searchParams.get("sizeFrom")) || null;
@@ -56,11 +54,26 @@ export default function LexiconFilterList({
     });
   }
 
+  return chips;
+}
+
+/** Active filters as removable chips, plus "reset all". */
+export default function LexiconFilterList({
+  hideInvertebratesByDefault,
+}: {
+  hideInvertebratesByDefault: boolean;
+}) {
+  const t = useTranslations("Lexicon");
+  const filters = useUrlFilters();
+
+  const invertebratesParam = filters.searchParams.get("invertebrates");
+  const chips = activeFilterChips(filters, hideInvertebratesByDefault, t);
+
   if (chips.length === 0) return null;
   // Hidden by the user's setting alone: nothing to reset.
   const onlyDefault = chips.length === 1 && chips[0].key === "invertebrates" && !invertebratesParam;
 
-  const remove = (chip: (typeof chips)[number]) => {
+  const remove = (chip: Chip) => {
     if (chip.key === "size") filters.set({ sizeFrom: null, sizeTo: null });
     else if (chip.key === "invertebrates") filters.set({ invertebrates: hideInvertebratesByDefault ? "show" : null });
     else if (chip.value === "true") filters.set({ [chip.key]: null });

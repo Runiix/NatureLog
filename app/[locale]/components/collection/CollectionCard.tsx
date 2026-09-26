@@ -43,10 +43,11 @@ export default function CollectionCard({
   const t = useTranslations("Collection");
   const tProfile = useTranslations("Profile");
   const format = useFormatter();
-  const [hasPhoto, setHasPhoto] = useState(animalImageExists);
+  const [photoAdded, setPhotoAdded] = useState(false);
+  const hasPhoto = animalImageExists || photoAdded;
   // Bumped after a new upload so the browser refetches the same object URL.
   const [version, setVersion] = useState(0);
-  const [spottedAt, setSpottedAt] = useState(first_spotted_at?.slice(0, 10) ?? null);
+  const [spottedAt, setSpottedAt] = useState(() => first_spotted_at?.slice(0, 10) ?? null);
   const [dialog, setDialog] = useState<"edit" | "photo" | "report" | null>(null);
 
   const bust = (url: string) =>
@@ -151,7 +152,7 @@ export default function CollectionCard({
           onClose={() => setDialog(null)}
           onSaved={(update) => {
             if (update.photoChanged) {
-              setHasPhoto(true);
+              setPhotoAdded(true);
               setVersion(Date.now());
             }
             if (update.date) setSpottedAt(update.date);

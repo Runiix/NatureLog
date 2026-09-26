@@ -8,6 +8,7 @@ import { getTranslations } from "next-intl/server";
 import { PageHeader } from "@/app/[locale]/components/ui/PageHeader";
 import { PageShell } from "@/app/[locale]/components/ui/PageShell";
 import CreateListButton from "@/app/[locale]/components/animallists/CreateListButton";
+import { Suspense } from "react";
 
 const getAnimalLists = async (
   supabase: TypedSupabaseClient,
@@ -47,8 +48,7 @@ const getSpottedIds = async (
 };
 
 export default async function AnimalListsPage({ params }: { params: Promise<{ username: string; locale: string }> }) {
-  const supabase = await createClient();
-  const { username } = await params;
+  const [supabase, { username }] = await Promise.all([createClient(), params]);
   const viewer = await getUser(supabase);
   if (!viewer) redirect("/loginpage");
 
@@ -76,13 +76,15 @@ export default async function AnimalListsPage({ params }: { params: Promise<{ us
         backLabel={t("backToProfile")}
         actions={isOwner && animalLists.length > 0 ? <CreateListButton /> : undefined}
       />
-      <AnimalLists
-        data={animalLists}
-        user={viewer}
-        spottedList={spottedIds}
-        currUser={isOwner}
-        ownerName={target.displayName}
-      />
+      <Suspense>
+        <AnimalLists
+          data={animalLists}
+          user={viewer}
+          spottedList={spottedIds}
+          currUser={isOwner}
+          ownerName={target.displayName}
+        />
+      </Suspense>
     </PageShell>
   );
 }

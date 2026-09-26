@@ -70,6 +70,7 @@ export default function RecentUploads({
             aria-hidden={i !== index}
             fill
             unoptimized
+            sizes="(min-width: 768px) 50vw, 100vw"
             className={cn(
               "object-cover transition-opacity duration-500",
               i === index ? "opacity-100" : "opacity-0",

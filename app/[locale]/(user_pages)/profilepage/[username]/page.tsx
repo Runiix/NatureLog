@@ -23,8 +23,7 @@ export default async function ProfilePage({
 }: {
   params: Promise<{ username: string; locale: string }>;
 }) {
-  const supabase = await createClient();
-  const { username } = await params;
+  const [supabase, { username }] = await Promise.all([createClient(), params]);
 
   const viewer = await getUser(supabase);
   if (!viewer) redirect("/loginpage");

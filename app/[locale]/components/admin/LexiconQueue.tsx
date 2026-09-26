@@ -54,7 +54,7 @@ function Photo({
         className="relative aspect-[4/3] w-full overflow-hidden rounded-lg bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
         {src ? (
-          <Image src={src} alt="" fill unoptimized className="object-cover" />
+          <Image src={src} alt="" fill unoptimized sizes="(min-width: 640px) 50vw, 100vw" className="object-cover" />
         ) : (
           <span className="flex h-full flex-col items-center justify-center gap-2 text-sm text-fg-subtle">
             <HideImage aria-hidden />
@@ -63,6 +63,49 @@ function Photo({
         )}
       </button>
     </figure>
+  );
+}
+
+/**
+ * Current and proposed photo side by side (the current one only for image
+ * proposals), plus the moderation flags on the proposed photo.
+ */
+function SubmissionPhotos({
+  item,
+  kind,
+  onOpen,
+}: {
+  item: LexiconQueueItem;
+  kind: Kind;
+  onOpen: (src: string) => void;
+}) {
+  const t = useTranslations("Admin");
+  const unchecked = item.flagged_categories.includes("unchecked");
+  const categories = item.flagged_categories.filter((category) => category !== "unchecked");
+
+  return (
+    <>
+      {(kind === "image" || item.imageUrl) && (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {kind === "image" && (
+            <Photo
+              src={item.animal?.image_link ?? null}
+              label={t("lexicon.current")}
+              onOpen={item.animal?.image_link ? () => onOpen(item.animal!.image_link!) : undefined}
+            />
+          )}
+          <Photo
+            src={item.imageUrl}
+            label={t("lexicon.proposed")}
+            onOpen={item.imageUrl ? () => onOpen(item.imageUrl!) : undefined}
+          />
+        </div>
+      )}
+      {item.imageUrl && unchecked && <p className="text-danger">{t("notChecked")}</p>}
+      {categories.length > 0 && (
+        <p className="text-danger">{t("flagged", { categories: categories.join(", ") })}</p>
+      )}
+    </>
   );
 }
 
@@ -90,9 +133,6 @@ function SubmissionCard({
   const [errors, setErrors] = useState<AnimalFieldErrors>({});
   const [descriptionError, setDescriptionError] = useState<string | null>(null);
   const [note, setNote] = useState("");
-
-  const unchecked = item.flagged_categories.includes("unchecked");
-  const categories = item.flagged_categories.filter((category) => category !== "unchecked");
 
   function approve() {
     if (kind === "description") {
@@ -158,26 +198,7 @@ function SubmissionCard({
         </div>
       )}
 
-      {(kind === "image" || item.imageUrl) && (
-        <div className="grid gap-4 sm:grid-cols-2">
-          {kind === "image" && (
-            <Photo
-              src={item.animal?.image_link ?? null}
-              label={t("lexicon.current")}
-              onOpen={item.animal?.image_link ? () => onOpen(item.animal!.image_link!) : undefined}
-            />
-          )}
-          <Photo
-            src={item.imageUrl}
-            label={t("lexicon.proposed")}
-            onOpen={item.imageUrl ? () => onOpen(item.imageUrl!) : undefined}
-          />
-        </div>
-      )}
-      {item.imageUrl && unchecked && <p className="text-danger">{t("notChecked")}</p>}
-      {categories.length > 0 && (
-        <p className="text-danger">{t("flagged", { categories: categories.join(", ") })}</p>
-      )}
+      <SubmissionPhotos item={item} kind={kind} onOpen={onOpen} />
 
       {kind === "new_animal" && (
         <AnimalFieldsForm

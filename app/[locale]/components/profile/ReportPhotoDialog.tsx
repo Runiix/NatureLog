@@ -28,8 +28,12 @@ export default function ReportPhotoDialog({
   async function submit(event: React.FormEvent) {
     event.preventDefault();
     setSending(true);
-    const res = await addReport(ownerId, imageLink, reason);
-    setSending(false);
+    let res;
+    try {
+      res = await addReport(ownerId, imageLink, reason);
+    } finally {
+      setSending(false);
+    }
     if (res.success) {
       toast(t("toast.reported"));
       onClose();

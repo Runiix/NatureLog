@@ -40,8 +40,12 @@ export default function PasswordReset() {
     }
 
     setPending(true);
-    const { error: updateError } = await createClient().auth.updateUser({ password });
-    setPending(false);
+    let updateError;
+    try {
+      ({ error: updateError } = await createClient().auth.updateUser({ password }));
+    } finally {
+      setPending(false);
+    }
     if (updateError) {
       setError({
         field: "form",

@@ -26,7 +26,8 @@ export default function MySuggestions({ suggestions }: { suggestions: MySuggesti
   const tKind = useTranslations("LexiconSuggest.kind");
   const format = useFormatter();
   const toast = useToast();
-  const [items, setItems] = useState(suggestions);
+  const [withdrawn, setWithdrawn] = useState<ReadonlySet<string>>(new Set());
+  const items = suggestions.filter((item) => !withdrawn.has(item.id));
   const [busy, setBusy] = useState<string | null>(null);
   const [, startTransition] = useTransition();
 
@@ -36,7 +37,7 @@ export default function MySuggestions({ suggestions }: { suggestions: MySuggesti
       try {
         const res = await withdrawLexiconSuggestion(id);
         if (!res.success) throw new Error(res.error);
-        setItems((current) => current.filter((item) => item.id !== id));
+        setWithdrawn((current) => new Set(current).add(id));
         toast(t("withdrawn"));
       } catch (error) {
         console.error("Withdraw failed:", error);

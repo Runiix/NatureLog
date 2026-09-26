@@ -13,7 +13,8 @@ import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { useToast } from "../ui/Toast";
 import AnimalFieldsForm from "./AnimalFieldsForm";
-import LexiconImagePicker, { appendLexiconImage } from "./LexiconImagePicker";
+import LexiconImagePicker from "./LexiconImagePicker";
+import { appendLexiconImage } from "@/app/[locale]/utils/lexiconImage";
 
 /** A user's proposal for an animal the lexicon does not have yet. */
 export default function SuggestAnimalForm() {

@@ -47,6 +47,55 @@ async function compressPair(file: File) {
   return formData;
 }
 
+/** Nothing uploaded yet: an invitation for the owner, a plain note for visitors. */
+function EmptyGrid({ currUser, onAdd }: { currUser: boolean; onAdd: () => void }) {
+  const t = useTranslations("Profile");
+  if (!currUser) return <EmptyState icon={<PhotoLibrary />} title={t("noPhotosVisitorTitle")} />;
+  return (
+    <EmptyState
+      icon={<PhotoLibrary />}
+      title={t("noPhotosOwnerTitle")}
+      description={t("noPhotosOwnerText", { max: MAX_GRID_IMAGES })}
+      action={
+        <Button icon={<AddAPhoto />} onClick={onAdd}>
+          {t("addPhoto")}
+        </Button>
+      }
+    />
+  );
+}
+
+/** One grid photo at full size. */
+function GridLightbox({
+  image,
+  alt,
+  onClose,
+}: {
+  image: ProfileGridImage;
+  alt: string;
+  onClose: () => void;
+}) {
+  const t = useTranslations("Profile");
+  return (
+    <Modal
+      label={t("photoLightbox")}
+      closeModal={onClose}
+      styles="max-w-5xl p-2 pt-12 sm:p-3 sm:pt-12 bg-surface-sunken"
+    >
+      {image.modalUrl && (
+        <Image
+          src={image.modalUrl}
+          alt={alt}
+          width={1920}
+          height={1280}
+          unoptimized
+          className="max-h-[80vh] w-full rounded-lg object-contain"
+        />
+      )}
+    </Modal>
+  );
+}
+
 /**
  * Up to twelve favourite photos. The first render comes from the server
  * (`initialImages`), so there is no client-side fetch before anything shows;
@@ -154,8 +203,6 @@ export default function PictureGrid({
     setBusy(null);
   }
 
-  const open = lightbox === null ? null : images[lightbox];
-
   return (
     <section aria-labelledby="profile-photos" className="flex flex-col gap-4">
       <div className="flex items-baseline justify-between gap-3">
@@ -169,19 +216,8 @@ export default function PictureGrid({
         )}
       </div>
 
-      {images.length === 0 && !currUser ? (
-        <EmptyState icon={<PhotoLibrary />} title={t("noPhotosVisitorTitle")} />
-      ) : images.length === 0 && busy !== "new" ? (
-        <EmptyState
-          icon={<PhotoLibrary />}
-          title={t("noPhotosOwnerTitle")}
-          description={t("noPhotosOwnerText", { max: MAX_GRID_IMAGES })}
-          action={
-            <Button icon={<AddAPhoto />} onClick={() => addInput.current?.click()}>
-              {t("addPhoto")}
-            </Button>
-          }
-        />
+      {images.length === 0 && busy !== "new" ? (
+        <EmptyGrid currUser={currUser} onAdd={() => addInput.current?.click()} />
       ) : (
         <ul className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3 lg:grid-cols-4">
           {images.map((image, index) => (
@@ -317,23 +353,12 @@ export default function PictureGrid({
         </>
       )}
 
-      {open && (
-        <Modal
-          label={t("photoLightbox")}
-          closeModal={() => setLightbox(null)}
-          styles="max-w-5xl p-2 pt-12 sm:p-3 sm:pt-12 bg-surface-sunken"
-        >
-          {open.modalUrl && (
-            <Image
-              src={open.modalUrl}
-              alt={t("photoAlt", { name: displayName, number: (lightbox ?? 0) + 1 })}
-              width={1920}
-              height={1280}
-              unoptimized
-              className="max-h-[80vh] w-full rounded-lg object-contain"
-            />
-          )}
-        </Modal>
+      {lightbox !== null && images[lightbox] && (
+        <GridLightbox
+          image={images[lightbox]}
+          alt={t("photoAlt", { name: displayName, number: lightbox + 1 })}
+          onClose={() => setLightbox(null)}
+        />
       )}
 
       {reporting && (

@@ -8,7 +8,7 @@ import { Spinner } from "./Spinner";
  * The one button recipe. Shared by Button and ButtonLink because most
  * "buttons" in this app are navigation, and both must look identical.
  */
-export const buttonStyles = cva(
+const buttonStyles = cva(
   [
     "inline-flex items-center justify-center gap-2 rounded-lg font-medium",
     "transition-colors duration-150 select-none whitespace-nowrap",

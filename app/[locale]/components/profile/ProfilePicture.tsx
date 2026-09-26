@@ -28,7 +28,9 @@ export default function ProfilePicture({
   const t = useTranslations("Profile");
   const toast = useToast();
   const fileInput = useRef<HTMLInputElement>(null);
-  const [url, setUrl] = useState(profilePicUrl);
+  // Local preview of the last upload, until the page brings a new signed URL.
+  const [preview, setPreview] = useState<{ base: string; src: string } | null>(null);
+  const url = preview?.base === profilePicUrl ? preview.src : profilePicUrl;
   const [hasPicture, setHasPicture] = useState(profilePic && !!profilePicUrl);
   const [uploading, setUploading] = useState(false);
   const [reporting, setReporting] = useState(false);
@@ -69,7 +71,7 @@ export default function ProfilePicture({
         toast(t("toast.underReview"));
       } else if (res.success) {
         // A local preview avoids waiting on storage/CDN for the new object.
-        setUrl(URL.createObjectURL(compressed));
+        setPreview({ base: profilePicUrl, src: URL.createObjectURL(compressed) });
         setHasPicture(true);
         toast(t("toast.uploaded"));
       } else {

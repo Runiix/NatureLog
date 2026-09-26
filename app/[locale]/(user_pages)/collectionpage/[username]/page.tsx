@@ -17,6 +17,7 @@ import { getProfileTarget } from "@/app/[locale]/utils/users";
 import { canViewProfile } from "@/app/[locale]/utils/visibility";
 import { notFound, redirect } from "next/navigation";
 import { GENERA } from "@/app/[locale]/utils/lexiconFilters";
+import { Suspense } from "react";
 
 
 type SpottedRow = { animal_id: number; first_spotted_at: string | null };
@@ -85,8 +86,7 @@ export default async function CollectionPage({
 }: {
   params: Promise<{ username: string; locale: string }>;
 }) {
-  const supabase = await createClient();
-  const { username } = await params;
+  const [supabase, { username }] = await Promise.all([createClient(), params]);
   const viewer = await getUser(supabase);
   if (!viewer) redirect("/loginpage");
 
@@ -139,6 +139,7 @@ export default async function CollectionPage({
   return (
     <PageShell>
       {header}
+      <Suspense>
       <div className="flex flex-col gap-3 sm:gap-4">
         <div className="flex flex-wrap items-center gap-2 sm:gap-3">
           <div className="flex min-w-[12rem] flex-1 items-center gap-2 sm:flex-none sm:gap-3">
@@ -163,6 +164,7 @@ export default async function CollectionPage({
         isOwner={isOwner}
         viewerSpotted={viewerSpotted ?? ownerSpotted}
       />
+      </Suspense>
       <ScrollToTop />
     </PageShell>
   );

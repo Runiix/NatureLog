@@ -38,7 +38,14 @@ function ReportCard({
         className="relative aspect-[4/3] w-full bg-surface-sunken focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
         {item.imageUrl ? (
-          <Image src={item.imageUrl} alt="" fill unoptimized className="object-cover" />
+          <Image
+            src={item.imageUrl}
+            alt=""
+            fill
+            unoptimized
+            sizes="(min-width: 1024px) 33vw, (min-width: 640px) 50vw, 100vw"
+            className="object-cover"
+          />
         ) : (
           <span className="flex h-full flex-col items-center justify-center gap-2 text-sm text-fg-subtle">
             <HideImage aria-hidden />

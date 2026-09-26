@@ -31,12 +31,15 @@ export default function SocialListElement({ person }: { person: SocialUser }) {
     setIsFollowing(next);
     // Decide from the current state — the old handler checked the initial
     // prop, so a second click sent the same action again.
-    const res = next ? await follow(person.id) : await unfollow(person.id);
-    if (!res.success) {
-      setIsFollowing(!next);
-      toast(t("error"), "error");
+    try {
+      const res = next ? await follow(person.id) : await unfollow(person.id);
+      if (!res.success) {
+        setIsFollowing(!next);
+        toast(t("error"), "error");
+      }
+    } finally {
+      setPending(false);
     }
-    setPending(false);
   }
 
   return (

@@ -80,6 +80,7 @@ export default async function HomePage() {
     getSpottingStats(supabase, user.id),
     getHideInvertebrates(supabase, user),
   ]);
+  const today = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
 
   return (
     <PageShell className="max-w-7xl">
@@ -103,7 +104,10 @@ export default async function HomePage() {
             </div>
           )}
           <Card className="md:col-span-2">
-            <DailyChallenge hideInvertebrates={hideInvertebrates} />
+            <DailyChallenge
+              day={today}
+              hideInvertebrates={hideInvertebrates}
+            />
           </Card>
 
           <Card className="flex flex-col gap-3 md:col-span-3">

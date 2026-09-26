@@ -36,12 +36,15 @@ export async function updateSession(request: NextRequest) {
   // supabase.auth.getUser(). A simple mistake could make it very hard to debug
   // issues with users being randomly logged out.
 
-  // IMPORTANT: DO NOT REMOVE auth.getUser()
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  // IMPORTANT: DO NOT REMOVE auth.getClaims(). It refreshes an expiring
+  // session. Unlike getUser() it verifies the JWT locally against the cached
+  // JWKS instead of calling the Auth server, so the proxy no longer adds a
+  // network round trip in front of every navigation and prefetch. Pages that
+  // need the full user still call getUser() themselves.
+  const { data } = await supabase.auth.getClaims();
+  const user = data?.claims ?? null;
 
-  // getUser() may have refreshed the session, and the new tokens only exist
+  // getClaims() may have refreshed the session, and the new tokens only exist
   // as cookies on supabaseResponse. A bare redirect would drop them and log
   // the user out on the next request, so every redirect carries them over.
   const redirectWithSession = (url: URL) => {

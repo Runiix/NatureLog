@@ -39,8 +39,7 @@ const FEATURES = [
 ] as const;
 
 export default async function LandingPage({ params }: { params: Promise<{ locale: string }> }) {
-  const { locale } = await params;
-  const supabase = await createClient();
+  const [{ locale }, supabase] = await Promise.all([params, createClient()]);
   const [user, t, tMeta] = await Promise.all([
     getUser(supabase),
     getTranslations("Landing"),

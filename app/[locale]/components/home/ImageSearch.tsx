@@ -71,7 +71,7 @@ export default function ImageSearch() {
         className="relative flex aspect-video w-full items-center justify-center overflow-hidden rounded-lg border border-dashed border-border bg-surface-sunken text-sm text-fg-muted transition-colors hover:border-accent focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent"
       >
         {preview ? (
-          <Image src={preview} alt="" fill unoptimized className="object-cover" />
+          <Image src={preview} alt="" fill unoptimized sizes="(min-width: 768px) 50vw, 100vw" className="object-cover" />
         ) : (
           <span className="flex flex-col items-center gap-2">
             <AddAPhoto />

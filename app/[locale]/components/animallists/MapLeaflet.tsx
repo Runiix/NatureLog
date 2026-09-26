@@ -5,6 +5,23 @@ import "leaflet/dist/leaflet.css";
 import { useState } from "react";
 import L, { LatLng } from "leaflet";
 
+function LocationPicker({
+  position,
+  icon,
+  onSelect,
+}: {
+  position: LatLng | null;
+  icon: L.Icon;
+  onSelect: (location: LatLng) => void;
+}) {
+  useMapEvents({
+    click(e) {
+      onSelect(e.latlng);
+    },
+  });
+  return position ? <Marker position={position} icon={icon} /> : null;
+}
+
 /**
  * Location picker for the list form: click the map to drop a pin. The public
  * lists map has its own component (listsmap/ListsMapLeaflet).
@@ -27,16 +44,6 @@ export default function MapLeaflet({
     iconSize: [38, 38],
     iconAnchor: [12, 41],
   });
-  const LocationPicker = () => {
-    useMapEvents({
-      click(e) {
-        setPosition(e.latlng);
-        onLocationSelect?.(e.latlng);
-      },
-    });
-    return position ? <Marker position={position} icon={icon} /> : null;
-  };
-
   return (
     <MapContainer
       center={[51.1657, 10.4515]}
@@ -51,7 +58,16 @@ export default function MapLeaflet({
         // water blue and parks green while matching the dark theme.
         className="dark:[filter:invert(1)_hue-rotate(180deg)_brightness(0.95)_contrast(0.9)]"
       />
-      {setMarker && <LocationPicker />}
+      {setMarker && (
+        <LocationPicker
+          position={position}
+          icon={icon}
+          onSelect={(latlng) => {
+            setPosition(latlng);
+            onLocationSelect?.(latlng);
+          }}
+        />
+      )}
     </MapContainer>
   );
 }

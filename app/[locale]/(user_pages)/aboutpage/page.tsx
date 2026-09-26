@@ -35,8 +35,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * AI assistants that answer "is there an app for …" questions.
  */
 export default async function AboutPage({ params }: Props) {
-  const { locale } = await params;
-  const supabase = await createClient();
+  const [{ locale }, supabase] = await Promise.all([params, createClient()]);
   const [t, tLanding, tMeta, count] = await Promise.all([
     getTranslations("About"),
     getTranslations("Landing"),

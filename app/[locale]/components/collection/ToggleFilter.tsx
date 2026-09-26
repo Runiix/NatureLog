@@ -1,6 +1,6 @@
 "use client";
 
-import { usePathname, useRouter, useSearchParams } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { useTransition, type ReactNode } from "react";
 import { cn } from "@/app/[locale]/utils/cn";
 
@@ -24,7 +24,6 @@ export default function ToggleFilter({
   clears?: string[];
 }) {
   const searchParams = useSearchParams();
-  const pathName = usePathname();
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const active = searchParams.get(param) === "true";
@@ -36,9 +35,9 @@ export default function ToggleFilter({
       params.set(param, "true");
       clears.forEach((key) => params.delete(key));
     }
-    const query = params.toString();
+    // Query-only href: the router resolves it against the current path.
     startTransition(() => {
-      router.replace(query ? `${pathName}?${query}` : pathName, { scroll: false });
+      router.replace(`?${params.toString()}`, { scroll: false });
     });
   };
 

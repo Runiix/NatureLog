@@ -47,10 +47,11 @@ export default async function removeReportedImage(path: string) {
 
   // Reports hold whatever URL the reporter saw, so match them by path.
   const { data: reports } = await admin.from("reports").select("id, image_link");
+  const imagePaths = new Set(image.paths);
   const reportIds = (reports ?? [])
     .filter((report) => {
       const reported = reportedPathFromLink(report.image_link);
-      return reported !== null && image.paths.includes(reported);
+      return reported !== null && imagePaths.has(reported);
     })
     .map((report) => report.id);
   if (reportIds.length > 0) {

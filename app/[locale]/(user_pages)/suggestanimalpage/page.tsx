@@ -24,7 +24,7 @@ export default async function SuggestAnimalPage() {
       />
       <SuggestAnimalForm />
       {/* Keyed so a new submission (router.refresh) shows up in the list. */}
-      <MySuggestions key={suggestions.map((item) => item.id).join()} suggestions={suggestions} />
+      <MySuggestions suggestions={suggestions} />
     </PageShell>
   );
 }

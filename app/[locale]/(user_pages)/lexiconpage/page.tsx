@@ -1,5 +1,6 @@
 import { AddCircleOutline } from "@mui/icons-material";
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { getTranslations } from "next-intl/server";
 import getAnimals from "@/app/[locale]/actions/lexicon/getAnimals";
 import { ButtonLink } from "@/app/[locale]/components/ui/Button";
@@ -68,6 +69,7 @@ export default async function LexiconPage({ searchParams }: Props) {
           </ButtonLink>
         }
       />
+      <Suspense>
       <div className="flex items-center gap-2 sm:justify-between sm:gap-3">
         <Search placeholder="searchAnimal" debounceMs={600} className="min-w-0 flex-1 sm:w-72 sm:flex-none" />
         <LexiconSort />
@@ -80,6 +82,7 @@ export default async function LexiconPage({ searchParams }: Props) {
         initialAnimals={firstPage}
         initialKey={filterKey}
       />
+      </Suspense>
       <ScrollToTop />
     </>
   );

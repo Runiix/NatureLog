@@ -20,6 +20,89 @@ const normalise = (value: string) =>
     .replace(/[̀-ͯ]/g, "")
     .replace(/[^a-z0-9]/g, "");
 
+/** Easy mode: four names to pick from, marked right/wrong once one is picked. */
+function ChoiceGrid({
+  round,
+  answerId,
+  picked,
+  answered,
+  onPick,
+}: {
+  round: QuizRound | null;
+  answerId: number | undefined;
+  picked: number | null;
+  answered: boolean;
+  onPick: (id: number) => void;
+}) {
+  const t = useTranslations("Home.quiz");
+  return (
+    <div role="group" aria-label={t("choicesLabel")} className="grid grid-cols-2 gap-2">
+      {round
+        ? round.choices.map((choice) => (
+          <button
+            key={choice.id}
+            type="button"
+            disabled={answered}
+            onClick={() => onPick(choice.id)}
+            aria-pressed={picked === choice.id}
+            className={cn(
+              "flex min-h-10 items-center justify-center gap-1 rounded-lg border px-2 py-1.5 text-center text-sm transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default",
+              !answered && "border-border-muted hover:border-accent",
+              answered && choice.id === answerId && "border-accent bg-accent/10 font-medium text-accent-text",
+              answered && picked === choice.id && choice.id !== answerId && "border-danger bg-danger/10 text-danger",
+              answered && picked !== choice.id && choice.id !== answerId && "border-border-muted opacity-60",
+            )}
+          >
+            {answered && choice.id === answerId && <CheckCircle fontSize="small" aria-hidden />}
+            {answered && picked === choice.id && choice.id !== answerId && (
+              <Cancel fontSize="small" aria-hidden />
+            )}
+            {choice.common_name}
+          </button>
+        ))
+        : Array.from({ length: 4 }, (_, index) => <Skeleton key={index} className="h-10" />)}
+    </div>
+  );
+}
+
+/** Hard mode: type the name, then check it. Locked once it is right. */
+function TypedAnswer({
+  value,
+  loaded,
+  solved,
+  onChange,
+  onCheck,
+}: {
+  value: string;
+  loaded: boolean;
+  solved: boolean;
+  onChange: (value: string) => void;
+  onCheck: () => void;
+}) {
+  const t = useTranslations("Home.quiz");
+  return (
+    <form
+      className="flex gap-2"
+      onSubmit={(event) => {
+        event.preventDefault();
+        if (value.trim()) onCheck();
+      }}
+    >
+      <Input
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={t("answerPlaceholder")}
+        aria-label={t("answerLabel")}
+        disabled={!loaded || solved}
+      />
+      <Button type="submit" variant="secondary" disabled={!loaded || !value.trim()}>
+        {t("check")}
+      </Button>
+    </form>
+  );
+}
+
 export default function AnimalQuiz() {
   const t = useTranslations("Home.quiz");
   const [round, setRound] = useState<QuizRound | null>(null);
@@ -92,6 +175,7 @@ export default function AnimalQuiz() {
             alt={t("imageAlt")}
             fill
             unoptimized
+            sizes="(min-width: 768px) 50vw, 100vw"
             className="object-cover"
           />
         ) : (
@@ -100,57 +184,24 @@ export default function AnimalQuiz() {
       </div>
 
       {mode === "easy" ? (
-        <div role="group" aria-label={t("choicesLabel")} className="grid grid-cols-2 gap-2">
-          {(round?.choices ?? Array.from({ length: 4 }, () => null)).map((choice, index) =>
-            choice ? (
-              <button
-                key={choice.id}
-                type="button"
-                disabled={answered}
-                onClick={() => setPicked(choice.id)}
-                aria-pressed={picked === choice.id}
-                className={cn(
-                  "flex min-h-10 items-center justify-center gap-1 rounded-lg border px-2 py-1.5 text-center text-sm transition-colors",
-                  "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent disabled:cursor-default",
-                  !answered && "border-border-muted hover:border-accent",
-                  answered && choice.id === answer?.id && "border-accent bg-accent/10 font-medium text-accent-text",
-                  answered && picked === choice.id && choice.id !== answer?.id && "border-danger bg-danger/10 text-danger",
-                  answered && picked !== choice.id && choice.id !== answer?.id && "border-border-muted opacity-60",
-                )}
-              >
-                {answered && choice.id === answer?.id && <CheckCircle fontSize="small" aria-hidden />}
-                {answered && picked === choice.id && choice.id !== answer?.id && (
-                  <Cancel fontSize="small" aria-hidden />
-                )}
-                {choice.common_name}
-              </button>
-            ) : (
-              <Skeleton key={index} className="h-10" />
-            ),
-          )}
-        </div>
+        <ChoiceGrid
+          round={round}
+          answerId={answer?.id}
+          picked={picked}
+          answered={answered}
+          onPick={setPicked}
+        />
       ) : (
-        <form
-          className="flex gap-2"
-          onSubmit={(event) => {
-            event.preventDefault();
-            if (typed.trim()) setChecked(true);
+        <TypedAnswer
+          value={typed}
+          loaded={round !== null}
+          solved={checked && correct}
+          onChange={(value) => {
+            setTyped(value);
+            setChecked(false);
           }}
-        >
-          <Input
-            value={typed}
-            onChange={(e) => {
-              setTyped(e.target.value);
-              setChecked(false);
-            }}
-            placeholder={t("answerPlaceholder")}
-            aria-label={t("answerLabel")}
-            disabled={!round || (checked && correct)}
-          />
-          <Button type="submit" variant="secondary" disabled={!round || !typed.trim()}>
-            {t("check")}
-          </Button>
-        </form>
+          onCheck={() => setChecked(true)}
+        />
       )}
 
       <p aria-live="polite" className={cn("min-h-5 text-sm", correct ? "text-accent-text" : "text-danger")}>

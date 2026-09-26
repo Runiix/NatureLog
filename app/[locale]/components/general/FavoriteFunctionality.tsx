@@ -49,8 +49,12 @@ export default function FavoriteFunctionality({
     const formData = new FormData();
     formData.append("animalId", String(id));
     formData.append("isSpotted", String(!next));
-    const res = await addOrRemoveAnimals(formData);
-    setPending(false);
+    let res;
+    try {
+      res = await addOrRemoveAnimals(formData);
+    } finally {
+      setPending(false);
+    }
     if (res.success) {
       setOverride(res.isSpotted === "true");
       setConfirming(false);

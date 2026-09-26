@@ -1,4 +1,4 @@
-import { targetForDay } from "@/app/[locale]/components/home/DailyChallenge";
+import { targetForDay } from "@/app/[locale]/utils/dailyChallenge";
 import filterSpottedAnimals from "@/app/[locale]/utils/filterSpottedAnimals";
 import {
   countActiveFilters,

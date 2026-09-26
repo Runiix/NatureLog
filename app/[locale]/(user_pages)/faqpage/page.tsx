@@ -36,8 +36,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
  * FAQPage markup repeats the visible text exactly, as Google requires.
  */
 export default async function FaqPage({ params }: Props) {
-  const { locale } = await params;
-  const supabase = await createClient();
+  const [{ locale }, supabase] = await Promise.all([params, createClient()]);
   const [t, count] = await Promise.all([getTranslations("Faq"), getSpeciesCount(supabase)]);
   const items = QUESTIONS.map((id) => ({
     q: t(`items.${id}.q`),

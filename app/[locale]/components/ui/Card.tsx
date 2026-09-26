@@ -1,7 +1,7 @@
 import { cva, type VariantProps } from "class-variance-authority";
 import { cn } from "@/app/[locale]/utils/cn";
 
-export const cardStyles = cva("rounded-xl border text-fg", {
+const cardStyles = cva("rounded-xl border text-fg", {
   variants: {
     variant: {
       solid: "border-border-muted bg-surface shadow-card",

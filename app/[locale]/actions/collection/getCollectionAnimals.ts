@@ -109,8 +109,10 @@ export default async function getCollectionAnimals(
         }
 
         const safeName = collectionImageName(animal.common_name);
-        const collectionUrl = await getSignedUrlForImage(ownerId, "Collection", safeName);
-        const collectionModalUrl = await getSignedUrlForImage(ownerId, "CollectionModals", safeName);
+        const [collectionUrl, collectionModalUrl] = await Promise.all([
+          getSignedUrlForImage(ownerId, "Collection", safeName),
+          getSignedUrlForImage(ownerId, "CollectionModals", safeName),
+        ]);
 
         return {
           ...animal,

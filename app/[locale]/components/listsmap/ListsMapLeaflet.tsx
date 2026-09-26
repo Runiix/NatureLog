@@ -36,9 +36,6 @@ function BoundsReporter({ onChange }: { onChange: (bounds: L.LatLngBounds) => vo
   const map = useMapEvents({
     moveend: () => onChange(map.getBounds()),
   });
-  useEffect(() => {
-    onChange(map.getBounds());
-  }, [map, onChange]);
   return null;
 }
 
@@ -124,6 +121,10 @@ export default function ListsMapLeaflet({
       zoom={6}
       style={{ height, width: "100%" }}
       className="z-0"
+      // The initial view never fires moveend; Leaflet calls this with the map as `this`.
+      whenReady={function (this: L.Map) {
+        onBoundsChange(this.getBounds());
+      }}
     >
       <TileLayer
         attribution="&copy; OpenStreetMap"
