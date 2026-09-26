@@ -1,11 +1,11 @@
 "use client";
 
-import { Tune } from "@mui/icons-material";
+import { AddCircleOutline, Tune } from "@mui/icons-material";
 import { useTranslations } from "next-intl";
 import { useState } from "react";
 import { countActiveFilters } from "@/app/[locale]/utils/lexiconFilters";
 import Modal from "../general/Modal";
-import { Button } from "../ui/Button";
+import { Button, ButtonLink } from "../ui/Button";
 import { useUrlFilters } from "./useUrlFilters";
 
 /**
@@ -46,6 +46,16 @@ export default function LexiconFilterNav({ children }: { children: React.ReactNo
       {open && (
         <Modal title={t("filters")} closeModal={() => setOpen(false)}>
           {children}
+          {/* The page header shows this from `lg` up; below, it would crowd the grid. */}
+          <ButtonLink
+            href="/suggestanimalpage"
+            variant="secondary"
+            size="sm"
+            icon={<AddCircleOutline />}
+            className="mb-4 self-start"
+          >
+            {t("suggestMissing")}
+          </ButtonLink>
           <Button fullWidth onClick={() => setOpen(false)} className="sticky bottom-0">
             {t("showResults")}
           </Button>

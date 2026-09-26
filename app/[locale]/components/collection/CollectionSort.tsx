@@ -9,6 +9,9 @@ export default function CollectionSort() {
   return (
     <SortControl
       id="collection-sort"
+      // Fills its row on phones.
+      className="w-full sm:w-auto"
+      selectClassName="min-w-0 flex-1 sm:flex-none"
       defaultColumn="common_name"
       options={COLLECTION_SORT_COLUMNS.map((column) => ({ value: column, label: t(column) }))}
       labels={{

@@ -11,11 +11,13 @@ import ProgressFilter from "./ProgressFilter";
 export default function YearFilter({
   yearCounts,
   total,
+  mobileAside,
 }: {
   /** Species first spotted per year, newest year first. */
   yearCounts: { year: string; count: number }[];
   /** All species in the collection, dated or not. */
   total: number;
+  mobileAside?: React.ReactNode;
 }) {
   const t = useTranslations("Collection");
   const best = Math.max(1, ...yearCounts.map((entry) => entry.count));
@@ -36,6 +38,7 @@ export default function YearFilter({
       label={t("yearFilterLabel")}
       options={options}
       clears={["noDate"]}
+      mobileAside={mobileAside}
     />
   );
 }

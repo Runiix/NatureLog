@@ -25,6 +25,7 @@ export default function ProgressFilter({
   label,
   options,
   clears = [],
+  mobileAside,
 }: {
   param: string;
   /** Accessible name of the group. */
@@ -32,6 +33,8 @@ export default function ProgressFilter({
   options: ProgressOption[];
   /** Parameters removed when an option is picked, for filters that exclude each other. */
   clears?: string[];
+  /** Rendered next to the select on phones. */
+  mobileAside?: React.ReactNode;
 }) {
   const searchParams = useSearchParams();
   const pathName = usePathname();
@@ -58,28 +61,31 @@ export default function ProgressFilter({
   return (
     <>
       <div className="flex flex-col gap-2 sm:hidden" aria-busy={isPending}>
-        <div className="relative">
-          <select
-            value={current.value}
-            onChange={(event) => select(event.target.value)}
-            aria-label={label}
-            className={cn(
-              "h-10 w-full appearance-none rounded-lg border border-border bg-surface pl-3 pr-9 text-sm font-medium text-fg transition-colors",
-              "focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30",
-              isPending && "opacity-60",
-            )}
-          >
-            {options.map((option) => (
-              <option key={option.value} value={option.value}>
-                {option.label} ({option.detail})
-              </option>
-            ))}
-          </select>
-          <ExpandMore
-            fontSize="small"
-            aria-hidden
-            className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-fg-subtle"
-          />
+        <div className="flex items-center gap-2">
+          <div className="relative min-w-0 flex-1">
+            <select
+              value={current.value}
+              onChange={(event) => select(event.target.value)}
+              aria-label={label}
+              className={cn(
+                "h-10 w-full appearance-none rounded-lg border border-border bg-surface pl-3 pr-9 text-sm font-medium text-fg transition-colors",
+                "focus:border-accent focus:outline-none focus:ring-2 focus:ring-accent/30",
+                isPending && "opacity-60",
+              )}
+            >
+              {options.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label} ({option.detail})
+                </option>
+              ))}
+            </select>
+            <ExpandMore
+              fontSize="small"
+              aria-hidden
+              className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-fg-subtle"
+            />
+          </div>
+          {mobileAside}
         </div>
         <div className="flex items-center gap-3">
           <span

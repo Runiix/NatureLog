@@ -10,16 +10,21 @@ import { ButtonLink } from "./Button";
 export function PageHeader({
   title,
   subtitle,
+  subtitleDesktopOnly = false,
   backHref,
   backLabel,
   actions,
+  actionsClassName,
   className,
 }: {
   title: React.ReactNode;
   subtitle?: React.ReactNode;
+  /** Hide the subtitle on phones, where filters need the room. */
+  subtitleDesktopOnly?: boolean;
   backHref?: string;
   backLabel?: string;
   actions?: React.ReactNode;
+  actionsClassName?: string;
   className?: string;
 }) {
   return (
@@ -44,9 +49,17 @@ export function PageHeader({
         <h1 className="truncate text-2xl font-semibold tracking-tight text-fg sm:text-3xl">
           {title}
         </h1>
-        {subtitle && <p className="text-sm text-fg-muted">{subtitle}</p>}
+        {subtitle && (
+          <p className={cn("text-sm text-fg-muted", subtitleDesktopOnly && "hidden sm:block")}>
+            {subtitle}
+          </p>
+        )}
       </div>
-      {actions && <div className="flex shrink-0 flex-wrap items-center gap-2">{actions}</div>}
+      {actions && (
+        <div className={cn("flex shrink-0 flex-wrap items-center gap-2", actionsClassName)}>
+          {actions}
+        </div>
+      )}
     </header>
   );
 }

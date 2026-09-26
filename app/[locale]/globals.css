@@ -96,6 +96,69 @@
   color: rgb(var(--color-fg-muted));
 }
 
+/*
+ * Customizable select (Chrome/Edge 135+): the dropdown follows the theme
+ * instead of the OS (blue highlight). Browsers without support keep the native
+ * picker. `[class]` outranks Tailwind's `.appearance-none`, which the selects
+ * with their own chevron icon use; those hide the built-in picker icon.
+ */
+@supports (appearance: base-select) {
+  select,
+  select[class],
+  ::picker(select) {
+    appearance: base-select;
+  }
+  /* The base-select button is inline-flex; without this the label sits at the top. */
+  select {
+    align-items: center;
+  }
+  select.appearance-none::picker-icon {
+    display: none;
+  }
+  /* Chevron flips while open: the built-in picker icon, and our own icon placed
+     right after the select. `rotate` composes with Tailwind's translate. */
+  select::picker-icon,
+  select + svg {
+    transition: rotate 200ms ease;
+  }
+  select:open::picker-icon,
+  select:open + svg {
+    rotate: 180deg;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    select::picker-icon,
+    select + svg {
+      transition: none;
+    }
+  }
+  ::picker(select) {
+    margin-top: 0.25rem;
+    padding: 0.25rem;
+    border: 1px solid rgb(var(--color-border-muted));
+    border-radius: 0.5rem;
+    background: rgb(var(--color-surface));
+    color: rgb(var(--color-fg));
+    box-shadow: var(--shadow-overlay);
+  }
+  select option {
+    padding: 0.5rem 0.75rem;
+    border-radius: 0.375rem;
+    font-size: 0.875rem;
+    outline: none;
+  }
+  select option::checkmark {
+    display: none;
+  }
+  select option:hover,
+  select option:focus-visible {
+    background: rgb(var(--color-accent) / 0.15);
+  }
+  select option:checked {
+    background: rgb(var(--color-accent-solid));
+    color: rgb(var(--color-accent-fg));
+  }
+}
+
 html,
 body {
   overflow-x: hidden;

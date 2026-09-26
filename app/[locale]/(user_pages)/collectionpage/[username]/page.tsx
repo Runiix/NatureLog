@@ -103,6 +103,7 @@ export default async function CollectionPage({
       subtitle={
         isOwner ? t("subtitleOwner") : t("subtitleVisitor", { name: target.displayName })
       }
+      subtitleDesktopOnly
       backHref={isOwner ? undefined : `/profilepage/${target.displayName}`}
       backLabel={t("backToProfile")}
     />
@@ -145,7 +146,8 @@ export default async function CollectionPage({
             <ImageExistsFilter />
             <NoDateFilter />
           </div>
-          <div className="sm:ml-auto">
+          {/* Phones: sort gets its own full-width row. */}
+          <div className="w-full sm:ml-auto sm:w-auto">
             <CollectionSort />
           </div>
         </div>

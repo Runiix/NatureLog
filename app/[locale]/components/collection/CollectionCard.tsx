@@ -53,6 +53,10 @@ export default function CollectionCard({
     version === 0 ? url : `${url}${url.includes("?") ? "&" : "?"}v=${version}`;
   const thumb = bust(imageUrl);
   const full = bust(modalUrl);
+  const spottedDate = spottedAt
+    ? format.dateTime(new Date(spottedAt), { day: "2-digit", month: "2-digit", year: "numeric" })
+    : null;
+  const spottedLabel = spottedDate ? t("spottedOn", { date: spottedDate }) : undefined;
 
   return (
     <Card padding="none" className="group/card flex h-full flex-col overflow-hidden">
@@ -120,16 +124,12 @@ export default function CollectionCard({
         >
           {common_name}
         </Link>
-        {spottedAt && (
-          <p className="mt-0.5 flex items-center gap-1 text-xs text-fg-muted sm:text-sm">
+        {spottedDate && (
+          // Phones: the eye icon plus the bare date, so it stays on one line.
+          <p className="mt-0.5 flex items-center gap-1 text-xs text-fg-muted sm:text-sm" title={spottedLabel}>
             <Visibility aria-hidden fontSize="inherit" />
-            {t("spottedOn", {
-              date: format.dateTime(new Date(spottedAt), {
-                day: "2-digit",
-                month: "2-digit",
-                year: "numeric",
-              }),
-            })}
+            <span aria-hidden className="sm:hidden">{spottedDate}</span>
+            <span className="sr-only sm:not-sr-only">{spottedLabel}</span>
           </p>
         )}
       </div>

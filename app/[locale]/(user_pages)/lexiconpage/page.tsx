@@ -59,6 +59,9 @@ export default async function LexiconPage({ searchParams }: Props) {
       <PageHeader
         title={t("title")}
         subtitle={t("subtitle")}
+        subtitleDesktopOnly
+        // Below `lg` the button lives in the filter dialog (LexiconFilterNav).
+        actionsClassName="hidden lg:flex"
         actions={
           <ButtonLink href="/suggestanimalpage" variant="secondary" size="sm" icon={<AddCircleOutline />}>
             {t("suggestMissing")}

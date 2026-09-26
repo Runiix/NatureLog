@@ -11,9 +11,11 @@ import ProgressFilter from "./ProgressFilter";
 export default function GenusFilter({
   counts,
   categoryCounts,
+  mobileAside,
 }: {
   counts: Record<string, number>;
   categoryCounts: { category: string }[];
+  mobileAside?: React.ReactNode;
 }) {
   const t = useTranslations("Collection");
   const tLex = useTranslations("Lexicon");
@@ -32,5 +34,12 @@ export default function GenusFilter({
     ),
   ];
 
-  return <ProgressFilter param="genus" label={t("filterLabel")} options={options} />;
+  return (
+    <ProgressFilter
+      param="genus"
+      label={t("filterLabel")}
+      options={options}
+      mobileAside={mobileAside}
+    />
+  );
 }

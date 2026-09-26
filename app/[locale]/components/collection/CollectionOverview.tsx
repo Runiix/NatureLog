@@ -49,38 +49,57 @@ export default function CollectionOverview({
     { value: "years" as const, label: t("viewYears"), icon: <CalendarMonth fontSize="small" aria-hidden /> },
   ];
 
+  // Phones: icon-only, next to the filter select. From `sm` up: labelled, above the cards.
+  const viewSwitch = (compact: boolean) => (
+    <div
+      role="radiogroup"
+      aria-label={t("viewLabel")}
+      className={cn(
+        "shrink-0 rounded-lg border border-border bg-surface p-0.5",
+        compact ? "flex h-10 sm:hidden" : "hidden self-start sm:inline-flex",
+      )}
+    >
+      {tabs.map((tab) => {
+        const active = tab.value === view;
+        return (
+          <button
+            key={tab.value}
+            type="button"
+            role="radio"
+            aria-checked={active}
+            aria-label={compact ? tab.label : undefined}
+            title={compact ? tab.label : undefined}
+            onClick={() => switchTo(tab.value)}
+            className={cn(
+              "flex items-center gap-1.5 rounded-md text-xs font-medium transition-colors",
+              "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
+              compact ? "w-9 justify-center" : "px-3 py-1.5",
+              active ? "bg-accent/10 text-accent-text" : "text-fg-muted hover:text-fg",
+            )}
+          >
+            {tab.icon}
+            {!compact && tab.label}
+          </button>
+        );
+      })}
+    </div>
+  );
+
   return (
     <div className="flex flex-col gap-2">
-      <div
-        role="radiogroup"
-        aria-label={t("viewLabel")}
-        className="inline-flex self-start rounded-lg border border-border bg-surface p-0.5"
-      >
-        {tabs.map((tab) => {
-          const active = tab.value === view;
-          return (
-            <button
-              key={tab.value}
-              type="button"
-              role="radio"
-              aria-checked={active}
-              onClick={() => switchTo(tab.value)}
-              className={cn(
-                "flex items-center gap-1.5 rounded-md px-3 py-1.5 text-xs font-medium transition-colors",
-                "focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-accent",
-                active ? "bg-accent/10 text-accent-text" : "text-fg-muted hover:text-fg",
-              )}
-            >
-              {tab.icon}
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      {viewSwitch(false)}
       {view === "groups" ? (
-        <GenusFilter counts={counts} categoryCounts={categoryCounts} />
+        <GenusFilter
+          counts={counts}
+          categoryCounts={categoryCounts}
+          mobileAside={viewSwitch(true)}
+        />
       ) : (
-        <YearFilter yearCounts={yearCounts} total={categoryCounts.length} />
+        <YearFilter
+          yearCounts={yearCounts}
+          total={categoryCounts.length}
+          mobileAside={viewSwitch(true)}
+        />
       )}
     </div>
   );

@@ -10,6 +10,7 @@ import { cookies } from "next/headers";
 import { ThemeProvider } from "./components/ui/theme/ThemeProvider";
 import { ThemeScript } from "./components/ui/theme/ThemeScript";
 import { ToastProvider } from "./components/ui/Toast";
+import { SelectTapToClose } from "./components/ui/SelectTapToClose";
 import { THEME_COOKIE, parseTheme } from "./components/ui/theme/theme";
 import { SITE_NAME, SITE_URL } from "./utils/seo";
 const open_sans = Open_Sans({ subsets: ["latin"] });
@@ -91,6 +92,7 @@ export default async function RootLayout({
               >
                 {tGeneral("skipToContent")}
               </a>
+              <SelectTapToClose />
               <main id="main" className="flex-grow">
                 <AppRouterCacheProvider>{children}</AppRouterCacheProvider>
               </main>
