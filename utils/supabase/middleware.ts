@@ -64,7 +64,7 @@ export async function updateSession(request: NextRequest) {
   const localePrefix = locale ? `/${locale}` : "";
 
   // Routes that require a session. /lexiconpage, /animalpage, /impressum,
-  // /contactpage and /termsofservice are deliberately public.
+  // /datenschutz, /contactpage and /termsofservice are deliberately public.
   const protectedPaths = [
     "/homepage",
     "/collectionpage",

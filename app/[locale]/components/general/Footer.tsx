@@ -36,6 +36,9 @@ export default async function Footer() {
           <Link href="/impressum" className={linkClass}>
             {t("imprint")}
           </Link>
+          <Link href="/datenschutz" className={linkClass}>
+            {t("privacy")}
+          </Link>
           <Link href="/termsofservice" className={linkClass}>
             {t("terms")}
           </Link>

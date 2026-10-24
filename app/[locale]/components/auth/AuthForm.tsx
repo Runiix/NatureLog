@@ -43,7 +43,7 @@ function TermsCheckbox({ error }: { error?: string }) {
               </Link>
             ),
             privacy: (chunks) => (
-              <Link href="/impressum" target="_blank" className="text-accent-text underline">
+              <Link href="/datenschutz" target="_blank" className="text-accent-text underline">
                 {chunks}
               </Link>
             ),

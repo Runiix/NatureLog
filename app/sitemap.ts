@@ -19,6 +19,7 @@ const PUBLIC_PAGES: { path: string; priority: number }[] = [
   { path: "/loginpage", priority: 0.5 },
   { path: "/contactpage", priority: 0.3 },
   { path: "/impressum", priority: 0.2 },
+  { path: "/datenschutz", priority: 0.2 },
   { path: "/termsofservice", priority: 0.2 },
 ];
 

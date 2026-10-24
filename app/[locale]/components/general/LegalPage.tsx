@@ -3,7 +3,7 @@ import { Card } from "../ui/Card";
 import { PageShell } from "../ui/PageShell";
 
 /**
- * Themed frame for the German legal texts (Impressum, terms). The texts stay
+ * Themed frame for the German legal texts (Impressum, privacy policy, terms). The texts stay
  * German — that version is the binding one — with a note for English readers.
  */
 export default async function LegalPage({ children }: { children: React.ReactNode }) {
