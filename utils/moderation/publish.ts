@@ -1,8 +1,12 @@
 import "server-only";
 import { collectionImageName } from "@/app/[locale]/utils/storagePaths";
+import { CONTEST_BUCKET, contestEntryPaths } from "@/utils/contest/storage";
 import type { TypedSupabaseClient } from "@/utils/supabase/types";
 
-export type ImageKind = "profile_picture" | "profile_grid" | "collection";
+export type ImageKind = "profile_picture" | "profile_grid" | "collection" | "contest_entry";
+
+/** The bucket a kind's live images are in. */
+export const liveBucket = (kind: ImageKind) => (kind === "contest_entry" ? CONTEST_BUCKET : "profiles");
 
 /** One stored image file, from an upload or from the quarantine bucket. */
 export type ImageFile = { data: Blob; contentType: string; extension: string };
@@ -18,6 +22,8 @@ export type PublishPayload = {
   date?: string | null;
   /** profile_grid: image this one replaces. */
   oldName?: string | null;
+  /** contest_entry: the entry row the photo belongs to. */
+  entryId?: string;
 };
 
 const upload = async (
@@ -25,8 +31,9 @@ const upload = async (
   path: string,
   file: ImageFile,
   upsert: boolean,
+  bucket = "profiles",
 ) => {
-  const { error } = await client.storage.from("profiles").upload(path, file.data, {
+  const { error } = await client.storage.from(bucket).upload(path, file.data, {
     cacheControl: "3600",
     contentType: file.contentType,
     upsert,
@@ -136,6 +143,41 @@ async function publishCollectionImage(
 }
 
 /**
+ * Puts a contest photo live and opens its entry for likes. Only while the
+ * contest still takes entries: a photo approved after the deadline would miss
+ * the bracket anyway.
+ */
+async function publishContestEntry(
+  client: TypedSupabaseClient,
+  userId: string,
+  [thumb, main]: ImageFile[],
+  { entryId }: PublishPayload,
+): Promise<string[]> {
+  const { data: entry } = await client
+    .from("contest_entries")
+    .select("id, contest_id, contests(status)")
+    .match({ id: entryId!, user_id: userId })
+    .maybeSingle();
+  if (!entry || entry.contests?.status !== "submission") throw new Error("The contest no longer takes entries");
+
+  const paths = contestEntryPaths(entry.contest_id, entry.id, { thumb: thumb.extension, main: main.extension });
+  await Promise.all([
+    upload(client, paths.thumb, thumb, true, CONTEST_BUCKET),
+    upload(client, paths.main, main, true, CONTEST_BUCKET),
+  ]);
+
+  const { error } = await client
+    .from("contest_entries")
+    .update({ status: "active", thumb_path: paths.thumb, main_path: paths.main })
+    .eq("id", entry.id);
+  if (error) {
+    await client.storage.from(CONTEST_BUCKET).remove([paths.thumb, paths.main]);
+    throw new Error(`Activating contest entry failed: ${error.message}`);
+  }
+  return [paths.thumb, paths.main];
+}
+
+/**
  * Puts an approved image in its live place in the `profiles` bucket and runs
  * the same side effects the upload always had. Returns the live paths. Throws
  * on failure.
@@ -154,12 +196,15 @@ export function publishImage(
       return publishProfileGridImage(client, userId, files, payload);
     case "collection":
       return publishCollectionImage(client, userId, files, payload);
+    case "contest_entry":
+      return publishContestEntry(client, userId, files, payload);
   }
 }
 
 /**
  * Takes a live image down again and undoes the flag that makes it show up.
- * Grid images have no flag; removing the objects is enough.
+ * Grid images have no flag; removing the objects is enough. A removed contest
+ * entry stays as a row so its matchups can count it as forfeited.
  */
 export async function unpublishImage(
   kind: ImageKind,
@@ -169,11 +214,17 @@ export async function unpublishImage(
   payload: PublishPayload,
 ): Promise<void> {
   if (livePaths.length > 0) {
-    const { error } = await client.storage.from("profiles").remove(livePaths);
+    const { error } = await client.storage.from(liveBucket(kind)).remove(livePaths);
     if (error) throw new Error(`Removing images failed: ${error.message}`);
   }
 
-  if (kind === "profile_picture") {
+  if (kind === "contest_entry" && payload.entryId) {
+    const { error } = await client
+      .from("contest_entries")
+      .update({ status: "removed", thumb_path: null, main_path: null })
+      .match({ id: payload.entryId, user_id: userId });
+    if (error) throw new Error(`Removing contest entry failed: ${error.message}`);
+  } else if (kind === "profile_picture") {
     const { error } = await client
       .from("profiles")
       .update({ profile_picture: false })

@@ -7,6 +7,8 @@ import {
 } from "./achievements";
 import { getListStats } from "./animalLists";
 import { isInvertebrate } from "./lexiconFilters";
+import { setProgress } from "./setProgress";
+import { getSpeciesSets } from "./sets";
 
 export type ProfileList = {
   id: string;
@@ -40,7 +42,7 @@ const getSightings = async (supabase: TypedSupabaseClient, userId: string) => {
   const { data, error } = await supabase
     .from("spotted")
     .select(
-      "first_spotted_at, image, image_updated_at, animals(common_name, category, very_rare, endangerment_status)",
+      "animal_id, first_spotted_at, image, image_updated_at, animals(common_name, category, very_rare, endangerment_status)",
     )
     .eq("user_id", userId);
   if (error) {
@@ -124,17 +126,21 @@ export async function getProfileData(
   supabase: TypedSupabaseClient,
   userId: string,
 ): Promise<ProfileData> {
-  const [profile, profilePictureUrl, sightings, listsCount, lists] =
+  const [profile, profilePictureUrl, sightings, listsCount, lists, sets] =
     await Promise.all([
       getProfileRow(supabase, userId),
       getProfilePictureUrl(supabase, userId),
       getSightings(supabase, userId),
       getPublicListsCount(supabase, userId),
       getPublicLists(supabase, userId),
+      getSpeciesSets(supabase),
     ]);
 
   // A sighting whose animal row is gone cannot be named or classified.
   const known = sightings.flatMap((row) => (row.animals ? [{ ...row, animal: row.animals }] : []));
+  const owned = sightings.flatMap((row) =>
+    row.animal_id !== null ? [{ animalId: row.animal_id, hasPhoto: row.image === true }] : [],
+  );
 
   return {
     hasProfilePicture: profile?.profile_picture ?? false,
@@ -155,6 +161,7 @@ export async function getProfileData(
         hasPhoto: row.image === true,
       })),
       publicLists: listsCount,
+      completedSets: sets.filter((set) => setProgress(set.animalIds, owned).complete).length,
     }),
     activity: buildActivity(
       known.map((row) => ({

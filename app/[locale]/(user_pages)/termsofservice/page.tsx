@@ -46,6 +46,16 @@ export default function Termsofservicepage() {
           ausgewählten Nutzern zugänglich zu machen, zu speichern und zu nutzen.
           Der Nutzer bleibt weiterhin Inhaber der Rechte.
         </p>
+        <p>
+          Beim wöchentlichen Fotowettbewerb dürfen nur selbst aufgenommene
+          Fotos eingereicht werden. Mit der Einreichung erlaubt der Nutzer,
+          dass das Foto während des Wettbewerbs allen angemeldeten Nutzern
+          gezeigt wird. Gewinnt das Foto, wird es unter der Lizenz CC BY 4.0
+          mit dem Benutzernamen als Urheberangabe als Bild der Art im Lexikon
+          verwendet. Der Betreiber kann Einreichungen ohne Angabe von Gründen
+          vom Wettbewerb ausschließen und ein Gewinnerfoto wieder aus dem
+          Lexikon entfernen.
+        </p>
 
         <h2 className=" border-b border-border-muted pb-1">
           4. Verbotene Inhalte
@@ -104,7 +114,7 @@ export default function Termsofservicepage() {
         </p>
 
         <p>
-          <em>Stand: Juni 2025</em>
+          <em>Stand: September 2026</em>
         </p>
       </div>
     </LegalPage>

@@ -1,7 +1,8 @@
 import { createClient } from "@/utils/supabase/server";
 import CollectionAnimalGrid from "@/app/[locale]/components/collection/CollectionAnimalGrid";
 import { getUser } from "@/app/[locale]/utils/data";
-import { Lock } from "@mui/icons-material";
+import { CollectionsBookmark, Lock } from "@mui/icons-material";
+import { ButtonLink } from "@/app/[locale]/components/ui/Button";
 import { getTranslations } from "next-intl/server";
 import CollectionOverview from "@/app/[locale]/components/collection/CollectionOverview";
 import NoDateFilter from "@/app/[locale]/components/collection/NoDateFilter";
@@ -106,6 +107,13 @@ export default async function CollectionPage({
       subtitleDesktopOnly
       backHref={isOwner ? undefined : `/profilepage/${target.displayName}`}
       backLabel={t("backToProfile")}
+      actions={
+        isOwner ? (
+          <ButtonLink href="/setspage" variant="secondary" size="sm" icon={<CollectionsBookmark />}>
+            {t("sets")}
+          </ButtonLink>
+        ) : undefined
+      }
     />
   );
 

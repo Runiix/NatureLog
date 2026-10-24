@@ -3,6 +3,7 @@
 import requireAuth from "@/utils/supabase/requireAuth";
 import { createAdminClient } from "@/utils/supabase/admin";
 import { QUEUE_BUCKET } from "@/utils/moderation/submitImage";
+import { CONTEST_BUCKET } from "@/utils/contest/storage";
 
 export default async function deleteUser() {
   const { supabase, user } = await requireAuth();
@@ -162,6 +163,29 @@ export default async function deleteUser() {
     if (queueDeleteError) {
       // Abort: once the account is gone the paths can no longer be found.
       console.error("Error deleting queued images:", queueDeleteError);
+      return { success: false, error: "failed" };
+    }
+  }
+
+  // Contest photos live in their own bucket; the entry rows cascade away. A
+  // winning photo was copied into the lexicon, which keeps its copy.
+  const { data: entryRows, error: entryError } = await supabase
+    .from("contest_entries")
+    .select("thumb_path, main_path")
+    .eq("user_id", user.id);
+  if (entryError) {
+    console.error("Error getting contest entries:", entryError);
+    return { success: false, error: "failed" };
+  }
+  const contestPaths = (entryRows ?? [])
+    .flatMap((row) => [row.thumb_path, row.main_path])
+    .filter((path): path is string => path !== null);
+  if (contestPaths.length) {
+    const { error: contestDeleteError } = await createAdminClient()
+      .storage.from(CONTEST_BUCKET)
+      .remove(contestPaths);
+    if (contestDeleteError) {
+      console.error("Error deleting contest photos:", contestDeleteError);
       return { success: false, error: "failed" };
     }
   }

@@ -47,11 +47,12 @@ describe.each(["de", "en"] as const)("profile features render in %s", (current) 
         hasPhoto: false,
       })),
       publicLists: 0,
+      completedSets: 0,
     });
     render(await ProfileAchievements({ achievements }));
     const de = current === "de";
     // sightings silver (2) + rare bronze (1)
-    expect(screen.getByText(de ? "3 von 22 Stufen erreicht" : "3 of 22 tiers earned")).toBeInTheDocument();
+    expect(screen.getByText(de ? "3 von 27 Stufen erreicht" : "3 of 27 tiers earned")).toBeInTheDocument();
     expect(screen.getByText(de ? "Silber" : "Silver")).toBeInTheDocument();
     expect(screen.getByText(de ? "Gold: 60 von 100" : "Gold: 60 of 100")).toBeInTheDocument();
     expect(screen.getByText(de ? "Sichte 100 Arten." : "Spot 100 species.")).toBeInTheDocument();
@@ -67,6 +68,7 @@ describe.each(["de", "en"] as const)("profile features render in %s", (current) 
         hasPhoto: true,
       })),
       publicLists: 0,
+      completedSets: 0,
     });
     render(await ProfileAchievements({ achievements }));
     expect(screen.getAllByText(current === "de" ? "Diamant" : "Diamond")).not.toHaveLength(0);

@@ -7,6 +7,7 @@ import {
   AutoStories,
   Close,
   Collections,
+  EmojiEvents,
   Home,
   Login,
   Map,
@@ -129,6 +130,7 @@ export default function Nav({
           icon: <Collections />,
         },
         { href: "/lexiconpage", label: t("lexicon"), icon: <AutoStories /> },
+        { href: "/contestpage", label: t("contest"), icon: <EmojiEvents /> },
         {
           href: `/animallistspage/${name}`,
           label: t("lists"),

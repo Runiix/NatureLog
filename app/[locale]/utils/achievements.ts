@@ -15,6 +15,8 @@ export type SightingFacts = {
 export type AchievementInput = {
   sightings: SightingFacts[];
   publicLists: number;
+  /** Species sets with every species spotted. */
+  completedSets: number;
 };
 
 export const TIERS = ["bronze", "silver", "gold", "platinum", "diamond"] as const;
@@ -26,6 +28,8 @@ export const TRACKS = {
   photos: [10, 50, 100, 200, 350],
   rare: [1, 5, 10, 20, 50],
   endangered: [1, 5, 10, 20, 50],
+  // Low, because there are only as many sets as the admins curate.
+  sets: [1, 2, 3, 5, 10],
 } as const satisfies Record<string, readonly number[]>;
 export type TrackId = keyof typeof TRACKS;
 
@@ -74,7 +78,7 @@ function single(id: SingleAchievement["id"], progress: number, target: number): 
   return { kind: "single", id, earned: progress >= target, progress: Math.min(progress, target), target };
 }
 
-export function computeAchievements({ sightings, publicLists }: AchievementInput): Achievement[] {
+export function computeAchievements({ sightings, publicLists, completedSets }: AchievementInput): Achievement[] {
   const groups = new Set(
     sightings.map((s) => s.category).filter((c): c is string => c !== null && ANIMAL_GROUPS.includes(c)),
   ).size;
@@ -87,6 +91,7 @@ export function computeAchievements({ sightings, publicLists }: AchievementInput
       "endangered",
       sightings.filter((s) => s.endangerment !== null && ENDANGERED.has(s.endangerment)).length,
     ),
+    tiered("sets", completedSets),
     single("allGroups", groups, ANIMAL_GROUPS.length),
     single("listMaker", publicLists, 1),
   ];

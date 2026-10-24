@@ -74,7 +74,8 @@
     "login": "Anmelden",
     "openMenu": "Menü öffnen",
     "closeMenu": "Menü schließen",
-    "admin": "Admin"
+    "admin": "Admin",
+    "contest": "Wettbewerb"
   },
   "Lexicon": {
     "true": "Ja",
@@ -333,7 +334,8 @@
       "saved": "Änderungen gespeichert",
       "deleted": "Liste gelöscht",
       "error": "Das hat nicht geklappt. Bitte versuche es erneut."
-    }
+    },
+    "progress": "Von dir entdeckt"
   },
   "Profile": {
     "stats": {
@@ -448,6 +450,11 @@
       "listMaker": {
         "name": "Kurator",
         "text": "Veröffentliche eine öffentliche Liste."
+      },
+      "sets": {
+        "name": "Komplettierer",
+        "text": "Vervollständige {count, plural, one {ein Arten-Set} other {# Arten-Sets}}.",
+        "maxed": "{count} Arten-Sets vollständig – höchste Stufe erreicht."
       }
     },
     "activity": {
@@ -541,7 +548,8 @@
       "ascending": "Aufsteigend",
       "descending": "Absteigend",
       "toggleOrder": "Reihenfolge umkehren"
-    }
+    },
+    "sets": "Sets"
   },
   "Home": {
     "greeting": "Hallo {name}",
@@ -825,7 +833,8 @@
     "kind": {
       "profile_picture": "Profilbild",
       "profile_grid": "Profilfoto",
-      "collection": "Sammlungsfoto"
+      "collection": "Sammlungsfoto",
+      "contest_entry": "Wettbewerbsfoto"
     },
     "toast": {
       "approved": "Foto freigegeben",
@@ -838,7 +847,9 @@
       "images": "Fotos",
       "reports": "Meldungen",
       "lexicon": "Lexikon-Vorschläge",
-      "new": "Neues Tier"
+      "new": "Neues Tier",
+      "sets": "Sets",
+      "contests": "Wettbewerbe"
     },
     "reports": {
       "title": "Gemeldete Fotos",
@@ -879,6 +890,66 @@
         "invalid": "Einige Angaben sind ungültig.",
         "nameTaken": "Im Lexikon gibt es bereits ein Tier mit diesem Namen.",
         "failed": "Das hat nicht geklappt. Bitte versuche es erneut."
+      }
+    },
+    "sets": {
+      "title": "Arten-Sets",
+      "hint": "Sets sind deine eigenen öffentlichen Listen. Die Arten bearbeitest du auf deiner Listenseite; hier legst du fest, welche Listen Sets sind und in welcher Reihenfolge sie erscheinen.",
+      "empty": "Noch keine Sets.",
+      "candidates": "Deine öffentlichen Listen",
+      "noCandidates": "Alle deine öffentlichen Listen sind schon Sets. Erstelle eine öffentliche Liste für ein weiteres Set.",
+      "untitled": "Unbenannte Liste",
+      "entries": "{count, plural, =0 {Keine Arten} one {# Art} other {# Arten}}",
+      "promote": "Zum Set machen",
+      "demote": "Entfernen",
+      "moveUp": "Nach oben",
+      "moveDown": "Nach unten",
+      "error": "Das hat nicht geklappt. Bitte versuche es erneut."
+    },
+    "contests": {
+      "hint": "Jeden Montag startet ein neuer Wettbewerb. Geplante Arten kommen zuerst; ohne Plan wird automatisch eine oft fotografierte Art gewählt. Der tägliche Job läuft von selbst – mit dem Button startest du ihn sofort.",
+      "advance": "Täglichen Job jetzt ausführen",
+      "scheduleTitle": "Arten planen",
+      "species": "Art",
+      "speciesPlaceholder": "Art eingeben…",
+      "week": "Einreichungswoche",
+      "weekOf": "Woche ab {date}",
+      "schedule": "Planen",
+      "noneScheduled": "Noch nichts geplant.",
+      "unschedule": "Entfernen",
+      "autoPickHint": "Wochen ohne geplante Art bekommen eine automatische Auswahl.",
+      "entriesTitle": "Einreichungen für {name}",
+      "entriesTitleNone": "Gerade nimmt kein Wettbewerb Fotos an",
+      "excludeHint": "Ausgeschlossene Fotos kommen nicht in den Turnierbaum. Er wird am Ende der Einreichungswoche aus den übrigen Fotos gesetzt.",
+      "noEntries": "Noch keine Einreichungen.",
+      "entryStatus": {
+        "pending": "Wartet auf Prüfung",
+        "active": "Im Rennen",
+        "excluded": "Ausgeschlossen",
+        "removed": "Entfernt"
+      },
+      "exclude": "Ausschließen",
+      "include": "Wieder zulassen",
+      "finishedTitle": "Beendete Wettbewerbe",
+      "noneFinished": "Noch kein Wettbewerb ist beendet.",
+      "wonBy": "Gewonnen von {name}",
+      "noWinner": "Kein Gewinner",
+      "vetoed": "Veto eingelegt",
+      "veto": "Veto",
+      "errors": {
+        "invalidAnimal": "Bitte wähle eine Art aus der Liste.",
+        "invalidWeek": "Diese Woche kann nicht mehr geplant werden.",
+        "weekTaken": "Für diese Woche ist schon eine Art geplant.",
+        "imageChanged": "Das Lexikonbild wurde inzwischen geändert; nichts wurde zurückgesetzt.",
+        "failed": "Das hat nicht geklappt. Bitte versuche es erneut."
+      },
+      "toast": {
+        "scheduled": "Art geplant",
+        "unscheduled": "Planung entfernt",
+        "advanced": "Wettbewerbe aktualisiert",
+        "excluded": "Foto ausgeschlossen",
+        "included": "Foto wieder im Rennen",
+        "vetoed": "Das vorherige Lexikonbild ist zurück"
       }
     }
   },
@@ -969,6 +1040,146 @@
         "approved": "Angenommen",
         "rejected": "Abgelehnt"
       }
+    }
+  },
+  "Compare": {
+    "cardTitle": "Du & {name}",
+    "viewAll": "Sammlungen vergleichen",
+    "both": "Habt ihr beide",
+    "bothPhotographed": "{count, plural, =0 {Noch keine gemeinsamen Fotos} one {# von beiden fotografiert} other {# von beiden fotografiert}}",
+    "onlyTheirs": "Nur {name}",
+    "photoTargets": "{count, plural, =0 {Keine Fotoziele} one {# Fotoziel für dich} other {# Fotoziele für dich}}",
+    "onlyMine": "Nur du",
+    "raceTitle": "Wettlauf zu {target} Arten",
+    "you": "Du",
+    "raceYou": "Dein Fortschritt zu {target} Arten",
+    "raceThem": "Fortschritt von {name} zu {target} Arten",
+    "pageTitle": "Du & {name}",
+    "pageSubtitle": "Du hast {mine, plural, one {# Art} other {# Arten}}, {name} hat {theirs, plural, one {# Art} other {# Arten}}.",
+    "backToProfile": "Zurück zum Profil",
+    "tabsLabel": "Vergleichsansichten",
+    "tabs": {
+      "theirs": "Nur {name}",
+      "photos": "Fotoziele",
+      "both": "Beide",
+      "mine": "Nur du"
+    },
+    "photoBy": "Foto: {names}",
+    "emptyTitle": "Hier ist nichts",
+    "empty": {
+      "theirs": "Du hast jede Art, die {name} hat.",
+      "photos": "Du hast alles fotografiert, was {name} fotografiert hat.",
+      "both": "Du und {name} habt noch keine gemeinsame Art.",
+      "mine": "{name} hat jede Art, die du hast."
+    }
+  },
+  "Sets": {
+    "title": "Arten-Sets",
+    "subtitle": "Sammle ganze Sets – entdecke jede Art und fotografiere sie alle.",
+    "untitled": "Unbenanntes Set",
+    "allSets": "Alle Sets",
+    "spotted": "Entdeckt",
+    "photographed": "Fotografiert",
+    "complete": "Vollständig",
+    "completePhotos": "Alle fotografiert",
+    "emptyTitle": "Noch keine Sets",
+    "emptyText": "Die ersten Arten-Sets sind in Arbeit.",
+    "emptySetTitle": "Dieses Set hat noch keine Arten",
+    "status": {
+      "photographed": "Fotografiert",
+      "spotted": "Entdeckt, noch ohne Foto",
+      "missing": "Noch nicht gefunden"
+    }
+  },
+  "Contest": {
+    "title": "Fotowettbewerb",
+    "subtitle": "Jede Woche eine Art, dein bestes Foto und ein Turnier, über das die Community abstimmt. Das Siegerfoto wird zum Lexikonbild.",
+    "emptyTitle": "Gerade läuft kein Wettbewerb",
+    "emptyText": "Der nächste Wettbewerb startet am Montag.",
+    "unknownSpecies": "Unbekannte Art",
+    "unknownUser": "Unbekannter Nutzer",
+    "hallOfFame": "Ruhmeshalle",
+    "photoBy": "Foto: {name}",
+    "archiveTitle": "Wettbewerb: {name}",
+    "backToContest": "Fotowettbewerb",
+    "phase": {
+      "scheduled": "Demnächst",
+      "submission": "Einreichung läuft",
+      "voting": "Abstimmung",
+      "finished": "Beendet",
+      "cancelled": "Abgesagt"
+    },
+    "entriesUntil": "Einreichen bis {time}",
+    "votingUntil": "Abstimmen bis {time}",
+    "submissionHint": "Reiche ein eigenes Foto ein. Like deine Lieblingsfotos: Die beliebtesten Fotos bekommen im Turnier nächste Woche die besten Setzplätze.",
+    "votingHint": "Wähle in jedem Duell das bessere Foto. Die Ergebnisse siehst du, sobald du abgestimmt hast.",
+    "winnerAnnounced": "{name} hat gewonnen – das Foto ist jetzt im Lexikon.",
+    "winnerVetoed": "{name} hat gewonnen.",
+    "noWinner": "Dieser Wettbewerb endete ohne Gewinner.",
+    "cancelledText": "Es wurden zu wenige Fotos eingereicht, deshalb wurde dieser Wettbewerb abgesagt.",
+    "scheduledText": "Dieser Wettbewerb hat noch nicht begonnen.",
+    "submit": {
+      "notInCollection": "Einreichen kannst du nur Arten aus deiner Sammlung. {name} schon entdeckt? Dann füge die Art zuerst hinzu.",
+      "toSpecies": "Zur Art",
+      "open": "Foto einreichen",
+      "title": "Dein Foto von {name}",
+      "hint": "Ein Foto pro Person. Es wird automatisch geprüft und muss eventuell kurz auf eine Freigabe warten.",
+      "consent": "Ich habe dieses Foto selbst aufgenommen. Gewinnt es, darf Naturelog es unter CC BY 4.0 mit meinem Benutzernamen im Lexikon zeigen.",
+      "cancel": "Abbrechen",
+      "confirm": "Foto einreichen",
+      "entered": "Du bist dabei – viel Glück!"
+    },
+    "errors": {
+      "missingPhoto": "Bitte wähle ein Foto aus.",
+      "consentMissing": "Bitte bestätige, dass es dein eigenes Foto ist.",
+      "failed": "Das hat nicht geklappt. Bitte versuche es erneut.",
+      "invalidImage": "Diese Datei ist kein unterstütztes Foto.",
+      "closed": "Dieser Wettbewerb nimmt keine Fotos mehr an.",
+      "notInCollection": "Füge diese Art zuerst deiner Sammlung hinzu.",
+      "alreadyEntered": "Du hast bereits ein Foto eingereicht.",
+      "imageRejected": "Dieses Foto kann nicht verwendet werden, weil es gegen unsere Inhaltsregeln verstößt.",
+      "voteClosed": "Die Abstimmung für dieses Duell ist beendet."
+    },
+    "toast": {
+      "inReview": "Danke! Dein Foto ist dabei, sobald es geprüft wurde.",
+      "entered": "Dein Foto ist im Wettbewerb",
+      "withdrawn": "Foto zurückgezogen"
+    },
+    "gallery": {
+      "emptyTitle": "Noch keine Einreichungen",
+      "emptyText": "Reiche als Erste oder Erster ein Foto ein.",
+      "open": "Foto von {name} vergrößern",
+      "inReview": "In Prüfung",
+      "yours": "Deine Einreichung",
+      "withdraw": "Zurückziehen",
+      "like": "Gefällt mir",
+      "unlike": "Gefällt mir entfernen",
+      "alt": "{name}, fotografiert von {user}"
+    },
+    "bracket": {
+      "final": "Finale",
+      "semifinal": "Halbfinale",
+      "quarterfinal": "Viertelfinale",
+      "roundOf": "Runde der letzten {count}",
+      "votes": "{count, plural, one {# Stimme} other {# Stimmen}}",
+      "yourPhoto": "Dein Foto",
+      "voted": "Deine Stimme",
+      "vote": "Abstimmen",
+      "closes": "Endet {time}",
+      "progress": "{voted} von {total} abgestimmt",
+      "tree": "Turnierbaum",
+      "upcoming": "Folgt",
+      "bye": "Freilos",
+      "removed": "Entfernt",
+      "winner": "Gewinner"
+    },
+    "teaser": {
+      "title": "Fotowettbewerb",
+      "submission": "Diese Woche: {name}. Reiche dein bestes Foto ein.",
+      "voting": "Das Turnier um {name} läuft – stimm für das beste Foto.",
+      "none": "Der nächste Wettbewerb startet am Montag.",
+      "alsoVoting": "Außerdem läuft die Abstimmung für {name}.",
+      "open": "Zum Wettbewerb"
     }
   }
 }

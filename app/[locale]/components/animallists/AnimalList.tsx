@@ -8,7 +8,7 @@ import { useInView } from "react-intersection-observer";
 import deleteAnimalList from "@/app/[locale]/actions/animallists/deleteAnimalList";
 import editAnimalList from "@/app/[locale]/actions/animallists/editAnimalList";
 import getAnimalListItems from "@/app/[locale]/actions/animallists/getAnimalListItems";
-import getCount from "@/app/[locale]/actions/animallists/getCount";
+import getListAnimals from "@/app/[locale]/actions/animallists/getListAnimals";
 import getUpvotes from "@/app/[locale]/actions/animallists/getUpvotes";
 import handleListUpvotes from "@/app/[locale]/actions/animallists/handleListUpvote";
 import { cn } from "@/app/[locale]/utils/cn";
@@ -16,6 +16,7 @@ import Modal from "../general/Modal";
 import { Button } from "../ui/Button";
 import { Card } from "../ui/Card";
 import { EmptyState } from "../ui/EmptyState";
+import { ProgressBar } from "../ui/ProgressBar";
 import { Skeleton } from "../ui/Skeleton";
 import { Spinner } from "../ui/Spinner";
 import { useToast } from "../ui/Toast";
@@ -94,11 +95,14 @@ function useListItems(listId: string) {
   return { items, initialLoad, hasMore, sentinelRef, refreshKey, reloadItems };
 }
 
-/** Entry count and upvotes, refetched with the items; upvoting is optimistic. */
+/**
+ * The list's animals (entry count and progress) and upvotes, refetched with
+ * the items; upvoting is optimistic.
+ */
 function useListStats(listId: string, refreshKey: number) {
   const t = useTranslations("Lists");
   const toast = useToast();
-  const [entryCount, setEntryCount] = useState<number | null>(null);
+  const [animalIds, setAnimalIds] = useState<number[] | null>(null);
   const [upvotes, setUpvotes] = useState(0);
   const [hasUpvoted, setHasUpvoted] = useState(false);
   const [upvotePending, setUpvotePending] = useState(false);
@@ -106,11 +110,11 @@ function useListStats(listId: string, refreshKey: number) {
   useEffect(() => {
     let cancelled = false;
     const load = async () => {
-      const [upvote, count] = await Promise.all([getUpvotes(listId), getCount(listId)]);
+      const [upvote, ids] = await Promise.all([getUpvotes(listId), getListAnimals(listId)]);
       if (cancelled) return;
       setHasUpvoted(upvote.hasUpvoted);
       setUpvotes(upvote.upvotes);
-      setEntryCount(count);
+      setAnimalIds(ids);
     };
     load().catch((error) => console.error("Error loading list stats:", error));
     return () => {
@@ -136,7 +140,7 @@ function useListStats(listId: string, refreshKey: number) {
     }
   }
 
-  return { entryCount, upvotes, hasUpvoted, upvotePending, toggleUpvote };
+  return { animalIds, upvotes, hasUpvoted, upvotePending, toggleUpvote };
 }
 
 /** Skeletons while the first page loads, then the entries or an empty state. */
@@ -198,13 +202,17 @@ function ListEntries({
   );
 }
 
-/** Title, visibility, entry count and upvotes; edit and delete for the owner. */
+/**
+ * Title, visibility, entry count, the viewer's progress and upvotes; edit and
+ * delete for the owner.
+ */
 function ListHeader({
   displayTitle,
   description,
   isPublic,
   currUser,
-  stats: { entryCount, upvotes, hasUpvoted, upvotePending, toggleUpvote },
+  spottedList,
+  stats: { animalIds, upvotes, hasUpvoted, upvotePending, toggleUpvote },
   onEdit,
   onDelete,
 }: {
@@ -212,11 +220,15 @@ function ListHeader({
   description: string | null;
   isPublic: boolean;
   currUser: boolean;
+  spottedList: number[];
   stats: ReturnType<typeof useListStats>;
   onEdit: () => void;
   onDelete: () => void;
 }) {
   const t = useTranslations("Lists");
+  const entryCount = animalIds?.length ?? null;
+  const spotted = new Set(spottedList);
+  const spottedCount = animalIds?.filter((id) => spotted.has(id)).length ?? 0;
   return (
     <header className="flex flex-col gap-4">
       <div className="flex flex-wrap items-start justify-between gap-3">
@@ -270,6 +282,12 @@ function ListHeader({
         </div>
       </div>
       {description && <p className="max-w-prose text-fg-muted">{description}</p>}
+      {entryCount !== null && entryCount > 0 && (
+        <div className="flex max-w-sm flex-col gap-1">
+          <span className="text-xs font-medium text-fg-muted">{t("progress")}</span>
+          <ProgressBar label={t("progress")} value={spottedCount} max={entryCount} />
+        </div>
+      )}
     </header>
   );
 }
@@ -333,6 +351,7 @@ export default function AnimalList({
         description={description}
         isPublic={isPublic}
         currUser={currUser}
+        spottedList={spottedList}
         stats={stats}
         onEdit={() => setDialog("edit")}
         onDelete={() => setDialog("delete")}

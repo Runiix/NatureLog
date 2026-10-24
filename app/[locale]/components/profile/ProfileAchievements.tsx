@@ -1,4 +1,12 @@
-import { CameraAlt, Category, Diamond, FormatListBulleted, Shield, Visibility } from "@mui/icons-material";
+import {
+  CameraAlt,
+  Category,
+  CollectionsBookmark,
+  Diamond,
+  FormatListBulleted,
+  Shield,
+  Visibility,
+} from "@mui/icons-material";
 import { getTranslations } from "next-intl/server";
 import {
   achievementScore,
@@ -8,12 +16,14 @@ import {
   type TieredAchievement,
 } from "@/app/[locale]/utils/achievements";
 import { cn } from "@/app/[locale]/utils/cn";
+import { ProgressBar } from "../ui/ProgressBar";
 
 const ICONS: Record<Achievement["id"], React.ReactNode> = {
   sightings: <Visibility />,
   photos: <CameraAlt />,
   rare: <Diamond />,
   endangered: <Shield />,
+  sets: <CollectionsBookmark />,
   allGroups: <Category />,
   listMaker: <FormatListBulleted />,
 };
@@ -65,22 +75,6 @@ function Medal({ icon, className }: { icon: React.ReactNode; className: string }
     >
       {icon}
     </span>
-  );
-}
-
-function Progress({ label, value, max }: { label: string; value: number; max: number }) {
-  return (
-    <div className="mt-1 flex items-center gap-2">
-      <progress
-        value={value}
-        max={max}
-        aria-label={label}
-        className="h-1.5 flex-1 overflow-hidden rounded-full bg-surface-sunken [&::-moz-progress-bar]:bg-accent [&::-webkit-progress-bar]:bg-surface-sunken [&::-webkit-progress-value]:bg-accent"
-      />
-      <span className="text-xs tabular-nums text-fg-subtle">
-        {value}/{max}
-      </span>
-    </div>
   );
 }
 
@@ -194,10 +188,11 @@ export default async function ProfileAchievements({
                 </p>
                 <p className="text-sm text-fg-muted">{t(`${achievement.id}.text`)}</p>
                 {!achievement.earned && achievement.target > 1 && (
-                  <Progress
+                  <ProgressBar
                     label={t(`${achievement.id}.name`)}
                     value={achievement.progress}
                     max={achievement.target}
+                    className="mt-1"
                   />
                 )}
               </div>

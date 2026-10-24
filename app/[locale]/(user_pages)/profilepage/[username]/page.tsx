@@ -12,11 +12,26 @@ import { Card } from "@/app/[locale]/components/ui/Card";
 import { EmptyState } from "@/app/[locale]/components/ui/EmptyState";
 import { PageShell } from "@/app/[locale]/components/ui/PageShell";
 import getProfileGrid from "@/app/[locale]/actions/profile/getProfileGrid";
-import { getUser } from "@/app/[locale]/utils/data";
+import ProfileCompare from "@/app/[locale]/components/profile/ProfileCompare";
+import { getOwnedAnimals } from "@/app/[locale]/utils/compare-queries";
+import { compareCollections, race } from "@/app/[locale]/utils/compareCollections";
+import { getHideInvertebrates, getUser } from "@/app/[locale]/utils/data";
 import { getProfileData } from "@/app/[locale]/utils/profile-queries";
 import { getProfileTarget } from "@/app/[locale]/utils/users";
 import { canViewProfile } from "@/app/[locale]/utils/visibility";
 import { createClient } from "@/utils/supabase/server";
+import type { TypedSupabaseClient } from "@/utils/supabase/types";
+import type { User } from "@supabase/supabase-js";
+
+/** The viewer's collection against the profile owner's, with the viewer's invertebrate setting. */
+async function getComparison(supabase: TypedSupabaseClient, viewer: User, targetId: string) {
+  const hideInvertebrates = await getHideInvertebrates(supabase, viewer);
+  const [mine, theirs] = await Promise.all([
+    getOwnedAnimals(supabase, viewer.id, hideInvertebrates),
+    getOwnedAnimals(supabase, targetId, hideInvertebrates),
+  ]);
+  return { comparison: compareCollections(mine, theirs), race: race(mine.length, theirs.length) };
+}
 
 export default async function ProfilePage({
   params,
@@ -58,9 +73,10 @@ export default async function ProfilePage({
 
   // The grid used to be fetched client-side after mount, behind a spinner
   // that could never actually show; now it arrives with the page.
-  const [profile, gridImages] = await Promise.all([
+  const [profile, gridImages, compare] = await Promise.all([
     getProfileData(supabase, target.id),
     getProfileGrid(target.id),
+    isOwner ? null : getComparison(supabase, viewer, target.id),
   ]);
 
   return (
@@ -95,6 +111,10 @@ export default async function ProfilePage({
       />
 
       <ProfileAchievements achievements={profile.achievements} />
+
+      {compare && (
+        <ProfileCompare displayName={target.displayName} comparison={compare.comparison} race={compare.race} />
+      )}
 
       <ProfileAnimalLists data={profile.lists} username={target.displayName} isOwner={isOwner} />
 

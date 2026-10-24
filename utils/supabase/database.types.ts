@@ -177,6 +177,241 @@ export type Database = {
         }
         Relationships: []
       }
+      contest_entries: {
+        Row: {
+          contest_id: string
+          created_at: string
+          id: string
+          license_accepted_at: string
+          main_path: string | null
+          seed: number | null
+          status: string
+          thumb_path: string | null
+          user_id: string
+        }
+        Insert: {
+          contest_id: string
+          created_at?: string
+          id?: string
+          license_accepted_at: string
+          main_path?: string | null
+          seed?: number | null
+          status?: string
+          thumb_path?: string | null
+          user_id: string
+        }
+        Update: {
+          contest_id?: string
+          created_at?: string
+          id?: string
+          license_accepted_at?: string
+          main_path?: string | null
+          seed?: number | null
+          status?: string
+          thumb_path?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_entries_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contest_entry_likes: {
+        Row: {
+          created_at: string
+          entry_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entry_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          entry_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_entry_likes_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "contest_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contest_matchups: {
+        Row: {
+          contest_id: string
+          ends_at: string
+          entry_a: string | null
+          entry_b: string | null
+          id: string
+          round: number
+          slot: number
+          starts_at: string
+          winner: string | null
+        }
+        Insert: {
+          contest_id: string
+          ends_at: string
+          entry_a?: string | null
+          entry_b?: string | null
+          id?: string
+          round: number
+          slot: number
+          starts_at: string
+          winner?: string | null
+        }
+        Update: {
+          contest_id?: string
+          ends_at?: string
+          entry_a?: string | null
+          entry_b?: string | null
+          id?: string
+          round?: number
+          slot?: number
+          starts_at?: string
+          winner?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_matchups_contest_id_fkey"
+            columns: ["contest_id"]
+            isOneToOne: false
+            referencedRelation: "contests"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contest_matchups_entry_a_fkey"
+            columns: ["entry_a"]
+            isOneToOne: false
+            referencedRelation: "contest_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contest_matchups_entry_b_fkey"
+            columns: ["entry_b"]
+            isOneToOne: false
+            referencedRelation: "contest_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contest_matchups_winner_fkey"
+            columns: ["winner"]
+            isOneToOne: false
+            referencedRelation: "contest_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contest_votes: {
+        Row: {
+          created_at: string
+          entry_id: string
+          matchup_id: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          entry_id: string
+          matchup_id: string
+          user_id?: string
+        }
+        Update: {
+          created_at?: string
+          entry_id?: string
+          matchup_id?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contest_votes_entry_id_fkey"
+            columns: ["entry_id"]
+            isOneToOne: false
+            referencedRelation: "contest_entries"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contest_votes_matchup_id_fkey"
+            columns: ["matchup_id"]
+            isOneToOne: false
+            referencedRelation: "contest_matchups"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      contests: {
+        Row: {
+          animal_id: number
+          bracket_size: number | null
+          created_at: string
+          id: string
+          previous_image: Json | null
+          published_paths: string[]
+          scheduled_by: string | null
+          status: string
+          vetoed_at: string | null
+          week_start: string
+          winner_entry_id: string | null
+        }
+        Insert: {
+          animal_id: number
+          bracket_size?: number | null
+          created_at?: string
+          id?: string
+          previous_image?: Json | null
+          published_paths?: string[]
+          scheduled_by?: string | null
+          status?: string
+          vetoed_at?: string | null
+          week_start: string
+          winner_entry_id?: string | null
+        }
+        Update: {
+          animal_id?: number
+          bracket_size?: number | null
+          created_at?: string
+          id?: string
+          previous_image?: Json | null
+          published_paths?: string[]
+          scheduled_by?: string | null
+          status?: string
+          vetoed_at?: string | null
+          week_start?: string
+          winner_entry_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "contests_animal_id_fkey"
+            columns: ["animal_id"]
+            isOneToOne: false
+            referencedRelation: "animals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contests_animal_id_fkey"
+            columns: ["animal_id"]
+            isOneToOne: false
+            referencedRelation: "user_spotted_animals"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "contests_winner_entry_id_fkey"
+            columns: ["winner_entry_id"]
+            isOneToOne: false
+            referencedRelation: "contest_entries"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       follows: {
         Row: {
           created_at: string | null
@@ -416,6 +651,7 @@ export type Database = {
           id: number
           image_link: string | null
           report_text: string | null
+          reporter_id: string | null
           user_id: string | null
         }
         Insert: {
@@ -423,6 +659,7 @@ export type Database = {
           id?: number
           image_link?: string | null
           report_text?: string | null
+          reporter_id?: string | null
           user_id?: string | null
         }
         Update: {
@@ -430,9 +667,36 @@ export type Database = {
           id?: number
           image_link?: string | null
           report_text?: string | null
+          reporter_id?: string | null
           user_id?: string | null
         }
         Relationships: []
+      }
+      species_sets: {
+        Row: {
+          created_at: string
+          list_id: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          list_id: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          list_id?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "species_sets_list_id_fkey"
+            columns: ["list_id"]
+            isOneToOne: true
+            referencedRelation: "animallists"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       spotted: {
         Row: {
@@ -543,6 +807,25 @@ export type Database = {
       }
     }
     Functions: {
+      contest_can_vote: {
+        Args: { p_entry_id: string; p_matchup_id: string }
+        Returns: boolean
+      }
+      contest_candidates: {
+        Args: { p_limit?: number; p_week_start: string }
+        Returns: {
+          animal_id: number
+          photos: number
+        }[]
+      }
+      contest_vote_counts: {
+        Args: { p_contest_id: string }
+        Returns: {
+          entry_id: string
+          matchup_id: string
+          votes: number
+        }[]
+      }
       is_admin: { Args: never; Returns: boolean }
       lexicon_pending_count: { Args: never; Returns: number }
       refresh_spotted_counts: {

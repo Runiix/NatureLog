@@ -18,8 +18,8 @@ const sighting = (overrides: Partial<SightingFacts> = {}): SightingFacts => ({
   ...overrides,
 });
 
-const byId = (sightings: SightingFacts[], publicLists = 0) =>
-  Object.fromEntries(computeAchievements({ sightings, publicLists }).map((a) => [a.id, a]));
+const byId = (sightings: SightingFacts[], publicLists = 0, completedSets = 0) =>
+  Object.fromEntries(computeAchievements({ sightings, publicLists, completedSets }).map((a) => [a.id, a]));
 
 describe("tiered", () => {
   test("below bronze has no tier and bronze is next", () => {
@@ -42,6 +42,12 @@ describe("tiered", () => {
     expect(tiered("endangered", 49)).toMatchObject({ tier: "platinum", next: { target: 50 } });
   });
 
+  test("sets use 1, 2, 3, 5, 10", () => {
+    expect(tiered("sets", 0)).toMatchObject({ tier: null, next: { tier: "bronze", target: 1 } });
+    expect(tiered("sets", 3).tier).toBe("gold");
+    expect(tiered("sets", 10).next).toBeNull();
+  });
+
   test("diamond has no next tier", () => {
     expect(tiered("photos", 1000)).toMatchObject({ tier: "diamond", tiersEarned: 5, next: null, count: 1000 });
   });
@@ -49,8 +55,8 @@ describe("tiered", () => {
 
 describe("computeAchievements", () => {
   test("a new user has earned nothing", () => {
-    const all = computeAchievements({ sightings: [], publicLists: 0 });
-    expect(achievementScore(all)).toEqual({ earned: 0, total: 22 });
+    const all = computeAchievements({ sightings: [], publicLists: 0, completedSets: 0 });
+    expect(achievementScore(all)).toEqual({ earned: 0, total: 27 });
   });
 
   test("tracks count the right sightings", () => {
@@ -62,7 +68,9 @@ describe("computeAchievements", () => {
         ...Array.from({ length: 10 }, () => sighting({ hasPhoto: true })),
       ],
       1,
+      2,
     );
+    expect(result.sets).toMatchObject({ count: 2, tier: "silver" });
     expect(result.sightings).toMatchObject({ count: 17, tier: "bronze" });
     expect(result.photos).toMatchObject({ count: 10, tier: "bronze" });
     expect(result.rare).toMatchObject({ count: 5, tier: "silver" });
@@ -85,9 +93,10 @@ describe("computeAchievements", () => {
     const all = computeAchievements({
       sightings: Array.from({ length: 60 }, () => sighting({ veryRare: true })),
       publicLists: 1,
+      completedSets: 1,
     });
-    // sightings silver (2) + rare diamond (5) + curator (1)
-    expect(achievementScore(all)).toEqual({ earned: 8, total: 22 });
+    // sightings silver (2) + rare diamond (5) + sets bronze (1) + curator (1)
+    expect(achievementScore(all)).toEqual({ earned: 9, total: 27 });
   });
 });
 

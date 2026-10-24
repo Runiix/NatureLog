@@ -12,7 +12,8 @@
     "collection": "Collection",
     "openMenu": "Open menu",
     "closeMenu": "Close menu",
-    "admin": "Admin"
+    "admin": "Admin",
+    "contest": "Contest"
   },
   "Lexicon": {
     "true": "Yes",
@@ -242,7 +243,8 @@
       "saved": "Changes saved",
       "deleted": "List deleted",
       "error": "That didn't work. Please try again."
-    }
+    },
+    "progress": "Spotted by you"
   },
   "Profile": {
     "stats": {
@@ -357,6 +359,11 @@
       "listMaker": {
         "name": "Curator",
         "text": "Publish a public list."
+      },
+      "sets": {
+        "name": "Completionist",
+        "text": "Complete {count, plural, one {a species set} other {# species sets}}.",
+        "maxed": "{count} species sets complete – top tier reached."
       }
     },
     "activity": {
@@ -541,7 +548,8 @@
       "ascending": "Ascending",
       "descending": "Descending",
       "toggleOrder": "Reverse order"
-    }
+    },
+    "sets": "Sets"
   },
   "Home": {
     "greeting": "Hello {name}",
@@ -825,7 +833,8 @@
     "kind": {
       "profile_picture": "Profile picture",
       "profile_grid": "Profile photo",
-      "collection": "Collection photo"
+      "collection": "Collection photo",
+      "contest_entry": "Contest photo"
     },
     "toast": {
       "approved": "Photo approved",
@@ -838,7 +847,9 @@
       "images": "Photos",
       "reports": "Reports",
       "lexicon": "Lexicon suggestions",
-      "new": "New animal"
+      "new": "New animal",
+      "sets": "Sets",
+      "contests": "Contests"
     },
     "reports": {
       "title": "Reported photos",
@@ -879,6 +890,66 @@
         "invalid": "Some details are not valid.",
         "nameTaken": "The lexicon already has an animal with this name.",
         "failed": "That didn't work. Please try again."
+      }
+    },
+    "sets": {
+      "title": "Species sets",
+      "hint": "Sets are your own public lists. Edit their species on your lists page; here you choose which lists are sets and in which order they appear.",
+      "empty": "No sets yet.",
+      "candidates": "Your public lists",
+      "noCandidates": "All of your public lists are sets already. Create a public list to add another set.",
+      "untitled": "Untitled list",
+      "entries": "{count, plural, =0 {No species} one {# species} other {# species}}",
+      "promote": "Make set",
+      "demote": "Remove",
+      "moveUp": "Move up",
+      "moveDown": "Move down",
+      "error": "That didn't work. Please try again."
+    },
+    "contests": {
+      "hint": "A new contest opens every Monday. Planned species go first; without one, a well-photographed species is picked automatically. The daily job runs by itself – use the button to run it now.",
+      "advance": "Run daily job now",
+      "scheduleTitle": "Plan species",
+      "species": "Species",
+      "speciesPlaceholder": "Start typing a species…",
+      "week": "Entry week",
+      "weekOf": "Week of {date}",
+      "schedule": "Plan",
+      "noneScheduled": "Nothing planned yet.",
+      "unschedule": "Remove",
+      "autoPickHint": "Weeks without a planned species get an automatic pick.",
+      "entriesTitle": "Entries for {name}",
+      "entriesTitleNone": "No contest is taking entries",
+      "excludeHint": "Excluded photos stay out of the bracket. The bracket is seeded from the remaining photos when the entry week ends.",
+      "noEntries": "No entries yet.",
+      "entryStatus": {
+        "pending": "Waiting for review",
+        "active": "In the running",
+        "excluded": "Excluded",
+        "removed": "Removed"
+      },
+      "exclude": "Exclude",
+      "include": "Let back in",
+      "finishedTitle": "Finished contests",
+      "noneFinished": "No contest has finished yet.",
+      "wonBy": "Won by {name}",
+      "noWinner": "No winner",
+      "vetoed": "Vetoed",
+      "veto": "Veto",
+      "errors": {
+        "invalidAnimal": "Please pick a species from the list.",
+        "invalidWeek": "That week can no longer be planned.",
+        "weekTaken": "That week already has a species.",
+        "imageChanged": "The lexicon image has changed since; nothing was reverted.",
+        "failed": "That didn't work. Please try again."
+      },
+      "toast": {
+        "scheduled": "Species planned",
+        "unscheduled": "Plan removed",
+        "advanced": "Contests updated",
+        "excluded": "Photo excluded",
+        "included": "Photo back in the running",
+        "vetoed": "The previous lexicon image is back"
       }
     }
   },
@@ -969,6 +1040,146 @@
         "approved": "Accepted",
         "rejected": "Declined"
       }
+    }
+  },
+  "Compare": {
+    "cardTitle": "You & {name}",
+    "viewAll": "Compare collections",
+    "both": "Both have",
+    "bothPhotographed": "{count, plural, =0 {No shared photos yet} one {# photographed by both} other {# photographed by both}}",
+    "onlyTheirs": "Only {name}",
+    "photoTargets": "{count, plural, =0 {No photo targets} one {# photo target for you} other {# photo targets for you}}",
+    "onlyMine": "Only you",
+    "raceTitle": "Race to {target} species",
+    "you": "You",
+    "raceYou": "Your progress towards {target} species",
+    "raceThem": "{name}'s progress towards {target} species",
+    "pageTitle": "You & {name}",
+    "pageSubtitle": "You have {mine, plural, one {# species} other {# species}}, {name} has {theirs, plural, one {# species} other {# species}}.",
+    "backToProfile": "Back to profile",
+    "tabsLabel": "Compare views",
+    "tabs": {
+      "theirs": "Only {name}",
+      "photos": "Photo targets",
+      "both": "Both",
+      "mine": "Only you"
+    },
+    "photoBy": "Photo: {names}",
+    "emptyTitle": "Nothing here",
+    "empty": {
+      "theirs": "You have every species {name} has.",
+      "photos": "You have photographed everything {name} has photographed.",
+      "both": "You and {name} have no species in common yet.",
+      "mine": "{name} has every species you have."
+    }
+  },
+  "Sets": {
+    "title": "Species sets",
+    "subtitle": "Collect whole sets – spot every species, then photograph them all.",
+    "untitled": "Untitled set",
+    "allSets": "All sets",
+    "spotted": "Spotted",
+    "photographed": "Photographed",
+    "complete": "Complete",
+    "completePhotos": "All photographed",
+    "emptyTitle": "No sets yet",
+    "emptyText": "The first species sets are on their way.",
+    "emptySetTitle": "This set has no species yet",
+    "status": {
+      "photographed": "Photographed",
+      "spotted": "Spotted, no photo yet",
+      "missing": "Not found yet"
+    }
+  },
+  "Contest": {
+    "title": "Photo contest",
+    "subtitle": "Every week one species, your best photo, and a bracket the community votes on. The winner becomes the lexicon image.",
+    "emptyTitle": "No contest running",
+    "emptyText": "The next contest starts on Monday.",
+    "unknownSpecies": "Unknown species",
+    "unknownUser": "Unknown user",
+    "hallOfFame": "Hall of fame",
+    "photoBy": "Photo: {name}",
+    "archiveTitle": "Contest: {name}",
+    "backToContest": "Photo contest",
+    "phase": {
+      "scheduled": "Coming up",
+      "submission": "Taking entries",
+      "voting": "Voting",
+      "finished": "Finished",
+      "cancelled": "Cancelled"
+    },
+    "entriesUntil": "Entries until {time}",
+    "votingUntil": "Voting until {time}",
+    "submissionHint": "Enter one photo of your own. Like your favourite entries: the most liked photos get the best seeds in next week's bracket.",
+    "votingHint": "Pick the better photo in each matchup. Results show once you have voted.",
+    "winnerAnnounced": "{name} won – their photo is now in the lexicon.",
+    "winnerVetoed": "{name} won.",
+    "noWinner": "This contest ended without a winner.",
+    "cancelledText": "Too few photos were entered, so this contest was cancelled.",
+    "scheduledText": "This contest has not started yet.",
+    "submit": {
+      "notInCollection": "Only species in your collection can be entered. Found {name}? Add it first.",
+      "toSpecies": "Go to species",
+      "open": "Enter a photo",
+      "title": "Your photo of {name}",
+      "hint": "One photo per person. It is checked automatically and may wait for a quick review.",
+      "consent": "I took this photo myself. If it wins, Naturelog may show it in the lexicon under CC BY 4.0, credited with my username.",
+      "cancel": "Cancel",
+      "confirm": "Enter photo",
+      "entered": "You're in – good luck!"
+    },
+    "errors": {
+      "missingPhoto": "Please choose a photo.",
+      "consentMissing": "Please confirm that this is your own photo.",
+      "failed": "That didn't work. Please try again.",
+      "invalidImage": "This file is not a supported photo.",
+      "closed": "This contest no longer takes entries.",
+      "notInCollection": "Add this species to your collection first.",
+      "alreadyEntered": "You have already entered a photo.",
+      "imageRejected": "This photo can't be used because it breaks our content rules.",
+      "voteClosed": "Voting on this matchup is closed."
+    },
+    "toast": {
+      "inReview": "Thanks! Your photo joins once it has been reviewed.",
+      "entered": "Your photo is in the contest",
+      "withdrawn": "Photo withdrawn"
+    },
+    "gallery": {
+      "emptyTitle": "No entries yet",
+      "emptyText": "Be the first to enter a photo.",
+      "open": "Enlarge the photo by {name}",
+      "inReview": "In review",
+      "yours": "Your entry",
+      "withdraw": "Withdraw",
+      "like": "Like",
+      "unlike": "Remove like",
+      "alt": "{name}, photographed by {user}"
+    },
+    "bracket": {
+      "final": "Final",
+      "semifinal": "Semi-final",
+      "quarterfinal": "Quarter-final",
+      "roundOf": "Round of {count}",
+      "votes": "{count, plural, one {# vote} other {# votes}}",
+      "yourPhoto": "Your photo",
+      "voted": "Your vote",
+      "vote": "Vote",
+      "closes": "Closes {time}",
+      "progress": "{voted} of {total} voted",
+      "tree": "Bracket",
+      "upcoming": "Coming up",
+      "bye": "Bye",
+      "removed": "Removed",
+      "winner": "Winner"
+    },
+    "teaser": {
+      "title": "Photo contest",
+      "submission": "This week: {name}. Enter your best shot.",
+      "voting": "The {name} bracket is on – vote for the best photo.",
+      "none": "The next contest starts on Monday.",
+      "alsoVoting": "Voting is also open for {name}.",
+      "open": "To the contest"
     }
   }
 }

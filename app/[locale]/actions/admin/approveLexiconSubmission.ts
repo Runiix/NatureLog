@@ -11,13 +11,13 @@ import {
   type AnimalFormValues,
 } from "@/utils/lexicon/animalFields";
 import {
-  USER_PHOTO_LICENSE,
   downloadQueuedImages,
   publishAnimalImages,
   removeAnimalImages,
   removeQueuedImages,
+  userPhotoCredit,
 } from "@/utils/lexicon/animalImages";
-import type { TablesUpdate, TypedSupabaseClient } from "@/utils/supabase/types";
+import type { TablesUpdate } from "@/utils/supabase/types";
 
 /** What the admin changed in the proposal before approving it. */
 export type ApproveEdits = {
@@ -29,21 +29,6 @@ type Published = { image_link: string; lexicon_link: string; paths: string[] };
 
 const asObject = (value: Json): Record<string, Json | undefined> =>
   value && typeof value === "object" && !Array.isArray(value) ? value : {};
-
-/** The contributor is credited by username, linking to their profile. */
-async function creditFor(supabase: TypedSupabaseClient, userId: string) {
-  const { data } = await supabase
-    .from("users")
-    .select("display_name")
-    .eq("id", userId)
-    .maybeSingle();
-  const name = data?.display_name ?? null;
-  return {
-    image_credit_text: name ?? "Naturelog",
-    image_credit_link: name ? `/profilepage/${encodeURIComponent(name)}` : null,
-    ...USER_PHOTO_LICENSE,
-  };
-}
 
 /**
  * Applies an open proposal to the lexicon, with the admin's edits, and marks
@@ -95,7 +80,7 @@ export default async function approveLexiconSubmission(id: string, edits: Approv
         update = {
           image_link: images.image_link,
           lexicon_link: images.lexicon_link,
-          ...(await creditFor(supabase, row.user_id)),
+          ...(await userPhotoCredit(supabase, row.user_id)),
         };
         previous = {
           image_link: animal.image_link,
@@ -133,7 +118,7 @@ export default async function approveLexiconSubmission(id: string, edits: Approv
             ...parsed.value,
             image_link: images.image_link,
             lexicon_link: images.lexicon_link,
-            ...(await creditFor(supabase, row.user_id)),
+            ...(await userPhotoCredit(supabase, row.user_id)),
           }
         : parsed.value;
 

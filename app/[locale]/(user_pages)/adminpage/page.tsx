@@ -2,10 +2,14 @@ import { getTranslations } from "next-intl/server";
 import getLexiconQueue from "@/app/[locale]/actions/admin/getLexiconQueue";
 import getModerationQueue from "@/app/[locale]/actions/admin/getModerationQueue";
 import getReports from "@/app/[locale]/actions/admin/getReports";
+import getContestAdmin from "@/app/[locale]/actions/admin/getContestAdmin";
+import getSetCandidates from "@/app/[locale]/actions/admin/getSetCandidates";
+import ContestAdmin from "@/app/[locale]/components/admin/ContestAdmin";
 import CreateAnimalForm from "@/app/[locale]/components/admin/CreateAnimalForm";
 import LexiconQueue from "@/app/[locale]/components/admin/LexiconQueue";
 import ModerationQueue from "@/app/[locale]/components/admin/ModerationQueue";
 import ReportQueue from "@/app/[locale]/components/admin/ReportQueue";
+import SetAdmin from "@/app/[locale]/components/admin/SetAdmin";
 import { PageHeader } from "@/app/[locale]/components/ui/PageHeader";
 import { PageShell } from "@/app/[locale]/components/ui/PageShell";
 import { cn } from "@/app/[locale]/utils/cn";
@@ -16,7 +20,7 @@ import requireAdmin from "@/utils/supabase/requireAdmin";
 // Signed image URLs expire, so the queue is always read fresh.
 export const dynamic = "force-dynamic";
 
-const TABS = ["images", "reports", "lexicon", "new"] as const;
+const TABS = ["images", "reports", "lexicon", "new", "sets", "contests"] as const;
 type Tab = (typeof TABS)[number];
 
 export default async function AdminPage({
@@ -57,7 +61,11 @@ export default async function AdminPage({
         ? getReports().then((items) => <ReportQueue items={items} />)
         : tab === "lexicon"
           ? getLexiconQueue().then((items) => <LexiconQueue items={items} />)
-          : Promise.resolve(<CreateAnimalForm />),
+          : tab === "sets"
+            ? getSetCandidates().then((candidates) => <SetAdmin candidates={candidates} />)
+            : tab === "contests"
+              ? getContestAdmin().then((data) => <ContestAdmin data={data} />)
+              : Promise.resolve(<CreateAnimalForm />),
   ]);
 
   const counts: Partial<Record<Tab, number>> = {

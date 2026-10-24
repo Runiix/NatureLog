@@ -57,7 +57,8 @@ export const config = {
     // Static files in /public must bypass the locale redirect, or
     // /manifest.json becomes /de/manifest.json (a 404). Listed by extension
     // rather than "anything with a dot" so usernames like "anna.m" still run
-    // through auth and i18n.
-    "/((?!_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json|webmanifest|txt|xml|mp4|webm|woff2?)$).*)",
+    // through auth and i18n. /api routes (the contest cron) have no locale
+    // and authenticate themselves.
+    "/((?!api/|_next/static|_next/image|favicon.ico|.*\\.(?:svg|png|jpg|jpeg|gif|webp|ico|json|webmanifest|txt|xml|mp4|webm|woff2?)$).*)",
   ],
 };

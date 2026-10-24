@@ -18,6 +18,31 @@ export const USER_PHOTO_LICENSE = {
   image_license_link: "https://creativecommons.org/licenses/by/4.0/",
 } as const;
 
+/** The animal columns a new lexicon image replaces; kept as `previous` for a rollback. */
+export const ANIMAL_IMAGE_FIELDS = [
+  "image_link",
+  "lexicon_link",
+  "image_credit_text",
+  "image_credit_link",
+  "image_license_text",
+  "image_license_link",
+] as const;
+
+/** Credit and licence fields for a user's photo: their username, linking to their profile. */
+export async function userPhotoCredit(supabase: TypedSupabaseClient, userId: string) {
+  const { data } = await supabase
+    .from("users")
+    .select("display_name")
+    .eq("id", userId)
+    .maybeSingle();
+  const name = data?.display_name ?? null;
+  return {
+    image_credit_text: name ?? "Naturelog",
+    image_credit_link: name ? `/profilepage/${encodeURIComponent(name)}` : null,
+    ...USER_PHOTO_LICENSE,
+  };
+}
+
 /**
  * Queue paths for a user's proposal images. The storage policy only lets a
  * user write under lexicon/<their id>/.

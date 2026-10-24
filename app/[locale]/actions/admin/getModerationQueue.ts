@@ -2,6 +2,7 @@
 
 import requireAdmin from "@/utils/supabase/requireAdmin";
 import { createAdminClient } from "@/utils/supabase/admin";
+import { liveBucket, type ImageKind } from "@/utils/moderation/publish";
 import { QUEUE_BUCKET } from "@/utils/moderation/submitImage";
 import type { Tables } from "@/utils/supabase/types";
 
@@ -68,23 +69,32 @@ export default async function getModerationQueue(): Promise<{
 
   const userIds = [...new Set([...pendingRows, ...recentRows].map((row) => row.user_id))];
   const pendingPaths = pendingRows.map((row) => previewPath(row.queue_paths)).filter(Boolean);
-  const livePaths = recentRows.map((row) => previewPath(row.live_paths)).filter(Boolean);
+  // Live images sit in different buckets by kind (contest photos have their own).
+  const livePaths = new Map<string, string[]>();
+  for (const row of recentRows) {
+    const path = previewPath(row.live_paths);
+    const bucket = liveBucket(row.kind as ImageKind);
+    if (path) livePaths.set(bucket, [...(livePaths.get(bucket) ?? []), path]);
+  }
 
-  const [{ data: users }, { data: pendingUrls }, { data: liveUrls }] = await Promise.all([
+  const [{ data: users }, { data: pendingUrls }, ...liveUrls] = await Promise.all([
     userIds.length
       ? admin.from("users").select("id, display_name").in("id", userIds)
       : Promise.resolve({ data: [] }),
     pendingPaths.length
       ? admin.storage.from(QUEUE_BUCKET).createSignedUrls(pendingPaths, SIGNED_URL_SECONDS)
       : Promise.resolve({ data: [] }),
-    livePaths.length
-      ? admin.storage.from("profiles").createSignedUrls(livePaths, SIGNED_URL_SECONDS)
-      : Promise.resolve({ data: [] }),
+    ...[...livePaths].map(([bucket, paths]) =>
+      admin.storage.from(bucket).createSignedUrls(paths, SIGNED_URL_SECONDS),
+    ),
   ]);
 
   const names = new Map((users ?? []).map((user) => [user.id, user.display_name]));
   const urls = new Map(
-    [...(pendingUrls ?? []), ...(liveUrls ?? [])].map((entry) => [entry.path, entry.signedUrl]),
+    [...(pendingUrls ?? []), ...liveUrls.flatMap(({ data }) => data ?? [])].map((entry) => [
+      entry.path,
+      entry.signedUrl,
+    ]),
   );
 
   const toItem =

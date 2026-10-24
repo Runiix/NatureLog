@@ -6,6 +6,8 @@ import { redirect } from "next/navigation";
 import getLastSpottedAnimals from "@/app/[locale]/actions/home/getLastSpottedAnimals";
 import AnimalOfTheDay from "@/app/[locale]/components/home/AnimalOfTheDay";
 import AnimalQuiz from "@/app/[locale]/components/home/AnimalQuiz";
+import ContestTeaser from "@/app/[locale]/components/home/ContestTeaser";
+import { getContests } from "@/app/[locale]/utils/contest-queries";
 import DailyChallenge from "@/app/[locale]/components/home/DailyChallenge";
 import ImageSearch from "@/app/[locale]/components/home/ImageSearch";
 import RecentUploads from "@/app/[locale]/components/home/RecentUploads";
@@ -73,12 +75,13 @@ export default async function HomePage() {
   if (!user) redirect("/loginpage");
   const name = user.user_metadata.displayName as string;
 
-  const [t, featured, recent, stats, hideInvertebrates] = await Promise.all([
+  const [t, featured, recent, stats, hideInvertebrates, contests] = await Promise.all([
     getTranslations("Home"),
     getFeaturedAnimals(supabase),
     getLastSpottedAnimals(),
     getSpottingStats(supabase, user.id),
     getHideInvertebrates(supabase, user),
+    getContests(supabase, ["submission", "voting"], 2),
   ]);
   const today = new Date().toISOString().slice(0, 10); // yyyy-mm-dd
 
@@ -107,6 +110,12 @@ export default async function HomePage() {
             <DailyChallenge
               day={today}
               hideInvertebrates={hideInvertebrates}
+            />
+          </Card>
+          <Card className="md:col-span-6">
+            <ContestTeaser
+              submission={contests.find((contest) => contest.status === "submission") ?? null}
+              voting={contests.find((contest) => contest.status === "voting") ?? null}
             />
           </Card>
 

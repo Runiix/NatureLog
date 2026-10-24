@@ -15,6 +15,7 @@ export default function LexiconImagePicker({
   onFileChange,
   consent,
   onConsentChange,
+  consentLabel,
   disabled = false,
 }: {
   file: File | null;
@@ -22,6 +23,8 @@ export default function LexiconImagePicker({
   /** Omit to hide the consent checkbox (admins enter credit themselves). */
   consent?: boolean;
   onConsentChange?: (consent: boolean) => void;
+  /** Replaces the lexicon suggestion's consent text. */
+  consentLabel?: string;
   disabled?: boolean;
 }) {
   const t = useTranslations("LexiconSuggest.image");
@@ -95,7 +98,7 @@ export default function LexiconImagePicker({
             disabled={disabled}
             className="mt-0.5 h-4 w-4 shrink-0 rounded border-border accent-[rgb(var(--color-accent))]"
           />
-          {t("consent")}
+          {consentLabel ?? t("consent")}
         </label>
       )}
     </div>

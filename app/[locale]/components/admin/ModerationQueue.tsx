@@ -119,7 +119,7 @@ function ModerationCard({
   );
 }
 
-type ModerationKind = "profile_picture" | "profile_grid" | "collection";
+type ModerationKind = "profile_picture" | "profile_grid" | "collection" | "contest_entry";
 
 /**
  * The admin's two lists: images waiting for a decision, and recently approved
